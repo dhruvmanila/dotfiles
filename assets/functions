@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+# Create a new directory and enter it
+function mkd() {
+	mkdir -p "$@" && cd "$_" || return;
+}
+
+# Use Git’s colored diff when available
+# This doesn't allow me to use 'diff', maybe make it 'gdiff' ?
+#hash git &>/dev/null;
+#if [ $? -eq 0 ]; then
+#	function diff() {
+#		git diff --no-index --color-words "$@";
+#	}
+#fi;
+
+# Normalize `open` across Linux, macOS, and Windows.
+# This is needed to make the `o` function (see below) cross-platform.
+if [ ! $(uname -s) = 'Darwin' ]; then
+	if grep -q Microsoft /proc/version; then
+		# Ubuntu on Windows using the Linux subsystem
+		alias open='explorer.exe';
+	else
+		alias open='xdg-open';
+	fi
+fi
+
+# `o` with no arguments opens the current directory, otherwise opens the given
+# location
+function o() {
+	if [ $# -eq 0 ]; then
+		open .;
+	else
+		open "$@";
+	fi;
+}
+
+# To open the python source folder directly using pyc in vscode :)
+function pyc() {
+	path=$(python -c "import sys;print(sys.executable.split('bin')[0])")
+	code "$path"
+}

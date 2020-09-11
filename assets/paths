@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Start PATH from here (default path in MacOS)
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+# Setting PATH for Python 3.8
+export PATH="/Library/Frameworks/Python.framework/Versions/3.8/bin:${PATH}"
+
+# Setting PATH for sbin
+export PATH="${PATH}:/usr/local/sbin"
+
+# Setting PATH for command line tools for python like black, pylint, etc.
+export PATH="${PATH}:${HOME}/Library/Python/3.8/bin"
+
+# Setting PATH for personal scripts
+export PATH="${PATH}:${HOME}/.local/bin"

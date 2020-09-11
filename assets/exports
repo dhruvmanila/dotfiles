@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# Disale default conda base getting activated by default
+export CONDA_AUTO_ACTIVATE_BASE=false;
+
+# Hide the “default interactive shell is now zsh” warning on macOS.
+export BASH_SILENCE_DEPRECATION_WARNING=1;
+
+# Make vim the default editor.
+export EDITOR='vim';
+
+# Increase Bash history size. Allow 32³ entries; the default is 500.
+export HISTSIZE='32768';
+export HISTFILESIZE="${HISTSIZE}";
+# Omit duplicates and commands that begin with a space from history.
+export HISTCONTROL='ignoreboth';
+
+# Prefer US English and use UTF-8.
+export LANG='en_US.UTF-8';
+export LC_ALL='en_US.UTF-8';
+
+# Highlight section titles in manual pages.
+# Colors for less
+# https://linuxtidbits.wordpress.com/2009/03/23/less-colors-for-man-pages/
+export LESS_TERMCAP_md="${yellow}";
+export LESS_TERMCAP_mb="${red}";       # begin blinking
+export LESS_TERMCAP_me="${reset}";           # end mode
+export LESS_TERMCAP_se="${reset}";           # end standout-mode
+export LESS_TERMCAP_so=$'\e[38;5;246m'    # begin standout-mode - info box
+export LESS_TERMCAP_ue="${reset}";           # end underline
+export LESS_TERMCAP_us="${underline}${yellow}";  # begin underline
+
+# Don’t clear the screen after quitting a manual page.
+# X - leave content on-screen
+# F - quit automatically if less than one screenfull
+# R - raw terminal characters (fixes git diff)
+# see http://jugglingbits.wordpress.com/2010/03/24/a-better-less-playing-nice-with-git/
+export LESS DEFAULT='-X -F -R';
+
+# Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
+export PYTHONIOENCODING='UTF-8';
+
+# Don’t clear the screen after quitting a manual page.
+export MANPAGER='less -X -F -R';
+
+# Avoid issues with `gpg` as installed via Homebrew.
+# https://stackoverflow.com/a/42265848/96656
+# export GPG_TTY=$(tty);

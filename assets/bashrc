@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Source everything from .bash_profile when starting interactively
+# If not running interactively, don't do anything
+[[ $- == *i* ]] || return
+
+# shellcheck source=/dev/null
+[ -n "$PS1" ] && source "${HOME}/.bash_profile";
+

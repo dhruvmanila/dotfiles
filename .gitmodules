@@ -1,0 +1,9 @@
+[submodule "vim/plugged/nerdtree"]
+	path = vim/plugged/nerdtree
+	url = https://github.com/preservim/nerdtree
+[submodule "vim/plugged/vim-fugitive"]
+    path = vim/plugged/vim-fugitive
+    url = https://github.com/tpope/vim-fugitive
+[submodule "vim/plugged/vim-monokai-tasty"]
+    path = vim/plugged/vim-monokai-tasty
+    url = https://github.com/patstockwell/vim-monokai-tasty

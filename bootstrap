@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+
+# dotfiles directory
+DOTFILES_DIRECTORY="${HOME}/dotfiles"
+
+source ${DOTFILES_DIRECTORY}/lib/utils
+source ${DOTFILES_DIRECTORY}/lib/brew
+
+# change to the dotfiles directory
+# For some unknown reason it doesn't exist, exit!
+e_header "Changing to the ${DOTFILES_DIRECTORY} directory"
+cd "${DOTFILES_DIRECTORY}" || e_error "Error: ${DOTFILES_DIRECTORY} doesn't exist."
+e_success "...done"
+
+# Before relying on Homebrew, check that packages can be compiled by making sure
+# I have installed xcode command line tools
+e_header "Checking for xcode command line tools..."
+if ! type_exists 'gcc'; then
+    e_error "The XCode Command Line Tools must be installed first."
+    printf "  Download them from: https://developer.apple.com/downloads or type xcode-select --install\n"
+    printf "  Then run: bash ~/dotfiles/bootstrap\n\n"
+    exit 1
+else
+    e_success "xcode command line tools already installed."
+fi
+
+# Check for Homebrew
+# Install homebrew and all the requested packages
+e_header "Checking for homebrew..."
+if ! type_exists 'brew'; then
+    e_header "Installing Homebrew..."
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh
+    if type_exists 'brew'; then
+        e_success "Successfully installed homebrew"
+        printf "\nInstalling packages...\n"
+        run_brew
+    else
+        e_error "Failed to install homebrew."
+        exit 1
+    fi
+else
+    e_success "Homebrew already installed."
+    printf "\nUpdating packages...\n"
+    run_brew
+fi
+
+# Check for git
+# Git will be installed with xcode command line tools. If not
+# then install with homebrew
+e_header "Checking for git..."
+if ! type_exists 'git'; then
+    e_header "Updating Homebrew..."
+    brew update
+    e_header "Installing Git..."
+    brew install git
+    if type_exists 'git'; then
+        e_success "Successfully installed git."
+    else
+        e_error "Failed to install git."
+        exit 1
+    fi
+else
+    e_success "Git already installed."
+fi
+
+# Download Git Auto-Completion
+e_header "Checking for git-completion..."
+if [[ ! -e ${HOME}/.git-completion.bash ]]; then
+    curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ${HOME}/.git-completion.bash
+    if [[ -f ${HOME}/.git-completion.bash ]]; then
+        e_success "Successfully downloaded git completion for bash."
+    else
+        e_error "Failed to download git completion for bash."
+    fi
+else
+    e_success "Git completion already downloaded."
+fi
+
+# Download vim plugin manager
+e_header "Checking for vim-plug..."
+if [[ ! -e ${HOME}/dotfiles/vim/autoload ]]; then
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    if [[ $? -eq 0 ]]; then
+        e_success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
+    else
+        e_error "Failed to download vim-plug."
+    fi
+else
+    e_success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
+fi
+
+
+link() {
+    # Force create/replace the symlink.
+    e_header "Creating symlink to ${2} in ${HOME} directory..."
+    ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"
+    if [ -f ${HOME}/${2} ] || [ -d ${HOME}/${2} ]; then
+        e_success "Successfully created symlink at ${HOME}/${2}"
+    else
+        e_error "Failed to create symlink for ${1}"
+    fi
+}
+
+mirrorfiles() {
+    # all the private/extra files should go in a folder named 'private'
+    if [[ -d ${DOTFILES_DIRECTORY}/private ]]; then
+        link "private/gitconfig"      ".gitconfig"
+    fi
+
+    # copy hushlogin as we are not going to be updating it
+    cp assets/hushlogin ${HOME}/.hushlogin
+
+    # Force remove the vim directory if it's already there.
+    if [ -e "${HOME}/.vim" ]; then
+        rm -rf "${HOME}/.vim"
+    fi
+
+    # Create the necessary symbolic links between the `dotfiles` and `HOME`
+    # directory. The `bash_profile` sources other files directly from the
+    # `dotfiles` repository.
+    link "assets/bashrc"         ".bashrc"
+    link "assets/bash_profile"   ".bash_profile"
+    link "assets/inputrc"        ".inputrc"
+    link "assets/vimrc"          ".vimrc"
+    link "assets/tmux.conf"      ".tmux.conf"
+    link "assets/gitignore"      ".gitignore"
+    link "vim"                   ".vim"
+
+    e_success "Dotfiles update complete!"
+}
+
+# Ask before potentially overwriting files
+seek_confirmation "Warning: This step may overwrite your existing dotfiles."
+
+if is_confirmed; then
+    mirrorfiles
+    source ${HOME}/.bash_profile
+else
+    printf "Aborting...\n"
+    exit 1
+fi
+
+
+# Ask before potentially overwriting OS X defaults
+seek_confirmation "Warning: This step may modify your OS X system defaults."
+
+if is_confirmed; then
+    bash ./bin/osxdefaults
+    e_success "OS X settings updated! You may need to restart."
+else
+    printf "Skipped OS X settings update.\n"
+fi
+
