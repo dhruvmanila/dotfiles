@@ -9,7 +9,7 @@ source ${DOTFILES_DIRECTORY}/lib/brew
 # change to the dotfiles directory
 # For some unknown reason it doesn't exist, exit!
 e_header "Changing to the ${DOTFILES_DIRECTORY} directory"
-cd "${DOTFILES_DIRECTORY}" || e_error "Error: ${DOTFILES_DIRECTORY} doesn't exist."
+cd "${DOTFILES_DIRECTORY}" || exit 1
 e_success "...done"
 
 # Before relying on Homebrew, check that packages can be compiled by making sure
@@ -32,7 +32,7 @@ if ! type_exists 'brew'; then
     curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh
     if type_exists 'brew'; then
         e_success "Successfully installed homebrew"
-        printf "\nInstalling packages...\n"
+        e_header "Installing packages..."
         run_brew
     else
         e_error "Failed to install homebrew."
@@ -40,7 +40,7 @@ if ! type_exists 'brew'; then
     fi
 else
     e_success "Homebrew already installed."
-    printf "\nUpdating packages...\n"
+    e_header "Updating packages..."
     run_brew
 fi
 
@@ -143,12 +143,12 @@ fi
 
 
 # Ask before potentially overwriting OS X defaults
-seek_confirmation "Warning: This step may modify your OS X system defaults."
-
-if is_confirmed; then
-    bash ./bin/osxdefaults
-    e_success "OS X settings updated! You may need to restart."
-else
-    printf "Skipped OS X settings update.\n"
-fi
+#seek_confirmation "Warning: This step may modify your OS X system defaults."
+#
+#if is_confirmed; then
+#    bash ${DOTFILES_DIRECTORY}/lib/osxdefaults
+#    e_success "OS X settings updated! You may need to restart."
+#else
+#    printf "Skipped OS X settings update.\n"
+#fi
 
