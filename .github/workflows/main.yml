@@ -1,0 +1,16 @@
+on:
+  push:
+    branch:
+      - master
+
+name: 'Trigger: Push action'
+
+jobs:
+  shellcheck:
+    name: Shellcheck
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@0.5.0
+
