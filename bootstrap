@@ -13,13 +13,22 @@ cd "${DOTFILES_DIRECTORY}" || exit 1
 e_success "...done"
 
 # Before relying on Homebrew, check that packages can be compiled by making sure
-# I have installed xcode command line tools
 e_header "Checking for xcode command line tools..."
 if ! type_exists 'gcc'; then
-    e_error "The XCode Command Line Tools must be installed first."
-    printf "  Download them from: https://developer.apple.com/downloads or type xcode-select --install\n"
-    printf "  Then run: bash ~/dotfiles/bootstrap\n\n"
-    exit 1
+    printf "Installing xcode command line tools...\n"
+    xcode-select --install &> /dev/null
+   
+    # wait until the tools are installed... 
+    until type_exists 'gcc'; do
+        sleep 5;
+    done
+    # making sure we installed it
+    if type_exists 'gcc'; then
+        e_success "Successfully installed xcode command line tools."
+    else
+        e_error "Failed to install xcode command line tools."
+        exit 1
+    fi
 else
     e_success "xcode command line tools already installed."
 fi
