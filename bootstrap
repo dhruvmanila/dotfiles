@@ -3,8 +3,10 @@
 # dotfiles directory
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 
-source ${DOTFILES_DIRECTORY}/lib/utils
-source ${DOTFILES_DIRECTORY}/lib/brew
+# shellcheck disable=SC1090
+source "${DOTFILES_DIRECTORY}"/lib/utils
+# shellcheck disable=SC1090
+source "${DOTFILES_DIRECTORY}"/lib/brew
 
 # change to the dotfiles directory
 # For some unknown reason it doesn't exist, exit!
@@ -75,7 +77,7 @@ fi
 # Download Git Auto-Completion
 e_header "Checking for git-completion..."
 if [[ ! -e ${HOME}/.git-completion.bash ]]; then
-    curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ${HOME}/.git-completion.bash
+    curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > "${HOME}/.git-completion.bash"
     if [[ -f ${HOME}/.git-completion.bash ]]; then
         e_success "Successfully downloaded git completion for bash."
     else
@@ -90,7 +92,7 @@ e_header "Checking for vim-plug..."
 if [[ ! -e ${HOME}/dotfiles/vim/autoload ]]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    if [[ $? -eq 0 ]]; then
+    if [[ -f "${HOME}/.vim/autoload/plug.vim" ]]; then
         e_success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
     else
         e_error "Failed to download vim-plug."
@@ -104,7 +106,7 @@ link() {
     # Force create/replace the symlink.
     e_header "Creating symlink to ${2} in ${HOME} directory..."
     ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"
-    if [ -f ${HOME}/${2} ] || [ -d ${HOME}/${2} ]; then
+    if [ -f "${HOME}/${2}" ] || [ -d "${HOME}/${2}" ]; then
         e_success "Successfully created symlink at ${HOME}/${2}"
     else
         e_error "Failed to create symlink for ${1}"
@@ -118,7 +120,7 @@ mirrorfiles() {
     fi
 
     # copy hushlogin as we are not going to be updating it
-    cp assets/hushlogin ${HOME}/.hushlogin
+    cp assets/hushlogin "${HOME}/.hushlogin"
 
     # Force remove the vim directory if it's already there.
     if [ -e "${HOME}/.vim" ]; then
@@ -144,7 +146,8 @@ seek_confirmation "Warning: This step may overwrite your existing dotfiles."
 
 if is_confirmed; then
     mirrorfiles
-    source ${HOME}/.bash_profile
+    # shellcheck disable=SC1090
+    source "${HOME}/.bash_profile"
 else
     printf "Aborting...\n"
     exit 1

@@ -2,20 +2,21 @@
 
 load_dotfiles() {
     declare -a files=(
-        $HOME/dotfiles/assets/paths # Path modifications
-        $HOME/dotfiles/assets/bash_prompt # Custom bash prompt
-        $HOME/dotfiles/assets/options # Options
-        $HOME/dotfiles/assets/exports # Exports
-        $HOME/dotfiles/assets/aliases # Aliases
-        $HOME/dotfiles/assets/functions # Functions
-        $HOME/dotfiles/assets/bash_completions # all completions
+        "$HOME/dotfiles/assets/paths" # Path modifications
+        "$HOME/dotfiles/assets/bash_prompt" # Custom bash prompt
+        "$HOME/dotfiles/assets/options" # Options
+        "$HOME/dotfiles/assets/exports" # Exports
+        "$HOME/dotfiles/assets/aliases" # Aliases
+        "$HOME/dotfiles/assets/functions" # Functions
+        "$HOME/dotfiles/assets/bash_completions" # all completions
     )
 
     # if these files are readable, source them
     for index in ${!files[*]}
     do
         if [[ -r ${files[$index]} ]]; then
-            source ${files[$index]}
+            # shellcheck source=/dev/null
+            source "${files[$index]}"
         fi
     done
 }
@@ -33,10 +34,12 @@ fi;
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/opt/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+# shellcheck disable=SC2181
 if [ $? -eq 0 ]; then
    eval "$__conda_setup"
 else
    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+       # shellcheck disable=SC1091
        . "/opt/anaconda3/etc/profile.d/conda.sh"
    else
        export PATH="/opt/anaconda3/bin:$PATH"
@@ -45,6 +48,6 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-
+# shellcheck disable=SC1091
 source /Users/dhruvmanilawala/.config/broot/launcher/bash/br
 
