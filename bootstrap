@@ -137,8 +137,7 @@ if is_confirmed; then
     mirrorfiles
     source ${HOME}/.bash_profile
 else
-    printf "Aborting...\n"
-    exit 1
+    printf "Continuing...\n"
 fi
 
 
@@ -146,7 +145,7 @@ fi
 seek_confirmation "Warning: This step may modify your OS X system defaults."
 
 if is_confirmed; then
-    bash ./bin/osxdefaults
+    bash ./lib/osxdefaults
     e_success "OS X settings updated! You may need to restart."
 else
     printf "Skipped OS X settings update.\n"

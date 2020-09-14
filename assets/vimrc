@@ -19,11 +19,12 @@ set nocompatible
 call plug#begin('~/.vim/plugged')
 
 " Colorschemes
-" Plug 'tomasr/molokai'                    
-" Plug 'crusoexia/vim-monokai'
-" Plug 'phanviet/vim-monokai-pro'
 Plug 'patstockwell/vim-monokai-tasty'
-" Plug 'erichdongubler/vim-sublime-monokai'
+Plug 'altercation/vim-colors-solarized'
+Plug 'KeitaNakamura/neodark.vim'
+
+" A collection of language packs for vim
+Plug 'sheerun/vim-polyglot'
 
 " File system explorer
 Plug 'preservim/nerdtree'
@@ -39,12 +40,148 @@ call plug#end()
 
 " Colorscheme
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"colorscheme neodark
+"let g:neodark#use_256color = 1
 
+"let g:vim_monokai_tasty_italic = 1
 colorscheme vim-monokai-tasty
+
+" If you don't know what the name of a particular hightlight is, you can use
+" `What`. It will print out the syntax group that the cursor is currently above.
+" from https://www.reddit.com/r/vim/comments/6z4aau/how_to_stop_vim_from_autohighlighting_italics_in/
+command! What echo synIDattr(synID(line('.'), col('.'), 1), 'name')
+
+"colorscheme solarized
+"set background=dark
+"let g:solarized_termcolors=256
+
+" Turn on syntax highlighting.
+syntax on
+
+" Turn on filetype plugins 
+if has('autocmd')
+  filetype plugin indent on
+endif
+
+let g:python_highlight_all=1
+
+" Spaces & Tabs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set tabstop=4       " number of visual spaces per TAB
+set softtabstop=4   " number of spaces in tab when editing
+set shiftwidth=4    " Insert 4 spaces on a tab
+set expandtab       " tabs are spaces, mainly because of python
+
+" UI Config
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set number              " show line numbers
+set relativenumber      " show relative numbering
+set showcmd             " show command in bottom bar
+set cursorline          " highlight current line
+set wildmenu            " visual autocomplete for command menu
+set showmatch           " highlight matching [{()}]
+set laststatus=2        " Show the status line at the bottom
+set mouse+=a            " A necessary evil, mouse support
+set noerrorbells visualbell t_vb=    "Disable annoying error noises
+set splitbelow          " Open new vertical split bottom
+set splitright          " Open new horizontal splits right
+set linebreak           " Have lines wrap instead of continue off-screen
+set scrolloff=12        " Keep cursor in approximately the middle of the screen
+set updatetime=100      " Some plugins require fast updatetime
+set ttyfast             " Improve redrawing
+set shortmess+=I        " Disable the default Vim startup message
+set ruler               " Show the cursor position
+set title               " Show the filename in window titlebar
+set showmode            " Show the current mode
+set nostartofline       " Don't set cursor to start of line when moving around
+set gdefault            " Add the g flag to search/replace by default
+set wildmode=longest,list,full " Tab completion for files/buffers
+" Use system clipboard by default so that you can 
+" CtrlC in other programs and put in Vim with p on all three platforms,
+" yank in Vim with y and CtrlV in other programs on all three platforms.
+" Support for Linux selection clipboard as well.
+set clipboard^=unnamed,unnamedplus
+set encoding=utf-8
+set backupcopy=yes      " see :help crontab
+set autoread            " reload files when changed on disk, i.e. via `git checkout`
+
+" Buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" By default, Vim doesn't let you hide a buffer (i.e. have a buffer that isn't
+" shown in any window) that has unsaved changes. This is to prevent you from "
+" forgetting about unsaved changes and then quitting e.g. via `:qa!`. We find
+" hidden buffers helpful enough to disable this protection. See `:help hidden`
+" for more information on this.
+set hidden              " Allows having hidden buffer (not displayed in any window)
+
+" Sensible stuff
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" The backspace key has slightly unintuitive behavior by default. For example,
+" by default, you can't backspace before the insertion point set with 'i'.
+" This configuration makes backspace behave more reasonably, in that you can
+" backspace over anything.
+set backspace=indent,eol,start
+
+" Automatic reloading of .vimrc on save
+autocmd! bufwritepost .vimrc source %
+
+" Unbind some useless/annoying default key bindings.
+nmap Q <Nop> " 'Q' in normal mode enters Ex mode. You almost never want this.
+
+" Searching
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set incsearch           " search as characters are entered
+set hlsearch            " highlight matches
+set ignorecase          " Ignore case in searches by default
+set smartcase           " But make it case sensitive if an uppercase is entered
+" turn off search highlight
+nnoremap <C-h> :nohlsearch<cr>
+vnoremap <C-h> :nohlsearch<cr>
+
+" Centralize backups, swapfiles and undo history
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set backupdir=~/.vim/backups/
+set directory=~/.vim/swaps/
+if exists("&undodir")
+	set undodir=~/.vim/undo/
+endif
+
+" Lose bad habits
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Try to prevent bad habits like using the arrow keys for movement. This is
+" not the only possible bad habit. For example, holding down the h/j/k/l keys
+" for movement, rather than using more efficient movement commands, is also a
+" bad habit. Don't want it in insert mode as it's necessary to navigate while
+" writing
+ 
+" Normal Mode
+nnoremap <Left>  :echoe "Use h"<CR>
+nnoremap <Right> :echoe "Use l"<CR>
+nnoremap <Up>    :echoe "Use k"<CR>
+nnoremap <Down>  :echoe "Use j"<CR>
+
+" Visual Mode
+vnoremap <Left>  :echoe "Use h"<CR>
+vnoremap <Right> :echoe "Use l"<CR>
+vnoremap <Up>    :echoe "Use k"<CR>
+vnoremap <Down>  :echoe "Use j"<CR>
+
+
+" =============================================================================
+"   PLUGIN CONFIG
+" =============================================================================
+
+" Set key to Ctrl-n to open nerd tree
+map <C-n> :NERDTreeToggle<CR>
 
 " Turn on syntax highlighting.
 " This turns on filetype detection
 syntax on
+
+" Turn on filetype plugins 
+if has('autocmd')
+  filetype plugin indent on
+endif
 
 " Spaces & Tabs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
