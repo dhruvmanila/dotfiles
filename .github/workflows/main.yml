@@ -8,7 +8,7 @@ name: 'Trigger: Push action'
 jobs:
   shellcheck:
     name: Shellcheck
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Run ShellCheck
