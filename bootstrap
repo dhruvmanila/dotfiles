@@ -3,23 +3,34 @@
 # dotfiles directory
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 
-source ${DOTFILES_DIRECTORY}/lib/utils
-source ${DOTFILES_DIRECTORY}/lib/brew
+# shellcheck disable=SC1090
+source "${DOTFILES_DIRECTORY}"/lib/utils
+# shellcheck disable=SC1090
+source "${DOTFILES_DIRECTORY}"/lib/brew
 
 # change to the dotfiles directory
 # For some unknown reason it doesn't exist, exit!
 e_header "Changing to the ${DOTFILES_DIRECTORY} directory"
-cd "${DOTFILES_DIRECTORY}" || e_error "Error: ${DOTFILES_DIRECTORY} doesn't exist."
+cd "${DOTFILES_DIRECTORY}" || exit 1
 e_success "...done"
 
 # Before relying on Homebrew, check that packages can be compiled by making sure
-# I have installed xcode command line tools
 e_header "Checking for xcode command line tools..."
 if ! type_exists 'gcc'; then
-    e_error "The XCode Command Line Tools must be installed first."
-    printf "  Download them from: https://developer.apple.com/downloads or type xcode-select --install\n"
-    printf "  Then run: bash ~/dotfiles/bootstrap\n\n"
-    exit 1
+    printf "Installing xcode command line tools...\n"
+    xcode-select --install &> /dev/null
+   
+    # wait until the tools are installed... 
+    until type_exists 'gcc'; do
+        sleep 5;
+    done
+    # making sure we installed it
+    if type_exists 'gcc'; then
+        e_success "Successfully installed xcode command line tools."
+    else
+        e_error "Failed to install xcode command line tools."
+        exit 1
+    fi
 else
     e_success "xcode command line tools already installed."
 fi
@@ -32,7 +43,7 @@ if ! type_exists 'brew'; then
     curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh
     if type_exists 'brew'; then
         e_success "Successfully installed homebrew"
-        printf "\nInstalling packages...\n"
+        e_header "Installing packages..."
         run_brew
     else
         e_error "Failed to install homebrew."
@@ -40,7 +51,7 @@ if ! type_exists 'brew'; then
     fi
 else
     e_success "Homebrew already installed."
-    printf "\nUpdating packages...\n"
+    e_header "Updating packages..."
     run_brew
 fi
 
@@ -66,7 +77,7 @@ fi
 # Download Git Auto-Completion
 e_header "Checking for git-completion..."
 if [[ ! -e ${HOME}/.git-completion.bash ]]; then
-    curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ${HOME}/.git-completion.bash
+    curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > "${HOME}/.git-completion.bash"
     if [[ -f ${HOME}/.git-completion.bash ]]; then
         e_success "Successfully downloaded git completion for bash."
     else
@@ -81,7 +92,7 @@ e_header "Checking for vim-plug..."
 if [[ ! -e ${HOME}/dotfiles/vim/autoload ]]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    if [[ $? -eq 0 ]]; then
+    if [[ -f "${HOME}/.vim/autoload/plug.vim" ]]; then
         e_success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
     else
         e_error "Failed to download vim-plug."
@@ -95,7 +106,7 @@ link() {
     # Force create/replace the symlink.
     e_header "Creating symlink to ${2} in ${HOME} directory..."
     ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"
-    if [ -f ${HOME}/${2} ] || [ -d ${HOME}/${2} ]; then
+    if [ -f "${HOME}/${2}" ] || [ -d "${HOME}/${2}" ]; then
         e_success "Successfully created symlink at ${HOME}/${2}"
     else
         e_error "Failed to create symlink for ${1}"
@@ -109,7 +120,7 @@ mirrorfiles() {
     fi
 
     # copy hushlogin as we are not going to be updating it
-    cp assets/hushlogin ${HOME}/.hushlogin
+    cp assets/hushlogin "${HOME}/.hushlogin"
 
     # Force remove the vim directory if it's already there.
     if [ -e "${HOME}/.vim" ]; then
@@ -135,7 +146,8 @@ seek_confirmation "Warning: This step may overwrite your existing dotfiles."
 
 if is_confirmed; then
     mirrorfiles
-    source ${HOME}/.bash_profile
+    # shellcheck disable=SC1090
+    source "${HOME}/.bash_profile"
 else
     printf "Continuing...\n"
 fi
@@ -150,4 +162,3 @@ if is_confirmed; then
 else
     printf "Skipped OS X settings update.\n"
 fi
-
