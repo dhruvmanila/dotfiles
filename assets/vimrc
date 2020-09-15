@@ -18,14 +18,17 @@ set nocompatible
 " =============================================================================
 call plug#begin('~/.vim/plugged')
 
-" Colorschemes
-" Plug 'tomasr/molokai'                    
-" Plug 'crusoexia/vim-monokai'
-" Plug 'phanviet/vim-monokai-pro'
+" Colorschemes (Monokai forever)
 Plug 'patstockwell/vim-monokai-tasty'
-" Plug 'erichdongubler/vim-sublime-monokai'
+Plug 'altercation/vim-colors-solarized'
+Plug 'KeitaNakamura/neodark.vim'
 
-" File system explorer
+" Syntactic language support
+Plug 'vim-python/python-syntax'
+
+" GUI enhancements
+Plug 'itchyny/lightline.vim'  
+Plug 'mhinz/vim-startify'    
 Plug 'preservim/nerdtree'
 
 " Git plugin
@@ -39,12 +42,30 @@ call plug#end()
 
 " Colorscheme
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"colorscheme neodark
+"let g:neodark#use_256color = 1
 
+"let g:vim_monokai_tasty_italic = 1
 colorscheme vim-monokai-tasty
 
+" If you don't know what the name of a particular hightlight is, you can use
+" `What`. It will print out the syntax group that the cursor is currently above.
+" from https://www.reddit.com/r/vim/comments/6z4aau/how_to_stop_vim_from_autohighlighting_italics_in/
+command! What echo synIDattr(synID(line('.'), col('.'), 1), 'name')
+
+"colorscheme solarized
+"set background=dark
+"let g:solarized_termcolors=256
+
 " Turn on syntax highlighting.
-" This turns on filetype detection
 syntax on
+
+" Turn on filetype plugins 
+if has('autocmd')
+  filetype plugin indent on
+endif
+
+let g:python_highlight_all=1
 
 " Spaces & Tabs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -73,7 +94,6 @@ set ttyfast             " Improve redrawing
 set shortmess+=I        " Disable the default Vim startup message
 set ruler               " Show the cursor position
 set title               " Show the filename in window titlebar
-set showmode            " Show the current mode
 set nostartofline       " Don't set cursor to start of line when moving around
 set gdefault            " Add the g flag to search/replace by default
 set wildmode=longest,list,full " Tab completion for files/buffers
@@ -152,6 +172,15 @@ vnoremap <Down>  :echoe "Use j"<CR>
 "   PLUGIN CONFIG
 " =============================================================================
 
+" NERDTree
 " Set key to Ctrl-n to open nerd tree
+" Close vim if only window left is NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <C-n> :NERDTreeToggle<CR>
+
+" Lightline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" --INSERT-- is unncessary because of lightline
+set noshowmode
+let g:lightline={'colorscheme': 'monokai_tasty'}
 
