@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # dotfiles directory
-DOTFILES_DIRECTORY="${HOME}/projects/dotfiles"
+DOTFILES_DIRECTORY="${HOME}/dotfiles"
 DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
 DOTFILES_GIT_REMOTE="git@github.com:dhruvmanila/dotfiles.git"
 
