@@ -8,12 +8,12 @@ DOTFILES_GIT_REMOTE="git@github.com:dhruvmanila/dotfiles.git"
 # -----------------------------------------------------
 
 # If missing, download and extract the dotfiles repository
-if [ ! -d ${DOTFILES_DIRECTORY} ]; then
+if [ ! -d "${DOTFILES_DIRECTORY}" ]; then
     printf "\n$(tput setaf 7)Downloading dotfiles...\033[m\n"
     mkdir -p "${DOTFILES_DIRECTORY}"
     
     # Get the tarball
-    if $(curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}"); then
+    if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}"; then
         printf "$(tput setaf 64)✓ Successfully downloaded the dotfiles $(tput sgr0)\n"
     else
         printf "$(tput setaf 1)x Failed to download the dotfiles $(tput sgr0)\n"
@@ -138,9 +138,9 @@ fi
 
 # Download Git Auto-Completion
 e_header "Checking for git-completion..."
-if [ ! -e ${HOME}/.git-completion.bash ]; then
+if [ ! -e "${HOME}/.git-completion.bash" ]; then
     curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > "${HOME}/.git-completion.bash"
-    if [ -f ${HOME}/.git-completion.bash ]; then
+    if [ -f "${HOME}/.git-completion.bash" ]; then
         e_success "Successfully downloaded git completion for bash."
     else
         e_error "Failed to download git completion for bash."
@@ -153,7 +153,7 @@ fi
 
 # Download vim plugin manager
 e_header "Checking for vim-plug..."
-if [ ! -e ${HOME}/dotfiles/vim/autoload ]; then
+if [ ! -e "${HOME}/dotfiles/vim/autoload" ]; then
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     if [ -f "${HOME}/.vim/autoload/plug.vim" ]; then
@@ -182,7 +182,7 @@ link() {
 
 mirrorfiles() {
     # all the private/extra files should go in a folder named 'private'
-    if [ -d ${DOTFILES_DIRECTORY}/private ]; then
+    if [ -d "${DOTFILES_DIRECTORY}/private" ]; then
         link "private/gitconfig"      ".gitconfig"
     fi
 
