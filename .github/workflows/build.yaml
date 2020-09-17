@@ -1,0 +1,15 @@
+on: [push, pull_request]
+
+name: "build"
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Run bootstrap
+        run: |
+          export CI=1
+          curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
+          echo -e "y\ny\n" > response.txt
+          bash bootstrap.sh < response.txt
+        shell: bash 
