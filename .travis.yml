@@ -16,4 +16,5 @@ before_script:
   - echo -e "y\ny\n" > response.txt
 
 script:
+  - export CI=1
   - bash bootstrap.sh < response.txt
