@@ -1,0 +1,8 @@
+language: bash
+
+before_script:
+  - curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
+  - echo -e "y\ny\n" > response.txt
+
+script:
+  - bash bootstrap.sh < response.txt
