@@ -8,8 +8,9 @@ jobs:
     steps:
       - name: Run bootstrap
         run: |
+          export TERM=xterm
           export CI=1
           curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
-          echo -e "y\ny\n" > response.txt
+          echo -e "\ny\ny\n" > response.txt
           bash bootstrap.sh < response.txt
         shell: bash 
