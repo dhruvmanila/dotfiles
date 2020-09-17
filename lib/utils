@@ -24,7 +24,7 @@ e_warning() {
 seek_confirmation() {
     printf "\n"
     e_warning "$@"
-    read -p "Continue? (y/n) " -n 1
+    read -rp "Continue? (y/n) " -n 1
     printf "\n"
 }
 
@@ -38,13 +38,13 @@ is_confirmed() {
 
 # Test whether we're in a git repo
 is_git_repo() {
-    $(git rev-parse --is-inside-work-tree &> /dev/null)
+    git rev-parse --is-inside-work-tree &> /dev/null
 }
 
 # Test whether a command exists
 # $1 - cmd to test
 type_exists() {
-    if [ $(type -P $1) ]; then
+    if type -P "$1"; then
       return 0
     fi
     return 1
@@ -53,8 +53,8 @@ type_exists() {
 # Test whether a Homebrew formula is already installed
 # $1 - formula name (may include options)
 formula_exists() {
-    if $(brew list $1 &> /dev/null); then
-        e_success "${1} already installed."
+    if brew list "$1" &> /dev/null; then
+        e_success "${1} already installed"
         return 0
     fi
 
