@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-run_brew() {
+# Just for testing this script
+# source ./utils
 
+DOTFILES_DIRECTORY=${HOME}/dotfiles
+
+run_brew() {
     # Check for Homebrew
     if type_exists 'brew'; then
         e_header "Updating Homebrew..."
@@ -9,69 +13,57 @@ run_brew() {
         BREW_PREFIX=$(brew --prefix)
 
         # Use the latest version of Homebrew
-        brew update
-        [[ $? ]] && e_success "Done"
+        brew update &> /dev/null
+        [[ $? ]] && e_success "Updated Homebrew"
 
         e_header "Updating any existing Homebrew formulae..."
         # Upgrade any already-installed formulae
-        brew upgrade
+        brew upgrade &> /dev/null
         [[ $? ]] && e_success "Done"
 
         e_header "Checking status of desired Homebrew formulae..."
-        local list_formulae
         local -a missing_formulae
-        local -a desired_formulae=(
-            # 'coreutils' # GNU core utilities
-            'bash'
-            'bash-completion2'
-            'broot'
-            'fd'
-            'vim'
-            'shellcheck'
-            'tldr'
-            'datamash'
-            'mackup'
-            'tree'
-            'pup'
-            'tmux'
-        )
+        readarray -t desired_formulae < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
 
-        # Switch to using brew-installed bash as default shell
-        if ! grep -F -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
-          echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
-          chsh -s "${BREW_PREFIX}/bin/bash";
-        fi;
-
-        for index in ${!desired_formulae[*]}
-        do
-            if ! formula_exists ${desired_formulae[$index]}; then
-                # Store the name (and options) of every missing formula
-                missing_formulae=("${missing_formulae[@]}" "${desired_formulae[$index]}")
+        for formula in "${desired_formulae[@]}"; do
+            if ! formula_exists "${formula}"; then
+                missing_formulae=("${missing_formulae[@]}" "${formula}")
             fi
         done
 
-        if [[ "$missing_formulae" ]]; then
-            # Convert the array of missing formula into a list of space-separate strings
-            list_formulae=$( printf "%s " "${missing_formulae[@]}" )
+
+        if [[ "${missing_formulae[*]}" ]]; then
 
             e_header "Installing missing Homebrew formulae..."
             # Install all missing formulae
-            brew install $list_formulae
+            for formula in "${missing_formulae[@]}"; do
+                e_header "Installing ${formula}..."
+                brew install "$formula" &> /dev/null
+                [[ $? ]] && e_success "Installed ${formula}"
+            done
 
-            [[ $? ]] && e_success "Done"
         fi
 
-        # use latest rsync rather than out-dated OS X rsync
-        # install separately from the main formulae list to fix gh-19
-        # brew install https://raw.github.com/Homebrew/homebrew-dupes/master/rsync.rb
-
         # Remove outdated versions from the Cellar
-        brew cleanup
+        e_header "Cleaning up..."
+        brew cleanup &> /dev/null
+        [[ $? ]] && e_success "Done"
+
+        # Switch to using brew-installed bash as default shell
+        if ! grep -F -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
+            e_header "Switching to brew-installed bash as default shell..."
+            echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
+            chsh -s "${BREW_PREFIX}/bin/bash";
+            [[ $? ]] && e_success "Done"
+        fi;
+
     else
         printf "\n"
-        e_error "Error: Homebrew not found."
+        e_error "Error: Homebrew not found"
         printf "Aborting...\n"
         exit 1
     fi
 
+    unset BREW_PREFIX formula
 }
+
