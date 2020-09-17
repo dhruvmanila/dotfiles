@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
+DOTFILES_DIRECTORY="$HOME/dotfiles"
 
 load_dotfiles() {
     declare -a files=(
-        "$HOME/dotfiles/assets/paths" # Path modifications
-        "$HOME/dotfiles/assets/bash_prompt" # Custom bash prompt
-        "$HOME/dotfiles/assets/options" # Options
-        "$HOME/dotfiles/assets/exports" # Exports
-        "$HOME/dotfiles/assets/aliases" # Aliases
-        "$HOME/dotfiles/assets/functions" # Functions
-        "$HOME/dotfiles/assets/bash_completions" # all completions
+        "$DOTFILES_DIRECTORY/assets/paths" # Path modifications
+        "$DOTFILES_DIRECTORY/bash/bash_prompt" # Custom bash prompt
+        "$DOTFILES_DIRECTORY/assets/options" # Options
+        "$DOTFILES_DIRECTORY/assets/exports" # Exports
+        "$DOTFILES_DIRECTORY/assets/aliases" # Aliases
+        "$DOTFILES_DIRECTORY/assets/functions" # Functions
+        "$DOTFILES_DIRECTORY/bash/bash_completions" # all completions
     )
 
     # if these files are readable, source them
@@ -51,3 +52,4 @@ unset __conda_setup
 # shellcheck disable=SC1091
 source /Users/dhruvmanilawala/.config/broot/launcher/bash/br
 
+unset DOTFILES_DIRECTORY
