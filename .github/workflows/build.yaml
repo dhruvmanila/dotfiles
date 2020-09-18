@@ -12,7 +12,7 @@ jobs:
           export TERM=xterm
           export CI=1
           curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
-          printf 'yy' | bash bootstrap.sh
+          printf 'yy' | sudo bash bootstrap.sh
         shell: bash
-          
+
 

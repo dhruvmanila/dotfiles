@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # dotfiles directory
-declare -r DOTFILES_DIRECTORY="${HOME}/dotfiles"
-declare -r DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
-declare -r DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
+declare DOTFILES_DIRECTORY="${HOME}/dotfiles"
+declare DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
+declare DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
 
 # -----------------------------------------------------
 
@@ -35,28 +35,25 @@ fi
 
 # ----------------------------------------------------
 
-# shellcheck disable=SC1090
-source "${DOTFILES_DIRECTORY}/lib/utils"
-# shellcheck disable=SC1090
-source "${DOTFILES_DIRECTORY}/lib/brew"
+source "${DOTFILES_DIRECTORY}/lib/utils" || exit 1
+source "${DOTFILES_DIRECTORY}/lib/brew"  || exit 1
 
 # change to the dotfiles directory
 # For some unknown reason it doesn't exist, exit!
 e_header "Changing to the ${DOTFILES_DIRECTORY} directory"
 cd "${DOTFILES_DIRECTORY}" || exit 1
-ls -la  # for testing
 e_success "Done"
 
 # ----------------------------------------------------
 
 # Before relying on Homebrew, check that packages can be compiled by making sure
 e_header "Checking for xcode command line tools..."
-if ! type_exists 'gcc'; then
+if ! xcode-select --path &> /dev/null; then
     printf "Installing xcode command line tools...\n"
     xcode-select --install &> /dev/null
    
     # wait until the tools are installed... 
-    until type_exists 'gcc'; do
+    until xcode-select --path &> /dev/null; do
         sleep 5;
     done
     # making sure we installed it
@@ -77,7 +74,7 @@ fi
 e_header "Checking for homebrew..."
 if ! type_exists 'brew'; then
     e_header "Installing Homebrew..."
-    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
     if type_exists 'brew'; then
         e_success "Successfully installed homebrew"
         e_header "Installing packages..."
@@ -92,7 +89,6 @@ else
     run_brew
 fi
 
-
 # ----------------------------------------------------
 
 # Check for git
@@ -101,9 +97,10 @@ fi
 e_header "Checking for git..."
 if ! type_exists 'git'; then
     e_header "Updating Homebrew..."
-    brew update
+    brew update &> /dev/null 
+    e_success "Homebrew updated"
     e_header "Installing Git..."
-    brew install git
+    brew install git 
     if type_exists 'git'; then
         e_success "Successfully installed git."
     else
@@ -114,42 +111,34 @@ else
     e_success "Git already installed."
 fi
 
-
 # ----------------------------------------------------
 
 # Initialize the git repository if it's missing
 # Necessary only if it's a fresh install
 if ! is_git_repo; then
     
-    ls -la  # for debugging
     e_header "Initializing git repository..."
-    git init 
+    git init -q || exit 1
     e_success "Initialized git repository"
-    ls -la  # for debugging
-    git remote add origin "${DOTFILES_GIT_REMOTE}" 
+    git remote add origin "${DOTFILES_GIT_REMOTE}" &> /dev/null
     e_success "Added the remote repository as origin"
-    ls -la  # for debugging
-    git fetch --all 
+    git fetch -q --all || exit 1
     e_success "Fetched everything from the remote"
-    ls -la  # for debugging
-    git reset --hard FETCH_HEAD 
+    git reset -q --hard FETCH_HEAD || exit 1
     e_success "Reset HEAD branch to master"
-    ls -la  # for debugging
-    git clean -fd 
+    git clean -qfd || exit 1
     e_success "Cleaned up untracked files"
-    ls -la  # for debugging
-    git pull --rebase --set-upstream origin master 
+    git pull -q --rebase --set-upstream origin master || exit 1
     e_success "Pulled down all the files from the remote"
-    ls -la  # for debugging
-    git submodule update --recursive --init 
+    git submodule -q update --recursive --init || exit 1 
     e_success "Initialized and updated all the submodules"
-    ls -la  # for debugging
 
     e_header "Checking for git repository..."
     if is_git_repo; then
         e_success "Successfully initialized the git repository"
     else
         e_error "Failed to initialized the git repository"
+        exit 1
     fi
 fi    
 
@@ -159,7 +148,7 @@ fi
 # Download Git Auto-Completion
 e_header "Checking for git-completion..."
 if [ ! -e "${HOME}/.git-completion.bash" ]; then
-    curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > "${HOME}/.git-completion.bash"
+    curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o "${HOME}/.git-completion.bash"
     if [ -f "${HOME}/.git-completion.bash" ]; then
         e_success "Successfully downloaded git completion for bash."
     else
@@ -175,7 +164,7 @@ fi
 # Download vim plugin manager
 e_header "Checking for vim-plug..."
 if [ ! -e "${HOME}/dotfiles/vim/autoload" ]; then
-    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     if [ -f "${HOME}/.vim/autoload/plug.vim" ]; then
         e_success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
@@ -191,14 +180,14 @@ fi
 
 link() {
     
-
-    ls -la # for testing
     # Force create/replace the symlink.
     e_header "Creating symlink to ${2} in ${HOME} directory..."
     if ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"; then
         e_success "Successfully created symlink at ${HOME}/${2}"
+        return 0
     else
         e_error "Failed to create symlink for ${1}"
+        return 1
     fi
 }
 
@@ -212,7 +201,7 @@ mirrorfiles() {
     fi
 
     # copy hushlogin as we are not going to be updating it
-    cp "${DOTFILES_DIRECTORY}assets/hushlogin" "${HOME}/.hushlogin"
+    cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
 
     # Force remove the vim directory if it's already there.
     if [ -e "${HOME}/.vim" ]; then
@@ -222,26 +211,24 @@ mirrorfiles() {
     # Create the necessary symbolic links between the `dotfiles` and `HOME`
     # directory. The `bash_profile` sources other files directly from the
     # `dotfiles` repository.
-    link "bash/bashrc"         ".bashrc"
-    link "bash/bash_profile"   ".bash_profile"
-    link "assets/inputrc"        ".inputrc"
-    link "vim/vimrc"          ".vimrc"
-    link "tmux/tmux.conf"      ".tmux.conf"
-    link "assets/gitignore"      ".gitignore"
-    link "vim"                   ".vim"
+    link "bash/bashrc"         ".bashrc"           || exit 1
+    link "bash/bash_profile"   ".bash_profile"     || exit 1
+    link "assets/inputrc"      ".inputrc"          || exit 1
+    link "vim/vimrc"           ".vimrc"            || exit 1
+    link "tmux/tmux.conf"      ".tmux.conf"        || exit 1
+    link "assets/gitignore"    ".gitignore"        || exit 1 
+    link "vim"                 ".vim"              || exit 1
 
     e_success "Dotfiles update complete!"
 }
 
 # ----------------------------------------------------
 
-set -x
 # Ask before potentially overwriting files
 seek_confirmation "Warning: This step may overwrite your existing dotfiles."
 
 if is_confirmed; then
     mirrorfiles
-    # shellcheck disable=SC1090
     source "${HOME}/.bash_profile"
 else
     printf "Continuing...\n"
@@ -259,5 +246,4 @@ if is_confirmed; then
 else
     printf "Skipped OS X settings update.\n"
 fi
-set +x
 

@@ -49,7 +49,11 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-# shellcheck disable=SC1091
-source /Users/dhruvmanilawala/.config/broot/launcher/bash/br
-
+if [ -e "${HOME}/.config/broot/launcher/bash/br" ]; then
+    source "${HOME}/.config/broot/launcher/bash/br"
+elif type -P "broot"; then
+    broot --install &> /dev/null
+    source "${HOME}/.config/broot/launcher/bash/br"
+fi
+    
 unset DOTFILES_DIRECTORY

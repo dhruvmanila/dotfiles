@@ -19,17 +19,17 @@ run_brew() {
 
         # Use the latest version of Homebrew
         brew update &> /dev/null
-        [[ $? ]] && e_success "Updated Homebrew"
+        e_success "Done"
 
         e_header "Updating any existing Homebrew formulae..."
         # Upgrade any already-installed formulae
         brew upgrade &> /dev/null
-        [[ $? ]] && e_success "Done"
+        e_success "Done"
 
         e_header "Checking status of desired Homebrew formulae..."
         local -a missing_formulae
-        
-        if [ "${BASH_VERSINFO}" -ge 4 ]; then
+
+        if [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
             readarray -t desired_formulae < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
         else
             local -a desired_formulae
@@ -52,7 +52,11 @@ run_brew() {
             for formula in "${missing_formulae[@]}"; do
                 e_header "Installing ${formula}..."
                 brew install "$formula" &> /dev/null
-                [[ $? ]] && e_success "Installed ${formula}"
+                if formula_exists "$formula"; then
+                    e_success "Successfully installed ${formula}"
+                else
+                    e_error "Failed to install ${formula}"
+                fi
             done
 
         fi
@@ -60,14 +64,14 @@ run_brew() {
         # Remove outdated versions from the Cellar
         e_header "Cleaning up..."
         brew cleanup &> /dev/null
-        [[ $? ]] && e_success "Done"
+        e_success "Done"
 
         # Switch to using brew-installed bash as default shell
         if ! grep -F -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
             e_header "Switching to brew-installed bash as default shell..."
             echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
             sudo chsh -s "${BREW_PREFIX}/bin/bash";
-            [[ $? ]] && e_success "Done"
+            e_success "Done"
         fi;
 
     else
