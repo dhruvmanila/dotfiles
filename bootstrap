@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # dotfiles directory
-DOTFILES_DIRECTORY="${HOME}/dotfiles"
-DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
-DOTFILES_GIT_REMOTE="git@github.com:dhruvmanila/dotfiles.git"
+declare -r DOTFILES_DIRECTORY="${HOME}/dotfiles"
+declare -r DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
+declare -r DOTFILES_GIT_REMOTE="git@github.com:dhruvmanila/dotfiles.git"
 
 # -----------------------------------------------------
 
@@ -44,6 +44,7 @@ source "${DOTFILES_DIRECTORY}/lib/brew"
 # For some unknown reason it doesn't exist, exit!
 e_header "Changing to the ${DOTFILES_DIRECTORY} directory"
 cd "${DOTFILES_DIRECTORY}" || exit 1
+ls -la  # for testing
 e_success "Done"
 
 # ----------------------------------------------------
@@ -132,6 +133,13 @@ if ! is_git_repo; then
     e_success "Pulled down all the files from the remote"
     git submodule update --recursive --init &> /dev/null
     e_success "Initialized and updated all the submodules"
+
+    e_header "Checking for git repository..."
+    if is_git_repo; then
+        e_success "Successfully initialized the git repository"
+    else
+        e_error "Failed to initialized the git repository"
+    fi
 fi    
 
 # ----------------------------------------------------
@@ -168,10 +176,10 @@ fi
 # ----------------------------------------------------
 
 link() {
+    ls -la # for testing
     # Force create/replace the symlink.
     e_header "Creating symlink to ${2} in ${HOME} directory..."
-    ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"
-    if [ -f "${HOME}/${2}" ] || [ -d "${HOME}/${2}" ]; then
+    if ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"; then
         e_success "Successfully created symlink at ${HOME}/${2}"
     else
         e_error "Failed to create symlink for ${1}"
