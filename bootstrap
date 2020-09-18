@@ -3,7 +3,7 @@
 # dotfiles directory
 declare -r DOTFILES_DIRECTORY="${HOME}/dotfiles"
 declare -r DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
-declare -r DOTFILES_GIT_REMOTE="git@github.com:dhruvmanila/dotfiles.git"
+declare -r DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
 
 # -----------------------------------------------------
 
