@@ -12,7 +12,13 @@ jobs:
           export TERM=xterm
           export CI=1
           curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
-          printf 'yy' | sudo bash bootstrap.sh
+          printf 'yn' | bash bootstrap.sh
         shell: bash
-
+  osxsettings:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        run: actions/checkout@v2
+      - name: Run osxdefaults
+        run: sudo bash lib/osxdefaults
 
