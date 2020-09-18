@@ -10,8 +10,6 @@ run_brew() {
     if type_exists 'brew'; then
 
         if test "${CI:-}"; then
-            # brew cleanup gives error: directory not found /usr/local/Cellar/openssl
-            set +x
             export HOMEBREW_NO_AUTO_UPDATE=1
         fi
 
@@ -65,8 +63,7 @@ run_brew() {
 
         # Remove outdated versions from the Cellar
         e_header "Cleaning up..."
-        brew cleanup > /dev/null
-        set -x  # see the note above
+        brew cleanup &> /dev/null
         e_success "Done"
 
         # Switch to using brew-installed bash as default shell
