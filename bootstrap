@@ -69,7 +69,7 @@ if ! type_exists 'gcc'; then
 else
     e_success "xcode command line tools already installed."
 fi
-
+pwd # for debugging
 # ----------------------------------------------------
 
 # Check for Homebrew
@@ -92,6 +92,7 @@ else
     run_brew
 fi
 
+pwd # for debugging
 # ----------------------------------------------------
 
 # Check for git
@@ -113,11 +114,14 @@ else
     e_success "Git already installed."
 fi
 
+pwd # for debugging
 # ----------------------------------------------------
 
 # Initialize the git repository if it's missing
 # Necessary only if it's a fresh install
 if ! is_git_repo; then
+    pwd # for debugging
+
     e_header "Initializing git repository..."
     git init &> /dev/null
     e_success "Initialized git repository"
@@ -134,6 +138,7 @@ if ! is_git_repo; then
     git submodule update --recursive --init &> /dev/null
     e_success "Initialized and updated all the submodules"
 
+pwd # for debugging
     e_header "Checking for git repository..."
     if is_git_repo; then
         e_success "Successfully initialized the git repository"
@@ -142,6 +147,7 @@ if ! is_git_repo; then
     fi
 fi    
 
+pwd # for debugging
 # ----------------------------------------------------
 
 # Download Git Auto-Completion
@@ -158,6 +164,7 @@ else
 fi
 
 # ----------------------------------------------------
+pwd # for debugging
 
 # Download vim plugin manager
 e_header "Checking for vim-plug..."
@@ -173,9 +180,12 @@ else
     e_success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
 fi
 
+pwd # for debugging
 # ----------------------------------------------------
 
 link() {
+    pwd # for debugging
+
     ls -la # for testing
     # Force create/replace the symlink.
     e_header "Creating symlink to ${2} in ${HOME} directory..."
@@ -188,6 +198,7 @@ link() {
 
 # ----------------------------------------------------
 
+pwd # for debugging
 mirrorfiles() {
     # all the private/extra files should go in a folder named 'private'
     if [ -d "${DOTFILES_DIRECTORY}/private" ]; then
@@ -218,6 +229,7 @@ mirrorfiles() {
 
 # ----------------------------------------------------
 
+pwd # for debugging
 # Ask before potentially overwriting files
 seek_confirmation "Warning: This step may overwrite your existing dotfiles."
 
@@ -229,6 +241,7 @@ else
     printf "Continuing...\n"
 fi
 
+pwd # for debugging
 # ----------------------------------------------------
 
 # Ask before potentially overwriting OS X defaults
@@ -240,3 +253,5 @@ if is_confirmed; then
 else
     printf "Skipped OS X settings update.\n"
 fi
+pwd # for debugging
+
