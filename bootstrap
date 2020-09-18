@@ -48,12 +48,12 @@ e_success "Done"
 
 # Before relying on Homebrew, check that packages can be compiled by making sure
 e_header "Checking for xcode command line tools..."
-if ! xcode-select --path &> /dev/null; then
+if ! type_exists 'gcc'; then
     printf "Installing xcode command line tools...\n"
     xcode-select --install &> /dev/null
    
     # wait until the tools are installed... 
-    until xcode-select --path &> /dev/null; do
+    until type_exists 'gcc'; do
         sleep 5;
     done
     # making sure we installed it
