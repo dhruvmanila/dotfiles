@@ -9,11 +9,6 @@ run_brew() {
     # Check for Homebrew
     if type_exists 'brew'; then
 
-        if test "${CI:-}"; then
-            #export HOMEBREW_NO_AUTO_UPDATE=1
-            brew cleanup --debug 
-        fi
-
         e_header "Updating Homebrew..."
 
         BREW_PREFIX=$(brew --prefix)
@@ -64,8 +59,7 @@ run_brew() {
 
         # Remove outdated versions from the Cellar
         e_header "Cleaning up..."
-        ls -la /usr/local/Cellar/
-        brew cleanup --debug --verbose
+        brew cleanup > /dev/null
         e_success "Done"
 
         # Switch to using brew-installed bash as default shell
