@@ -10,7 +10,8 @@ run_brew() {
     if type_exists 'brew'; then
 
         if test "${CI:-}"; then
-            export HOMEBREW_NO_AUTO_UPDATE=1
+            #export HOMEBREW_NO_AUTO_UPDATE=1
+            brew cleanup --debug 
         fi
 
         e_header "Updating Homebrew..."

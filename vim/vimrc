@@ -14,10 +14,6 @@ Plug 'patstockwell/vim-monokai-tasty'
 Plug 'altercation/vim-colors-solarized'
 Plug 'KeitaNakamura/neodark.vim'
 
-" Semantic language support
-" Autocomplete
-Plug 'kiteco/plugins'
-
 " Syntactic language support
 Plug 'vim-python/python-syntax'
 

@@ -30,7 +30,3 @@
     path = vim/plugged/vim-startify
     url = https://github.com/mhinz/vim-startify
     ignore = untracked
-[submodule "vim/plugged/plugins"]
-    path = vim/plugged/plugins
-    url = https://github.com/kiteco/plugins
-    ignore = untracked
