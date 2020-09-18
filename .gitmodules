@@ -1,24 +1,32 @@
 [submodule "vim/plugged/nerdtree"]
 	path = vim/plugged/nerdtree
 	url = https://github.com/preservim/nerdtree
+    ignore = untracked
 [submodule "vim/plugged/vim-fugitive"]
     path = vim/plugged/vim-fugitive
     url = https://github.com/tpope/vim-fugitive
+    ignore = untracked
 [submodule "vim/plugged/vim-monokai-tasty"]
     path = vim/plugged/vim-monokai-tasty
     url = https://github.com/patstockwell/vim-monokai-tasty
+    ignore = untracked
 [submodule "vim/plugged/lightline.vim"]
     path = vim/plugged/lightline.vim
     url = https://github.com/itchyny/lightline.vim
+    ignore = untracked
 [submodule "vim/plugged/neodark.vim"]
     path = vim/plugged/neodark.vim
     url = https://github.com/KeitaNakamura/neodark.vim
+    ignore = untracked
 [submodule "vim/plugged/python-syntax"]
     path = vim/plugged/python-syntax
     url = https://github.com/vim-python/python-syntax
+    ignore = untracked
 [submodule "vim/plugged/vim-colors-solarized"]
     path = vim/plugged/vim-colors-solarized
     url = https://github.com/altercation/vim-colors-solarized
+    ignore = untracked
 [submodule "vim/plugged/vim-startify"]
     path = vim/plugged/vim-startify
     url = https://github.com/mhinz/vim-startify
+    ignore = untracked
