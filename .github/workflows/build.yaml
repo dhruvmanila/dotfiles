@@ -8,10 +8,12 @@ jobs:
     steps:
       - name: Run bootstrap
         run: |
-          set -eo pipefail
+          set -exo pipefail
           export TERM=xterm
           export CI=1
           curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
-          echo -e " \ny\ny\ny" > response.txt
+          echo -e "y\ny\ny\n" > response.txt
+          cat response.txt
+          bash --version
           bash bootstrap.sh < response.txt
         shell: bash 

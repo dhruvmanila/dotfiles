@@ -10,7 +10,6 @@ run_brew() {
     if type_exists 'brew'; then
 
         if test "${CI:-}"; then
-            echo "Entered the CI block"
             export HOMEBREW_NO_AUTO_UPDATE=1
         fi
 
@@ -29,7 +28,15 @@ run_brew() {
 
         e_header "Checking status of desired Homebrew formulae..."
         local -a missing_formulae
-        readarray -t desired_formulae < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
+        
+        if [ "${BASH_VERSINFO}" -ge 4 ]; then
+            readarray -t desired_formulae < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
+        else
+            local -a desired_formulae
+            while IFS= read -r line; do
+                desired_formulae+=("$line")
+            done < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
+        fi
 
         for formula in "${desired_formulae[@]}"; do
             if ! formula_exists "${formula}"; then
@@ -59,7 +66,7 @@ run_brew() {
         if ! grep -F -q "${BREW_PREFIX}/bin/bash" /etc/shells; then
             e_header "Switching to brew-installed bash as default shell..."
             echo "${BREW_PREFIX}/bin/bash" | sudo tee -a /etc/shells;
-            chsh -s "${BREW_PREFIX}/bin/bash";
+            sudo chsh -s "${BREW_PREFIX}/bin/bash";
             [[ $? ]] && e_success "Done"
         fi;
 
