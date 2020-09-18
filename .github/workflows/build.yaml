@@ -14,11 +14,13 @@ jobs:
           curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
           printf 'yn' | bash bootstrap.sh
         shell: bash
-  osxsettings:
+  osxdefaults:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        run: actions/checkout@v2
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
       - name: Run osxdefaults
         run: sudo bash lib/osxdefaults
-
+        shell: bash
