@@ -48,12 +48,12 @@ e_success "Done"
 
 # Before relying on Homebrew, check that packages can be compiled by making sure
 e_header "Checking for xcode command line tools..."
-if ! xcode-select -p &> /dev/null; then
+if ! xcode-select -p > /dev/null; then
     printf "Installing xcode command line tools...\n"
-    xcode-select --install &> /dev/null
+    xcode-select --install > /dev/null
 
     # wait until the tools are installed...
-    until xcode-select -p &> /dev/null; do
+    until xcode-select -p > /dev/null; do
         sleep 5;
     done
     # making sure we installed it
@@ -97,7 +97,7 @@ fi
 e_header "Checking for git..."
 if ! type_exists 'git'; then
     e_header "Updating Homebrew..."
-    brew update &> /dev/null
+    brew update > /dev/null
     e_success "Homebrew updated"
     e_header "Installing Git..."
     brew install git
@@ -120,7 +120,7 @@ if ! is_git_repo; then
     e_header "Initializing git repository..."
     git init -q || exit 1
     e_success "Initialized git repository"
-    git remote add origin "${DOTFILES_GIT_REMOTE}" &> /dev/null
+    git remote add origin "${DOTFILES_GIT_REMOTE}" > /dev/null
     e_success "Added the remote repository as origin"
     git fetch -q --all || exit 1
     e_success "Fetched everything from the remote"
