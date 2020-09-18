@@ -58,6 +58,6 @@ formula_exists() {
         return 0
     fi
 
-    e_warning "Missing formula: $1"
+    e_warning "Missing formula: ${1}"
     return 1
 }

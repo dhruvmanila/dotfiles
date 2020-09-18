@@ -18,12 +18,12 @@ run_brew() {
         BREW_PREFIX=$(brew --prefix)
 
         # Use the latest version of Homebrew
-        brew update &> /dev/null
+        brew update > /dev/null
         e_success "Done"
 
         e_header "Updating any existing Homebrew formulae..."
         # Upgrade any already-installed formulae
-        brew upgrade &> /dev/null
+        brew upgrade > /dev/null
         e_success "Done"
 
         e_header "Checking status of desired Homebrew formulae..."
@@ -51,8 +51,8 @@ run_brew() {
             # Install all missing formulae
             for formula in "${missing_formulae[@]}"; do
                 e_header "Installing ${formula}..."
-                brew install "$formula" &> /dev/null
-                if formula_exists "$formula"; then
+                brew install "$formula" > /dev/null
+                if formula_exists "$formula" > /dev/null; then
                     e_success "Successfully installed ${formula}"
                 else
                     e_error "Failed to install ${formula}"
@@ -63,7 +63,7 @@ run_brew() {
 
         # Remove outdated versions from the Cellar
         e_header "Cleaning up..."
-        brew cleanup &> /dev/null
+        brew cleanup > /dev/null
         e_success "Done"
 
         # Switch to using brew-installed bash as default shell

@@ -11,7 +11,7 @@ declare DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
 if [ ! -d "${DOTFILES_DIRECTORY}" ]; then
     printf "\n$(tput setaf 7)Downloading dotfiles...\033[m\n"
     mkdir -p "${DOTFILES_DIRECTORY}"
-    
+
     # Get the tarball
     if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}"; then
         printf "$(tput setaf 64)✓ Successfully downloaded the dotfiles $(tput sgr0)\n"
@@ -48,12 +48,12 @@ e_success "Done"
 
 # Before relying on Homebrew, check that packages can be compiled by making sure
 e_header "Checking for xcode command line tools..."
-if ! xcode-select --path &> /dev/null; then
+if ! xcode-select -p &> /dev/null; then
     printf "Installing xcode command line tools...\n"
     xcode-select --install &> /dev/null
-   
-    # wait until the tools are installed... 
-    until xcode-select --path &> /dev/null; do
+
+    # wait until the tools are installed...
+    until xcode-select -p &> /dev/null; do
         sleep 5;
     done
     # making sure we installed it
@@ -97,10 +97,10 @@ fi
 e_header "Checking for git..."
 if ! type_exists 'git'; then
     e_header "Updating Homebrew..."
-    brew update &> /dev/null 
+    brew update &> /dev/null
     e_success "Homebrew updated"
     e_header "Installing Git..."
-    brew install git 
+    brew install git
     if type_exists 'git'; then
         e_success "Successfully installed git."
     else
@@ -116,7 +116,7 @@ fi
 # Initialize the git repository if it's missing
 # Necessary only if it's a fresh install
 if ! is_git_repo; then
-    
+
     e_header "Initializing git repository..."
     git init -q || exit 1
     e_success "Initialized git repository"
@@ -130,7 +130,7 @@ if ! is_git_repo; then
     e_success "Cleaned up untracked files"
     git pull -q --rebase --set-upstream origin master || exit 1
     e_success "Pulled down all the files from the remote"
-    git submodule -q update --recursive --init || exit 1 
+    git submodule -q update --recursive --init || exit 1
     e_success "Initialized and updated all the submodules"
 
     e_header "Checking for git repository..."
@@ -140,7 +140,7 @@ if ! is_git_repo; then
         e_error "Failed to initialized the git repository"
         exit 1
     fi
-fi    
+fi
 
 
 # ----------------------------------------------------
@@ -179,7 +179,7 @@ fi
 # ----------------------------------------------------
 
 link() {
-    
+
     # Force create/replace the symlink.
     e_header "Creating symlink to ${2} in ${HOME} directory..."
     if ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"; then
@@ -216,7 +216,7 @@ mirrorfiles() {
     link "assets/inputrc"      ".inputrc"          || exit 1
     link "vim/vimrc"           ".vimrc"            || exit 1
     link "tmux/tmux.conf"      ".tmux.conf"        || exit 1
-    link "assets/gitignore"    ".gitignore"        || exit 1 
+    link "assets/gitignore"    ".gitignore"        || exit 1
     link "vim"                 ".vim"              || exit 1
 
     e_success "Dotfiles update complete!"
