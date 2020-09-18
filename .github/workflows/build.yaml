@@ -12,28 +12,6 @@ jobs:
           export TERM=xterm
           export CI=1
           curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
-          yes | bash bootstrap.sh
-        shell: bash 
-  build2:
-    runs-on: macos-latest
-    steps:
-      - name: Run bootstrap 
-        run: |
-          set -eo pipefail
-          export TERM=xterm
-          export CI=1
-          curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
-          printf 'y\ny\n' | bash bootstrap.sh
-        shell: bash
-  build3:
-    runs-on: macos-latest
-    steps:
-      - name: Run bootstrap
-        run: |
-          set -eo pipefail
-          export TERM=xterm
-          export CI=1
-          curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
           printf 'yy' | bash bootstrap.sh
         shell: bash
           

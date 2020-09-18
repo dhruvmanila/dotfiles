@@ -69,7 +69,7 @@ if ! type_exists 'gcc'; then
 else
     e_success "xcode command line tools already installed."
 fi
-pwd # for debugging
+
 # ----------------------------------------------------
 
 # Check for Homebrew
@@ -92,7 +92,7 @@ else
     run_brew
 fi
 
-pwd # for debugging
+
 # ----------------------------------------------------
 
 # Check for git
@@ -114,31 +114,37 @@ else
     e_success "Git already installed."
 fi
 
-pwd # for debugging
+
 # ----------------------------------------------------
 
 # Initialize the git repository if it's missing
 # Necessary only if it's a fresh install
 if ! is_git_repo; then
-    pwd # for debugging
-
+    
+    ls -la  # for debugging
     e_header "Initializing git repository..."
-    git init &> /dev/null
+    git init 
     e_success "Initialized git repository"
-    git remote add origin "${DOTFILES_GIT_REMOTE}" &> /dev/null
+    ls -la  # for debugging
+    git remote add origin "${DOTFILES_GIT_REMOTE}" 
     e_success "Added the remote repository as origin"
-    git fetch --all &> /dev/null
+    ls -la  # for debugging
+    git fetch --all 
     e_success "Fetched everything from the remote"
-    git reset --hard origin/master &> /dev/null 
-    e_success "Reset HEAD branch to origin/master"
-    git clean -fd &> /dev/null
+    ls -la  # for debugging
+    git reset --hard FETCH_HEAD 
+    e_success "Reset HEAD branch to master"
+    ls -la  # for debugging
+    git clean -fd 
     e_success "Cleaned up untracked files"
-    git pull --rebase --set-upstream origin master &> /dev/null
+    ls -la  # for debugging
+    git pull --rebase --set-upstream origin master 
     e_success "Pulled down all the files from the remote"
-    git submodule update --recursive --init &> /dev/null
+    ls -la  # for debugging
+    git submodule update --recursive --init 
     e_success "Initialized and updated all the submodules"
+    ls -la  # for debugging
 
-pwd # for debugging
     e_header "Checking for git repository..."
     if is_git_repo; then
         e_success "Successfully initialized the git repository"
@@ -147,7 +153,7 @@ pwd # for debugging
     fi
 fi    
 
-pwd # for debugging
+
 # ----------------------------------------------------
 
 # Download Git Auto-Completion
@@ -164,7 +170,7 @@ else
 fi
 
 # ----------------------------------------------------
-pwd # for debugging
+
 
 # Download vim plugin manager
 e_header "Checking for vim-plug..."
@@ -180,11 +186,11 @@ else
     e_success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
 fi
 
-pwd # for debugging
+
 # ----------------------------------------------------
 
 link() {
-    pwd # for debugging
+    
 
     ls -la # for testing
     # Force create/replace the symlink.
@@ -198,7 +204,7 @@ link() {
 
 # ----------------------------------------------------
 
-pwd # for debugging
+
 mirrorfiles() {
     # all the private/extra files should go in a folder named 'private'
     if [ -d "${DOTFILES_DIRECTORY}/private" ]; then
@@ -206,7 +212,7 @@ mirrorfiles() {
     fi
 
     # copy hushlogin as we are not going to be updating it
-    cp assets/hushlogin "${HOME}/.hushlogin"
+    cp "${DOTFILES_DIRECTORY}assets/hushlogin" "${HOME}/.hushlogin"
 
     # Force remove the vim directory if it's already there.
     if [ -e "${HOME}/.vim" ]; then
@@ -229,7 +235,7 @@ mirrorfiles() {
 
 # ----------------------------------------------------
 
-pwd # for debugging
+set -x
 # Ask before potentially overwriting files
 seek_confirmation "Warning: This step may overwrite your existing dotfiles."
 
@@ -241,17 +247,17 @@ else
     printf "Continuing...\n"
 fi
 
-pwd # for debugging
+
 # ----------------------------------------------------
 
 # Ask before potentially overwriting OS X defaults
 seek_confirmation "Warning: This step may modify your OS X system defaults."
 
 if is_confirmed; then
-    bash ./lib/osxdefaults
+    bash "${DOTFILES_DIRECTORY}/lib/osxdefaults"
     e_success "OS X settings updated! You may need to restart."
 else
     printf "Skipped OS X settings update.\n"
 fi
-pwd # for debugging
+set +x
 
