@@ -14,6 +14,10 @@ Plug 'patstockwell/vim-monokai-tasty'
 Plug 'altercation/vim-colors-solarized'
 Plug 'KeitaNakamura/neodark.vim'
 
+" Semantic language support
+" Autocomplete
+Plug 'kiteco/plugins'
+
 " Syntactic language support
 Plug 'vim-python/python-syntax'
 
@@ -169,6 +173,19 @@ let g:ale_fix_on_save = 1
 " --INSERT-- is unncessary because of lightline
 set noshowmode
 let g:lightline={'colorscheme': 'monokai_tasty'}
+
+" Kite autocomplete
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:kite_supported_languages = ['python']
+let g:kite_auto_complete = 1
+let g:kite_snippets = 1
+let g:kite_tab_complete = 1
+let g:kite_log = 1
+
+" To have the preview window automatically closed once a completion has been inserted
+autocmd CompleteDone * if !pumvisible() | pclose | endif
+
+set belloff+=ctrlg  " if vim beeps during completion
 
 
 " Minor Configs

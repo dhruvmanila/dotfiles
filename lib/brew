@@ -63,7 +63,8 @@ run_brew() {
 
         # Remove outdated versions from the Cellar
         e_header "Cleaning up..."
-        brew cleanup &> /dev/null
+        ls -la /usr/local/Cellar/
+        brew cleanup --debug --verbose
         e_success "Done"
 
         # Switch to using brew-installed bash as default shell
