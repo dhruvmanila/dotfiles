@@ -15,4 +15,9 @@ Thumbs.db
 
 # private folder
 private/
+
+# vim undo history
 vim/undo/*
+
+# Download the plug script on a fresh install
+vim/autoload
