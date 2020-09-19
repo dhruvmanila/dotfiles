@@ -19,12 +19,12 @@ run_brew() {
         BREW_PREFIX=$(brew --prefix)
 
         # Use the latest version of Homebrew
-        brew update &>> homebrew.log
+        brew update >> homebrew.log 2>&1
         e_success "Done"
 
         e_header "Updating any existing Homebrew formulae..."
         # Upgrade any already-installed formulae
-        brew upgrade &>> homebrew.log
+        brew upgrade >> homebrew.log 2>&1
         e_success "Done"
 
         e_header "Checking status of desired Homebrew formulae..."
@@ -52,7 +52,7 @@ run_brew() {
             # Install all missing formulae
             for formula in "${missing_formulae[@]}"; do
                 e_header "Installing ${formula}..."
-                brew install "$formula" &>> homebrew.log
+                brew install "$formula" >> homebrew.log 2>&1
                 if formula_exists "$formula" &> /dev/null; then
                     e_success "Successfully installed ${formula}"
                 else
@@ -64,11 +64,11 @@ run_brew() {
 
         # Remove outdated versions from the Cellar
         e_header "Cleaning up..."
-        if brew cleanup &>> homebrew.log; then
+        if brew cleanup >> homebrew.log 2>&1; then
             e_success "Done"
         else 
             e_error "Failure occured at cleanup stage, debugging..."
-            brew cleanup --debug &>> homebrew.log
+            brew cleanup --debug >> homebrew.log 2>&1
             e_error "Showing the homebrew log, continuing..."
             cat homebrew.log
         fi
