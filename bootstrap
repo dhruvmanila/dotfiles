@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-#set -e
+set -e
+exit_code=0
 
 # dotfiles directory
 declare DOTFILES_DIRECTORY="${HOME}/dotfiles"
@@ -154,6 +155,7 @@ if [ ! -e "${HOME}/.git-completion.bash" ]; then
         e_success "Successfully downloaded git completion for bash."
     else
         e_error "Failed to download git completion for bash."
+        exit_code=1
     fi
 else
     e_success "Git completion already downloaded."
@@ -171,6 +173,7 @@ if [ ! -e "${HOME}/dotfiles/vim/autoload" ]; then
         e_success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
     else
         e_error "Failed to download vim-plug."
+        exit_code=1
     fi
 else
     e_success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
@@ -247,4 +250,7 @@ if is_confirmed; then
 else
     printf "Skipped OS X settings update.\n"
 fi
+
+# ----------------------------------------------------
+exit $exit_code
 

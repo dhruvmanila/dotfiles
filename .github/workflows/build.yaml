@@ -9,7 +9,6 @@ jobs:
       - name: Run bootstrap
         run: |
           set -eo pipefail
-          export CI=1
           export TERM=xterm
           curl -o bootstrap.sh https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bootstrap
           printf 'yn' | bash bootstrap.sh

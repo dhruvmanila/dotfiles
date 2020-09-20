@@ -9,11 +9,9 @@ run_brew() {
     # Check for Homebrew
     if type_exists 'brew'; then
 
-        if test "${CI:-}"; then
-            export HOMEBREW_NO_AUTO_UPDATE=1
-            touch homebrew.log
-        fi
-
+        export HOMEBREW_NO_AUTO_UPDATE=1
+        touch homebrew.log
+        
         e_header "Updating Homebrew..."
 
         BREW_PREFIX=$(brew --prefix)
@@ -64,7 +62,7 @@ run_brew() {
 
         # Remove outdated versions from the Cellar
         e_header "Cleaning up..."
-        if brew cleanup >> homebrew.log 2>&1; then
+        if brew cleanup --debug >> homebrew.log 2>&1; then
             e_success "Done"
         else 
             e_error "Failure occured at cleanup stage, debugging..."
