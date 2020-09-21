@@ -28,26 +28,15 @@ run_brew() {
         e_header "Checking status of desired Homebrew formulae..."
         local -a missing_formulae
 
-        if [ "${BASH_VERSINFO[0]}" -ge 4 ]; then
-            readarray -t desired_formulae < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
-        else
-            local -a desired_formulae
-            while IFS= read -r line; do
-                desired_formulae+=("$line")
-            done < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
-        fi
-
-        for formula in "${desired_formulae[@]}"; do
+        while IFS= read -r formula; do
             if ! formula_exists "${formula}"; then
-                missing_formulae=("${missing_formulae[@]}" "${formula}")
+                missing_formulae+=("${formula}")
             fi
-        done
-
+        done < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
 
         if [[ "${missing_formulae[*]}" ]]; then
 
             e_header "Installing missing Homebrew formulae..."
-            # Install all missing formulae
             for formula in "${missing_formulae[@]}"; do
                 e_header "Installing ${formula}..."
                 brew install "$formula" >> homebrew.log 2>&1

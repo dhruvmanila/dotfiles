@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -e
-exit_code=0
+declare -i exitcode
+exitcode=0
 
 # dotfiles directory
 declare DOTFILES_DIRECTORY="${HOME}/dotfiles"
@@ -37,13 +37,13 @@ fi
 
 # ----------------------------------------------------
 
-source "${DOTFILES_DIRECTORY}/lib/utils" || exit 1
-source "${DOTFILES_DIRECTORY}/lib/brew"  || exit 1
+source "${DOTFILES_DIRECTORY}/lib/utils" || { echo "Failed to source utils" >&2;exit 1; }
+source "${DOTFILES_DIRECTORY}/lib/brew"  || { echo "Failed to source brew" >&2;exit 1; }
 
 # change to the dotfiles directory
 # For some unknown reason it doesn't exist, exit!
 e_header "Changing to the ${DOTFILES_DIRECTORY} directory"
-cd "${DOTFILES_DIRECTORY}" || exit 1
+cd "${DOTFILES_DIRECTORY}" || { echo "Failed to change directory to ${DOTFILES_DIRECTORY}" &>2;exit 1; }
 e_success "Done"
 
 # ----------------------------------------------------
@@ -155,7 +155,7 @@ if [ ! -e "${HOME}/.git-completion.bash" ]; then
         e_success "Successfully downloaded git completion for bash."
     else
         e_error "Failed to download git completion for bash."
-        exit_code=1
+        exitcode=1
     fi
 else
     e_success "Git completion already downloaded."
@@ -173,7 +173,7 @@ if [ ! -e "${HOME}/dotfiles/vim/autoload" ]; then
         e_success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
     else
         e_error "Failed to download vim-plug."
-        exit_code=1
+        exitcode=1
     fi
 else
     e_success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
@@ -252,5 +252,4 @@ else
 fi
 
 # ----------------------------------------------------
-exit $exit_code
-
+exit ${exitcode}
