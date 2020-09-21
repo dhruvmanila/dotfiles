@@ -6,23 +6,22 @@
 DOTFILES_DIRECTORY=${HOME}/dotfiles
 
 run_brew() {
+    local -i returncode=0
+
     # Check for Homebrew
     if type_exists 'brew'; then
 
+        BREW_PREFIX=$(brew --prefix)
         export HOMEBREW_NO_AUTO_UPDATE=1
-        touch homebrew.log
         
         e_header "Updating Homebrew..."
-
-        BREW_PREFIX=$(brew --prefix)
-
         # Use the latest version of Homebrew
-        brew update >> homebrew.log 2>&1
+        brew update &> /dev/null || returncode=1
         e_success "Done"
 
         e_header "Updating any existing Homebrew formulae..."
         # Upgrade any already-installed formulae
-        brew upgrade >> homebrew.log 2>&1
+        brew upgrade &> /dev/null || returncode=1
         e_success "Done"
 
         e_header "Checking status of desired Homebrew formulae..."
@@ -39,7 +38,7 @@ run_brew() {
             e_header "Installing missing Homebrew formulae..."
             for formula in "${missing_formulae[@]}"; do
                 e_header "Installing ${formula}..."
-                brew install "$formula" >> homebrew.log 2>&1
+                brew install "$formula" &> /dev/null || returncode=1
                 if formula_exists "$formula" &> /dev/null; then
                     e_success "Successfully installed ${formula}"
                 else
@@ -51,13 +50,10 @@ run_brew() {
 
         # Remove outdated versions from the Cellar
         e_header "Cleaning up..."
-        if brew cleanup --debug >> homebrew.log 2>&1; then
+        if brew cleanup; then
             e_success "Done"
         else 
-            e_error "Failure occured at cleanup stage, debugging..."
-            brew cleanup --debug >> homebrew.log 2>&1
-            e_error "Showing the homebrew log, continuing..."
-            cat homebrew.log
+            e_error "Failure occured at cleanup stage, continuing..."
         fi
 
         # Switch to using brew-installed bash as default shell
@@ -68,10 +64,6 @@ run_brew() {
             e_success "Done"
         fi;
 
-        if [ -e homebrew.log ]; then
-            rm -rf homebrew.log
-        fi
-
     else
         printf "\n"
         e_error "Error: Homebrew not found"
@@ -80,5 +72,6 @@ run_brew() {
     fi
 
     unset BREW_PREFIX formula
+    return ${returncode}
 }
 

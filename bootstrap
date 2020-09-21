@@ -43,7 +43,7 @@ source "${DOTFILES_DIRECTORY}/lib/brew"  || { echo "Failed to source brew" >&2;e
 # change to the dotfiles directory
 # For some unknown reason it doesn't exist, exit!
 e_header "Changing to the ${DOTFILES_DIRECTORY} directory"
-cd "${DOTFILES_DIRECTORY}" || { echo "Failed to change directory to ${DOTFILES_DIRECTORY}" &>2;exit 1; }
+cd "${DOTFILES_DIRECTORY}" || { echo "Failed to change directory to ${DOTFILES_DIRECTORY}" >&2;exit 1; }
 e_success "Done"
 
 # ----------------------------------------------------
@@ -80,7 +80,7 @@ if ! type_exists 'brew'; then
     if type_exists 'brew'; then
         e_success "Successfully installed homebrew"
         e_header "Installing packages..."
-        run_brew
+        run_brew || exit 1
     else
         e_error "Failed to install homebrew."
         exit 1
@@ -88,7 +88,7 @@ if ! type_exists 'brew'; then
 else
     e_success "Homebrew already installed."
     e_header "Updating packages..."
-    run_brew
+    run_brew || exit 1
 fi
 
 # ----------------------------------------------------
