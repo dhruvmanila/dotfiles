@@ -59,7 +59,7 @@ if ! xcode-select -p > /dev/null; then
         sleep 5;
     done
     # making sure we installed it
-    if type_exists 'gcc'; then
+    if xcode-select -p > /dev/null; then
         e_success "Successfully installed xcode command line tools."
     else
         e_error "Failed to install xcode command line tools."
