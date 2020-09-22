@@ -8,16 +8,15 @@ alias g="git"
 # Easy clear
 alias cl="clear"
 
-# Easier navigation: .., ..., ...., ....., ~ and -
+# Easier navigation: .., ..., ...., ..... and -
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
-# alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"  # cd to the previous directory
 
 # Reload the shell (i.e. invoke as a login shell)
-alias reload="exec ${SHELL} -l"
+alias reload='exec ${SHELL} -l'
 
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
@@ -54,13 +53,16 @@ else # macOS `ls`
 fi
 
 # List all files colorized in long format
-alias l="ls -lF ${colorflag}"
+alias l='ls -lF ${colorflag}'
 
 # List all files colorized in long format, excluding . and ..
-alias la="ls -lAF ${colorflag}"
+alias la='ls -lAF ${colorflag}'
 
 # List only directories
-alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
+alias ld='ls -lF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
+
+# List all the directories
+alias lda='ls -lAF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
 
 # Always use color output for `ls`
-alias ls="command ls ${colorflag}"
+alias ls='command ls ${colorflag}'

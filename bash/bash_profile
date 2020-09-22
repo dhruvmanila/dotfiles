@@ -2,7 +2,7 @@
 DOTFILES_DIRECTORY="$HOME/dotfiles"
 
 load_dotfiles() {
-    declare -a files=(
+    declare -a dotfiles=(
         "$DOTFILES_DIRECTORY/assets/paths" # Path modifications
         "$DOTFILES_DIRECTORY/bash/bash_prompt" # Custom bash prompt
         "$DOTFILES_DIRECTORY/assets/options" # Options
@@ -13,11 +13,9 @@ load_dotfiles() {
     )
 
     # if these files are readable, source them
-    for index in ${!files[*]}
-    do
-        if [[ -r ${files[$index]} ]]; then
-            # shellcheck source=/dev/null
-            source "${files[$index]}"
+    for file in "${dotfiles[@]}"; do
+        if [ -r "${file}" ]; then
+            source "${file}"
         fi
     done
 }
@@ -40,7 +38,6 @@ if [ $? -eq 0 ]; then
    eval "$__conda_setup"
 else
    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-       # shellcheck disable=SC1091
        . "/opt/anaconda3/etc/profile.d/conda.sh"
    else
        export PATH="/opt/anaconda3/bin:$PATH"

@@ -26,10 +26,15 @@ run_brew() {
 
         e_header "Checking status of desired Homebrew formulae..."
         local -a missing_formulae
+        local -a brew_list
+        brew_list=($(brew list))
 
         while IFS= read -r formula; do
-            if ! formula_exists "${formula}"; then
+            if contains_element "${formula}" "${brew_list[@]}"; then
+                e_success "${formula} already installed"
+            else
                 missing_formulae+=("${formula}")
+                e_warning "Missing formula: ${formula}"
             fi
         done < "${DOTFILES_DIRECTORY}/lib/packages/brew_formulae.txt"
 

@@ -61,3 +61,21 @@ formula_exists() {
     e_warning "Missing formula: ${1}"
     return 1
 }
+
+# Check whether the first argument is present in the 
+# array which is the second argument
+contains_element() {
+    local element match=$1
+    # shift the argument list by 1 to the left 
+    # dropping the first argument
+    shift
+    # for without an in implicitly iterates over the
+    # argument list
+    for element; do
+        if [[ "${element}" == "${match}" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
