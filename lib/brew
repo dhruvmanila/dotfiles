@@ -27,7 +27,10 @@ run_brew() {
         e_header "Checking status of desired Homebrew formulae..."
         local -a missing_formulae
         local -a brew_list
-        brew_list=($(brew list))
+
+        while IFS= read -r line; do
+            brew_list+=("$line");
+        done < <(brew list)
 
         while IFS= read -r formula; do
             if contains_element "${formula}" "${brew_list[@]}"; then
@@ -44,7 +47,7 @@ run_brew() {
             for formula in "${missing_formulae[@]}"; do
                 e_header "Installing ${formula}..."
                 brew install "$formula" &> /dev/null || returncode=1
-                if formula_exists "$formula" &> /dev/null; then
+                if formula_exists "$formula"; then
                     e_success "Successfully installed ${formula}"
                 else
                     e_error "Failed to install ${formula}"
