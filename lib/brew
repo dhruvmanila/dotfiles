@@ -61,7 +61,7 @@ run_brew() {
         if brew cleanup; then
             e_success "Done"
         else 
-            e_error "Failure occured at cleanup stage, continuing..."
+            e_error "Error occured at cleanup stage, continuing..."
         fi
 
         # Switch to using brew-installed bash as default shell

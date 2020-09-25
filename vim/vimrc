@@ -3,6 +3,9 @@
 " VI compatible mode is disabled so that VIm things work
 set nocompatible
 
+" Set leader key
+let mapleader=" "       " leader is space
+
 " =============================================================================
 "   PLUGINS
 " =============================================================================
@@ -14,12 +17,17 @@ Plug 'patstockwell/vim-monokai-tasty'
 Plug 'altercation/vim-colors-solarized'
 Plug 'KeitaNakamura/neodark.vim'
 
+" Search
+Plug 'romainl/vim-cool'
+
 " Syntactic language support
 Plug 'vim-python/python-syntax'
+Plug 'dense-analysis/ale'
+Plug 'maximbaz/lightline-ale'
 
 " GUI enhancements
-Plug 'itchyny/lightline.vim'  
-Plug 'mhinz/vim-startify'    
+Plug 'itchyny/lightline.vim'
+Plug 'mhinz/vim-startify'
 Plug 'preservim/nerdtree'
 
 " Git plugin
@@ -51,18 +59,15 @@ command! What echo synIDattr(synID(line('.'), col('.'), 1), 'name')
 " Turn on syntax highlighting.
 syntax on
 
-" Turn on filetype plugins 
+" Turn on filetype plugins
 if has('autocmd')
   filetype plugin indent on
 endif
 
+if !has('gui_running')
+  set t_Co=256
+endif
 
-" Spaces & Tabs
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set tabstop=4       " number of visual spaces per TAB
-set softtabstop=4   " number of spaces in tab when editing
-set shiftwidth=4    " Insert 4 spaces on a tab
-set expandtab       " tabs are spaces, mainly because of python
 
 " UI Config
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -87,7 +92,7 @@ set title               " Show the filename in window titlebar
 set nostartofline       " Don't set cursor to start of line when moving around
 set gdefault            " Add the g flag to search/replace by default
 set wildmode=longest,list,full " Tab completion for files/buffers
-" Use system clipboard by default so that you can 
+" Use system clipboard by default so that you can
 " CtrlC in other programs and put in Vim with p on all three platforms,
 " yank in Vim with y and CtrlV in other programs on all three platforms.
 " Support for Linux selection clipboard as well.
@@ -110,6 +115,12 @@ autocmd! bufwritepost .vimrc source %
 " Unbind some useless/annoying default key bindings.
 nmap Q <Nop> " 'Q' in normal mode enters Ex mode. You almost never want this.
 
+" quicker window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
 " Searching
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set incsearch           " search as characters are entered
@@ -117,8 +128,8 @@ set hlsearch            " highlight matches
 set ignorecase          " Ignore case in searches by default
 set smartcase           " But make it case sensitive if an uppercase is entered
 " turn off search highlight
-nnoremap <C-h> :nohlsearch<cr>
-vnoremap <C-h> :nohlsearch<cr>
+nnoremap <Leader>h :nohlsearch<cr>
+vnoremap <Leader>h :nohlsearch<cr>
 
 " Centralize backups, swapfiles and undo history
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -134,7 +145,7 @@ set undodir=~/.vim/undo/
 " for movement, rather than using more efficient movement commands, is also a
 " bad habit. Don't want it in insert mode as it's necessary to navigate while
 " writing
- 
+
 " Normal Mode
 nnoremap <Left>  :echoe "Use h"<CR>
 nnoremap <Right> :echoe "Use l"<CR>
@@ -152,8 +163,7 @@ vnoremap <Down>  :echoe "Use j"<CR>
 "   PLUGIN CONFIG
 " =============================================================================
 
-let g:python_highlight_all=1
-let g:startify_custom_header =[]     " Disable startify header
+let g:startify_custom_header = []     " Disable startify header
 
 " ALE
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -163,12 +173,80 @@ let g:ale_lint_on_enter = 0
 let g:ale_lint_on_save = 1
 " Set this variable to 1 to fix files when you save them.
 let g:ale_fix_on_save = 1
+let g:ale_fixers = {
+    \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+    \}
+" Keep the sign gutter open
+let g:ale_sign_column_always = 1
+" Navigate between errors
+nmap <silent> [a <Plug>(ale_previous_wrap)
+nmap <silent> ]a <Plug>(ale_next_wrap)
 
 " Lightline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " --INSERT-- is unncessary because of lightline
 set noshowmode
-let g:lightline={'colorscheme': 'monokai_tasty'}
+
+let g:lightline = {
+	\ 'colorscheme': 'monokai_tasty',
+	\ 'active': {
+	\   'left': [ [ 'mode', 'paste' ],
+	\             [ 'gitbranch', 'readonly', 'filename', ] ],
+	\   'right': [ [ 'linter_errors', 'linter_warnings', 'linter_infos', ],
+	\            [ 'percent' ],
+	\            [ 'fileencoding', 'filetype' ] ]
+	\ },
+	\ 'component_function': {
+	\   'gitbranch': 'LightlineFugitive',
+	\   'filename': 'LightlineFilename',
+	\   'readonly': 'LightlineReadonly',
+	\   'fileencoding': 'LightlineFileencoding',
+	\   'filetype': 'LightlineFiletype',
+	\ },
+	\ 'component_expand': {
+        \   'linter_infos': 'lightline#ale#infos',
+        \   'linter_warnings': 'lightline#ale#warnings',
+        \   'linter_errors': 'lightline#ale#errors',
+	\ },
+	\ 'component_type': {
+        \   'linter_infos': 'right',
+        \   'linter_warnings': 'warning',
+        \   'linter_errors': 'error',
+	\ },
+	\ 'separator': { 'left': '', 'right': '' },
+	\ 'subseparator': { 'left': '', 'right': '' },
+	\ }
+
+let g:lightline#ale#indicator_infos = "\uf129"
+let g:lightline#ale#indicator_warnings = "\uf071"
+let g:lightline#ale#indicator_errors = "\uf05e"
+
+function! LightlineFugitive()
+  if exists('*FugitiveHead')
+    let branch = FugitiveHead()
+    return branch !=# '' ? ''.branch : ''
+  endif
+  return ''
+endfunction
+
+function! LightlineFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? ' +' : ''
+  return filename . modified
+endfunction
+
+function! LightlineReadonly()
+  return &readonly ? '' : ''
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightlineFileencoding()
+  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+endfunction
+
 
 " Minor Configs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -178,4 +256,3 @@ let g:lightline={'colorscheme': 'monokai_tasty'}
 " Close vim if only window left is NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <C-n> :NERDTreeToggle<CR>
-
