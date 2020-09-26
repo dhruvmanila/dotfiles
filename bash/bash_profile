@@ -52,5 +52,5 @@ elif type -P "broot"; then
     broot --install &> /dev/null
     source "${HOME}/.config/broot/launcher/bash/br"
 fi
-    
+
 unset DOTFILES_DIRECTORY

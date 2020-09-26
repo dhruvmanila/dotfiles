@@ -189,10 +189,13 @@ set noshowmode
 
 let g:lightline = {
 	\ 'colorscheme': 'monokai_tasty',
+	\ 'component': {
+	\   'lineinfo': ' %3l:%-2c%<',
+	\ },
 	\ 'active': {
 	\   'left': [ [ 'mode', 'paste' ],
 	\             [ 'gitbranch', 'readonly', 'filename', ] ],
-	\   'right': [ [ 'linter_errors', 'linter_warnings', 'linter_infos', ],
+	\   'right': [ [ 'linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo' ] ,
 	\            [ 'percent' ],
 	\            [ 'fileencoding', 'filetype' ] ]
 	\ },
