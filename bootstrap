@@ -222,6 +222,9 @@ mirrorfiles() {
     link "tmux/tmux.conf"      ".tmux.conf"        || exitcode=1
     link "assets/gitignore"    ".gitignore"        || exitcode=1
     link "vim"                 ".vim"              || exitcode=1
+    link "python/flake8"       ".config/flake8"    || exitcode=1
+    link "python/pylintrc"     ".pylintrc"         || exitcode=1
+    link "python/mypy"         ".config/mypy"      || exitcode=1
 
     e_success "Dotfiles update complete!"
 }
