@@ -6,22 +6,21 @@
 DOTFILES_DIRECTORY=${HOME}/dotfiles
 
 run_brew() {
-    local -i returncode=0
 
     # Check for Homebrew
     if type_exists 'brew'; then
 
         BREW_PREFIX=$(brew --prefix)
         export HOMEBREW_NO_AUTO_UPDATE=1
-        
+
         e_header "Updating Homebrew..."
         # Use the latest version of Homebrew
-        brew update &> /dev/null || returncode=1
+        brew update &> /dev/null
         e_success "Done"
 
         e_header "Updating any existing Homebrew formulae..."
         # Upgrade any already-installed formulae
-        brew upgrade &> /dev/null || returncode=1
+        brew upgrade &> /dev/null
         e_success "Done"
 
         e_header "Checking status of desired Homebrew formulae..."
@@ -46,7 +45,7 @@ run_brew() {
             e_header "Installing missing Homebrew formulae..."
             for formula in "${missing_formulae[@]}"; do
                 e_header "Installing ${formula}..."
-                brew install "$formula" &> /dev/null || returncode=1
+                brew install "$formula" &> /dev/null
                 if formula_exists "$formula"; then
                     e_success "Successfully installed ${formula}"
                 else
@@ -60,7 +59,7 @@ run_brew() {
         e_header "Cleaning up..."
         if brew cleanup; then
             e_success "Done"
-        else 
+        else
             e_error "Error occured at cleanup stage, continuing..."
         fi
 
@@ -80,6 +79,4 @@ run_brew() {
     fi
 
     unset BREW_PREFIX formula
-    return ${returncode}
 }
-

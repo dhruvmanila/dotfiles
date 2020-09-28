@@ -42,3 +42,15 @@
 	path = vim/plugged/vim-cool
 	url = https://github.com/romainl/vim-cool
 	ignore = untracked
+[submodule "vim/plugged/incsearch.vim"]
+	path = vim/plugged/incsearch.vim
+	url = https://github.com/haya14busa/incsearch.vim
+	ignore = untracked
+[submodule "vim/plugged/indentLine"]
+	path = vim/plugged/indentLine
+	url = https://github.com/Yggdroot/indentLine
+	ignore = untracked
+[submodule "vim/plugged/vim-yaml"]
+	path = vim/plugged/vim-yaml
+	url = https://github.com/stephpy/vim-yaml
+	ignore = untracked

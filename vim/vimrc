@@ -19,16 +19,19 @@ Plug 'KeitaNakamura/neodark.vim'
 
 " Search
 Plug 'romainl/vim-cool'
+Plug 'haya14busa/incsearch.vim'
 
 " Syntactic language support
 Plug 'vim-python/python-syntax'
 Plug 'dense-analysis/ale'
 Plug 'maximbaz/lightline-ale'
+Plug 'stephpy/vim-yaml'
 
 " GUI enhancements
 Plug 'itchyny/lightline.vim'
 Plug 'mhinz/vim-startify'
 Plug 'preservim/nerdtree'
+Plug 'Yggdroot/indentLine'
 
 " Git plugin
 Plug 'tpope/vim-fugitive'
@@ -168,16 +171,39 @@ let g:startify_custom_header = []     " Disable startify header
 " ALE
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ale_enabled = 1
-" For quick startup
+
+" Error message format
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+
+" Don't lint on opening the files but when I save them
+" Also, not when I do some edits
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+
 " Set this variable to 1 to fix files when you save them.
 let g:ale_fix_on_save = 1
 let g:ale_fixers = {
     \   '*': ['remove_trailing_lines', 'trim_whitespace'],
     \}
+
+" Custom symbols
+let g:ale_sign_error = '✘'
+let g:ale_sign_warning = '⚠'
+" Remove background color
+highlight clear ALEErrorSign
+highlight clear ALEWarningSign
+
+"let g:ale_open_list = 1
+" Show 5 lines of errors (default: 10)
+"let g:ale_list_window_size = 5
+
 " Keep the sign gutter open
-let g:ale_sign_column_always = 1
+"let g:ale_sign_column_always = 1
+
 " Navigate between errors
 nmap <silent> [a <Plug>(ale_previous_wrap)
 nmap <silent> ]a <Plug>(ale_next_wrap)
@@ -220,6 +246,7 @@ let g:lightline = {
 	\ 'subseparator': { 'left': '', 'right': '' },
 	\ }
 
+" Ale error indicator for lightline
 let g:lightline#ale#indicator_infos = "\uf129"
 let g:lightline#ale#indicator_warnings = "\uf071"
 let g:lightline#ale#indicator_errors = "\uf05e"
@@ -259,3 +286,11 @@ endfunction
 " Close vim if only window left is NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <C-n> :NERDTreeToggle<CR>
+
+" incsearch
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+" Indent line
+let g:indentLine_char = '⦙'

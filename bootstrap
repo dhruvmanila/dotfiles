@@ -80,7 +80,7 @@ if ! type_exists 'brew'; then
     if type_exists 'brew'; then
         e_success "Successfully installed homebrew"
         e_header "Installing packages..."
-        run_brew || exit 1
+        run_brew
     else
         e_error "Failed to install homebrew."
         exit 1
@@ -88,7 +88,7 @@ if ! type_exists 'brew'; then
 else
     e_success "Homebrew already installed."
     e_header "Updating packages..."
-    run_brew || exit 1
+    run_brew
 fi
 
 # ----------------------------------------------------
@@ -215,13 +215,13 @@ mirrorfiles() {
     # Create the necessary symbolic links between the `dotfiles` and `HOME`
     # directory. The `bash_profile` sources other files directly from the
     # `dotfiles` repository.
-    link "bash/bashrc"         ".bashrc"           || exit 1
-    link "bash/bash_profile"   ".bash_profile"     || exit 1
-    link "assets/inputrc"      ".inputrc"          || exit 1
-    link "vim/vimrc"           ".vimrc"            || exit 1
-    link "tmux/tmux.conf"      ".tmux.conf"        || exit 1
-    link "assets/gitignore"    ".gitignore"        || exit 1
-    link "vim"                 ".vim"              || exit 1
+    link "bash/bashrc"         ".bashrc"           || exitcode=1
+    link "bash/bash_profile"   ".bash_profile"     || exitcode=1
+    link "assets/inputrc"      ".inputrc"          || exitcode=1
+    link "vim/vimrc"           ".vimrc"            || exitcode=1
+    link "tmux/tmux.conf"      ".tmux.conf"        || exitcode=1
+    link "assets/gitignore"    ".gitignore"        || exitcode=1
+    link "vim"                 ".vim"              || exitcode=1
 
     e_success "Dotfiles update complete!"
 }
