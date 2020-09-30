@@ -54,3 +54,7 @@
 	path = vim/plugged/vim-yaml
 	url = https://github.com/stephpy/vim-yaml
 	ignore = untracked
+[submodule "vim/plugged/vim-commentary"]
+	path = vim/plugged/vim-commentary
+	url = https://github.com/tpope/vim-commentary
+	ignore = untracked

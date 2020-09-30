@@ -27,6 +27,9 @@ Plug 'dense-analysis/ale'
 Plug 'maximbaz/lightline-ale'
 Plug 'stephpy/vim-yaml'
 
+" Text manipulations
+Plug 'tpope/vim-commentary'
+
 " GUI enhancements
 Plug 'itchyny/lightline.vim'
 Plug 'mhinz/vim-startify'
@@ -293,4 +296,4 @@ map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
 " Indent line
-let g:indentLine_char = '⦙'
+let g:indentLine_char = '⎸'
