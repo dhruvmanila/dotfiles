@@ -26,9 +26,10 @@ Plug 'vim-python/python-syntax'
 Plug 'dense-analysis/ale'
 Plug 'maximbaz/lightline-ale'
 Plug 'stephpy/vim-yaml'
+Plug 'wlangstroth/vim-racket'
 
 " Text manipulations
-Plug 'tpope/vim-commentary'
+Plug 'preservim/nerdcommenter'
 
 " GUI enhancements
 Plug 'itchyny/lightline.vim'
@@ -289,6 +290,16 @@ endfunction
 " Close vim if only window left is NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <C-n> :NERDTreeToggle<CR>
+
+" NERDCommenter
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Allow commenting and inverting empty lines
+let g:NERDCommentEmptyLines = 1
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
 
 " incsearch
 map /  <Plug>(incsearch-forward)

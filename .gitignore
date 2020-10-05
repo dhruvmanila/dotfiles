@@ -21,3 +21,6 @@ vim/undo/*
 
 # Download the plug script on a fresh install
 vim/autoload/*
+
+# Ignore the swap files
+vim/swaps/*
