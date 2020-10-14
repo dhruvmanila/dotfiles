@@ -12,8 +12,11 @@ elif [ -f "/etc/bash_completion" ]; then
     source "/etc/bash_completion";
 fi;
 
-#Git auto-complete
+# Git auto-complete
 if [ -f "${HOME}/.git-completion.bash" ]; then
     source "${HOME}/.git-completion.bash"
 fi
+
+# GitHub Command line interface (gh) auto-complete
+eval "$(gh completion -s bash)"
 
