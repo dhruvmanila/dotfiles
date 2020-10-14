@@ -215,16 +215,18 @@ mirrorfiles() {
     # Create the necessary symbolic links between the `dotfiles` and `HOME`
     # directory. The `bash_profile` sources other files directly from the
     # `dotfiles` repository.
-    link "bash/bashrc"         ".bashrc"           || exitcode=1
-    link "bash/bash_profile"   ".bash_profile"     || exitcode=1
-    link "assets/inputrc"      ".inputrc"          || exitcode=1
-    link "vim/vimrc"           ".vimrc"            || exitcode=1
-    link "tmux/tmux.conf"      ".tmux.conf"        || exitcode=1
-    link "assets/gitignore"    ".gitignore"        || exitcode=1
-    link "vim"                 ".vim"              || exitcode=1
-    link "python/flake8"       ".config/flake8"    || exitcode=1
-    link "python/pylintrc"     ".pylintrc"         || exitcode=1
-    link "python/mypy"         ".config/mypy"      || exitcode=1
+    link "bash/bashrc"                ".bashrc"                || exitcode=1
+    link "bash/bash_profile"          ".bash_profile"          || exitcode=1
+    link "assets/inputrc"             ".inputrc"               || exitcode=1
+    link "vim/vimrc"                  ".vimrc"                 || exitcode=1
+    link "tmux/tmux.conf"             ".tmux.conf"             || exitcode=1
+    link "assets/gitignore"           ".gitignore"             || exitcode=1
+    link "vim"                        ".vim"                   || exitcode=1
+    link "python/flake8"              ".config/flake8"         || exitcode=1
+    link "python/pylintrc"            ".pylintrc"              || exitcode=1
+    link "python/mypy"                ".config/mypy"           || exitcode=1
+    link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=1
+    link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
 
     e_success "Dotfiles update complete!"
 }
