@@ -62,3 +62,7 @@
 	path = vim/plugged/vim-racket
 	url = https://github.com/wlangstroth/vim-racket
 	ignore = untracked
+[submodule "vim/plugged/vim-surround"]
+	path = vim/plugged/vim-surround
+	url = https://github.com/tpope/vim-surround
+	ignore = untracked

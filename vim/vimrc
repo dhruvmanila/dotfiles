@@ -30,6 +30,7 @@ Plug 'wlangstroth/vim-racket'
 
 " Text manipulations
 Plug 'preservim/nerdcommenter'
+Plug 'tpope/vim-surround'
 
 " GUI enhancements
 Plug 'itchyny/lightline.vim'
@@ -107,6 +108,19 @@ set clipboard^=unnamed,unnamedplus
 set encoding=utf-8
 set backupcopy=yes      " see :help crontab
 set autoread            " reload files when changed on disk, i.e. via `git checkout`
+
+" Cursor shape for tmux running in iTerm2
+" Cursor settings:
+"  1 -> blinking block
+"  2 -> solid block
+"  3 -> blinking underscore
+"  4 -> solid underscore
+"  5 -> blinking vertical bar
+"  6 -> solid vertical bar
+" https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
+let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"  " INSERT
+let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"  " REPLACE
+let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"  " NORMAL (ELSE)
 
 " Buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -300,6 +314,8 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDCompactSexyComs = 1
 " Enable trimming of trailing whitespace when uncommenting
 let g:NERDTrimTrailingWhitespace = 1
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
 
 " incsearch
 map /  <Plug>(incsearch-forward)
