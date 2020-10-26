@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Python3 easy open
-alias python="python3 -q"
-alias pip="pip3"
+alias python="python3"
+alias pip="pipm"
 alias g="git"
 
 # Easy clear

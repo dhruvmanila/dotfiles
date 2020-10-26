@@ -37,6 +37,13 @@ function o() {
 
 # To open the python source folder directly using pyc in vscode :)
 function pyc() {
-	path=$(python -c "import sys;print(sys.executable.split('bin')[0])")
+	path=$(python -c "import os;print(os.__file__.split('os.py')[0])")
 	code "$path"
+}
+
+# https://snarky.ca/why-you-should-use-python-m-pip/
+# Let's convert `pip` to `python -m pip` and add some other functionality to it
+function pipm() {
+	echo "Current Python interpreter: $(python -V)"
+	python -m pip $@
 }
