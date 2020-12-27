@@ -1,22 +1,13 @@
 #!/usr/bin/env bash
 
 # Create a new directory and enter it
-function mkd() {
+function mcd() {
 	mkdir -p "$@" && cd "$_" || return;
 }
 
-# Use Git’s colored diff when available
-# This doesn't allow me to use 'diff', maybe make it 'gdiff' ?
-#hash git &>/dev/null;
-#if [ $? -eq 0 ]; then
-#	function diff() {
-#		git diff --no-index --color-words "$@";
-#	}
-#fi;
-
 # Normalize `open` across Linux, macOS, and Windows.
 # This is needed to make the `o` function (see below) cross-platform.
-if [ ! $(uname -s) = 'Darwin' ]; then
+if [ ! "$(uname -s)" = 'Darwin' ]; then
 	if grep -q Microsoft /proc/version; then
 		# Ubuntu on Windows using the Linux subsystem
 		alias open='explorer.exe';
@@ -43,8 +34,8 @@ function pyc() {
 
 # https://snarky.ca/why-you-should-use-python-m-pip/
 # Let's convert `pip` to `python -m pip` and add some other functionality to it
-function pipm() {
+function pip() {
 	echo "Current Python interpreter: $(python -V)"
 	echo -e "$(python -m pip -V)\n"
-	python -m pip $@
+	python -m pip "$@"
 }

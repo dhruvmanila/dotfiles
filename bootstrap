@@ -224,7 +224,6 @@ mirrorfiles() {
     link "vim"                        ".vim"                   || exitcode=1
     link "python/flake8"              ".config/flake8"         || exitcode=1
     link "python/pylintrc"            ".pylintrc"              || exitcode=1
-    link "python/mypy"                ".config/mypy"           || exitcode=1
     # Directory doesn't exist in the CI run
     link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=0
     link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=0

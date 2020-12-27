@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+from subprocess import call
+
+try:
+    import pkg_resources
+except ImportError as err:
+    import sys
+
+    print(err)
+    sys.exit(1)
+
+IGNORE_PACKAGES = {"pip", "setuptools", "wheel"}
+
+
+def colorcode(code: int) -> str:
+    return "\033[" + str(code) + "m"
+
+
+RED = colorcode(31)
+YELLOW = colorcode(33)
+WHITE = colorcode(37)
+BOLD = colorcode(1)
+RESET = colorcode(0)
+
+
+print(f"{YELLOW}Collecting packages...{RESET}")
+packages = [dist.project_name for dist in pkg_resources.working_set]
+print(f"{YELLOW}Collected {WHITE}{BOLD}{len(packages)} {RESET}{YELLOW}packages.{RESET}")
+
+for pkg in packages:
+    if pkg in IGNORE_PACKAGES:
+        print(f"\n{YELLOW}Skipping {WHITE}{BOLD}{pkg}...{RESET}")
+        continue
+    print(f"\n{RED}Uninstalling {WHITE}{BOLD}{pkg}...{RESET}")
+    call(f"pip uninstall --yes {pkg}", shell=True)

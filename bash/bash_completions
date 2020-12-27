@@ -18,5 +18,7 @@ if [ -f "${HOME}/.git-completion.bash" ]; then
 fi
 
 # GitHub Command line interface (gh) auto-complete
-eval "$(gh completion -s bash)"
+if which gh > /dev/null; then
+    eval "$(gh completion -s bash)"
+fi
 

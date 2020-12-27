@@ -2,7 +2,6 @@
 
 # Python3 easy open
 alias python="python3"
-alias pip="pipm"
 alias g="git"
 
 # Easy clear
@@ -41,7 +40,7 @@ alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
 alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl; sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'delete from LSQuarantineEvent'"
 
 # Get macOS Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
-alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update; sudo gem cleanup'
+alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup'
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
