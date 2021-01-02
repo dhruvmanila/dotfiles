@@ -35,7 +35,9 @@ function pyc() {
 # https://snarky.ca/why-you-should-use-python-m-pip/
 # Let's convert `pip` to `python -m pip` and add some other functionality to it
 function pip() {
-	echo "Current Python interpreter: $(python -V)"
-	echo -e "$(python -m pip -V)\n"
+	if [ "$1" != "freeze" ]; then
+		echo "Current Python interpreter: $(python -V)"
+		echo -e "$(python -m pip -V)\n"
+	fi
 	python -m pip "$@"
 }

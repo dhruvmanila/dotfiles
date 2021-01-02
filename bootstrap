@@ -3,9 +3,10 @@ declare -i exitcode
 exitcode=0
 
 # dotfiles directory
-declare DOTFILES_DIRECTORY="${HOME}/dotfiles"
-declare DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
-declare DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
+DOTFILES_DIRECTORY="${HOME}/dotfiles"
+DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
+DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
+HOMEBREW_INSTALL_LINK="https://raw.githubusercontent.com/Homebrew/install/master/install.sh"
 
 # -----------------------------------------------------
 
@@ -76,7 +77,7 @@ fi
 e_header "Checking for homebrew..."
 if ! type_exists 'brew'; then
     e_header "Installing Homebrew..."
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"
     if type_exists 'brew'; then
         e_success "Successfully installed homebrew"
         e_header "Installing packages..."

@@ -296,16 +296,16 @@ function! LightlineFileencoding()
 endfunction
 
 
-" Minor Configs
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 " NERDTree
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set key to Ctrl-n to open nerd tree
 " Close vim if only window left is NERDTree
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 map <C-n> :NERDTreeToggle<CR>
 
+
 " NERDCommenter
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 " Allow commenting and inverting empty lines
@@ -316,11 +316,20 @@ let g:NERDCompactSexyComs = 1
 let g:NERDTrimTrailingWhitespace = 1
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
+" Custom delimiters for the specified filetype
+" This did not seem to work when I put it in the ftplugin/scheme.vim
+let g:NERDCustomDelimiters = {
+	\ 'racket': { 'left': ';;' , 'leftAlt': ';' }
+	\ }
+
 
 " incsearch
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
+
 " Indent line
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:indentLine_char = '⎸'

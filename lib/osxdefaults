@@ -160,13 +160,19 @@ defaults write com.apple.screensaver askForPasswordDelay -int 0
 # Save screenshots to the desktop
 defaults write com.apple.screencapture location -string "${HOME}/Desktop"
 
+# Display the thumbnail after taking a screenshot with the shortcut key (default false)
+defaults write com.apple.screencapture show-thumbnail -bool true
+
+# Include data and time in screenshot filenames (default true)
+defaults write com.apple.screencapture include-date -bool true
+
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
 defaults write com.apple.screencapture type -string "png"
 
 # Disable shadow in screenshots
 defaults write com.apple.screencapture disable-shadow -bool true
 
-# Disable subpixel font rendering 
+# Disable subpixel font rendering
 defaults write NSGlobalDomain AppleFontSmoothing -int 0
 
 # Enable HiDPI display modes (requires restart)
@@ -194,9 +200,9 @@ defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
 defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
 # Finder: show hidden files by default
-#defaults write com.apple.finder AppleShowAllFiles -bool true
+defaults write com.apple.finder AppleShowAllFiles -bool true
 
-# Finder: show all filename extensions
+# Finder: show all filename extensions (default false)
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
 # Finder: show status bar
@@ -214,7 +220,7 @@ defaults write com.apple.finder _FXSortFoldersFirst -bool true
 # When performing a search, search the current folder by default
 defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 
-# Disable the warning when changing a file extension
+# Disable the warning when changing a file extension (default true)
 defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
 # Enable spring loading for directories
@@ -261,8 +267,12 @@ defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 /usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
 
 # Use list view in all Finder windows by default
-# Four-letter codes for the other view modes: `icnv`, `clmv`, `glyv`
-defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+# Four-letter codes for the other view modes:
+# - "icnv" icon view
+# - "clmv" column view
+# - "glyv" gallery view
+# - "Nlsv" list view
+defaults write com.apple.finder FXPreferredViewStyle -string "icnv"
 
 # Disable the warning before emptying the Trash
 defaults write com.apple.finder WarnOnEmptyTrash -bool false
@@ -287,16 +297,17 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict \
 # Dock, Dashboard, and hot corners                                            #
 ###############################################################################
 
-# Set dock to left 
-defaults write com.apple.dock orientation -string "left"
+# Set dock to a side (default "bottom") ("left" ,"bottom", "right")
+defaults write com.apple.dock orientation -string "bottom"
 
 # Enable highlight hover effect for the grid view of a stack (Dock)
 defaults write com.apple.dock mouse-over-hilite-stack -bool true
 
-# Set the icon size of Dock items to 45 pixels
-defaults write com.apple.dock tilesize -int 45
+# Set the icon size of Dock items to x pixels
+defaults write com.apple.dock tilesize -int 46
 
-# Change minimize/maximize window effect [scale, genie]
+# Change minimize/maximize window effect ("scale", "genie", "suck")
+# com.apple.dock autohide must be set to true
 defaults write com.apple.dock mineffect -string "scale"
 
 # Minimize windows into their application’s icon
@@ -323,16 +334,17 @@ defaults write com.apple.dock mru-spaces -bool false
 
 # Remove the auto-hiding Dock delay
 defaults write com.apple.dock autohide-delay -float 0
+
 # Remove the animation when hiding/showing the Dock
 defaults write com.apple.dock autohide-time-modifier -float 0
 
-# Automatically hide and show the Dock
+# Automatically hide and show the Dock (default false)
 defaults write com.apple.dock autohide -bool true
 
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
 
-# Don’t show recent applications in Dock
+# Don’t show recent applications in Dock (default true)
 defaults write com.apple.dock show-recents -bool false
 
 # Disable the Launchpad gesture (pinch with thumb and three fingers)
@@ -358,13 +370,13 @@ find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -dele
 # Top left screen corner → Desktop
 defaults write com.apple.dock wvous-tl-corner -int 4
 defaults write com.apple.dock wvous-tl-modifier -int 0
-# Top right screen corner → Mission Control 
+# Top right screen corner → Mission Control
 defaults write com.apple.dock wvous-tr-corner -int 2
 defaults write com.apple.dock wvous-tr-modifier -int 0
 # Bottom left screen corner → Launchpad
 defaults write com.apple.dock wvous-bl-corner -int 11
 defaults write com.apple.dock wvous-bl-modifier -int 0
-# Bottom right screen corner → Application windows 
+# Bottom right screen corner → Application windows
 defaults write com.apple.dock wvous-br-corner -int 3
 defaults write com.apple.dock wvous-br-modifier -int 0
 
@@ -534,7 +546,7 @@ for app in "Activity Monitor" \
 	"Photos" \
 	"Safari" \
 	"SystemUIServer" \
-	"Terminal"; do 
+	"Terminal"; do
 	killall "${app}" &> /dev/null
 done
 echo "Done. Note that some of these changes require a logout/restart to take effect."

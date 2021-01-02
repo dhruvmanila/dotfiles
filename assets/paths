@@ -5,3 +5,6 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # Setting PATH for useful scripts
 export PATH="${PATH}:${HOME}/dotfiles/bin"
+
+# Setting PATH for private scripts
+export PATH="${PATH}:${HOME}/projects/bin"
