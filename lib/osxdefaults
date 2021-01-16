@@ -160,7 +160,7 @@ execute 'defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeter
 execute 'defaults write NSGlobalDomain AppleMetricUnits -bool true'
 
 # Set the timezone; see `sudo systemsetup -listtimezones` for other values
-execute 'sudo systemsetup -settimezone "Asia/Kolkata" > /dev/null'
+execute 'sudo systemsetup -settimezone "Asia/Kolkata"'
 
 
 #---------------------------------------------------------------------#
@@ -189,7 +189,7 @@ execute 'sudo pmset -b sleep 10'
 execute 'sudo pmset -a standbydelay 10800'
 
 # Never go into computer sleep mode
-execute 'sudo systemsetup -setcomputersleep Off > /dev/null'
+execute 'sudo systemsetup -setcomputersleep Off'
 
 # Hibernation mode
 # 0: Disable hibernation (speeds up entering sleep mode)
