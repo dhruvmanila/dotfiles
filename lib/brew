@@ -3,7 +3,7 @@
 # Just for testing this script
 # source ./utils
 
-DOTFILES_DIRECTORY=${HOME}/dotfiles
+DOTFILES_DIRECTORY="${HOME}/dotfiles"
 
 run_brew() {
 

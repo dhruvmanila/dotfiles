@@ -69,5 +69,3 @@ unset TTY
 # Opt-out of homebrew's analytics
 export HOMEBREW_NO_ANALYTICS=1
 
-# https://docs.docker.com/compose/reference/envvars/#compose_file
-export COMPOSE_FILE="docker-compose.yml:docker-compose.override.yml:docker-compose.infogami-local.yml"

@@ -2,22 +2,22 @@
 DOTFILES_DIRECTORY="$HOME/dotfiles"
 
 load_dotfiles() {
-    declare -a dotfiles=(
-        "$DOTFILES_DIRECTORY/assets/paths" # Path modifications
-        "$DOTFILES_DIRECTORY/bash/bash_prompt" # Custom bash prompt
-        "$DOTFILES_DIRECTORY/assets/options" # Options
-        "$DOTFILES_DIRECTORY/assets/exports" # Exports
-        "$DOTFILES_DIRECTORY/assets/aliases" # Aliases
-        "$DOTFILES_DIRECTORY/assets/functions" # Functions
-        "$DOTFILES_DIRECTORY/bash/bash_completions" # all completions
-    )
+  declare -a dotfiles=(
+    "${DOTFILES_DIRECTORY}/assets/paths" # Path modifications
+    "${DOTFILES_DIRECTORY}/bash/bash_prompt" # Custom bash prompt
+    "${DOTFILES_DIRECTORY}/assets/options" # Options
+    "${DOTFILES_DIRECTORY}/assets/exports" # Exports
+    "${DOTFILES_DIRECTORY}/assets/aliases" # Aliases
+    "${DOTFILES_DIRECTORY}/assets/functions" # Functions
+    "${DOTFILES_DIRECTORY}/bash/bash_completions" # all completions
+  )
 
-    # if these files are readable, source them
-    for file in "${dotfiles[@]}"; do
-        if [ -r "${file}" ]; then
-            source "${file}"
-        fi
-    done
+  # if these files are readable, source them
+  for file in "${dotfiles[@]}"; do
+    if [ -r "${file}" ]; then
+      source "${file}"
+    fi
+  done
 }
 
 load_dotfiles
@@ -30,18 +30,18 @@ fi;
 
 
 if [ -e "${HOME}/.config/broot/launcher/bash/br" ]; then
-    source "${HOME}/.config/broot/launcher/bash/br"
+  source "${HOME}/.config/broot/launcher/bash/br"
 elif type -P "broot"; then
-    broot --install &> /dev/null
-    source "${HOME}/.config/broot/launcher/bash/br"
+  broot --install &> /dev/null
+  source "${HOME}/.config/broot/launcher/bash/br"
 fi
 
 if command -v pyenv 1>/dev/null 2>&1; then
-    eval "$(pyenv init -)"
+  eval "$(pyenv init -)"
 fi
 
-if which pyenv-virtualenv-init > /dev/null; then 
-    eval "$(pyenv virtualenv-init -)"
+if which pyenv-virtualenv-init > /dev/null; then
+  eval "$(pyenv virtualenv-init -)"
 fi
 
 unset DOTFILES_DIRECTORY
