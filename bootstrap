@@ -27,7 +27,7 @@ if [[ ! -d "${DOTFILES_DIRECTORY}" ]]; then
     if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}"; then
         printf "%b✓ Successfully downloaded the dotfiles %b\n" "$GREEN" "$RESET_ALL"
     else
-        printf "%bx Failed to download the dotfiles %b\n" "$RED" "$RESET_ALL"
+        printf "%b✗ Failed to download the dotfiles %b\n" "$RED" "$RESET_ALL"
         exit 1
     fi
 
@@ -36,7 +36,7 @@ if [[ ! -d "${DOTFILES_DIRECTORY}" ]]; then
     if [ -d "${DOTFILES_DIRECTORY}" ]; then
         printf "%b✓ Successfully extracted the dotfiles %b\n" "$GREEN" "$RESET_ALL"
     else
-        printf "%bx Failed to extract the dotfiles %b\n" "$RED" "$RESET_ALL"
+        printf "%b✗ Failed to extract the dotfiles %b\n" "$RED" "$RESET_ALL"
         exit 1
     fi
 

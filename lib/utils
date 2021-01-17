@@ -18,7 +18,7 @@ function success() {
 
 # Error logging
 function error() {
-    printf "%bx %s %b\n" "$RED" "$@" "$RESET_ALL"
+    printf "%b✗ %s %b\n" "$RED" "$@" "$RESET_ALL"
 }
 
 # Warning logging

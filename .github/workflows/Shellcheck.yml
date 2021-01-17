@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@0.5.0
+        uses: ludeeus/action-shellcheck@1.0.0
         env:
           SHELLCHECK_OPTS: -e SC2059 -e SC1090 -e SC1091
 
