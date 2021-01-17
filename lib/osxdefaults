@@ -1,52 +1,13 @@
 #!/usr/bin/env bash
 
 #---------------------------------------------------------------------#
-#                         Utility functions                           #
+#                                 Setup                               #
 #---------------------------------------------------------------------#
 
-# Print header message in bright white color with a newline at the start of the message
-# Argument: String
-function header() {
-  printf "\n\e[1;37m%s \e[0m\n" "$@"
-}
+export PS4="\e[1m==> \e[0m"
 
-# Print success message in bright green color
-# Argument: String
-function success() {
-  printf "\e[1;32m✓ %s \e[0m\n" "$@"
-}
-
-# Print error message in bright red color
-# Argument: String
-function error() {
-  printf "\e[1;35mx %s \e[0m\n" "$@"
-}
-
-# Execute the given string argument along with logging the command as the header and
-# the outcome of the command as either success or error accordingly.
-# Argument: String
-function execute() {
-  local -r cmd=$1
-  local -i exit_code
-  local -r temp_file="$(mktemp /tmp/XXXXX)"
-
-  header "> ${cmd}"
-  eval "$cmd" &> "$temp_file"
-  exit_code=$?
-
-  if [[ $exit_code == 0 ]]; then
-    success "Done"
-  else
-    error "$(< "$temp_file")"
-  fi
-
-  rm -rf "$temp_file"
-}
-
-
-#---------------------------------------------------------------------#
-#                             Pre-commands                            #
-#---------------------------------------------------------------------#
+set -e
+set -x
 
 # Close any open System Preferences panes, to prevent them from overriding
 # settings we’re about to change
@@ -55,7 +16,7 @@ osascript -e 'tell application "System Preferences" to quit'
 # Ask for the administrator password upfront
 sudo -v
 
-# Keep-alive: update existing `sudo` time stamp until `.macos` has finished
+# Keep-alive: update existing `sudo` time stamp until `osxdefaults` has finished
 while true; do
   sudo -n true;
   sleep 60;
@@ -68,71 +29,70 @@ done 2>/dev/null &
 #---------------------------------------------------------------------#
 
 # Set computer name (as done via System Preferences → Sharing)
-execute 'sudo scutil --set ComputerName "Dhruv'\''s MBP"'
-execute 'sudo scutil --set HostName "mbp"'
-execute 'sudo scutil --set LocalHostName "mbp"'
-execute 'sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "mbp"'
+sudo scutil --set ComputerName "Dhruv's MBP"
+sudo scutil --set HostName "mbp"
+sudo scutil --set LocalHostName "mbp"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "mbp"
 
 # Disable the sound effects on boot
-execute 'sudo nvram SystemAudioVolume=" "'
+sudo nvram SystemAudioVolume=" "
 
 # Set highlight color to graphite
-execute 'defaults write NSGlobalDomain AppleHighlightColor -string "0.847059 0.847059 0.862745 Graphite"'
+defaults write NSGlobalDomain AppleHighlightColor -string "0.847059 0.847059 0.862745 Graphite"
 
 # Set sidebar icon size to medium
-execute 'defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2'
+defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
 
 # Always show scrollbars
-execute 'defaults write NSGlobalDomain AppleShowScrollBars -string "Always"'
+defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
 # Possible values: `WhenScrolling`, `Automatic` and `Always`
 
 # Disable the over-the-top focus ring animation
-execute 'defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false'
+defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
 
 # Expand save panel by default
-execute 'defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true'
-execute 'defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true'
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
 
 # Expand print panel by default
-execute 'defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true'
-execute 'defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true'
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
 
 # Automatically quit printer app once the print jobs complete
-execute 'defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true'
+defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
 # Disable the “Are you sure you want to open this application?” dialog
-execute 'defaults write com.apple.LaunchServices LSQuarantine -bool false'
+defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 # Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
-execute '/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 
 # Disable automatic termination of inactive apps
-execute 'defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true'
+defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
 
 # Disable the crash reporter
-execute 'defaults write com.apple.CrashReporter DialogType -string "none"'
+defaults write com.apple.CrashReporter DialogType -string "none"
 
 # Reveal IP address, hostname, OS version, etc. when clicking the clock
 # in the login window
-execute 'sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName'
+sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
 
 # Disable Notification Center and remove the menu bar icon
-execute 'launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null'
+launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
 
 # Disable automatic capitalization as it’s annoying when typing code
-execute 'defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false'
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 
 # Disable smart dashes as they’re annoying when typing code
-execute 'defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false'
+defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 
 # Disable automatic period substitution as it’s annoying when typing code
-execute 'defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false'
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
 
 # Disable smart quotes as they’re annoying when typing code
-execute 'defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false'
+defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 
-# Disable auto-correct
-# execute 'defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false'
+# Disable auto-correct  'defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 
 #---------------------------------------------------------------------#
@@ -140,27 +100,27 @@ execute 'defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool
 #---------------------------------------------------------------------#
 
 # Trackpad: enable tap to click for this user and for the login screen
-execute 'defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true'
-execute 'defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1'
-execute 'defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1'
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 
 # Disable press-and-hold for keys in favor of key repeat
-execute 'defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false'
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 # Set a blazingly fast keyboard repeat rate
-execute 'defaults write NSGlobalDomain KeyRepeat -int 1'
-execute 'defaults write NSGlobalDomain InitialKeyRepeat -int 10'
+defaults write NSGlobalDomain KeyRepeat -int 1
+defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 # Set language and text formats
 # Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with
 # `Inches`, `en_GB` with `en_US`, and `true` with `false`.
-execute 'defaults write NSGlobalDomain AppleLanguages -array "en-IN" "en-GB"'
-execute 'defaults write NSGlobalDomain AppleLocale -string "en_IN"'
-execute 'defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"'
-execute 'defaults write NSGlobalDomain AppleMetricUnits -bool true'
+defaults write NSGlobalDomain AppleLanguages -array "en-IN" "en-GB"
+defaults write NSGlobalDomain AppleLocale -string "en_IN"
+defaults write NSGlobalDomain AppleMeasurementUnits -string "Centimeters"
+defaults write NSGlobalDomain AppleMetricUnits -bool true
 
 # Set the timezone; see `sudo systemsetup -listtimezones` for other values
-execute 'sudo systemsetup -settimezone "Asia/Kolkata"'
+sudo systemsetup -settimezone "Asia/Calcutta"
 
 
 #---------------------------------------------------------------------#
@@ -168,34 +128,34 @@ execute 'sudo systemsetup -settimezone "Asia/Kolkata"'
 #---------------------------------------------------------------------#
 
 # Enable lid wakeup
-execute 'sudo pmset -a lidwake 1'
+sudo pmset -a lidwake 1
 
 # Restart automatically on power loss
-execute 'sudo pmset -a autorestart 1'
+sudo pmset -a autorestart 1
 
 # Restart automatically if the computer freezes
-execute 'sudo systemsetup -setrestartfreeze on'
+sudo systemsetup -setrestartfreeze on
 
 # Sleep the display after 15 minutes
-execute 'sudo pmset -a displaysleep 10'
+sudo pmset -a displaysleep 10
 
 # Disable machine sleep while charging
-execute 'sudo pmset -c sleep 0'
+sudo pmset -c sleep 0
 
 # Set machine sleep to 10 minutes on battery
-execute 'sudo pmset -b sleep 10'
+sudo pmset -b sleep 10
 
 # Set standby delay to 3 hours (default is 3 hour)
-execute 'sudo pmset -a standbydelay 10800'
+sudo pmset -a standbydelay 10800
 
 # Never go into computer sleep mode
-execute 'sudo systemsetup -setcomputersleep Off'
+sudo systemsetup -setcomputersleep Off
 
 # Hibernation mode
 # 0: Disable hibernation (speeds up entering sleep mode)
 # 3: Copy RAM to disk so the system state can still be restored in case of a
 #    power failure.
-execute 'sudo pmset -a hibernatemode 3'
+sudo pmset -a hibernatemode 3
 
 # Remove the sleep image file to save disk space
 # sudo rm /private/var/vm/sleepimage
@@ -210,29 +170,29 @@ execute 'sudo pmset -a hibernatemode 3'
 #---------------------------------------------------------------------#
 
 # Require password immediately after sleep or screen saver begins
-execute 'defaults write com.apple.screensaver askForPassword -int 1'
-execute 'defaults write com.apple.screensaver askForPasswordDelay -int 0'
+defaults write com.apple.screensaver askForPassword -int 1
+defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 # Save screenshots to the desktop
-execute "defaults write com.apple.screencapture location -string \"${HOME}/Desktop\""
+defaults write com.apple.screencapture location -string "${HOME}/Desktop"
 
 # Display the thumbnail after taking a screenshot with the shortcut key (default false)
-execute 'defaults write com.apple.screencapture show-thumbnail -bool true'
+defaults write com.apple.screencapture show-thumbnail -bool true
 
 # Include data and time in screenshot filenames (default true)
-execute 'defaults write com.apple.screencapture include-date -bool true'
+defaults write com.apple.screencapture include-date -bool true
 
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
-execute 'defaults write com.apple.screencapture type -string "png"'
+defaults write com.apple.screencapture type -string "png"
 
 # Disable shadow in screenshots
-execute 'defaults write com.apple.screencapture disable-shadow -bool true'
+defaults write com.apple.screencapture disable-shadow -bool true
 
 # Disable subpixel font rendering
-execute 'defaults write NSGlobalDomain AppleFontSmoothing -int 0'
+defaults write NSGlobalDomain AppleFontSmoothing -int 0
 
 # Enable HiDPI display modes (requires restart)
-execute 'sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true'
+sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
 
 
 #---------------------------------------------------------------------#
@@ -240,55 +200,55 @@ execute 'sudo defaults write /Library/Preferences/com.apple.windowserver Display
 #---------------------------------------------------------------------#
 
 # Finder: allow quitting via ⌘ + Q; doing so will also hide desktop icons
-execute 'defaults write com.apple.finder QuitMenuItem -bool true'
+defaults write com.apple.finder QuitMenuItem -bool true
 
 # Finder: allow window animations and Get Info animations
-execute 'defaults write com.apple.finder DisableAllAnimations -bool false'
+defaults write com.apple.finder DisableAllAnimations -bool false
 
 # Set Desktop as the default location for new Finder windows
 # For other paths, use `PfLo` and `file:///full/path/here/`
-execute 'defaults write com.apple.finder NewWindowTarget -string "PfDe"'
-execute "defaults write com.apple.finder NewWindowTargetPath -string \"file://${HOME}/Desktop/\""
+defaults write com.apple.finder NewWindowTarget -string "PfDe"
+defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/Desktop/"
 
 # Show icons for hard drives, servers, and removable media on the desktop
-execute 'defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true'
-execute 'defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true'
-execute 'defaults write com.apple.finder ShowMountedServersOnDesktop -bool true'
-execute 'defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true'
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool true
+defaults write com.apple.finder ShowHardDrivesOnDesktop -bool true
+defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
+defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool true
 
 # Finder: show hidden files by default
-execute 'defaults write com.apple.finder AppleShowAllFiles -bool true'
+defaults write com.apple.finder AppleShowAllFiles -bool true
 
 # Finder: show all filename extensions (default false)
-execute 'defaults write NSGlobalDomain AppleShowAllExtensions -bool true'
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
 # Finder: show status bar
-execute 'defaults write com.apple.finder ShowStatusBar -bool true'
+defaults write com.apple.finder ShowStatusBar -bool true
 
 # Finder: show path bar
-execute 'defaults write com.apple.finder ShowPathbar -bool true'
+defaults write com.apple.finder ShowPathbar -bool true
 
 # Display full POSIX path as Finder window title
-execute 'defaults write com.apple.finder _FXShowPosixPathInTitle -bool true'
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
 
 # Keep folders on top when sorting by name
-execute 'defaults write com.apple.finder _FXSortFoldersFirst -bool true'
+defaults write com.apple.finder _FXSortFoldersFirst -bool true
 
 # When performing a search, search the current folder by default
-execute 'defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"'
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
 
 # Disable the warning when changing a file extension (default true)
-execute 'defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false'
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
 
 # Enable spring loading for directories
-execute 'defaults write NSGlobalDomain com.apple.springing.enabled -bool true'
+defaults write NSGlobalDomain com.apple.springing.enabled -bool true
 
 # Remove the spring loading delay for directories
-execute 'defaults write NSGlobalDomain com.apple.springing.delay -float 0'
+defaults write NSGlobalDomain com.apple.springing.delay -float 0
 
 # Avoid creating .DS_Store files on network or USB volumes
-execute 'defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true'
-execute 'defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true'
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 # Disable disk image verification
 # defaults write com.apple.frameworks.diskimages skip-verify -bool true
@@ -296,32 +256,32 @@ execute 'defaults write com.apple.desktopservices DSDontWriteUSBStores -bool tru
 # defaults write com.apple.frameworks.diskimages skip-verify-remote -bool true
 
 # Automatically open a new Finder window when a volume is mounted
-execute 'defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true'
-execute 'defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true'
-execute 'defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true'
+defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
+defaults write com.apple.frameworks.diskimages auto-open-rw-root -bool true
+defaults write com.apple.finder OpenWindowForNewRemovableDisk -bool true
 
 # Show item info near icons on the desktop and in other icon views
-execute '/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist'
-execute '/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist'
-execute '/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist'
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:showItemInfo true" ~/Library/Preferences/com.apple.finder.plist
 
 # Show item info to the right of the icons on the desktop
 # /usr/libexec/PlistBuddy -c "Set DesktopViewSettings:IconViewSettings:labelOnBottom false" ~/Library/Preferences/com.apple.finder.plist
 
 # Enable snap-to-grid for icons on the desktop and in other icon views
-execute '/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist'
-execute '/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist'
-execute '/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist'
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy grid" ~/Library/Preferences/com.apple.finder.plist
 
 # Increase grid spacing for icons on the desktop and in other icon views
-execute '/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist'
-execute '/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist'
-execute '/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist'
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist
 
 # Increase the size of icons on the desktop and in other icon views
-execute '/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist'
-execute '/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist'
-execute '/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist'
+/usr/libexec/PlistBuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
+/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
 
 # Use list view in all Finder windows by default
 # Four-letter codes for the other view modes:
@@ -329,23 +289,23 @@ execute '/usr/libexec/PlistBuddy -c "Set :StandardViewSettings:IconViewSettings:
 # - "clmv" column view
 # - "glyv" gallery view
 # - "Nlsv" list view
-execute 'defaults write com.apple.finder FXPreferredViewStyle -string "icnv"'
+defaults write com.apple.finder FXPreferredViewStyle -string "icnv"
 
 # Disable the warning before emptying the Trash
-execute 'defaults write com.apple.finder WarnOnEmptyTrash -bool false'
+defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
 # Enable AirDrop over Ethernet and on unsupported Macs running Lion
 # defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
 # Show the ~/Library folder
-execute 'chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library'
+chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library
 
 # Show the /Volumes folder
-execute 'sudo chflags nohidden /Volumes'
+sudo chflags nohidden /Volumes
 
 # Expand the following File Info panes:
 # “General”, “Open with”, and “Sharing & Permissions”
-execute 'defaults write com.apple.finder FXInfoPanesExpanded -dict General -bool true OpenWith -bool true Privileges -bool true'
+defaults write com.apple.finder FXInfoPanesExpanded -dict General -bool true OpenWith -bool true Privileges -bool true
 
 
 #---------------------------------------------------------------------#
@@ -353,61 +313,61 @@ execute 'defaults write com.apple.finder FXInfoPanesExpanded -dict General -bool
 #---------------------------------------------------------------------#
 
 # Set dock to a side (default "bottom") ("left" ,"bottom", "right")
-execute 'defaults write com.apple.dock orientation -string "bottom"'
+defaults write com.apple.dock orientation -string "bottom"
 
 # Enable highlight hover effect for the grid view of a stack (Dock)
-execute 'defaults write com.apple.dock mouse-over-hilite-stack -bool true'
+defaults write com.apple.dock mouse-over-hilite-stack -bool true
 
 # Set the icon size of Dock items to x pixels
-execute 'defaults write com.apple.dock tilesize -int 46'
+defaults write com.apple.dock tilesize -int 46
 
 # Change minimize/maximize window effect ("scale", "genie", "suck")
 # com.apple.dock autohide must be set to true
-execute 'defaults write com.apple.dock mineffect -string "scale"'
+defaults write com.apple.dock mineffect -string "scale"
 
 # Minimize windows into their application’s icon
-execute 'defaults write com.apple.dock minimize-to-application -bool true'
+defaults write com.apple.dock minimize-to-application -bool true
 
 # Enable spring loading for all Dock items
-execute 'defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true'
+defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true
 
 # Show indicator lights for open applications in the Dock
-execute 'defaults write com.apple.dock show-process-indicators -bool true'
+defaults write com.apple.dock show-process-indicators -bool true
 
 # Don’t animate opening applications from the Dock
-execute 'defaults write com.apple.dock launchanim -bool false'
+defaults write com.apple.dock launchanim -bool false
 
 # Speed up Mission Control animations
-execute 'defaults write com.apple.dock expose-animation-duration -float 0.1'
+defaults write com.apple.dock expose-animation-duration -float 0.1
 
 # Don’t group windows by application in Mission Control
 # (i.e. use the old Exposé behavior instead)
-execute 'defaults write com.apple.dock expose-group-by-app -bool false'
+defaults write com.apple.dock expose-group-by-app -bool false
 
 # Don’t automatically rearrange Spaces based on most recent use
-execute 'defaults write com.apple.dock mru-spaces -bool false'
+defaults write com.apple.dock mru-spaces -bool false
 
 # Remove the auto-hiding Dock delay
-execute 'defaults write com.apple.dock autohide-delay -float 0'
+defaults write com.apple.dock autohide-delay -float 0
 
 # Remove the animation when hiding/showing the Dock
-execute 'defaults write com.apple.dock autohide-time-modifier -float 0'
+defaults write com.apple.dock autohide-time-modifier -float 0
 
 # Automatically hide and show the Dock (default false)
-execute 'defaults write com.apple.dock autohide -bool true'
+defaults write com.apple.dock autohide -bool true
 
 # Make Dock icons of hidden applications translucent
-execute 'defaults write com.apple.dock showhidden -bool true'
+defaults write com.apple.dock showhidden -bool true
 
 # Don’t show recent applications in Dock (default true)
-execute 'defaults write com.apple.dock show-recents -bool false'
+defaults write com.apple.dock show-recents -bool false
 
 # Disable the Launchpad gesture (pinch with thumb and three fingers)
 #defaults write com.apple.dock showLaunchpadGestureEnabled -int 0
 
 # Reset Launchpad, but keep the desktop wallpaper intact
 # TODO: What is happening here?
-execute "find \"${HOME}/Library/Application Support/Dock\" -name \"*-*.db\" -maxdepth 1 -delete"
+find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -delete
 
 # Hot corners
 # Possible values:
@@ -423,17 +383,17 @@ execute "find \"${HOME}/Library/Application Support/Dock\" -name \"*-*.db\" -max
 # 12: Notification Center
 # 13: Lock Screen
 # Top left screen corner → Desktop
-execute 'defaults write com.apple.dock wvous-tl-corner -int 4'
-execute 'defaults write com.apple.dock wvous-tl-modifier -int 0'
+defaults write com.apple.dock wvous-tl-corner -int 4
+defaults write com.apple.dock wvous-tl-modifier -int 0
 # Top right screen corner → Mission Control
-execute 'defaults write com.apple.dock wvous-tr-corner -int 2'
-execute 'defaults write com.apple.dock wvous-tr-modifier -int 0'
+defaults write com.apple.dock wvous-tr-corner -int 2
+defaults write com.apple.dock wvous-tr-modifier -int 0
 # Bottom left screen corner → Launchpad
-execute 'defaults write com.apple.dock wvous-bl-corner -int 11'
-execute 'defaults write com.apple.dock wvous-bl-modifier -int 0'
+defaults write com.apple.dock wvous-bl-corner -int 11
+defaults write com.apple.dock wvous-bl-modifier -int 0
 # Bottom right screen corner → Application windows
-execute 'defaults write com.apple.dock wvous-br-corner -int 3'
-execute 'defaults write com.apple.dock wvous-br-modifier -int 0'
+defaults write com.apple.dock wvous-br-corner -int 3
+defaults write com.apple.dock wvous-br-modifier -int 0
 
 
 #---------------------------------------------------------------------#
@@ -445,65 +405,65 @@ execute 'defaults write com.apple.dock wvous-br-modifier -int 0'
 # defaults write com.apple.Safari SuppressSearchSuggestions -bool true
 
 # Press Tab to highlight each item on a web page
-execute 'defaults write com.apple.Safari WebKitTabToLinksPreferenceKey -bool true'
-execute 'defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks -bool true'
+defaults write com.apple.Safari WebKitTabToLinksPreferenceKey -bool true
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks -bool true
 
 # Show the full URL in the address bar (note: this still hides the scheme) TODO: This pair does not exist
-execute 'defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true'
+defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
 
 # Set Safari’s home page to `about:blank` for faster loading
-execute 'defaults write com.apple.Safari HomePage -string "about:blank"'
+defaults write com.apple.Safari HomePage -string "about:blank"
 
 # Prevent Safari from opening ‘safe’ files automatically after downloading
-execute 'defaults write com.apple.Safari AutoOpenSafeDownloads -bool false'
+defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
 
 # Allow hitting the Backspace key to go to the previous page in history
-execute 'defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled -bool true'
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled -bool true
 
 # Hide Safari’s bookmarks bar by default
-execute 'defaults write com.apple.Safari ShowFavoritesBar -bool false'
+defaults write com.apple.Safari ShowFavoritesBar -bool false
 
 # Hide Safari’s sidebar in Top Sites
-execute 'defaults write com.apple.Safari ShowSidebarInTopSites -bool false'
+defaults write com.apple.Safari ShowSidebarInTopSites -bool false
 
 # Disable Safari’s thumbnail cache for History and Top Sites
-execute 'defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2'
+defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2
 
 # Enable Safari’s debug menu
-execute 'defaults write com.apple.Safari IncludeInternalDebugMenu -bool true'
+defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
 
 # Make Safari’s search banners default to Contains instead of Starts With
-execute 'defaults write com.apple.Safari FindOnPageMatchesWordStartsOnly -bool false'
+defaults write com.apple.Safari FindOnPageMatchesWordStartsOnly -bool false
 
 # Remove useless icons from Safari’s bookmarks bar
-execute 'defaults write com.apple.Safari ProxiesInBookmarksBar "()"'
+defaults write com.apple.Safari ProxiesInBookmarksBar "()"
 
 # Enable the Develop menu and the Web Inspector in Safari
-execute 'defaults write com.apple.Safari IncludeDevelopMenu -bool true'
-execute 'defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true'
-execute 'defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true'
+defaults write com.apple.Safari IncludeDevelopMenu -bool true
+defaults write com.apple.Safari WebKitDeveloperExtrasEnabledPreferenceKey -bool true
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled -bool true
 
 # Disable AutoFill except for passwords
-execute 'defaults write com.apple.Safari AutoFillFromAddressBook -bool false'
-execute 'defaults write com.apple.Safari AutoFillPasswords -bool true'
-execute 'defaults write com.apple.Safari AutoFillCreditCardData -bool false'
-execute 'defaults write com.apple.Safari AutoFillMiscellaneousForms -bool false'
+defaults write com.apple.Safari AutoFillFromAddressBook -bool false
+defaults write com.apple.Safari AutoFillPasswords -bool true
+defaults write com.apple.Safari AutoFillCreditCardData -bool false
+defaults write com.apple.Safari AutoFillMiscellaneousForms -bool false
 
 # Warn about fraudulent websites
-execute 'defaults write com.apple.Safari WarnAboutFraudulentWebsites -bool true'
+defaults write com.apple.Safari WarnAboutFraudulentWebsites -bool true
 
 # Disable plug-ins
-execute 'defaults write com.apple.Safari WebKitPluginsEnabled -bool false'
-execute 'defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2PluginsEnabled -bool false'
+defaults write com.apple.Safari WebKitPluginsEnabled -bool false
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2PluginsEnabled -bool false
 
 # Disable Java
-execute 'defaults write com.apple.Safari WebKitJavaEnabled -bool false'
-execute 'defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabled -bool false'
-execute 'defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabledForLocalFiles -bool false'
+defaults write com.apple.Safari WebKitJavaEnabled -bool false
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabled -bool false
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaEnabledForLocalFiles -bool false
 
 # Block pop-up windows
-execute 'defaults write com.apple.Safari WebKitJavaScriptCanOpenWindowsAutomatically -bool false'
-execute 'defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically -bool false'
+defaults write com.apple.Safari WebKitJavaScriptCanOpenWindowsAutomatically -bool false
+defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2JavaScriptCanOpenWindowsAutomatically -bool false
 
 # Disable auto-playing video
 #defaults write com.apple.Safari WebKitMediaPlaybackAllowsInline -bool false
@@ -512,10 +472,10 @@ execute 'defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdenti
 #defaults write com.apple.SafariTechnologyPreview com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool false
 
 # Enable “Do Not Track”
-execute 'defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true'
+defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
 
 # Update extensions automatically
-execute 'defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true'
+defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 
 
 #---------------------------------------------------------------------#
@@ -533,7 +493,7 @@ execute 'defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -b
 #---------------------------------------------------------------------#
 
 # Only use UTF-8 in Terminal.app
-execute 'defaults write com.apple.terminal StringEncodings -array 4'
+defaults write com.apple.terminal StringEncodings -array 4
 
 # Enable “focus follows mouse” for Terminal.app and all X11 apps
 # i.e. hover over a window and start typing in it without clicking first
@@ -545,10 +505,10 @@ execute 'defaults write com.apple.terminal StringEncodings -array 4'
 # defaults write com.apple.terminal SecureKeyboardEntry -bool true
 
 # Disable the annoying line marks
-execute 'defaults write com.apple.Terminal ShowLineMarks -int 0'
+defaults write com.apple.Terminal ShowLineMarks -int 0
 
 # Don’t display the annoying prompt when quitting iTerm
-execute 'defaults write com.googlecode.iterm2 PromptOnQuit -bool false'
+defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 
 
 #---------------------------------------------------------------------#
@@ -556,17 +516,17 @@ execute 'defaults write com.googlecode.iterm2 PromptOnQuit -bool false'
 #---------------------------------------------------------------------#
 
 # Show the main window when launching Activity Monitor
-execute 'defaults write com.apple.ActivityMonitor OpenMainWindow -bool true'
+defaults write com.apple.ActivityMonitor OpenMainWindow -bool true
 
 # Visualize CPU usage in the Activity Monitor Dock icon
-execute 'defaults write com.apple.ActivityMonitor IconType -int 5'
+defaults write com.apple.ActivityMonitor IconType -int 5
 
 # Show all processes in Activity Monitor
-execute 'defaults write com.apple.ActivityMonitor ShowCategory -int 0'
+defaults write com.apple.ActivityMonitor ShowCategory -int 0
 
 # Sort Activity Monitor results by CPU usage
-execute 'defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"'
-execute 'defaults write com.apple.ActivityMonitor SortDirection -int 0'
+defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
+defaults write com.apple.ActivityMonitor SortDirection -int 0
 
 
 #---------------------------------------------------------------------#
@@ -574,14 +534,14 @@ execute 'defaults write com.apple.ActivityMonitor SortDirection -int 0'
 #---------------------------------------------------------------------#
 
 # Use plain text mode for new TextEdit documents
-execute 'defaults write com.apple.TextEdit RichText -int 0'
+defaults write com.apple.TextEdit RichText -int 0
 # Open and save files as UTF-8 in TextEdit
-execute 'defaults write com.apple.TextEdit PlainTextEncoding -int 4'
-execute 'defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4'
+defaults write com.apple.TextEdit PlainTextEncoding -int 4
+defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 
 # Enable the debug menu in Disk Utility
-execute 'defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true'
-execute 'defaults write com.apple.DiskUtility advanced-image-options -bool true'
+defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
+defaults write com.apple.DiskUtility advanced-image-options -bool true
 
 
 #---------------------------------------------------------------------#
@@ -589,7 +549,7 @@ execute 'defaults write com.apple.DiskUtility advanced-image-options -bool true'
 #---------------------------------------------------------------------#
 
 # Prevent Photos from opening automatically when devices are plugged in
-execute 'defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true'
+defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 
 
 #---------------------------------------------------------------------#

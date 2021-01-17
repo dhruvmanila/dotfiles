@@ -2,33 +2,41 @@
 declare -i exitcode
 exitcode=0
 
-# dotfiles directory
+export PS4="\e[1m==> \e[0m"
+
+BOLD="\e[1m"
+RESET_ALL="\e[0m"
+GREEN="\e[32m"
+RED="\e[35m"
+
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
 DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
 HOMEBREW_INSTALL_LINK="https://raw.githubusercontent.com/Homebrew/install/master/install.sh"
+GIT_COMPLETION_INSTALL_LINK="https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+VIM_PLUG_INSTALL_LINK="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 
 # -----------------------------------------------------
 
 # If missing, download and extract the dotfiles repository
-if [ ! -d "${DOTFILES_DIRECTORY}" ]; then
-    printf "\n$(tput setaf 7)Downloading dotfiles...\033[m\n"
+if [[ ! -d "${DOTFILES_DIRECTORY}" ]]; then
+    echo -e "\n${BOLD}==> Downloading dotfiles... ${RESET_ALL}"
     mkdir -p "${DOTFILES_DIRECTORY}"
 
     # Get the tarball
     if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}"; then
-        printf "$(tput setaf 64)✓ Successfully downloaded the dotfiles $(tput sgr0)\n"
+        echo -e "${GREEN}✓ Successfully downloaded the dotfiles ${RESET_ALL}"
     else
-        printf "$(tput setaf 1)x Failed to download the dotfiles $(tput sgr0)\n"
+        echo -e "${RED}x Failed to download the dotfiles ${RESET_ALL}"
         exit 1
     fi
 
     # Extract to the dotfiles directory
     tar -zxf "${HOME}/dotfiles.tar.gz" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
     if [ -d "${DOTFILES_DIRECTORY}" ]; then
-        printf "$(tput setaf 64)✓ Successfully extracted the dotfiles $(tput sgr0)\n"
+        echo -e "${GREEN}✓ Successfully extracted the dotfiles ${RESET_ALL}"
     else
-        printf "$(tput setaf 1)x Failed to extract the dotfiles $(tput sgr0)\n"
+        echo -e "${RED}x Failed to extract the dotfiles ${RESET_ALL}"
         exit 1
     fi
 
@@ -38,21 +46,18 @@ fi
 
 # ----------------------------------------------------
 
-source "${DOTFILES_DIRECTORY}/lib/utils" || { echo "Failed to source utils" >&2;exit 1; }
-source "${DOTFILES_DIRECTORY}/lib/brew"  || { echo "Failed to source brew" >&2;exit 1; }
+source "${DOTFILES_DIRECTORY}/lib/utils"
+source "${DOTFILES_DIRECTORY}/lib/brew"
 
-# change to the dotfiles directory
-# For some unknown reason it doesn't exist, exit!
-e_header "Changing to the ${DOTFILES_DIRECTORY} directory"
-cd "${DOTFILES_DIRECTORY}" || { echo "Failed to change directory to ${DOTFILES_DIRECTORY}" >&2;exit 1; }
-e_success "Done"
+header "Changing directory to ${DOTFILES_DIRECTORY}"
+cd "${DOTFILES_DIRECTORY}" || { error "Failed to change directory to ${DOTFILES_DIRECTORY}" >&2;exit 1; }
+success "Done"
 
 # ----------------------------------------------------
 
-# Before relying on Homebrew, check that packages can be compiled by making sure
-e_header "Checking for xcode command line tools..."
+header "Checking for xcode command line tools..."
 if ! xcode-select -p > /dev/null; then
-    printf "Installing xcode command line tools...\n"
+    header "Installing xcode command line tools..."
     xcode-select --install > /dev/null
 
     # wait until the tools are installed...
@@ -61,34 +66,34 @@ if ! xcode-select -p > /dev/null; then
     done
     # making sure we installed it
     if xcode-select -p > /dev/null; then
-        e_success "Successfully installed xcode command line tools."
+        success "Successfully installed xcode command line tools."
     else
-        e_error "Failed to install xcode command line tools."
+        error "Failed to install xcode command line tools."
         exit 1
     fi
 else
-    e_success "xcode command line tools already installed."
+    success "xcode command line tools already installed."
 fi
 
 # ----------------------------------------------------
 
 # Check for Homebrew
 # Install homebrew and all the requested packages
-e_header "Checking for homebrew..."
+header "Checking for homebrew..."
 if ! type_exists 'brew'; then
-    e_header "Installing Homebrew..."
-    bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"
+    header "Installing Homebrew..."
+    curl -fsSL ${HOMEBREW_INSTALL_LINK}
     if type_exists 'brew'; then
-        e_success "Successfully installed homebrew"
-        e_header "Installing packages..."
+        success "Successfully installed homebrew"
+        header "Installing packages..."
         run_brew
     else
-        e_error "Failed to install homebrew."
+        error "Failed to install homebrew."
         exit 1
     fi
 else
-    e_success "Homebrew already installed."
-    e_header "Updating packages..."
+    success "Homebrew already installed."
+    header "Updating packages..."
     run_brew
 fi
 
@@ -97,101 +102,94 @@ fi
 # Check for git
 # Git will be installed with xcode command line tools. If not
 # then install with homebrew
-e_header "Checking for git..."
+header "Checking for git..."
 if ! type_exists 'git'; then
-    e_header "Updating Homebrew..."
-    brew update > /dev/null
-    e_success "Homebrew updated"
-    e_header "Installing Git..."
+    header "Updating Homebrew..."
+    brew update
+    header "Installing Git with Homebrew..."
     brew install git
     if type_exists 'git'; then
-        e_success "Successfully installed git."
+        success "Successfully installed git."
     else
-        e_error "Failed to install git."
+        error "Failed to install git."
         exit 1
     fi
 else
-    e_success "Git already installed."
+    success "Git already installed."
 fi
 
 # ----------------------------------------------------
 
 # Initialize the git repository if it's missing
 # Necessary only if it's a fresh install
+header "Checking for git repository..."
 if ! is_git_repo; then
+    header "Initializing git repository..."
+    set -x
+    git init
+    git remote add origin "${DOTFILES_GIT_REMOTE}"
+    git fetch --all
+    git reset --hard FETCH_HEAD
+    git clean -fd
+    git pull --rebase --set-upstream origin master
+    git submodule update --recursive --init
+    set +x
 
-    e_header "Initializing git repository..."
-    git init -q || exit 1
-    e_success "Initialized git repository"
-    git remote add origin "${DOTFILES_GIT_REMOTE}" > /dev/null
-    e_success "Added the remote repository as origin"
-    git fetch -q --all || exit 1
-    e_success "Fetched everything from the remote"
-    git reset -q --hard FETCH_HEAD || exit 1
-    e_success "Reset HEAD branch to master"
-    git clean -qfd || exit 1
-    e_success "Cleaned up untracked files"
-    git pull -q --rebase --set-upstream origin master || exit 1
-    e_success "Pulled down all the files from the remote"
-    git submodule -q update --recursive --init || exit 1
-    e_success "Initialized and updated all the submodules"
-
-    e_header "Checking for git repository..."
     if is_git_repo; then
-        e_success "Successfully initialized the git repository"
+        success "Successfully initialized the git repository."
     else
-        e_error "Failed to initialized the git repository"
+        error "Failed to initialized the git repository."
         exit 1
     fi
+else
+    success "Git repository already initialized."
 fi
 
 
 # ----------------------------------------------------
 
 # Download Git Auto-Completion
-e_header "Checking for git-completion..."
-if [ ! -e "${HOME}/.git-completion.bash" ]; then
-    curl -fsSL https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash -o "${HOME}/.git-completion.bash"
+header "Checking for git-completion..."
+if [[ ! -e "${HOME}/.git-completion.bash" ]]; then
+    curl -fsSL $GIT_COMPLETION_INSTALL_LINK -o "${HOME}/.git-completion.bash"
     if [ -f "${HOME}/.git-completion.bash" ]; then
-        e_success "Successfully downloaded git completion for bash."
+        success "Successfully downloaded git completion for bash."
     else
-        e_error "Failed to download git completion for bash."
+        error "Failed to download git completion for bash."
         exitcode=1
     fi
 else
-    e_success "Git completion already downloaded."
+    success "Git completion already downloaded."
 fi
 
-# ----------------------------------------------------
 
+# ----------------------------------------------------
 
 # Download vim plugin manager
-e_header "Checking for vim-plug..."
-if [ ! -e "${HOME}/dotfiles/vim/autoload" ]; then
-    curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs \
-        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    if [ -f "${HOME}/.vim/autoload/plug.vim" ]; then
-        e_success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
+header "Checking for vim-plug..."
+if [[ ! -e "${HOME}/dotfiles/vim/autoload" ]]; then
+    curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs $VIM_PLUG_INSTALL_LINK
+    if [[ -f "${HOME}/.vim/autoload/plug.vim" ]]; then
+        success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
     else
-        e_error "Failed to download vim-plug."
+        error "Failed to download vim-plug."
         exitcode=1
     fi
 else
-    e_success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
+    success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
 fi
 
 
 # ----------------------------------------------------
 
-link() {
-
+function link() {
     # Force create/replace the symlink.
-    e_header "Creating symlink to ${2} in ${HOME} directory..."
+    header "Creating symlink to ${2} in ${HOME} directory..."
     if ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"; then
-        e_success "Successfully created symlink at ${HOME}/${2}"
+        success "Successfully created symlink at ${HOME}/${2}"
         return 0
     else
-        e_error "Failed to create symlink for ${1}"
+        error "Failed to create symlink for ${1}"
         return 1
     fi
 }
@@ -199,9 +197,9 @@ link() {
 # ----------------------------------------------------
 
 
-mirrorfiles() {
+function mirrorfiles() {
     # all the private/extra files should go in a folder named 'private'
-    if [ -d "${DOTFILES_DIRECTORY}/private" ]; then
+    if [[ -d "${DOTFILES_DIRECTORY}/private" ]]; then
         link "private/gitconfig"      ".gitconfig"
     fi
 
@@ -209,8 +207,12 @@ mirrorfiles() {
     cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
 
     # Force remove the vim directory if it's already there.
-    if [ -e "${HOME}/.vim" ]; then
+    if [[ -e "${HOME}/.vim" ]]; then
         rm -rf "${HOME}/.vim"
+    fi
+
+    if [[ ! -d "${HOME}/.gnupg" ]]; then
+        mkdir "${HOME}/.gnupg"
     fi
 
     # Create the necessary symbolic links between the `dotfiles` and `HOME`
@@ -225,11 +227,10 @@ mirrorfiles() {
     link "vim"                        ".vim"                   || exitcode=1
     link "python/flake8"              ".config/flake8"         || exitcode=1
     link "python/pylintrc"            ".pylintrc"              || exitcode=1
-    # Directory doesn't exist in the CI run
-    link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=0
-    link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=0
+    link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=1
+    link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
 
-    e_success "Dotfiles update complete!"
+    success "Dotfiles update complete!"
 }
 
 # ----------------------------------------------------
@@ -252,9 +253,9 @@ seek_confirmation "Warning: This step may modify your OS X system defaults."
 
 if is_confirmed; then
     bash "${DOTFILES_DIRECTORY}/lib/osxdefaults"
-    e_success "OS X settings updated! You may need to restart."
+    success "osx settings updated! You may need to restart."
 else
-    printf "Skipped OS X settings update.\n"
+    printf "Skipped osx settings update.\n"
 fi
 
 # ----------------------------------------------------
