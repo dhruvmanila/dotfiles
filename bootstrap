@@ -20,23 +20,23 @@ VIM_PLUG_INSTALL_LINK="https://raw.githubusercontent.com/junegunn/vim-plug/maste
 
 # If missing, download and extract the dotfiles repository
 if [[ ! -d "${DOTFILES_DIRECTORY}" ]]; then
-    echo -e "\n${BOLD}==> Downloading dotfiles... ${RESET_ALL}"
+    printf "\n%b==> Downloading dotfiles... %b\n" "$BOLD" "$RESET_ALL"
     mkdir -p "${DOTFILES_DIRECTORY}"
 
     # Get the tarball
     if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}"; then
-        echo -e "${GREEN}✓ Successfully downloaded the dotfiles ${RESET_ALL}"
+        printf "%b✓ Successfully downloaded the dotfiles %b\n" "$GREEN" "$RESET_ALL"
     else
-        echo -e "${RED}x Failed to download the dotfiles ${RESET_ALL}"
+        printf "%bx Failed to download the dotfiles %b\n" "$RED" "$RESET_ALL"
         exit 1
     fi
 
     # Extract to the dotfiles directory
     tar -zxf "${HOME}/dotfiles.tar.gz" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
     if [ -d "${DOTFILES_DIRECTORY}" ]; then
-        echo -e "${GREEN}✓ Successfully extracted the dotfiles ${RESET_ALL}"
+        printf "%b✓ Successfully extracted the dotfiles %b\n" "$GREEN" "$RESET_ALL"
     else
-        echo -e "${RED}x Failed to extract the dotfiles ${RESET_ALL}"
+        printf "%bx Failed to extract the dotfiles %b\n" "$RED" "$RESET_ALL"
         exit 1
     fi
 
