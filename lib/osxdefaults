@@ -555,6 +555,7 @@ defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 #---------------------------------------------------------------------#
 #                    Kill affected applications                       #
 #---------------------------------------------------------------------#
+set +e
 
 for app in "Activity Monitor" \
 	"Address Book" \
