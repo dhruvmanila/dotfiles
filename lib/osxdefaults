@@ -573,5 +573,4 @@ for app in "Activity Monitor" \
 	killall "${app}" &> /dev/null
 done
 
-printf "\n"
-success "Done. Note that some of these changes require a logout/restart to take effect."
+printf "\nDone. Note that some of these changes require a logout/restart to take effect."
