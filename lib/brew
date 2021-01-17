@@ -9,11 +9,13 @@ function run_brew() {
         BREW_PREFIX=$(brew --prefix)
         export HOMEBREW_NO_AUTO_UPDATE=1
 
-        header "Updating Homebrew..."
-        brew update
-
-        header "Updating any existing Homebrew formulae..."
-        brew upgrade
+        # Only run the commands if we are not in CI
+        if [[ -z "$CI" ]]; then
+            header "Updating Homebrew..."
+            brew update
+            header "Updating any existing Homebrew formulae..."
+            brew upgrade
+        fi
 
         header "Checking status of desired Homebrew formulae..."
         local -a missing_formulae
