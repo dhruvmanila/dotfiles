@@ -90,7 +90,7 @@ function command_exists() {
 
 function check_dotfiles() {
   if [[ ! -d "${DOTFILES_DIRECTORY}" ]]; then
-    headers "Downloading dotfiles..."
+    header "Downloading dotfiles..."
     mkdir -p "${DOTFILES_DIRECTORY}"
     # Get the tarball
     if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}" > /dev/null; then
