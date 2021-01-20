@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Bash completions
-
 BREW_PREFIX="$(brew --prefix)"
+GIT_COMPLETION_PATH="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash"
 
 # Add tab completion for many Bash commands
 if which brew &> /dev/null && [ -r "${BREW_PREFIX}/etc/profile.d/bash_completion.sh" ]; then
@@ -13,12 +13,9 @@ elif [ -f "/etc/bash_completion" ]; then
 fi;
 
 # Git auto-complete
-if [ -f "${HOME}/.git-completion.bash" ]; then
-    source "${HOME}/.git-completion.bash"
+if [[ -r ${GIT_COMPLETION_PATH} ]]; then
+    source "${GIT_COMPLETION_PATH}"
 fi
 
-# GitHub Command line interface (gh) auto-complete
-if which gh > /dev/null; then
-    eval "$(gh completion -s bash)"
-fi
 
+unset BREW_PREFIX GIT_COMPLETION_PATH

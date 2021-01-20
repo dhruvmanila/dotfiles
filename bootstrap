@@ -1,130 +1,200 @@
 #!/usr/bin/env bash
-declare -i exitcode
-exitcode=0
+declare -i exitcode=0
 
+# Debug prompt
 export PS4="\e[1m==> \e[0m"
 
+# Dotfiles information
+DOTFILES_DIRECTORY="${HOME}/dotfiles"
+DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
+DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
+
+# Install links
+HOMEBREW_INSTALL_LINK="https://raw.githubusercontent.com/Homebrew/install/master/install.sh"
+GIT_COMPLETION_PATH="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash"
+GIT_COMPLETION_INSTALL_LINK="https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+VIM_PLUG_INSTALL_LINK="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+
+# Colors
 BOLD="\e[1m"
 RESET_ALL="\e[0m"
 GREEN="\e[32m"
 RED="\e[35m"
+YELLOW="\e[1;33m"
 
-DOTFILES_DIRECTORY="${HOME}/dotfiles"
-DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
-DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
-HOMEBREW_INSTALL_LINK="https://raw.githubusercontent.com/Homebrew/install/master/install.sh"
-GIT_COMPLETION_INSTALL_LINK="https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
-VIM_PLUG_INSTALL_LINK="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 
-# -----------------------------------------------------
+# ------------------------------------------------------------------ #
+#                        Utility functions                           #
+# ------------------------------------------------------------------ #
 
-# If missing, download and extract the dotfiles repository
-if [[ ! -d "${DOTFILES_DIRECTORY}" ]]; then
-    printf "\n%b==> Downloading dotfiles... %b\n" "$BOLD" "$RESET_ALL"
-    mkdir -p "${DOTFILES_DIRECTORY}"
+# Header logging
+function header() {
+    printf "\n%b==> %s %b\n" "$BOLD" "$@" "$RESET_ALL"
+}
 
-    # Get the tarball
-    if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}"; then
-        printf "%b✓ Successfully downloaded the dotfiles %b\n" "$GREEN" "$RESET_ALL"
-    else
-        printf "%b✗ Failed to download the dotfiles %b\n" "$RED" "$RESET_ALL"
-        exit 1
+# Success logging
+function success() {
+    printf "%b✓ %s %b\n" "$GREEN" "$@" "$RESET_ALL"
+}
+
+# Error logging
+function error() {
+    printf "%b✗ %s %b\n" "$RED" "$@" "$RESET_ALL"
+}
+
+# Warning logging
+function warning() {
+    printf "%b! %s %b\n" "$YELLOW" "$@" "$RESET_ALL"
+}
+
+# Ask for confirmation before proceeding
+function seek_confirmation() {
+    printf "\n"
+    warning "$@"
+    read -rp "Continue? (y/n) " -n 1
+    printf "\n"
+}
+
+# Test whether the result of an 'ask' is a confirmation
+function is_confirmed() {
+    if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+      return 0
     fi
+    return 1
+}
 
+ask() {
+  printf "%b[?] %s: %b" "$YELLOW" "$1" "$RESET_ALL"
+  read -r
+}
+
+# Test whether we're in a git repo
+function is_git_repo() {
+    git rev-parse --is-inside-work-tree &> /dev/null
+}
+
+# Test whether a command exists
+# $1 - cmd to test
+function command_exists() {
+    if command -v "$1" > /dev/null; then
+      return 0
+    fi
+    return 1
+}
+
+
+
+# ------------------------------------------------------------------ #
+#                          Check functions                           #
+# ------------------------------------------------------------------ #
+
+function check_dotfiles() {
+  if [[ ! -d "${DOTFILES_DIRECTORY}" ]]; then
+    headers "Downloading dotfiles..."
+    mkdir -p "${DOTFILES_DIRECTORY}"
+    # Get the tarball
+    if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}" > /dev/null; then
+      success "Successfully downloaded the dotfiles."
+    else
+      error "Failed to download the dotfiles."
+      exit 1
+    fi
     # Extract to the dotfiles directory
     tar -zxf "${HOME}/dotfiles.tar.gz" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
-    if [ -d "${DOTFILES_DIRECTORY}" ]; then
-        printf "%b✓ Successfully extracted the dotfiles %b\n" "$GREEN" "$RESET_ALL"
+    if [[ -d "${DOTFILES_DIRECTORY}" ]]; then
+      success "Successfully extracted the dotfiles."
     else
-        printf "%b✗ Failed to extract the dotfiles %b\n" "$RED" "$RESET_ALL"
-        exit 1
+      error "Failed to extract the dotfiles."
+      exit 1
     fi
-
     # Remove the tarball
     rm -rf "${HOME}/dotfiles.tar.gz"
-fi
+  fi
+}
 
-# ----------------------------------------------------
 
-source "${DOTFILES_DIRECTORY}/lib/utils"
-source "${DOTFILES_DIRECTORY}/lib/brew"
-
-header "Changing directory to ${DOTFILES_DIRECTORY}"
-cd "${DOTFILES_DIRECTORY}" || { error "Failed to change directory to ${DOTFILES_DIRECTORY}" >&2;exit 1; }
-success "Done"
-
-# ----------------------------------------------------
-
-header "Checking for xcode command line tools..."
-if ! xcode-select -p > /dev/null; then
+function check_xcode_command_line_tools() {
+  header "Checking for xcode command line tools..."
+  if ! xcode-select -p > /dev/null; then
     header "Installing xcode command line tools..."
     xcode-select --install > /dev/null
-
     # wait until the tools are installed...
     until xcode-select -p > /dev/null; do
-        sleep 5;
+      sleep 5;
     done
     # making sure we installed it
     if xcode-select -p > /dev/null; then
-        success "Successfully installed xcode command line tools."
+      success "Successfully installed xcode command line tools."
     else
-        error "Failed to install xcode command line tools."
-        exit 1
+      error "Failed to install xcode command line tools."
+      exit 1
     fi
-else
+  else
     success "xcode command line tools already installed."
-fi
+  fi
+}
 
-# ----------------------------------------------------
 
-# Check for Homebrew
-# Install homebrew and all the requested packages
-header "Checking for homebrew..."
-if ! type_exists 'brew'; then
+function check_homebrew() {
+  header "Checking for homebrew..."
+  if ! command_exists "brew"; then
     header "Installing Homebrew..."
-    curl -fsSL ${HOMEBREW_INSTALL_LINK}
+    /bin/bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"
     if type_exists 'brew'; then
-        success "Successfully installed homebrew"
-        header "Installing packages..."
-        run_brew
+      success "Successfully installed homebrew."
     else
-        error "Failed to install homebrew."
-        exit 1
+      error "Failed to install homebrew."
+      exit 1
     fi
-else
+  else
     success "Homebrew already installed."
-    header "Updating packages..."
-    run_brew
-fi
+    # Only run the update and upgrade commands if we are not in CI and
+    # if homebrew was already installed.
+    if [[ -z "$CI" ]]; then
+      header "Updating Homebrew..."
+      brew update && success "Done"
+      header "Updating any existing Homebrew formulae..."
+      brew upgrade && success "Done"
+    fi
+  fi
+  header "Installing homebrew bundle tap..."
+  brew tap homebrew/bundle && success "Done"
+  header "Installing everything from Brewfile..."
+  brew bundle install \
+    --verbose \
+    --no-lock \
+    --cleanup \
+    --file ~/dotfiles/lib/Brewfile \
+    && success "Done"
+  header "Cleaning up..."
+  brew cleanup && success "Done"
+}
 
-# ----------------------------------------------------
 
-# Check for git
-# Git will be installed with xcode command line tools. If not
-# then install with homebrew
-header "Checking for git..."
-if ! type_exists 'git'; then
+function check_git() {
+  header "Checking for git..."
+  if ! command_exists "git"; then
     header "Updating Homebrew..."
     brew update
     header "Installing Git with Homebrew..."
     brew install git
-    if type_exists 'git'; then
-        success "Successfully installed git."
+    if command_exists "git"; then
+      success "Successfully installed git."
     else
-        error "Failed to install git."
-        exit 1
+      error "Failed to install git."
+      exit 1
     fi
-else
+  else
     success "Git already installed."
-fi
+  fi
+}
 
-# ----------------------------------------------------
 
-# Initialize the git repository if it's missing
-# Necessary only if it's a fresh install
-header "Checking for git repository..."
-if ! is_git_repo; then
+function check_git_repository() {
+  header "Checking for git repository..."
+  if ! is_git_repo; then
     header "Initializing git repository..."
+
     set -x
     git init
     git remote add origin "${DOTFILES_GIT_REMOTE}"
@@ -136,127 +206,284 @@ if ! is_git_repo; then
     set +x
 
     if is_git_repo; then
-        success "Successfully initialized the git repository."
+      success "Successfully initialized the git repository."
     else
-        error "Failed to initialized the git repository."
-        exit 1
+      error "Failed to initialized the git repository."
+      exit 1
     fi
-else
+  else
     success "Git repository already initialized."
-fi
+  fi
+}
 
 
-# ----------------------------------------------------
-
-# Download Git Auto-Completion
-header "Checking for git-completion..."
-if [[ ! -e "${HOME}/.git-completion.bash" ]]; then
-    curl -fsSL $GIT_COMPLETION_INSTALL_LINK -o "${HOME}/.git-completion.bash"
-    if [ -f "${HOME}/.git-completion.bash" ]; then
+function check_git_auto_completion() {
+  header "Checking for git-completion..."
+  if [[ ! -f $GIT_COMPLETION_PATH ]]; then
+    if [[ ! -f "${HOME}/.git-completion.bash" ]]; then
+      curl -fsSL $GIT_COMPLETION_INSTALL_LINK -o "${HOME}/.git-completion.bash"
+      if [[ -f "${HOME}/.git-completion.bash" ]]; then
         success "Successfully downloaded git completion for bash."
-    else
+      else
         error "Failed to download git completion for bash."
         exitcode=1
+      fi
+    else
+      success "Git completion already downloaded."
     fi
-else
-    success "Git completion already downloaded."
-fi
+  else
+    success "Source git completion from ${GIT_COMPLETION_PATH}"
+  fi
+}
 
 
-# ----------------------------------------------------
-
-# Download vim plugin manager
-header "Checking for vim-plug..."
-if [[ ! -e "${HOME}/dotfiles/vim/autoload" ]]; then
+function check_vim_plug() {
+  header "Checking for vim-plug..."
+  if [[ ! -d "${HOME}/dotfiles/vim/autoload" ]]; then
     curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs $VIM_PLUG_INSTALL_LINK
     if [[ -f "${HOME}/.vim/autoload/plug.vim" ]]; then
-        success "Successfully downloaded vim-plug. Use :PlugInstall to install the plugins."
+      success "Successfully downloaded vim-plug."
+      header "Downloading vim plugins..."
+      vim +PlugInstall
     else
-        error "Failed to download vim-plug."
-        exitcode=1
+      error "Failed to download vim-plug."
+      exitcode=1
     fi
-else
+  else
     success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
-fi
+  fi
+}
 
 
-# ----------------------------------------------------
+function check_python() {
+  if ! command_exists "pyenv"; then
+    warning "pyenv is not installed. Make sure pyenv and its dependencies are installed."
+    return
+  fi
+  local pyenv_global_python="3.9.1"
+  header "Checking for Python..."
+  if [[ "$(pyenv global)" != "${pyenv_global_python}" ]]; then
+    header "Installing Python ${pyenv_global_python}..."
+    pyenv install --skip-existing ${pyenv_global_python}
+    header "Making ${pyenv_global_python} as the global Python version..."
+    pyenv global ${pyenv_global_python} && success "Done."
+  fi
+  header "Rehashing pyenv shims..."
+  pyenv rehash && success "Done."
+  header "Upgrading pip..."
+  "$(pyenv root)/versions/${pyenv_global_python}/bin/pip" install --upgrade pip
+
+  header "Collecting packages from ${DOTFILES_DIRECTORY}/lib/requirements.txt..."
+  local -a pip_packages
+  while IFS= read -r line; do
+    pip_packages+=("$line");
+  done < "${DOTFILES_DIRECTORY}/lib/requirements.txt"
+  success "Collected ${#pip_packages[@]} packages."
+
+  header "Installing/Upgrading collected packages..."
+  for package in "${pip_packages[@]}"; do
+    header "Installing/Upgrading ${package}..."
+    "$(pyenv root)/versions/${pyenv_global_python}/bin/pip" install --upgrade "${package}"
+    success "Successfully installed ${package}."
+  done
+}
+
+
+function check_ssh() {
+  header "Checking for SSH keys..."
+  if [[ ! -d "${HOME}/.ssh" ]]; then
+    mkdir "${HOME}/.ssh" && success "Created ~/.ssh directory."
+  fi
+
+  local ssh_algorithm="ed25519"
+  if [[ -f "${HOME}/.ssh/id_${ssh_algorithm}.pub" ]]; then
+    ssh -T git@github.com &> /dev/null
+    [[ $? -eq 1 ]] && success "GitHub SSH is already authenticated."
+    return
+  else
+    warning "No SSH keys found."
+  fi
+
+  link "assets/ssh/config" ".ssh/config"
+
+  header "Generating SSH keys..."
+  ask "Please provide an email address"
+  ssh-keygen -t "$ssh_algorithm" -C "$REPLY"
+
+  seek_confirmation "Do you want to add the SSH key to the ssh-agent?"
+  if is_confirmed; then
+    header "Adding SSH key to the ssh-agent..."
+    eval "$(ssh-agent -s)"
+    ssh-add -K "${HOME}/.ssh/id_${ssh_algorithm}"
+  fi
+
+  header "Adding public SSH key to the GitHub account..."
+  pbcopy < "${HOME}/.ssh/id_${ssh_algorithm}.pub" \
+    && success "Copied public SSH key to clipboard. Please add it to GitHub.com..."
+  open "https://github.com/settings/ssh"
+  while true; do
+    ssh -T git@github.com &> /dev/null
+    if [[ $? -eq 1 ]]; then
+      success "Authentication successful."
+      break
+    else
+      error "Failed to authenticate. Please try again in 5 seconds..."
+    fi
+    sleep 5
+  done
+}
+
+
+# ------------------------------------------------------------------ #
+#                         Symlink dotfiles                           #
+# ------------------------------------------------------------------ #
+
+function backup_dotfiles() {
+  local backup_dir
+  backup_dir="${HOME}/dotfiles_$(date +"%Y_%m_%dT%H_%M_%S").backup"
+  mkdir "$backup_dir"
+
+  for location in "${HOME}/.bash_profile" \
+    "${HOME}/.bashrc" \
+    "${HOME}/.gitconfig" \
+    "${HOME}/.gnupg" \
+    "${HOME}/.inputrc" \
+    "${HOME}/.ssh" \
+    "${HOME}/.tmux.conf" \
+    "${HOME}/.vim"; do
+    if [[ -f $location || -d $location ]]; then
+      mv "$location" "$backup_dir"
+    fi
+  done
+}
+
 
 function link() {
-    # Force create/replace the symlink.
-    header "Creating symlink to ${2} in ${HOME} directory..."
-    if ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"; then
-        success "Successfully created symlink at ${HOME}/${2}"
-        return 0
-    else
-        error "Failed to create symlink for ${1}"
-        return 1
-    fi
+  # Force create/replace the symlink.
+  header "Creating symlink to ${2} in ${HOME} directory..."
+  if ln -fs "${DOTFILES_DIRECTORY}/${1}" "${HOME}/${2}"; then
+    success "Successfully created symlink at ${HOME}/${2}"
+    return 0
+  else
+    error "Failed to create symlink for ${1}"
+    return 1
+  fi
 }
 
-# ----------------------------------------------------
 
+function mirror_files() {
+  backup_dotfiles
+  # all the private/extra files should go in a folder named 'private'
+  if [[ -d "${DOTFILES_DIRECTORY}/private" ]]; then
+    link "private/gitconfig"        ".gitconfig"
+  fi
 
-function mirrorfiles() {
-    # all the private/extra files should go in a folder named 'private'
-    if [[ -d "${DOTFILES_DIRECTORY}/private" ]]; then
-        link "private/gitconfig"      ".gitconfig"
-    fi
+  # copy hushlogin as we are not going to be updating it
+  cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
 
-    # copy hushlogin as we are not going to be updating it
-    cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
+  if [[ ! -d "${HOME}/.gnupg" ]]; then
+    mkdir "${HOME}/.gnupg"
+  fi
 
-    # Force remove the vim directory if it's already there.
-    if [[ -e "${HOME}/.vim" ]]; then
-        rm -rf "${HOME}/.vim"
-    fi
+  if [[ ! -d "${HOME}/.ssh" ]]; then
+    mkdir "${HOME}/.ssh"
+  fi
 
-    if [[ ! -d "${HOME}/.gnupg" ]]; then
-        mkdir "${HOME}/.gnupg"
-    fi
+  # Create the necessary symbolic links between the `dotfiles` and `HOME`
+  # directory. The `bash_profile` sources other files directly from the
+  # `dotfiles` repository.
+  link "bash/bashrc"                ".bashrc"                || exitcode=1
+  link "bash/bash_profile"          ".bash_profile"          || exitcode=1
+  link "assets/inputrc"             ".inputrc"               || exitcode=1
+  link "vim/vimrc"                  ".vimrc"                 || exitcode=1
+  link "tmux/tmux.conf"             ".tmux.conf"             || exitcode=1
+  link "assets/gitignore"           ".gitignore"             || exitcode=1
+  link "vim"                        ".vim"                   || exitcode=1
+  link "python/flake8"              ".config/flake8"         || exitcode=1
+  link "python/pylintrc"            ".pylintrc"              || exitcode=1
+  link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=1
+  link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
 
-    # Create the necessary symbolic links between the `dotfiles` and `HOME`
-    # directory. The `bash_profile` sources other files directly from the
-    # `dotfiles` repository.
-    link "bash/bashrc"                ".bashrc"                || exitcode=1
-    link "bash/bash_profile"          ".bash_profile"          || exitcode=1
-    link "assets/inputrc"             ".inputrc"               || exitcode=1
-    link "vim/vimrc"                  ".vimrc"                 || exitcode=1
-    link "tmux/tmux.conf"             ".tmux.conf"             || exitcode=1
-    link "assets/gitignore"           ".gitignore"             || exitcode=1
-    link "vim"                        ".vim"                   || exitcode=1
-    link "python/flake8"              ".config/flake8"         || exitcode=1
-    link "python/pylintrc"            ".pylintrc"              || exitcode=1
-    link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=1
-    link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
-
-    success "Dotfiles update complete!"
+  success "Dotfiles update complete!"
 }
 
-# ----------------------------------------------------
 
-# Ask before potentially overwriting files
-seek_confirmation "Warning: This step may overwrite your existing dotfiles."
+# ------------------------------------------------------------------ #
+#                         MacOS settings                             #
+# ------------------------------------------------------------------ #
 
-if is_confirmed; then
-    mirrorfiles
+function update_macos_settings() {
+  header "Updating macos settings..."
+  bash "${DOTFILES_DIRECTORY}/lib/osxdefaults"
+}
+
+
+function update_macos_dock() {
+  if ! command_exists "dockutil"; then
+    header "Installing dockutil..."
+    brew install --formula dockutil
+  fi
+  header "Updating macos dock applications..."
+  dockutil --remove all && success "Removed all applications"
+  for app in "/Applications/Safari.app" \
+    "/Applications/Firefox.app" \
+    "/Applications/PyCharm CE.app" \
+    "/Applications/Visual Studio Code.app" \
+    "/Applications/iTerm.app" \
+    "/System/Applications/Notes.app" \
+    "/Applications/Mark Text.app" \
+    "/System/Applications/Music.app" \
+    "/System/Applications/Books.app" \
+    "/Applications/Slack.app" \
+    "/Applications/Discord.app"; do
+    dockutil --add "$app" --section apps && success "Added ${app}"
+  done
+  dockutil \
+    --add "${HOME}/Downloads" \
+    --view grid \
+    --display folder \
+    --sort dateadded \
+    --section others && success "Added ~/Downloads folder"
+}
+
+
+# ------------------------------------------------------------------ #
+#                         Main entrypoint                            #
+# ------------------------------------------------------------------ #
+
+function main() {
+  check_dotfiles
+
+  header "Changing directory to ${DOTFILES_DIRECTORY}"
+  cd "${DOTFILES_DIRECTORY}" || { error "Failed to change directory." >&2;exit 1; }
+  success "Done"
+
+  check_xcode_command_line_tools
+  check_homebrew
+  check_git
+  check_git_repository
+  check_git_auto_completion
+  check_vim_plug
+  check_python
+  check_ssh
+
+  seek_confirmation "Warning: This step may overwrite your existing dotfiles."
+  if is_confirmed; then
+    mirror_files
+    # shellcheck source=./bash/bash_profile
     source "${HOME}/.bash_profile"
-else
+  else
     printf "Continuing...\n"
-fi
+  fi
 
-
-# ----------------------------------------------------
-
-# Ask before potentially overwriting OS X defaults
-seek_confirmation "Warning: This step may modify your OS X system defaults."
-
-if is_confirmed; then
-    bash "${DOTFILES_DIRECTORY}/lib/osxdefaults"
-    success "osx settings updated! You may need to restart."
-else
+  seek_confirmation "Warning: This step may modify your OS X system defaults."
+  if is_confirmed; then
+    update_macos_settings
+    update_macos_dock
+  else
     printf "Skipped osx settings update.\n"
-fi
+  fi
+}
 
-# ----------------------------------------------------
+main
 exit ${exitcode}

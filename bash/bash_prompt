@@ -52,7 +52,7 @@ function __git_prompt() {
 
 
 function __build_prompt() {
-  local EXIT="$?"
+  local -i EXIT="$?"
 
   local -r RESET="\[\e[0m\]";
   local -r RED="\[\e[0;31m\]";
@@ -62,7 +62,8 @@ function __build_prompt() {
   local -r WHITE="\[\e[1;37m\]";
 
   PS1="\n"
-  
+
+  # --------------- First line -----------------
   # Prompt - [exitcode] [(root)] [@hostname] pwd [on branch [status]]
   # Show the exit code if it is not 0
   if [[ $EXIT -ne 0 ]]; then
@@ -87,9 +88,19 @@ function __build_prompt() {
   # Git repository details
   PS1+="\$(__git_prompt \"${WHITE} on ${YELLOW}\" \"${BLUE}\")";
 
-  # Prompt character '$ '
-  PS1+="\n${WHITE}\$ ${RESET}"
+  # --------------- Second line -----------------
+  # Line break
+  PS1+="\n"
 
+  # Python virtual environment name
+  if [[ -n $VIRTUAL_ENV ]]; then
+    PS1+="${WHITE}(${BLUE}$(basename "$VIRTUAL_ENV")${WHITE}) "
+  fi
+
+  # Prompt character '$ '
+  PS1+="${WHITE}\$ ${RESET}"
+
+  # ---------------------------------------------
   # Continuition prompt
   PS2="\[${YELLOW}\]→ \[${RESET}\]";
 

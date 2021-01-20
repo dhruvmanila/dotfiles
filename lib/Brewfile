@@ -1,0 +1,93 @@
+# Brewfile
+#
+# Organized as:
+#
+# - Necessary taps
+# - Brew formulae
+# - Casks
+
+# Set argument for all `brew install --cask` commands
+cask_args appdir: "~/Applications"
+
+
+tap "heroku/brew"
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+tap "homebrew/core"
+
+
+# Shells
+
+brew "bash"
+brew "bash-completion@2"           # Bash completion
+brew "bashdb"                      # Bash shell debugger
+
+
+# Programming languages
+
+# Pre-requisites for pyenv Python install
+brew "openssl@1.1"
+brew "readline"
+brew "sqlite"
+brew "xz"
+brew "zlib"
+
+brew "pyenv"
+brew "pyenv-virtualenv"
+brew "node"
+
+
+# Editors
+
+brew "vim"
+
+
+# CLI utilities
+
+brew "adns"
+brew "bdw-gc"
+brew "broot"
+brew "datamash"
+brew "dockutil"
+brew "fd"
+brew "fzf"
+brew "gh"
+brew "gnupg"
+brew "htop"
+brew "hyperfine"
+brew "lnav"
+brew "mackup"
+brew "nnn"
+brew "pinentry-mac"
+brew "pup"
+brew "rename"
+brew "ripgrep"
+brew "shellcheck"
+brew "stow"
+brew "stress"
+brew "tldr"
+brew "tmux"
+brew "tree"
+brew "heroku/brew/heroku"
+
+
+# Fonts
+
+cask "font-fira-code-nerd-font"
+cask "font-jetbrains-mono"
+
+
+# GUI Editors
+
+cask "mark-text"                   # Markdown editor
+cask "racket"
+
+
+# General casks
+
+cask "firefox"
+cask "iterm2"
+cask "virtualbox"
+cask "vagrant"
+cask "wireshark"

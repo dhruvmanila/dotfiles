@@ -4,5 +4,5 @@
 [[ $- == *i* ]] || return
 
 # shellcheck source=/dev/null
-[ -n "$PS1" ] && source "${HOME}/.bash_profile";
+[[ -n "$PS1" ]] && source "${HOME}/.bash_profile";
 

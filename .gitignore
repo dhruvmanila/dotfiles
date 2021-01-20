@@ -24,3 +24,5 @@ vim/autoload/*
 
 # Ignore the swap files
 vim/swaps/*
+
+.vagrant
