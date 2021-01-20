@@ -24,6 +24,33 @@ export LC_ALL='en_US.UTF-8';
 # Still need to fix it in tmux
 export TERM=xterm-256color
 
+# Highlight section titles in manual pages.
+# Colors for less
+# ------ ANSI codes ------
+# Black            \e[0;30m
+# Blue             \e[0;34m
+# Green            \e[0;32m
+# Cyan             \e[0;36m
+# Red              \e[0;31m
+# Purple           \e[0;35m
+# Brown            \e[0;33m
+# Gray             \e[0;37m
+# Dark Gray        \e[1;30m
+# Light Blue       \e[1;34m
+# Light Green      \e[1;32m
+# Light Cyan       \e[1;36m
+# Light Red        \e[1;31m
+# Light Purple     \e[1;35m
+# Yellow           \e[1;33m
+# White            \e[1;37m
+export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
+export LESS_TERMCAP_md=$'\e[1;36m'     # begin blink
+export LESS_TERMCAP_me=$'\e[0m'        # reset bold/blink
+export LESS_TERMCAP_so=$'\e[01;33m'    # begin reverse video
+export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
+export LESS_TERMCAP_us=$'\e[1;32m'     # begin underline
+export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
+
 # LESS defaults
 # X - leave content on-screen
 # F - quit automatically if less than one screenfull

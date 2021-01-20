@@ -115,15 +115,15 @@ function check_dotfiles() {
 
 function check_xcode_command_line_tools() {
   header "Checking for xcode command line tools..."
-  if ! xcode-select -p > /dev/null; then
+  if ! xcode-select -p &> /dev/null; then
     header "Installing xcode command line tools..."
     xcode-select --install > /dev/null
     # wait until the tools are installed...
-    until xcode-select -p > /dev/null; do
+    until xcode-select -p &> /dev/null; do
       sleep 5;
     done
     # making sure we installed it
-    if xcode-select -p > /dev/null; then
+    if xcode-select -p &> /dev/null; then
       success "Successfully installed xcode command line tools."
     else
       error "Failed to install xcode command line tools."
@@ -140,7 +140,7 @@ function check_homebrew() {
   if ! command_exists "brew"; then
     header "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"
-    if type_exists 'brew'; then
+    if command_exists 'brew'; then
       success "Successfully installed homebrew."
     else
       error "Failed to install homebrew."
