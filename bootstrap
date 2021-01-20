@@ -139,7 +139,17 @@ function check_homebrew() {
   header "Checking for homebrew..."
   if ! command_exists "brew"; then
     header "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"
+    # Install performs `brew update` but the homebrew-core tap is a shallow clone
+    # https://github.com/Homebrew/brew/pull/9447
+    # So, if the command fails and if the repository is shallow, we will run the
+    # recommended command
+    if ! /bin/bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"; then
+      error "Failure occured during installation. Checking if homebrew-core is a shallow clone..."
+      if [[ -f "$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core/.git/shallow" ]]; then
+        header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
+        git -C "$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core" fetch --unshallow
+      fi
+    fi
     if command_exists 'brew'; then
       success "Successfully installed homebrew."
     else
@@ -148,15 +158,12 @@ function check_homebrew() {
     fi
   else
     success "Homebrew already installed."
-    # Only run the update and upgrade commands if we are not in CI and
-    # if homebrew was already installed.
-    if [[ -z "$CI" ]]; then
-      header "Updating Homebrew..."
-      brew update && success "Done"
-      header "Updating any existing Homebrew formulae..."
-      brew upgrade && success "Done"
-    fi
   fi
+  header "Updating Homebrew..."
+  brew update && success "Done"
+  header "Updating any existing Homebrew formulae..."
+  brew upgrade && success "Done"
+
   header "Installing homebrew bundle tap..."
   brew tap homebrew/bundle && success "Done"
   header "Installing everything from Brewfile..."

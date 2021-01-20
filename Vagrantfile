@@ -24,8 +24,5 @@ Vagrant.configure("2") do |config|
 
     # Customize the number of cpus on the VM:
     vb.cpus = 2
-
-    # Enable clipboard from host to guest
-    vb.customize ["modifyvm", :id, "--clipboard-mode", "hosttoguest"]
   end
 end
