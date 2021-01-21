@@ -32,7 +32,7 @@
    ignore = untracked
 [submodule "vim/plugged/ale"]
    path = vim/plugged/ale
-   url = https://github.com/w0rp/ale
+   url = https://github.com/dense-analysis/ale
    ignore = untracked
 [submodule "vim/plugged/lightline-ale"]
    path = vim/plugged/lightline-ale
