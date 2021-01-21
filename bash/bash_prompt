@@ -1,111 +1,138 @@
 #!/usr/bin/env bash
 
+source /usr/local/opt/gitstatus/gitstatus.plugin.sh
 
-function __git_prompt() {
-	local s='';
-	local branch_name='';
+# Sets GITSTATUS_PROMPT to reflect the state of the current git repository.
+# The value is empty if not in a git repository. Forwards all arguments to
+# gitstatus_query.
+#
+# Example value of GITSTATUS_PROMPT: master ⇣42⇡42 ⇠42⇢42 *42 merge ~42 +42 !42 ?42
+#
+#   master  current branch
+#      ⇣42  local branch is 42 commits behind the remote
+#      ⇡42  local branch is 42 commits ahead of the remote
+#      ⇠42  local branch is 42 commits behind the push remote
+#      ⇢42  local branch is 42 commits ahead of the push remote
+#      *42  42 stashes
+#    merge  merge in progress
+#      ~42  42 merge conflicts
+#      +42  42 staged changes
+#      !42  42 unstaged changes
+#      ?42  42 untracked files
+function gitstatus_prompt_update() {
+  gitstatus_query "$@"                  || return 1  # error
+  [[ "$VCS_STATUS_RESULT" == ok-sync ]] || return 0  # not a git repo
 
-	# Check if the current directory is in a Git repository.
-	git rev-parse --is-inside-work-tree &>/dev/null || return;
+  local      reset=$'\e[0m'         # no color
+  local      clean=$'\e[38;5;076m'  # green foreground
+  local  untracked=$'\e[38;5;014m'  # teal foreground
+  local   modified=$'\e[38;5;011m'  # yellow foreground
+  local conflicted=$'\e[38;5;196m'  # red foreground
 
-	# Check for what branch we’re on.
-	# Get the short symbolic ref. If HEAD isn’t a symbolic ref, get a
-	# tracking remote branch or tag. Otherwise, get the
-	# short SHA for the latest commit, or give up.
-	branch_name="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
-		git describe --all --exact-match HEAD 2> /dev/null || \
-		git rev-parse --short HEAD 2> /dev/null || \
-		echo '(unknown)')";
+  local p
 
-	# Early exit for Chromium & Blink repo, as the dirty check takes too long.
-	# Thanks, @paulirish!
-	# https://github.com/paulirish/dotfiles/blob/dd33151f/.bash_prompt#L110-L123
-	repo_url="$(git config --get remote.origin.url)";
-	if grep -q 'chromium/src.git' <<< "${repo_url}"; then
-		s+='*';
-	else
-		# Check for uncommitted changes in the index.
-		if ! git diff --quiet --ignore-submodules --cached; then
-			s+='+';
-		fi;
+  local where  # branch name, tag or commit
+  if [[ -n "$VCS_STATUS_LOCAL_BRANCH" ]]; then
+    where="$VCS_STATUS_LOCAL_BRANCH"
+  elif [[ -n "$VCS_STATUS_TAG" ]]; then
+    p+="${reset}#"
+    where="$VCS_STATUS_TAG"
+  else
+    p+="${reset}@"
+    where="${VCS_STATUS_COMMIT:0:8}"
+  fi
 
-		# Check for unstaged changes.
-		if ! git diff-files --quiet --ignore-submodules --; then
-			s+='!';
-		fi;
+  (( ${#where} > 32 )) && where="${where:0:12}…${where: -12}"  # truncate long branch names and tags
+  p+="${clean}${where}"
 
-		# Check for untracked files.
-		if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-			s+='?';
-		fi;
+  # ⇣42 if behind the remote.
+  (( VCS_STATUS_COMMITS_BEHIND )) && p+=" ${clean}⇣${VCS_STATUS_COMMITS_BEHIND}"
+  # ⇡42 if ahead of the remote; no leading space if also behind the remote: ⇣42⇡42.
+  (( VCS_STATUS_COMMITS_AHEAD && !VCS_STATUS_COMMITS_BEHIND )) && p+=" "
+  (( VCS_STATUS_COMMITS_AHEAD  )) && p+="${clean}⇡${VCS_STATUS_COMMITS_AHEAD}"
+  # ⇠42 if behind the push remote.
+  (( VCS_STATUS_PUSH_COMMITS_BEHIND )) && p+=" ${clean}⇠${VCS_STATUS_PUSH_COMMITS_BEHIND}"
+  (( VCS_STATUS_PUSH_COMMITS_AHEAD && !VCS_STATUS_PUSH_COMMITS_BEHIND )) && p+=" "
+  # ⇢42 if ahead of the push remote; no leading space if also behind: ⇠42⇢42.
+  (( VCS_STATUS_PUSH_COMMITS_AHEAD  )) && p+="${clean}⇢${VCS_STATUS_PUSH_COMMITS_AHEAD}"
+  # *42 if have stashes.
+  (( VCS_STATUS_STASHES        )) && p+=" ${clean}*${VCS_STATUS_STASHES}"
+  # 'merge' if the repo is in an unusual state.
+  [[ -n "$VCS_STATUS_ACTION"   ]] && p+=" ${conflicted}${VCS_STATUS_ACTION}"
+  # ~42 if have merge conflicts.
+  (( VCS_STATUS_NUM_CONFLICTED )) && p+=" ${conflicted}~${VCS_STATUS_NUM_CONFLICTED}"
+  # +42 if have staged changes.
+  (( VCS_STATUS_NUM_STAGED     )) && p+=" ${modified}+${VCS_STATUS_NUM_STAGED}"
+  # !42 if have unstaged changes.
+  (( VCS_STATUS_NUM_UNSTAGED   )) && p+=" ${modified}!${VCS_STATUS_NUM_UNSTAGED}"
+  # ?42 if have untracked files. It's really a question mark, your font isn't broken.
+  (( VCS_STATUS_NUM_UNTRACKED  )) && p+=" ${untracked}?${VCS_STATUS_NUM_UNTRACKED}"
 
-		# Check for stashed files.
-		if git rev-parse --verify refs/stash &>/dev/null; then
-			s+='$';
-		fi;
-	fi;
-
-	[ -n "${s}" ] && s=" [${s}]";
-
-	echo -e "${1}${branch_name}${2}${s}";
+  echo -e "${p}${reset}";
 }
 
+# Start gitstatusd in the background.
+gitstatus_stop && gitstatus_start -s -1 -u -1 -c -1 -d -1
 
-function __build_prompt() {
-  local -i EXIT="$?"
 
-  local -r RESET="\[\e[0m\]";
-  local -r RED="\[\e[0;31m\]";
-  local -r GREEN="\[\e[0;32m\]";
-  local -r YELLOW="\[\e[0;33m\]";
-  local -r BLUE="\[\e[1;34m\]";
-  local -r WHITE="\[\e[1;37m\]";
+function build_prompt() {
+  local -i exit="$?"
+
+  local -r reset="\[\e[0m\]";
+  local -r red="\[\e[0;31m\]";
+  local -r green="\[\e[0;32m\]";
+  local -r yellow="\[\e[0;33m\]";
+  local -r blue="\[\e[1;34m\]";
+  local -r white="\[\e[1;37m\]";
 
   PS1="\n"
 
   # --------------- First line -----------------
   # Prompt - [exitcode] [(root)] [@hostname] pwd [on branch [status]]
   # Show the exit code if it is not 0
-  if [[ $EXIT -ne 0 ]]; then
-    PS1+="${RED}✗ ${EXIT} "
+  if [[ $exit -ne 0 ]]; then
+    PS1+="${red}✗ ${exit} "
   fi
 
-  # PS1+="${BLUE}\t: "
+  # PS1+="${blue}\t: "
+
+  # Python virtual environment name
+  if [[ -n $VIRTUAL_ENV ]]; then
+    PS1+="${white}(${blue}$(basename "$VIRTUAL_ENV")${white}) "
+  fi
 
   # Show username only if its root
   if [[ $USER == "root" ]]; then
-    PS1+="${WHITE}(${RED}\u${WHITE}) "
+    PS1+="${white}(${red}\u${white}) "
   fi
 
   # Show hostname only if its not local
   if [[ "${SSH_TTY}" ]]; then
-    PS1+="${WHITE}@${BLUE}\h "
+    PS1+="${white}@${blue}\h "
   fi
 
   # Working directory full path
-  PS1+="${GREEN}\w"
+  PS1+="${green}\w"
 
   # Git repository details
-  PS1+="\$(__git_prompt \"${WHITE} on ${YELLOW}\" \"${BLUE}\")";
+  git_prompt="$(gitstatus_prompt_update "$@")";
+  if [[ -n "${git_prompt}" ]]; then
+    PS1+="${white} on ${git_prompt}"
+  fi
 
   # --------------- Second line -----------------
   # Line break
   PS1+="\n"
 
-  # Python virtual environment name
-  if [[ -n $VIRTUAL_ENV ]]; then
-    PS1+="${WHITE}(${BLUE}$(basename "$VIRTUAL_ENV")${WHITE}) "
-  fi
-
   # Prompt character '$ '
-  PS1+="${WHITE}\$ ${RESET}"
+  PS1+="${white}\$ ${reset}"
 
   # ---------------------------------------------
   # Continuition prompt
-  PS2="\[${YELLOW}\]→ \[${RESET}\]";
+  PS2="\[${yellow}\]→ \[${reset}\]";
 
   # Debug prompt
-  PS4="\[${WHITE}\]==> \[${RESET}\]";
+  PS4="\[${white}\]==> \[${reset}\]";
 
 }
 
@@ -113,4 +140,4 @@ function __build_prompt() {
 # Set the various prompt commands (PS1, PS2, PS4)
 # Include previous values to maintain Apple Terminal support (window title path and sessions)
 # This is explained in /etc/bashrc_Apple_Terminal
-PROMPT_COMMAND="__build_prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+PROMPT_COMMAND="build_prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
