@@ -83,6 +83,14 @@ function command_exists() {
 }
 
 
+# Make directory if it doesn't exist in $HOME
+# $1 - directory to create
+function mkdir_in_home() {
+  if [[ ! -d "${HOME}/$1" ]]; then
+    mkdir "${HOME}/$1"
+  fi
+}
+
 
 # ------------------------------------------------------------------ #
 #                          Check functions                           #
@@ -384,7 +392,6 @@ function backup_dotfiles() {
     "${HOME}/.gitconfig" \
     "${HOME}/.gnupg" \
     "${HOME}/.inputrc" \
-    "${HOME}/.ssh" \
     "${HOME}/.tmux.conf" \
     "${HOME}/.vim"; do
     if [[ -f $location || -d $location ]]; then
@@ -419,16 +426,12 @@ function mirror_files() {
   # copy hushlogin as we are not going to be updating it
   cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
 
-  if [[ ! -d "${HOME}/.gnupg" ]]; then
-    mkdir "${HOME}/.gnupg"
-  fi
-
-  if [[ ! -d "${HOME}/.ssh" ]]; then
-    mkdir "${HOME}/.ssh"
-  fi
+  mkdir_in_home ".gnupg"
+  mkdir_in_home ".ssh"
+  mkdir_in_home ".config"
 
   # Create the necessary symbolic links between the `dotfiles` and `HOME`
-  # directory. The `bash_profile` sources other files directly from the
+  # directory. The `bashrc` sources other files directly from the
   # `dotfiles` repository.
   link "bash/bashrc"                ".bashrc"                || exitcode=1
   link "bash/bash_profile"          ".bash_profile"          || exitcode=1
@@ -445,9 +448,6 @@ function mirror_files() {
 
   success "Dotfiles update complete!"
 }
-
-
-
 
 
 # ------------------------------------------------------------------ #
@@ -513,10 +513,6 @@ function main() {
     header "Sourcing ~/.bash_profile..."
     # shellcheck source=./bash/bash_profile
     source "${HOME}/.bash_profile" &> /dev/null && success "Done."
-    if command_exists "reload" &> /dev/null; then
-      header "Reloading shell..."
-      reload && success "Done"
-    fi
   else
     printf "Continuing...\n"
   fi

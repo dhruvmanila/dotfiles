@@ -1,8 +1,56 @@
 #!/usr/bin/env bash
-# Source everything from .bash_profile when starting interactively
-# If not running interactively, don't do anything
-[[ $- == *i* ]] || return
 
-# shellcheck source=/dev/null
-[[ -n "$PS1" ]] && source "${HOME}/.bash_profile";
+function load_dotfiles() {
+  local dotfiles_directory="${HOME}/dotfiles"
+  local -a dotfiles=(
+    "assets/paths"
+    "bash/bash_prompt"
+    "assets/options"
+    "assets/exports"
+    "assets/aliases"
+    "assets/functions"
+    "bash/bash_completions"
+  )
 
+  for file in "${dotfiles[@]}"; do
+    if [[ -r "${dotfiles_directory}/${file}" ]]; then
+      # shellcheck source=/dev/null
+      source "${dotfiles_directory}/${file}"
+    fi
+  done
+}
+
+load_dotfiles
+unset load_dotfiles
+
+# Enable tab completion for `g` by marking it as an alias for `git`
+if type _git &> /dev/null; then
+	complete -o default -o nospace -F _git g;
+fi;
+
+
+# if [ -e "${HOME}/.config/broot/launcher/bash/br" ]; then
+#   source "${HOME}/.config/broot/launcher/bash/br"
+# elif type -P "broot"; then
+#   broot --install &> /dev/null
+#   source "${HOME}/.config/broot/launcher/bash/br"
+# fi
+
+# pyenv init
+if command -v pyenv &>/dev/null; then
+  eval "$(pyenv init -)"
+fi
+
+# pyenv virtualenv init
+if command -v pyenv-virtualenv-init &> /dev/null; then
+  eval "$(pyenv virtualenv-init -)"
+fi
+
+# Pip auto-complete
+if command -v pip &> /dev/null; then
+  eval "$(pip completion --bash)"
+fi
+
+# >>>> Vagrant command completion (start)
+. /opt/vagrant/embedded/gems/2.2.14/gems/vagrant-2.2.14/contrib/bash/completion.sh
+# <<<<  Vagrant command completion (end)
