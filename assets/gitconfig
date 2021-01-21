@@ -1,0 +1,55 @@
+# vi :set filetype=gitconfig:
+[user]
+	name = Dhruv Manilawala
+	email = dhruvmanila@gmail.com
+	signingkey = 9601911DE8797432
+
+[core]
+	editor = vim
+	# Use custom `.gitignore`
+	excludesfile = ~/.gitignore
+	ignorecase = false
+
+[alias]
+	c = commit           # commit
+	cl = clone           # clone
+	br = branch          # branch
+	co = checkout        # checkout
+	nb = checkout -b     # new branch
+	st = status -sb      # status in a concise manner
+
+	# View abbreviated SHA, description, and history graph of the latest 10 commits.
+	l = log --oneline -n 10 --graph
+	la = log --oneline -n 10 --graph --all
+	undo = reset --soft HEAD~1  # Undo your last commit
+	ammend = commit --ammend  # ammend your last commit
+
+	# Show verbose output about tags, branches or remotes
+	tags = tag -l
+	branches = branch --all
+	remotes = remote --verbose
+
+	# List aliases.
+	aliases = config --get-regexp alias
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold # line info
+	old = red # deletions
+	new = green # additions
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[commit]
+	gpgsign = true
+
+[gpg]
+	program = gpg

@@ -14,7 +14,7 @@ Thumbs.db
 .Trashes
 
 # private folder
-private/
+local/
 
 # vim undo history
 vim/undo/*

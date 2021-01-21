@@ -152,7 +152,8 @@ function check_homebrew() {
     # So, if the command fails and if the repository is shallow, we will run the
     # recommended command
     if ! /bin/bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"; then
-      error "Failure occured during installation. Checking if homebrew-core is a shallow clone..."
+      error "Failure occured during installation. \
+      Checking if homebrew-core is a shallow clone..."
       if [[ -f "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/.git/shallow" ]]; then
         header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
         git -C "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core" fetch --unshallow
@@ -291,9 +292,9 @@ function check_python() {
   done < "${DOTFILES_DIRECTORY}/lib/requirements.txt"
   success "Collected ${#pip_packages[@]} packages."
 
-  header "Installing/Upgrading collected packages..."
+  header "Installing collected packages..."
   for package in "${pip_packages[@]}"; do
-    header "Installing/Upgrading ${package}..."
+    header "Installing ${package}..."
     if $pip_exec install --upgrade "${package}"; then
       success "Successfully installed ${package}."
     else
@@ -414,10 +415,6 @@ function link() {
 
 function mirror_files() {
   backup_dotfiles
-  # all the private/extra files should go in a folder named 'private'
-  if [[ -d "${DOTFILES_DIRECTORY}/private" ]]; then
-    link "private/gitconfig"        ".gitconfig"
-  fi
 
   # copy hushlogin as we are not going to be updating it
   cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
@@ -435,6 +432,7 @@ function mirror_files() {
   link "vim/vimrc"                  ".vimrc"                 || exitcode=1
   link "tmux/tmux.conf"             ".tmux.conf"             || exitcode=1
   link "assets/gitignore"           ".gitignore"             || exitcode=1
+  link "assets/gitconfig"           ".gitconfig"             || exitcode=1
   link "vim"                        ".vim"                   || exitcode=1
   link "python/flake8"              ".config/flake8"         || exitcode=1
   link "python/pylintrc"            ".pylintrc"              || exitcode=1
