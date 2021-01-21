@@ -145,9 +145,9 @@ function check_homebrew() {
     # recommended command
     if ! /bin/bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"; then
       error "Failure occured during installation. Checking if homebrew-core is a shallow clone..."
-      if [[ -f "$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core/.git/shallow" ]]; then
+      if [[ -f "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/.git/shallow" ]]; then
         header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
-        git -C "$(brew --prefix)/Homebrew/Library/Taps/homebrew/homebrew-core" fetch --unshallow
+        git -C "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core" fetch --unshallow
       fi
     fi
     if command_exists 'brew'; then
@@ -159,6 +159,7 @@ function check_homebrew() {
   else
     success "Homebrew already installed."
   fi
+  export HOMEBREW_NO_AUTO_UPDATE=1
   header "Updating Homebrew..."
   brew update && success "Done"
   header "Updating any existing Homebrew formulae..."
@@ -175,6 +176,15 @@ function check_homebrew() {
     && success "Done"
   header "Cleaning up..."
   brew cleanup && success "Done"
+
+  local brew_prefix
+  brew_prefix=$(brew --prefix)
+  if ! grep -F -q "${brew_prefix}/bin/bash" /etc/shells; then
+    header "Switching to brew-installed bash as default shell..."
+    echo "${brew_prefix}/bin/bash" | sudo tee -a /etc/shells;
+    sudo chsh -s "${brew_prefix}/bin/bash";
+    success "Done"
+  fi;
 }
 
 
@@ -244,29 +254,12 @@ function check_git_auto_completion() {
 }
 
 
-function check_vim_plug() {
-  header "Checking for vim-plug..."
-  if [[ ! -d "${HOME}/dotfiles/vim/autoload" ]]; then
-    curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs $VIM_PLUG_INSTALL_LINK
-    if [[ -f "${HOME}/.vim/autoload/plug.vim" ]]; then
-      success "Successfully downloaded vim-plug."
-      header "Downloading vim plugins..."
-      vim +PlugInstall
-    else
-      error "Failed to download vim-plug."
-      exitcode=1
-    fi
-  else
-    success "Vim-plug already downloaded. Use :PlugInstall to install the plugins."
-  fi
-}
-
-
 function check_python() {
   if ! command_exists "pyenv"; then
-    warning "pyenv is not installed. Make sure pyenv and its dependencies are installed."
-    return
+    error "pyenv is not installed. Make sure pyenv and its dependencies are installed."
+    exit 1
   fi
+
   local pyenv_global_python="3.9.1"
   header "Checking for Python..."
   if [[ "$(pyenv global)" != "${pyenv_global_python}" ]]; then
@@ -277,8 +270,11 @@ function check_python() {
   fi
   header "Rehashing pyenv shims..."
   pyenv rehash && success "Done."
+
+  local pip_exec
+  pip_exec="$(pyenv root)/versions/${pyenv_global_python}/bin/pip"
   header "Upgrading pip..."
-  "$(pyenv root)/versions/${pyenv_global_python}/bin/pip" install --upgrade pip
+  $pip_exec install --upgrade pip
 
   header "Collecting packages from ${DOTFILES_DIRECTORY}/lib/requirements.txt..."
   local -a pip_packages
@@ -290,9 +286,37 @@ function check_python() {
   header "Installing/Upgrading collected packages..."
   for package in "${pip_packages[@]}"; do
     header "Installing/Upgrading ${package}..."
-    "$(pyenv root)/versions/${pyenv_global_python}/bin/pip" install --upgrade "${package}"
-    success "Successfully installed ${package}."
+    if $pip_exec install --upgrade "${package}"; then
+      success "Successfully installed ${package}."
+    else
+      error "Failed to install ${package}."
+      exitcode=1
+    fi
   done
+}
+
+
+# ------------------------------------------------------------------ #
+#               Check functions relying on dotfiles                  #
+# ------------------------------------------------------------------ #
+
+function check_vim_plug() {
+  header "Checking for vim-plug..."
+  if [[ ! -f "${DOTFILES_DIRECTORY}/vim/autoload/plug.vim" ]]; then
+    curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs $VIM_PLUG_INSTALL_LINK
+    if [[ -f "${HOME}/.vim/autoload/plug.vim" ]]; then
+      success "Successfully downloaded vim-plug."
+      header "Downloading vim plugins..."
+      vim +PlugInstall
+    else
+      error "Failed to download vim-plug."
+      exitcode=1
+    fi
+  else
+    success "Vim-plug already downloaded."
+    header "Downloading vim plugins..."
+    vim +PlugInstall
+  fi
 }
 
 
@@ -300,6 +324,7 @@ function check_ssh() {
   header "Checking for SSH keys..."
   if [[ ! -d "${HOME}/.ssh" ]]; then
     mkdir "${HOME}/.ssh" && success "Created ~/.ssh directory."
+    link "assets/ssh/config" ".ssh/config"
   fi
 
   local ssh_algorithm="ed25519"
@@ -310,8 +335,6 @@ function check_ssh() {
   else
     warning "No SSH keys found."
   fi
-
-  link "assets/ssh/config" ".ssh/config"
 
   header "Generating SSH keys..."
   ask "Please provide an email address"
@@ -328,13 +351,18 @@ function check_ssh() {
   pbcopy < "${HOME}/.ssh/id_${ssh_algorithm}.pub" \
     && success "Copied public SSH key to clipboard. Please add it to GitHub.com..."
   open "https://github.com/settings/ssh"
-  while true; do
+  for i in {1..6}; do
     ssh -T git@github.com &> /dev/null
     if [[ $? -eq 1 ]]; then
       success "Authentication successful."
       break
     else
-      error "Failed to authenticate. Please try again in 5 seconds..."
+      if [[ i -eq 6 ]]; then
+        error "Exceeded max retries."
+        warning "Authenticate using 'ssh -T git@github.com' command."
+        break
+      fi
+      error "Failed to authenticate. Retrying in 5 seconds..."
     fi
     sleep 5
   done
@@ -349,6 +377,7 @@ function backup_dotfiles() {
   local backup_dir
   backup_dir="${HOME}/dotfiles_$(date +"%Y_%m_%dT%H_%M_%S").backup"
   mkdir "$backup_dir"
+  header "Creating backup for any existing dotfiles..."
 
   for location in "${HOME}/.bash_profile" \
     "${HOME}/.bashrc" \
@@ -360,8 +389,10 @@ function backup_dotfiles() {
     "${HOME}/.vim"; do
     if [[ -f $location || -d $location ]]; then
       mv "$location" "$backup_dir"
+      success "Backup ${location}"
     fi
   done
+  success "Created backup in ${backup_dir}"
 }
 
 
@@ -410,9 +441,13 @@ function mirror_files() {
   link "python/pylintrc"            ".pylintrc"              || exitcode=1
   link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=1
   link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
+  link "assets/ssh/config"          ".ssh/config"            || exitcode=1
 
   success "Dotfiles update complete!"
 }
+
+
+
 
 
 # ------------------------------------------------------------------ #
@@ -470,17 +505,28 @@ function main() {
   check_git
   check_git_repository
   check_git_auto_completion
-  check_vim_plug
   check_python
-  check_ssh
 
   seek_confirmation "Warning: This step may overwrite your existing dotfiles."
   if is_confirmed; then
     mirror_files
+    header "Sourcing ~/.bash_profile..."
     # shellcheck source=./bash/bash_profile
-    source "${HOME}/.bash_profile"
+    source "${HOME}/.bash_profile" &> /dev/null && success "Done."
+    if command_exists "reload" &> /dev/null; then
+      header "Reloading shell..."
+      reload && success "Done"
+    fi
   else
     printf "Continuing...\n"
+  fi
+
+  # These rely on the dotfiles
+  if [[ -f "${HOME}/.vimrc" ]]; then
+    check_vim_plug
+  fi
+  if [[ -f "${HOME}/.ssh/config" ]]; then
+    check_ssh
   fi
 
   seek_confirmation "Warning: This step may modify your OS X system defaults."
