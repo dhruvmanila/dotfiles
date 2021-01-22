@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 function load_dotfiles() {
+  local file
   local dotfiles_directory="${HOME}/dotfiles"
   local -a dotfiles=(
     "assets/paths"
@@ -25,7 +26,7 @@ unset load_dotfiles
 
 # Enable tab completion for `g` by marking it as an alias for `git`
 if type _git &> /dev/null; then
-	complete -o default -o nospace -F _git g;
+  complete -o default -o nospace -F _git g;
 fi;
 
 
@@ -50,7 +51,3 @@ fi
 if command -v pip &> /dev/null; then
   eval "$(pip completion --bash)"
 fi
-
-# >>>> Vagrant command completion (start)
-. /opt/vagrant/embedded/gems/2.2.14/gems/vagrant-2.2.14/contrib/bash/completion.sh
-# <<<<  Vagrant command completion (end)

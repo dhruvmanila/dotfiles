@@ -312,8 +312,8 @@ defaults write com.apple.finder FXInfoPanesExpanded -dict General -bool true Ope
 #                Dock, Dashboard, and hot corners                     #
 #---------------------------------------------------------------------#
 
-# Set dock to a side (default "bottom") ("left" ,"bottom", "right")
-defaults write com.apple.dock orientation -string "bottom"
+# Set dock to a side ("left" ,"bottom", "right")
+defaults write com.apple.dock orientation -string "left"
 
 # Enable highlight hover effect for the grid view of a stack (Dock)
 defaults write com.apple.dock mouse-over-hilite-stack -bool true

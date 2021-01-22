@@ -2,20 +2,25 @@
 # Bash completions
 BREW_PREFIX="$(brew --prefix)"
 GIT_COMPLETION_PATH="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash"
+VAGRANT_COMPLETION_PATH="/opt/vagrant/embedded/gems/2.2.14/gems/vagrant-2.2.14/contrib/bash/completion.sh"
 
 # Add tab completion for many Bash commands
-if which brew &> /dev/null && [ -r "${BREW_PREFIX}/etc/profile.d/bash_completion.sh" ]; then
-    # Ensure existing Homebrew v1 completions continue to work
-    export BASH_COMPLETION_COMPAT_DIR="${BREW_PREFIX}/etc/bash_completion.d";
-    source "${BREW_PREFIX}/etc/profile.d/bash_completion.sh";
-elif [ -f "/etc/bash_completion" ]; then
-    source "/etc/bash_completion";
+if which brew &> /dev/null && [[ -r "${BREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+  # Ensure existing Homebrew v1 completions continue to work
+  export BASH_COMPLETION_COMPAT_DIR="${BREW_PREFIX}/etc/bash_completion.d";
+  source "${BREW_PREFIX}/etc/profile.d/bash_completion.sh";
+elif [[ -f "/etc/bash_completion" ]]; then
+  source "/etc/bash_completion";
 fi;
 
 # Git auto-complete
-if [[ -r ${GIT_COMPLETION_PATH} ]]; then
-    source "${GIT_COMPLETION_PATH}"
+if [[ -r "${GIT_COMPLETION_PATH}" ]]; then
+  source "${GIT_COMPLETION_PATH}"
 fi
 
+# Vagrant auto-complete
+if [[ -r "${VAGRANT_COMPLETION_PATH}" ]]; then
+  source "${VAGRANT_COMPLETION_PATH}"
+fi
 
-unset BREW_PREFIX GIT_COMPLETION_PATH
+unset BREW_PREFIX GIT_COMPLETION_PATH VAGRANT_COMPLETION_PATH
