@@ -147,7 +147,7 @@ function check_homebrew_shallow() {
   if [[ -f "${core_location}/.git/shallow" ]]; then
     warning "homebrew/homebrew-core is a shallow clone."
     header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
-    git -c $core_location fetch --unshallow
+    git -C $core_location fetch --unshallow
   else
     success "homebrew/homebrew-core is not a shallow clone."
   fi
@@ -157,7 +157,7 @@ function check_homebrew_shallow() {
     if [[ -f "${cask_location}/.git/shallow" ]]; then
       warning "homebrew/homebrew-cask is a shallow clone."
       header "Fetching everything from homebrew/homebrew-cask (this may take a while)..."
-      git -c $cask_location fetch --unshallow
+      git -C $cask_location fetch --unshallow
     else
       success "homebrew/homebrew-cask is not a shallow clone."
     fi
@@ -252,8 +252,7 @@ function check_git_repository() {
     git remote add origin https://github.com/dhruvmanila/dotfiles  || exitcode=1
     git fetch --all                                                || exitcode=1
     git reset --hard FETCH_HEAD                                    || exitcode=1
-    git clean -fd                                                  || exitcode=1
-    git pull --rebase --set-upstream origin master                 || exitcode=1
+    git branch --set-upstream-to origin/master master              || exitcode=1
     set +x
 
     if is_git_repo; then
