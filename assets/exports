@@ -69,6 +69,6 @@ unset TTY
 
 # Opt-out of homebrew's analytics
 export HOMEBREW_NO_ANALYTICS=1
-
 # Do not create the lock file on `brew bundle`
 export HOMEBREW_BUNDLE_NO_LOCK=1
+export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"

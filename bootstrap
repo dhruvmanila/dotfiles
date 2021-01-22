@@ -7,13 +7,6 @@ export PS4="\e[1m==> \e[0m"
 # Dotfiles information
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
-DOTFILES_GIT_REMOTE="https://github.com/dhruvmanila/dotfiles"
-
-# Install links
-HOMEBREW_INSTALL_LINK="https://raw.githubusercontent.com/Homebrew/install/master/install.sh"
-GIT_COMPLETION_PATH="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash"
-GIT_COMPLETION_INSTALL_LINK="https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
-VIM_PLUG_INSTALL_LINK="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 
 # Colors
 BOLD="\e[1m"
@@ -63,7 +56,8 @@ function is_confirmed() {
     return 1
 }
 
-ask() {
+
+function ask() {
   printf "%b[?] %s: %b" "$YELLOW" "$1" "$RESET_ALL"
   read -r
 }
@@ -124,6 +118,7 @@ function check_dotfiles() {
 function check_xcode_command_line_tools() {
   header "Checking for xcode command line tools..."
   if ! xcode-select -p &> /dev/null; then
+    warning "xcode command line tools are not installed"
     header "Installing xcode command line tools..."
     xcode-select --install > /dev/null
     # wait until the tools are installed...
@@ -138,7 +133,34 @@ function check_xcode_command_line_tools() {
       exit 1
     fi
   else
-    success "xcode command line tools already installed."
+    success "xcode command line tools are already installed."
+  fi
+}
+
+
+function check_homebrew_shallow() {
+  # https://github.com/Homebrew/brew/pull/9383
+  local core_location="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core"
+  local cask_location="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-cask"
+
+  header "Checking if homebrew-core is a shallow clone..."
+  if [[ -f "${core_location}/.git/shallow" ]]; then
+    warning "homebrew/homebrew-core is a shallow clone."
+    header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
+    git -c $core_location fetch --unshallow
+  else
+    success "homebrew/homebrew-core is not a shallow clone."
+  fi
+  # homebrew-cask might not be installed
+  if [[ -d "${cask_location}" ]]; then
+    header "Checking if homebrew-cask is a shallow clone..."
+    if [[ -f "${cask_location}/.git/shallow" ]]; then
+      warning "homebrew/homebrew-cask is a shallow clone."
+      header "Fetching everything from homebrew/homebrew-cask (this may take a while)..."
+      git -c $cask_location fetch --unshallow
+    else
+      success "homebrew/homebrew-cask is not a shallow clone."
+    fi
   fi
 }
 
@@ -146,137 +168,132 @@ function check_xcode_command_line_tools() {
 function check_homebrew() {
   header "Checking for homebrew..."
   if ! command_exists "brew"; then
+    warning "Homebrew is not installed."
     header "Installing Homebrew..."
     # Install performs `brew update` but the homebrew-core tap is a shallow clone
     # https://github.com/Homebrew/brew/pull/9447
     # So, if the command fails and if the repository is shallow, we will run the
     # recommended command
-    if ! /bin/bash -c "$(curl -fsSL ${HOMEBREW_INSTALL_LINK})"; then
-      error "Failure occured during installation. \
-      Checking if homebrew-core is a shallow clone..."
-      if [[ -f "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/.git/shallow" ]]; then
-        header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
-        git -C "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core" fetch --unshallow
-      fi
+    if ! /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"; then
+      error "Failure occured during Homebrew installation."
+      check_homebrew_shallow
     fi
-    if command_exists 'brew'; then
-      success "Successfully installed homebrew."
-    else
-      error "Failed to install homebrew."
-      exit 1
-    fi
+
+    { command_exists 'brew' && success "Successfully installed Homebrew."; } \
+      || { error "Failed to install Homebrew." >&2; exit 1;}
   else
     success "Homebrew already installed."
   fi
+  # No auto update during the setup process
   export HOMEBREW_NO_AUTO_UPDATE=1
-  header "Updating Homebrew..."
-  brew update && success "Done"
-  header "Updating any existing Homebrew formulae..."
-  brew upgrade && success "Done"
 
+  # Shallow clone error will occur only when updating Homebrew
+  header "Updating Homebrew..."
+  { brew update && success "Done"; } \
+    || { error "Failed to update Homebrew."; check_homebrew_shallow; }
+
+  header "Updating any existing Homebrew formulas..."
+  { brew upgrade && success "Done"; } \
+    || { error "Failed to upgrade Homebrew formulas."; exitcode=1; }
+
+  # If the bundle installation fails, then exit as we won't be able to install
+  # anything using the Brewfile
   header "Installing homebrew bundle tap..."
-  brew tap homebrew/bundle && success "Done"
+  { brew tap homebrew/bundle && success "Done."; } \
+    || { error "Failed to install homebrew/bundle tap." >&2; exit 1; }
+
   header "Installing everything from Brewfile..."
-  brew bundle install \
-    --verbose \
-    --no-lock \
-    --cleanup \
-    --file ~/dotfiles/lib/Brewfile \
-    && success "Done"
+  # -v: prints output from commands as they are run
+  # --no-lock: don't output a Brewfile.lock.json file
+  { brew bundle install -v --no-lock --file ~/dotfiles/lib/Brewfile && success "Done"; } \
+    || { error "Failure occured during 'brew bundle install'"; exitcode=1; }
+
   header "Cleaning up..."
-  brew cleanup && success "Done"
+  { brew cleanup && success "Done"; } \
+    || { error "Failure occured during 'brew cleanup'"; exitcode=1; }
 
   local brew_prefix
   brew_prefix=$(brew --prefix)
   if ! grep -F -q "${brew_prefix}/bin/bash" /etc/shells; then
     header "Switching to brew-installed bash as default shell..."
     echo "${brew_prefix}/bin/bash" | sudo tee -a /etc/shells;
-    sudo chsh -s "${brew_prefix}/bin/bash";
-    success "Done"
+    { sudo chsh -s "${brew_prefix}/bin/bash" && success "Done"; } \
+      || { error "Failed to change the default shell."; exitcode=1; }
   fi;
 }
 
 
 function check_git() {
-  header "Checking for git..."
+  header "Checking for Git..."
   if ! command_exists "git"; then
-    header "Updating Homebrew..."
-    brew update
+    warning "Git is not installed"
     header "Installing Git with Homebrew..."
     brew install git
     if command_exists "git"; then
-      success "Successfully installed git."
+      success "Successfully installed Git."
     else
-      error "Failed to install git."
+      error "Failed to install Git."
       exit 1
     fi
   else
-    success "Git already installed."
+    success "Git is already installed."
   fi
 }
 
 
 function check_git_repository() {
-  header "Checking for git repository..."
+  header "Checking for Git repository..."
   if ! is_git_repo; then
-    header "Initializing git repository..."
+    warning "Git repository is not initialized."
+    header "Initializing Git repository..."
 
     set -x
-    git init
-    git remote add origin "${DOTFILES_GIT_REMOTE}"
-    git fetch --all
-    git reset --hard FETCH_HEAD
-    git clean -fd
-    git pull --rebase --set-upstream origin master
-    git submodule update --recursive --init
+    git init                                                       || exitcode=1
+    git remote add origin https://github.com/dhruvmanila/dotfiles  || exitcode=1
+    git fetch --all                                                || exitcode=1
+    git reset --hard FETCH_HEAD                                    || exitcode=1
+    git clean -fd                                                  || exitcode=1
+    git pull --rebase --set-upstream origin master                 || exitcode=1
     set +x
 
     if is_git_repo; then
-      success "Successfully initialized the git repository."
+      success "Successfully initialized the Git repository."
     else
-      error "Failed to initialized the git repository."
-      exit 1
+      error "Failed to initialized the Git repository."
+      exitcode=1
     fi
   else
-    success "Git repository already initialized."
-  fi
-}
-
-
-function check_git_auto_completion() {
-  header "Checking for git-completion..."
-  if [[ ! -f $GIT_COMPLETION_PATH ]]; then
-    if [[ ! -f "${HOME}/.git-completion.bash" ]]; then
-      curl -fsSL $GIT_COMPLETION_INSTALL_LINK -o "${HOME}/.git-completion.bash"
-      if [[ -f "${HOME}/.git-completion.bash" ]]; then
-        success "Successfully downloaded git completion for bash."
-      else
-        error "Failed to download git completion for bash."
-        exitcode=1
-      fi
-    else
-      success "Git completion already downloaded."
-    fi
-  else
-    success "Source git completion from ${GIT_COMPLETION_PATH}"
+    success "Git repository is already initialized."
   fi
 }
 
 
 function check_python() {
   if ! command_exists "pyenv"; then
-    error "pyenv is not installed. Make sure pyenv and its dependencies are installed."
+    error "pyenv is not installed. Install it using 'brew install --formula pyenv' command."
     exit 1
   fi
 
   local pyenv_global_python="3.9.1"
-  header "Checking for Python..."
-  if [[ "$(pyenv global)" != "${pyenv_global_python}" ]]; then
+  header "Checking for Python ${pyenv_global_python}..."
+  if ! pyenv versions | grep -q ${pyenv_global_python}; then
+    warning "Python ${pyenv_global_python} is not installed"
     header "Installing Python ${pyenv_global_python}..."
-    pyenv install --skip-existing ${pyenv_global_python}
+    if pyenv install ${pyenv_global_python}; then
+      success "Successfully installed Python ${pyenv_global_python}"
+    else
+      error "Failure occured while installing Python ${pyenv_global_python}"
+      return
+    fi
+  else
+    success "Python ${pyenv_global_python} is already installed"
+  fi
+
+  if [[ $(pyenv global) != "$pyenv_global_python" ]]; then
     header "Making ${pyenv_global_python} as the global Python version..."
     pyenv global ${pyenv_global_python} && success "Done."
   fi
+
   header "Rehashing pyenv shims..."
   pyenv rehash && success "Done."
 
@@ -309,22 +326,14 @@ function check_python() {
 #               Check functions relying on dotfiles                  #
 # ------------------------------------------------------------------ #
 
-function check_vim_plug() {
-  header "Checking for vim-plug..."
-  if [[ ! -f "${DOTFILES_DIRECTORY}/vim/autoload/plug.vim" ]]; then
-    curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs $VIM_PLUG_INSTALL_LINK
-    if [[ -f "${HOME}/.vim/autoload/plug.vim" ]]; then
-      success "Successfully downloaded vim-plug."
-      header "Installing vim plugins..."
-      vim +PlugInstall +qa
-    else
-      error "Failed to download vim-plug."
-      exitcode=1
-    fi
-  else
-    success "Vim-plug already downloaded."
+function check_vim_plugins() {
+  header "Checking for vim plugins..."
+  if [[ ! -d "${HOME}/.vim/plugged" ]]; then
+    warning "Vim plugins are not installed."
     header "Installing vim plugins..."
-    vim +PlugInstall +qa
+    vim +PlugInstall +qa && success "Done."
+  else
+    success "Vim plugins are already installed."
   fi
 }
 
@@ -342,7 +351,7 @@ function check_ssh() {
     [[ $? -eq 1 ]] && success "GitHub SSH is already authenticated."
     return
   else
-    warning "No SSH keys found."
+    warning "SSH key file ~/.ssh/id_${ssh_algorithm}.pub not found."
   fi
 
   header "Generating SSH keys..."
@@ -367,8 +376,7 @@ function check_ssh() {
       break
     else
       if [[ i -eq 6 ]]; then
-        error "Exceeded max retries."
-        warning "Authenticate using 'ssh -T git@github.com' command."
+        error "Exceeded max retries. Authenticate using 'ssh -T git@github.com' command."
         break
       fi
       error "Failed to authenticate. Retrying in 5 seconds..."
@@ -384,23 +392,30 @@ function check_ssh() {
 
 function backup_dotfiles() {
   local backup_dir
+  local -i count=0
   backup_dir="${HOME}/dotfiles_$(date +"%Y_%m_%dT%H_%M_%S").backup"
   mkdir "$backup_dir"
-  header "Creating backup for any existing dotfiles..."
 
+  header "Creating backup for any existing dotfiles..."
   for location in "${HOME}/.bash_profile" \
     "${HOME}/.bashrc" \
     "${HOME}/.gitconfig" \
-    "${HOME}/.gnupg" \
     "${HOME}/.inputrc" \
     "${HOME}/.tmux.conf" \
     "${HOME}/.vim"; do
     if [[ -f $location || -d $location ]]; then
       mv "$location" "$backup_dir"
       success "Backup ${location}"
+      (( count+=1 ))
     fi
   done
-  success "Created backup in ${backup_dir}"
+
+  if (( count > 0 )); then
+    success "Created backup in ${backup_dir}"
+  else
+    success "Skipped backup as there are no dotfiles"
+    rm -rf "$backup_dir"
+  fi
 }
 
 
@@ -444,7 +459,7 @@ function mirror_files() {
   link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
   link "assets/ssh/config"          ".ssh/config"            || exitcode=1
 
-  success "Dotfiles update complete!"
+  success "Dotfiles update complete."
 }
 
 
@@ -453,7 +468,7 @@ function mirror_files() {
 # ------------------------------------------------------------------ #
 
 function update_macos_settings() {
-  header "Updating macos settings..."
+  header "Updating macOS settings..."
   bash "${DOTFILES_DIRECTORY}/lib/osxdefaults"
 }
 
@@ -463,7 +478,8 @@ function update_macos_dock() {
     header "Installing dockutil..."
     brew install --formula dockutil
   fi
-  header "Updating macos dock applications..."
+
+  header "Updating macOS dock applications..."
   dockutil --remove all && success "Removed all applications"
   for app in "/Applications/Safari.app" \
     "/Applications/Firefox.app" \
@@ -476,14 +492,21 @@ function update_macos_dock() {
     "/System/Applications/Books.app" \
     "/Applications/Slack.app" \
     "/Applications/Discord.app"; do
-    dockutil --add "$app" --section apps && success "Added ${app}"
+    if dockutil --add "$app" --section apps; then
+      success "Added ${app}"
+    else
+      error "Failed to add ${app}"
+      exitcode=1
+    fi
   done
-  dockutil \
+
+  { dockutil \
     --add "${HOME}/Downloads" \
     --view grid \
     --display folder \
     --sort dateadded \
-    --section others && success "Added ~/Downloads folder"
+    --section others && success "Added ~/Downloads folder"; } \
+    || { error "Failed to add ~/Downloads folder"; exitcode=1; }
 }
 
 
@@ -496,39 +519,31 @@ function main() {
 
   header "Changing directory to ${DOTFILES_DIRECTORY}"
   cd "${DOTFILES_DIRECTORY}" || { error "Failed to change directory." >&2;exit 1; }
-  success "Done"
+  success "Done."
 
   check_xcode_command_line_tools
   check_homebrew
   check_git
   check_git_repository
-  check_git_auto_completion
   check_python
 
   seek_confirmation "Warning: This step may overwrite your existing dotfiles."
   if is_confirmed; then
     mirror_files
-    header "Sourcing ~/.bash_profile..."
-    # shellcheck source=./bash/bash_profile
-    source "${HOME}/.bash_profile" &> /dev/null && success "Done."
   else
-    printf "Continuing...\n"
+    success "Continuing..."
   fi
 
   # These rely on the dotfiles
-  if [[ -f "${HOME}/.vimrc" ]]; then
-    check_vim_plug
-  fi
-  if [[ -f "${HOME}/.ssh/config" ]]; then
-    check_ssh
-  fi
+  check_vim_plugins
+  check_ssh
 
-  seek_confirmation "Warning: This step may modify your OS X system defaults."
+  seek_confirmation "Warning: This step may modify your macOS system defaults."
   if is_confirmed; then
     update_macos_settings
     update_macos_dock
   else
-    printf "Skipped osx settings update.\n"
+    success "Skipped macOS settings update."
   fi
 }
 
