@@ -13,16 +13,16 @@ Thumbs.db
 .Spotlight-V100
 .Trashes
 
-# private folder
+# local folder
 local/
 
 # vim undo history
 vim/undo/*
 
-# Download the plug script on a fresh install
-vim/autoload/*
-
 # Ignore the swap files
 vim/swaps/*
+
+# Use :Plug... commands to update everything
+vim/plugged
 
 .vagrant

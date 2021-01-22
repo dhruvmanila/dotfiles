@@ -12,10 +12,8 @@ let mapleader=" "       " leader is space
 call plug#begin('~/.vim/plugged')
 
 " Colorschemes (Monokai forever)
-" This contains colors for terminal, lightline and airline
+" This contains colors for terminal, lightline/airline and dir if using GNU
 Plug 'patstockwell/vim-monokai-tasty'
-Plug 'altercation/vim-colors-solarized'
-Plug 'KeitaNakamura/neodark.vim'
 
 " Search
 Plug 'romainl/vim-cool'
@@ -49,23 +47,17 @@ call plug#end()
 
 " Colorscheme
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"colorscheme neodark
-"let g:neodark#use_256color = 1
+" Turn on syntax highlighting.
+syntax on
 
 "let g:vim_monokai_tasty_italic = 1
-colorscheme vim-monokai-tasty
+silent! colorscheme vim-monokai-tasty
 
 " If you don't know what the name of a particular hightlight is, you can use
 " `What`. It will print out the syntax group that the cursor is currently above.
 " from https://www.reddit.com/r/vim/comments/6z4aau/how_to_stop_vim_from_autohighlighting_italics_in/
 command! What echo synIDattr(synID(line('.'), col('.'), 1), 'name')
 
-"colorscheme solarized
-"set background=dark
-"let g:solarized_termcolors=256
-
-" Turn on syntax highlighting.
-syntax on
 
 " Turn on filetype plugins
 " if has('autocmd')
