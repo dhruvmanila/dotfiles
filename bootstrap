@@ -315,12 +315,16 @@ function check_vim_plug() {
     curl -fsSLo ~/.vim/autoload/plug.vim --create-dirs $VIM_PLUG_INSTALL_LINK
     if [[ -f "${HOME}/.vim/autoload/plug.vim" ]]; then
       success "Successfully downloaded vim-plug."
+      header "Installing vim plugins..."
+      vim +PlugInstall +qa
     else
       error "Failed to download vim-plug."
       exitcode=1
     fi
   else
     success "Vim-plug already downloaded."
+    header "Installing vim plugins..."
+    vim +PlugInstall +qa
   fi
 }
 
