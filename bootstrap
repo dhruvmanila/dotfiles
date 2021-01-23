@@ -22,41 +22,41 @@ YELLOW="\e[1;33m"
 
 # Header logging
 function header() {
-    printf "\n%b==> %s %b\n" "$BOLD" "$@" "$RESET_ALL"
+  printf "\n%b==> %s %b\n" "$BOLD" "$@" "$RESET_ALL"
 }
 
 # Success logging
 function success() {
-    printf "%b✓ %s %b\n" "$GREEN" "$@" "$RESET_ALL"
+  printf "%b✓ %s %b\n" "$GREEN" "$@" "$RESET_ALL"
 }
 
 # Error logging
 function error() {
-    printf "%b✗ %s %b\n" "$RED" "$@" "$RESET_ALL"
+  printf "%b✗ %s %b\n" "$RED" "$@" "$RESET_ALL"
 }
 
 # Warning logging
 function warning() {
-    printf "%b! %s %b\n" "$YELLOW" "$@" "$RESET_ALL"
+  printf "%b! %s %b\n" "$YELLOW" "$@" "$RESET_ALL"
 }
 
 # Ask for confirmation before proceeding
 function seek_confirmation() {
-    printf "\n"
-    warning "$@"
-    read -rp "Continue? (y/n) " -n 1
-    printf "\n"
+  printf "\n"
+  warning "$@"
+  read -rp "Continue? (y/n) " -n 1
+  printf "\n"
 }
 
 # Test whether the result of an 'ask' is a confirmation
 function is_confirmed() {
-    if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-      return 0
-    fi
-    return 1
+  if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+    return 0
+  fi
+  return 1
 }
 
-
+# Ask the user for some information
 function ask() {
   printf "%b[?] %s: %b" "$YELLOW" "$1" "$RESET_ALL"
   read -r
@@ -64,16 +64,16 @@ function ask() {
 
 # Test whether we're in a git repo
 function is_git_repo() {
-    git rev-parse --is-inside-work-tree &> /dev/null
+  git rev-parse --is-inside-work-tree &> /dev/null
 }
 
 # Test whether a command exists
 # $1 - cmd to test
 function command_exists() {
-    if command -v "$1" > /dev/null; then
-      return 0
-    fi
-    return 1
+  if command -v "$1" > /dev/null; then
+    return 0
+  fi
+  return 1
 }
 
 
@@ -329,43 +329,53 @@ function check_vim_plugins() {
   header "Checking for vim plugins..."
   if [[ ! -d "${HOME}/.vim/plugged" ]]; then
     warning "Vim plugins are not installed."
+    header "Upgrading vim plug..."
+    vim +PlugUpgrade +qa && success "Done."
     header "Installing vim plugins..."
     vim +PlugInstall +qa && success "Done."
   else
     success "Vim plugins are already installed."
+    header "Upgrading vim plug..."
+    vim +PlugUpgrade +qa && success "Done."
+    header "Updating vim plugins..."
+    vim +PlugUpdate +qa && success "Done."
   fi
 }
 
 
-function check_ssh() {
+function check_github_ssh() {
   header "Checking for SSH keys..."
   if [[ ! -d "${HOME}/.ssh" ]]; then
     mkdir "${HOME}/.ssh" && success "Created ~/.ssh directory."
     link "assets/ssh/config" ".ssh/config"
+  elif [[ ! -f "${HOME}/.ssh/config" ]]; then
+    link "assets/ssh/config" ".ssh/config"
   fi
 
+  local ssh_agent_env="${HOME}/.ssh/agent_env_${HOSTNAME}"
   local ssh_algorithm="ed25519"
-  if [[ -f "${HOME}/.ssh/id_${ssh_algorithm}.pub" ]]; then
+  local ssh_filename="github"
+
+  if [[ -f "${HOME}/.ssh/${ssh_filename}.pub" ]]; then
     ssh -T git@github.com &> /dev/null
     [[ $? -eq 1 ]] && success "GitHub SSH is already authenticated."
     return
-  else
-    warning "SSH key file ~/.ssh/id_${ssh_algorithm}.pub not found."
   fi
 
+  warning "SSH key file ~/.ssh/${ssh_filename}.pub not found."
   header "Generating SSH keys..."
   ask "Please provide an email address"
-  ssh-keygen -t "$ssh_algorithm" -C "$REPLY"
+  ssh-keygen -f "${HOME}/.ssh/${ssh_filename}" -t "$ssh_algorithm" -C "$REPLY"
 
-  seek_confirmation "Do you want to add the SSH key to the ssh-agent?"
-  if is_confirmed; then
-    header "Adding SSH key to the ssh-agent..."
-    eval "$(ssh-agent -s)"
-    ssh-add -K "${HOME}/.ssh/id_${ssh_algorithm}"
-  fi
+  header "Adding SSH key to the ssh-agent..."
+  ssh-agent > "${ssh_agent_env}"
+  success "Stored SSH agent information in ${ssh_agent_env}"
+  # shellcheck disable=SC1090
+  source "${ssh_agent_env}"
+  ssh-add -K "${HOME}/.ssh/${ssh_filename}"
 
   header "Adding public SSH key to the GitHub account..."
-  pbcopy < "${HOME}/.ssh/id_${ssh_algorithm}.pub" \
+  pbcopy < "${HOME}/.ssh/${ssh_filename}.pub" \
     && success "Copied public SSH key to clipboard. Please add it to GitHub.com..."
   open "https://github.com/settings/ssh"
   for i in {1..6}; do
@@ -535,7 +545,7 @@ function main() {
 
   # These rely on the dotfiles
   check_vim_plugins
-  check_ssh
+  check_github_ssh
 
   seek_confirmation "Warning: This step may modify your macOS system defaults."
   if is_confirmed; then
