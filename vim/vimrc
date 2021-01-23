@@ -6,12 +6,13 @@ set nocompatible
 " Set leader key
 let mapleader=" "       " leader is space
 
+
 " =============================================================================
 "   PLUGINS
 " =============================================================================
 call plug#begin('~/.vim/plugged')
 
-" Colorschemes (Monokai forever)
+" Colorschemes
 " This contains colors for terminal, lightline/airline and dir if using GNU
 Plug 'patstockwell/vim-monokai-tasty'
 
@@ -28,7 +29,7 @@ Plug 'wlangstroth/vim-racket'
 
 " Text manipulations
 Plug 'preservim/nerdcommenter'
-Plug 'tpope/vim-surround'
+" Plug 'tpope/vim-surround'
 
 " GUI enhancements
 Plug 'itchyny/lightline.vim'
@@ -37,9 +38,11 @@ Plug 'preservim/nerdtree'
 Plug 'Yggdroot/indentLine'
 
 " Git plugin
-Plug 'tpope/vim-fugitive'
+Plug 'itchyny/vim-gitbranch'
+" Plug 'tpope/vim-fugitive'
 
 call plug#end()
+
 
 " =============================================================================
 "  EDITOR SETTINGS
@@ -50,59 +53,100 @@ call plug#end()
 " Turn on syntax highlighting.
 syntax on
 
-"let g:vim_monokai_tasty_italic = 1
+" let g:vim_monokai_tasty_italic = 1
 silent! colorscheme vim-monokai-tasty
 
-" If you don't know what the name of a particular hightlight is, you can use
-" `What`. It will print out the syntax group that the cursor is currently above.
-" from https://www.reddit.com/r/vim/comments/6z4aau/how_to_stop_vim_from_autohighlighting_italics_in/
+" If you don't know what the name of a particular hightlight is, you can use `What`.
+" It will print out the syntax group that the cursor is currently above.
+" Ref: https://www.reddit.com/r/vim/comments/6z4aau/how_to_stop_vim_from_autohighlighting_italics_in/
 command! What echo synIDattr(synID(line('.'), col('.'), 1), 'name')
 
+" Turn on loading of plugin files, indent files and filetype detection
+if has('autocmd')
+  filetype plugin indent on
+endif
 
-" Turn on filetype plugins
-" if has('autocmd')
-"   filetype plugin indent on
-" endif
-
-" if !has('gui_running')
-"   set t_Co=256
-" endif
+if !has('gui_running')
+  set t_Co=256
+endif
 
 
-" UI Config
+" General Config
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set number              " show line numbers
 set relativenumber      " show relative numbering
-set showcmd             " show command in bottom bar
-set cursorline          " highlight current line
-set wildmenu            " visual autocomplete for command menu
+
+if has('cmdline_info')
+  set showcmd             " Show the command being typed in
+endif                     " the right side of the bottom bar.
+
+" Global <TAB> settings
+" set expandtab
+" set tabstop=4
+" set shiftwidth=4
+" set softtabstop=4
+
+set listchars=tab:▸\                " ┐
+set listchars+=trail:·              " │ Use custom symbols to
+set listchars+=eol:↴                " │ represent invisible characters.
+set listchars+=nbsp:_               " ┘
+
 set showmatch           " highlight matching [{()}]
-set laststatus=2        " Show the status line at the bottom
-set mouse+=a            " A necessary evil, mouse support
-set noerrorbells visualbell t_vb=    "Disable annoying error noises
+
+" Show the status line at the bottom
+" 0: never
+" 1: only if there are at least two windows
+" 2: always
+set laststatus=2
+
+set mouse+=a            " Enable mouse support
+
+" Disable annoying error noises
+set noerrorbells
+set visualbell
+set t_vb=
+
 set splitbelow          " Open new vertical split bottom
 set splitright          " Open new horizontal splits right
+
 set linebreak           " Have lines wrap instead of continue off-screen
+
 set scrolloff=12        " Keep cursor in approximately the middle of the screen
-set updatetime=100      " Some plugins require fast updatetime
+
+" set updatetime=100      " Some plugins require fast updatetime
+
 set ttyfast             " Improve redrawing
-set shortmess+=I        " Disable the default Vim startup message
+
+" Disable the default Vim startup message
+" ':help shortmess' to look at other flags
+set shortmess+=I
+
 set ruler               " Show the cursor position
-set title               " Show the filename in window titlebar
 set nostartofline       " Don't set cursor to start of line when moving around
-set gdefault            " Add the g flag to search/replace by default
-set wildmode=longest,list,full " Tab completion for files/buffers
-" Use system clipboard by default so that you can
-" CtrlC in other programs and put in Vim with p on all three platforms,
-" yank in Vim with y and CtrlV in other programs on all three platforms.
-" Support for Linux selection clipboard as well.
-set clipboard^=unnamed,unnamedplus
+
+set title               " Show the filename in window titlebar
+
+" set gdefault          " Add the g flag to search/replace by default (deprecated)
+
+" Tab completion for files/buffers
+set wildmenu             " Visual autocomplete for command menu
+set wildmode=longest     " Complete longest common string
+set wildmode+=list       " then list alternatives
+set wildmode+=full       " then complete each full match showing the wildmenu
+
+" Use the system clipboard as the default register
+set clipboard=unnamed
+if has('unnamedplus')
+  set clipboard+=unnamedplus
+endif
+
 set encoding=utf-8
-set backupcopy=yes      " see :help crontab
+
 set autoread            " reload files when changed on disk, i.e. via `git checkout`
 
 " Cursor shape for tmux running in iTerm2
 " Cursor settings:
+" NOTE: This seems to be incorrect
 "  1 -> blinking block
 "  2 -> solid block
 "  3 -> blinking underscore
@@ -110,29 +154,51 @@ set autoread            " reload files when changed on disk, i.e. via `git check
 "  5 -> blinking vertical bar
 "  6 -> solid vertical bar
 " https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
-let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"  " INSERT
-let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"  " REPLACE
-let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"  " NORMAL (ELSE)
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"  " INSERT
+  let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"  " REPLACE
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"  " NORMAL (ELSE)
+else
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
 
-" Buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hidden              " Allows having hidden buffer (not displayed in any window)
 
-" Sensible stuff
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Allow backspace in insert mode
 set backspace=indent,eol,start
 
-" Automatic reloading of .vimrc on save
-autocmd! bufwritepost .vimrc source %
-
 " Unbind some useless/annoying default key bindings.
-nmap Q <Nop> " 'Q' in normal mode enters Ex mode. You almost never want this.
+" 'Q' in normal mode enters Ex mode. You almost never want this.
+nmap Q <Nop>
 
-" quicker window movement
+" Quicker window movement
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
+
+" --INSERT-- is unncessary because of lightline
+set noshowmode
+
+
+" Auto commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Automatic reloading of .vimrc on save
+" Nested is necessary to correctly reload lightline/airline
+augroup auto_reload_vimrc
+  autocmd!
+  autocmd BufWritePost .vimrc,vimrc nested source $MYVIMRC
+augroup END
+
+" Highlight current line, but only in active window
+augroup cursor_line_only_in_active_window
+  autocmd!
+  autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline
+augroup END
+
 
 " Searching
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -140,9 +206,11 @@ set incsearch           " search as characters are entered
 set hlsearch            " highlight matches
 set ignorecase          " Ignore case in searches by default
 set smartcase           " But make it case sensitive if an uppercase is entered
-" turn off search highlight
+
+" Turn off search highlight (this becomes useless with vim-cool plugin)
 nnoremap <Leader>h :nohlsearch<cr>
 vnoremap <Leader>h :nohlsearch<cr>
+
 
 " Centralize backups, swapfiles and undo history
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -150,6 +218,7 @@ set backupdir=~/.vim/backups/
 set directory=~/.vim/swaps/
 set undofile
 set undodir=~/.vim/undo/
+
 
 " Lose bad habits
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -178,95 +247,106 @@ vnoremap <Down>  :echoe "Use j"<CR>
 
 let g:startify_custom_header = []     " Disable startify header
 
+
 " ALE
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ale_enabled = 1
 
 " Error message format
+let g:ale_echo_msg_info_str = 'I'
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_echo_msg_format = '[%linter%] %code: %%s [%severity%]'
 
 " Don't lint on opening the files but when I save them
 " Also, not when I do some edits
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_save = 1
-let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 0
 
 " Set this variable to 1 to fix files when you save them.
 let g:ale_fix_on_save = 1
-let g:ale_fixers = {
-    \   '*': ['remove_trailing_lines', 'trim_whitespace'],
-    \}
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace']}
 
 " Custom symbols
 let g:ale_sign_error = '✘'
-let g:ale_sign_warning = '⚠'
+let g:ale_sign_warning = '!'
+
 " Remove background color
 highlight clear ALEErrorSign
 highlight clear ALEWarningSign
-
-"let g:ale_open_list = 1
-" Show 5 lines of errors (default: 10)
-"let g:ale_list_window_size = 5
-
-" Keep the sign gutter open
-"let g:ale_sign_column_always = 1
 
 " Navigate between errors
 nmap <silent> [a <Plug>(ale_previous_wrap)
 nmap <silent> ]a <Plug>(ale_next_wrap)
 
+
 " Lightline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" --INSERT-- is unncessary because of lightline
-set noshowmode
 
 let g:lightline = {
-	\ 'colorscheme': 'monokai_tasty',
-	\ 'component': {
-	\   'lineinfo': ' %3l:%-2c%<',
-	\ },
-	\ 'active': {
-	\   'left': [ [ 'mode', 'paste' ],
-	\             [ 'gitbranch', 'readonly', 'filename', ] ],
-	\   'right': [ [ 'linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo' ] ,
-	\            [ 'percent' ],
-	\            [ 'fileencoding', 'filetype' ] ]
-	\ },
-	\ 'component_function': {
-	\   'gitbranch': 'LightlineFugitive',
-	\   'filename': 'LightlineFilename',
-	\   'readonly': 'LightlineReadonly',
-	\   'fileencoding': 'LightlineFileencoding',
-	\   'filetype': 'LightlineFiletype',
-	\ },
-	\ 'component_expand': {
-        \   'linter_infos': 'lightline#ale#infos',
-        \   'linter_warnings': 'lightline#ale#warnings',
-        \   'linter_errors': 'lightline#ale#errors',
-	\ },
-	\ 'component_type': {
-        \   'linter_infos': 'right',
-        \   'linter_warnings': 'warning',
-        \   'linter_errors': 'error',
-	\ },
-	\ 'separator': { 'left': '', 'right': '' },
-	\ 'subseparator': { 'left': '', 'right': '' },
-	\ }
+  \ 'colorscheme': 'monokai_tasty',
+  \ 'component': {
+  \   'lineinfo': ' %3l:%-2c%<',
+  \ },
+  \ 'active': {
+  \   'left': [
+  \     ['mode', 'paste'],
+  \     ['gitbranch', 'readonly', 'filename']
+  \   ],
+  \   'right': [
+  \     ['linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo'],
+  \     ['percent'],
+  \     ['fileencoding', 'filetype']
+  \   ]
+  \ },
+  \ 'component_function': {
+  \   'gitbranch': 'LightlineGitBranch',
+  \   'filename': 'LightlineFilename',
+  \   'readonly': 'LightlineReadonly',
+  \   'fileencoding': 'LightlineFileencoding',
+  \   'filetype': 'LightlineFiletype',
+  \ },
+  \ 'component_expand': {
+  \   'linter_infos': 'lightline#ale#infos',
+  \   'linter_warnings': 'lightline#ale#warnings',
+  \   'linter_errors': 'lightline#ale#errors',
+  \ },
+  \ 'component_type': {
+  \   'linter_infos': 'right',
+  \   'linter_warnings': 'warning',
+  \   'linter_errors': 'error',
+  \ },
+  \ 'mode_map': {
+  \   'n' : 'N',
+  \   'i' : 'I',
+  \   'R' : 'R',
+  \   'v' : 'V',
+  \   'V' : 'VL',
+  \   "\<C-v>": 'VB',
+  \   'c' : 'C',
+  \   's' : 'S',
+  \   'S' : 'SL',
+  \   "\<C-s>": 'SB',
+  \   't': 'T',
+  \ },
+  \ }
 
 " Ale error indicator for lightline
-let g:lightline#ale#indicator_infos = "\uf129"
-let g:lightline#ale#indicator_warnings = "\uf071"
-let g:lightline#ale#indicator_errors = "\uf05e"
+let g:lightline#ale#indicator_infos = "i"
+let g:lightline#ale#indicator_warnings = "!"
+let g:lightline#ale#indicator_errors = "✘"
 
-function! LightlineFugitive()
-  if exists('*FugitiveHead')
+function! LightlineGitBranch()
+  if exists('*gitbranch#name')
+    let branch = gitbranch#name()
+  elseif exists('*FugitiveHead')
     let branch = FugitiveHead()
-    return branch !=# '' ? ''.branch : ''
+  else
+    let branch = ''
   endif
-  return ''
+  return branch !=# '' ? ''.branch : ''
 endfunction
 
 function! LightlineFilename()
@@ -290,10 +370,24 @@ endfunction
 
 " NERDTree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Ignore files in NERDTree
+let NERDTreeIgnore = [
+  \ '\.pyc$',
+  \ '\.pyo$',
+  \ '__pycache__$',
+  \ ]
+
+" 1. Close vim if only window left is NERDTree
+" 2. Load NERDTree only if vim is run without arguments (blocks startify)
+augroup nerdtree
+  autocmd!
+  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+  " autocmd VimEnter * if !argc() | NERDTree | endif
+augroup END
+
 " Set key to Ctrl-n to open nerd tree
-" Close vim if only window left is NERDTree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-map <C-n> :NERDTreeToggle<CR>
+nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>
 
 
 " NERDCommenter
@@ -311,7 +405,7 @@ let g:NERDDefaultAlign = 'left'
 " Custom delimiters for the specified filetype
 " This did not seem to work when I put it in the ftplugin/racket.vim
 let g:NERDCustomDelimiters = {
-	\ 'racket': { 'left': ';;' , 'leftAlt': ';' }
+  \ 'racket': { 'left': ';;' , 'leftAlt': ';' }
 	\ }
 
 
@@ -325,3 +419,9 @@ map g/ <Plug>(incsearch-stay)
 " Indent line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:indentLine_char = '⎸'
+
+
+" Vim cool
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Show number of matches in the command-line
+let g:CoolTotalMatches = 1

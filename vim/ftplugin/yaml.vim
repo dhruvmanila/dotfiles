@@ -1,5 +1,3 @@
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
+" Indent settings comes from vim-yaml plugin
 
 let b:ale_linters = ['yamllint']

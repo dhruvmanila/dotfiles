@@ -16,20 +16,18 @@ def colorcode(code: int) -> str:
     return "\033[" + str(code) + "m"
 
 
-RED = colorcode(31)
-YELLOW = colorcode(33)
-WHITE = colorcode(37)
+GREEN = colorcode(32)
 BOLD = colorcode(1)
 RESET = colorcode(0)
 
 
-print(f"{YELLOW}Collecting packages...{RESET}")
+print(f"{BOLD}==> Collecting packages...{RESET}")
 packages = [dist.project_name for dist in pkg_resources.working_set]
-print(f"{YELLOW}Collected {WHITE}{BOLD}{len(packages)} {RESET}{YELLOW}packages.{RESET}")
+print(f"{GREEN}✓ Collected {len(packages)} packages.{RESET}")
 
 for pkg in packages:
+    print(f"\n{BOLD}==> Uninstalling {pkg}...{RESET}")
     if pkg in IGNORE_PACKAGES:
-        print(f"\n{YELLOW}Skipping {WHITE}{BOLD}{pkg}...{RESET}")
+        print(f"\n{GREEN}Skipping {pkg}...{RESET}")
         continue
-    print(f"\n{RED}Uninstalling {WHITE}{BOLD}{pkg}...{RESET}")
     call(f"pip uninstall --yes {pkg}", shell=True)
