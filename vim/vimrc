@@ -286,20 +286,21 @@ nmap <silent> ]a <Plug>(ale_next_wrap)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let g:lightline = {
-  \ 'colorscheme': 'monokai_tasty',
-  \ 'component': {
-  \   'lineinfo': ' %3l:%-2c%<',
-  \ },
+  \ 'colorscheme': 'custom_monokai_tasty',
   \ 'active': {
   \   'left': [
   \     ['mode', 'paste'],
-  \     ['gitbranch', 'readonly', 'filename']
+  \     ['gitbranch', 'readonly'],
+  \     ['filename']
   \   ],
   \   'right': [
   \     ['linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo'],
-  \     ['percent'],
-  \     ['fileencoding', 'filetype']
+  \     ['fileencoding'],
+  \     ['filetype']
   \   ]
+  \ },
+  \ 'component': {
+  \   'lineinfo': '%3p%%  %3l:%-2c%<',
   \ },
   \ 'component_function': {
   \   'gitbranch': 'LightlineGitBranch',
@@ -331,6 +332,8 @@ let g:lightline = {
   \   "\<C-s>": 'SB',
   \   't': 'T',
   \ },
+  \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+	\ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" },
   \ }
 
 " Ale error indicator for lightline
@@ -338,18 +341,23 @@ let g:lightline#ale#indicator_infos = "i"
 let g:lightline#ale#indicator_warnings = "!"
 let g:lightline#ale#indicator_errors = "✘"
 
+" For vim-fugitive plugin: let branch = FugitiveHead()
 function! LightlineGitBranch()
-  if exists('*gitbranch#name')
-    let branch = gitbranch#name()
-  elseif exists('*FugitiveHead')
-    let branch = FugitiveHead()
-  else
-    let branch = ''
-  endif
+  let branch = gitbranch#name()
   return branch !=# '' ? ''.branch : ''
 endfunction
 
+" https://github.com/itchyny/lightline.vim/issues/293
+" Filename from the project root (git repository)
 function! LightlineFilename()
+  " let root = fnamemodify(get(b:, 'gitbranch_path'), ':h:h')
+  " let path = expand('%:p')
+  " let modified = &modified ? ' [+]' : ''
+  " if path[:len(root)-1] ==# root
+  "   let filename = path[len(root)+1:]
+  " else
+  "   let filename = expand('%')
+  " endif
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
   let modified = &modified ? ' +' : ''
   return filename . modified

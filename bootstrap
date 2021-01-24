@@ -6,7 +6,6 @@ export PS4="\e[1m==> \e[0m"
 
 # Dotfiles information
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
-DOTFILES_TARBALL_PATH="https://github.com/dhruvmanila/dotfiles/tarball/master"
 
 # Colors
 BOLD="\e[1m"
@@ -95,7 +94,7 @@ function check_dotfiles() {
     header "Downloading dotfiles..."
     mkdir -p "${DOTFILES_DIRECTORY}"
     # Get the tarball
-    if curl -fsSLo "${HOME}/dotfiles.tar.gz" "${DOTFILES_TARBALL_PATH}" > /dev/null; then
+    if curl -fsSLo ~/dotfiles.tar.gz https://github.com/dhruvmanila/dotfiles/tarball/master; then
       success "Successfully downloaded the dotfiles."
     else
       error "Failed to download the dotfiles."
@@ -110,7 +109,7 @@ function check_dotfiles() {
       exit 1
     fi
     # Remove the tarball
-    rm -rf "${HOME}/dotfiles.tar.gz"
+    rm -rf ~/dotfiles.tar.gz
   fi
 }
 
@@ -228,7 +227,7 @@ function check_git() {
   if ! command_exists "git"; then
     warning "Git is not installed"
     header "Installing Git with Homebrew..."
-    brew install git
+    brew install --formula git
     if command_exists "git"; then
       success "Successfully installed Git."
     else
