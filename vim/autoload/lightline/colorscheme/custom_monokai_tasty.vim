@@ -95,10 +95,10 @@ let s:palette.inactive.middle = [
       \s:add(s:dark_grey, s:light_charcoal, 'none') ]
 
 " tabs
-let s:palette.tabline.left = [ [ '#d0d0d0', '#666666', 252, 242 ] ]
-let s:palette.tabline.tabsel = [ [ '#dadada', '#121212', 253, 233 ] ]
+let s:palette.tabline.left = [ s:add(s:light_grey, s:light_charcoal, 'none') ]
+let s:palette.tabline.tabsel = [ s:add(s:charcoal, s:light_green, 'none') ]
 let s:palette.tabline.middle = [ [ '#8a8a8a', '#3a3a3a', 245, 237 ] ]
-let s:palette.tabline.right = [ [ '#d0d0d0', '#666666', 252, 242 ] ]
+let s:palette.tabline.right = [ s:add(s:light_grey, s:light_charcoal, 'none') ]
 
 let s:palette.normal.error = [ [ '#d0d0d0', '#ff0000', 252, 196 ] ]
 let s:palette.normal.warning = [ [ '#262626', '#ffff00', 235, 226 ] ]

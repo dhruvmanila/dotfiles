@@ -15,6 +15,7 @@ call plug#begin('~/.vim/plugged')
 " Colorschemes
 " This contains colors for terminal, lightline/airline and dir if using GNU
 Plug 'patstockwell/vim-monokai-tasty'
+Plug 'arcticicestudio/nord-vim'
 
 " Search
 Plug 'romainl/vim-cool'
@@ -55,6 +56,7 @@ syntax on
 
 " let g:vim_monokai_tasty_italic = 1
 silent! colorscheme vim-monokai-tasty
+" silent! colorscheme nord
 
 " If you don't know what the name of a particular hightlight is, you can use `What`.
 " It will print out the syntax group that the cursor is currently above.
@@ -86,18 +88,17 @@ endif                     " the right side of the bottom bar.
 " set shiftwidth=4
 " set softtabstop=4
 
-set listchars=tab:▸\                " ┐
-set listchars+=trail:·              " │ Use custom symbols to
-set listchars+=eol:↴                " │ represent invisible characters.
-set listchars+=nbsp:_               " ┘
+" Use custom symbols to represent invisible characters
+set listchars=tab:▸\
+set listchars+=trail:·
+set listchars+=eol:↴
+set listchars+=nbsp:_
 
 set showmatch           " highlight matching [{()}]
 
-" Show the status line at the bottom
-" 0: never
-" 1: only if there are at least two windows
-" 2: always
+" Always show the status line at the bottom
 set laststatus=2
+set showtabline=2
 
 set mouse+=a            " Enable mouse support
 
@@ -272,6 +273,7 @@ let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace']}
 " Custom symbols
 let g:ale_sign_error = '✘'
 let g:ale_sign_warning = '!'
+let g:ale_sign_info = 'i'
 
 " Remove background color
 highlight clear ALEErrorSign
@@ -319,21 +321,8 @@ let g:lightline = {
   \   'linter_warnings': 'warning',
   \   'linter_errors': 'error',
   \ },
-  \ 'mode_map': {
-  \   'n' : 'N',
-  \   'i' : 'I',
-  \   'R' : 'R',
-  \   'v' : 'V',
-  \   'V' : 'VL',
-  \   "\<C-v>": 'VB',
-  \   'c' : 'C',
-  \   's' : 'S',
-  \   'S' : 'SL',
-  \   "\<C-s>": 'SB',
-  \   't': 'T',
-  \ },
   \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
-	\ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" },
+  \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" },
   \ }
 
 " Ale error indicator for lightline
@@ -344,7 +333,7 @@ let g:lightline#ale#indicator_errors = "✘"
 " For vim-fugitive plugin: let branch = FugitiveHead()
 function! LightlineGitBranch()
   let branch = gitbranch#name()
-  return branch !=# '' ? ''.branch : ''
+  return branch !=# '' ? ' '.branch : ''
 endfunction
 
 " https://github.com/itchyny/lightline.vim/issues/293
@@ -386,11 +375,11 @@ let NERDTreeIgnore = [
   \ ]
 
 " 1. Close vim if only window left is NERDTree
-" 2. Load NERDTree only if vim is run without arguments (blocks startify)
+" 2. Load NERDTree and startify if vim is ran without arguments
 augroup nerdtree
   autocmd!
   autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-  " autocmd VimEnter * if !argc() | NERDTree | endif
+  autocmd VimEnter * if !argc() | Startify | NERDTree | wincmd w | endif
 augroup END
 
 " Set key to Ctrl-n to open nerd tree
@@ -414,7 +403,7 @@ let g:NERDDefaultAlign = 'left'
 " This did not seem to work when I put it in the ftplugin/racket.vim
 let g:NERDCustomDelimiters = {
   \ 'racket': { 'left': ';;' , 'leftAlt': ';' }
-	\ }
+  \ }
 
 
 " incsearch

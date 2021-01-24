@@ -11,7 +11,7 @@ DOTFILES_DIRECTORY="${HOME}/dotfiles"
 BOLD="\e[1m"
 RESET_ALL="\e[0m"
 GREEN="\e[32m"
-RED="\e[35m"
+RED="\e[31m"
 YELLOW="\e[1;33m"
 
 
@@ -342,6 +342,30 @@ function check_vim_plugins() {
 }
 
 
+function check_tmux_plugins() {
+  header "Checking for tmux plugins..."
+  if [[ ! -d "${HOME}/.tmux/plugins/tpm" ]]; then
+    warning "tmux plugin manager is not installed."
+    header "Installing tmux plugin manager..."
+    if git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm; then
+      success "Successfully installed tmux plugin manager."
+      header "Installing tmux plugins..."
+      { ~/.tmux/plugins/tpm/bin/install_plugins && success "Done."; } \
+        || { error "Failed to install tmux plugins."; exitcode=1; }
+    else
+      error "Failed to install tmux plugin manager."
+      exitcode=1
+      return
+    fi
+  else
+    success "tmux plugin manager is already installed."
+    header "Updating tmux plugins..."
+    { ~/.tmux/plugins/tpm/bin/update_plugins all && success "Done".; } \
+      || { error "Failed to update tmux plugins."; exitcode=1; }
+  fi
+}
+
+
 function check_github_ssh() {
   header "Checking for SSH keys..."
   if [[ ! -d "${HOME}/.ssh" ]]; then
@@ -457,12 +481,12 @@ function mirror_files() {
   link "bash/bash_profile"          ".bash_profile"          || exitcode=1
   link "assets/inputrc"             ".inputrc"               || exitcode=1
   link "vim/vimrc"                  ".vimrc"                 || exitcode=1
-  link "tmux/tmux.conf"             ".tmux.conf"             || exitcode=1
-  link "assets/gitignore"           ".gitignore"             || exitcode=1
-  link "assets/gitconfig"           ".gitconfig"             || exitcode=1
   link "vim"                        ".vim"                   || exitcode=1
+  link "tmux/tmux.conf"             ".tmux.conf"             || exitcode=1
   link "python/flake8"              ".config/flake8"         || exitcode=1
   link "python/pylintrc"            ".pylintrc"              || exitcode=1
+  link "assets/gitignore"           ".gitignore"             || exitcode=1
+  link "assets/gitconfig"           ".gitconfig"             || exitcode=1
   link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=1
   link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
   link "assets/ssh/config"          ".ssh/config"            || exitcode=1
@@ -544,6 +568,7 @@ function main() {
 
   # These rely on the dotfiles
   check_vim_plugins
+  check_tmux_plugins
   check_github_ssh
 
   seek_confirmation "Warning: This step may modify your macOS system defaults."
