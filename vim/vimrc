@@ -170,35 +170,8 @@ set hidden              " Allows having hidden buffer (not displayed in any wind
 " Allow backspace in insert mode
 set backspace=indent,eol,start
 
-" Unbind some useless/annoying default key bindings.
-" 'Q' in normal mode enters Ex mode. You almost never want this.
-nmap Q <Nop>
-
-" Quicker window movement
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
 " --INSERT-- is unncessary because of lightline
 set noshowmode
-
-
-" Auto commands
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Automatic reloading of .vimrc on save
-" Nested is necessary to correctly reload lightline/airline
-augroup auto_reload_vimrc
-  autocmd!
-  autocmd BufWritePost .vimrc,vimrc nested source $MYVIMRC
-augroup END
-
-" Highlight current line, but only in active window
-augroup cursor_line_only_in_active_window
-  autocmd!
-  autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-  autocmd WinLeave * setlocal nocursorline
-augroup END
 
 
 " Searching
@@ -242,11 +215,102 @@ vnoremap <Up>    :echoe "Use k"<CR>
 vnoremap <Down>  :echoe "Use j"<CR>
 
 
+" Custom functions
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Set all the open windows to equal width.
+" `wincmd =` changes the height as well, we will extract the height
+" changes from `winrestcmd` and execute it.
+" Used for :NERDTreeToggle using <CTRL-n>
+function! SetWindowsToEqualWidth()
+  let restoreCommands = split(winrestcmd(), '|')
+  " `=~#` Regexp matches with match case
+  let heightCommands = filter(restoreCommands, { idx, cmd -> cmd =~# '^:\dresize' })
+  wincmd =
+  execute join(heightCommands, '|')
+endfunction
+
+
+" Custom mappings
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Ref: Get list of all custom mappings `:map`
+
+" Unbind some useless/annoying default key bindings.
+" 'Q' in normal mode enters Ex mode. You almost never want this.
+nmap Q <Nop>
+
+" Quicker window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" Set the terminal height to 2.5 of the current window and
+" open it in the directory of the file
+map <F6>
+  \ :let $VIM_DIR=expand('%:p:h')<CR>
+  \ :let &termwinsize = float2nr(winheight(0) / 2.5) . "x0"<CR>
+  \ :terminal<CR>
+  \ cd $VIM_DIR<CR>
+  \ clear<CR>
+
+
+" Auto commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Automatic reloading of .vimrc on save
+" Nested is necessary to correctly reload lightline/airline
+augroup auto_reload_vimrc
+  autocmd!
+  autocmd BufWritePost .vimrc,vimrc nested source $MYVIMRC
+augroup END
+
+" Highlight current line, but only in active window
+augroup cursor_line_only_in_active_window
+  autocmd!
+  autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  autocmd WinLeave * setlocal nocursorline
+augroup END
+
+" Help filetype detection
+augroup filetype_detection
+  autocmd!
+  autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
+augroup END
+
+
 " =============================================================================
 "   PLUGIN CONFIG
 " =============================================================================
 
-let g:startify_custom_header = []     " Disable startify header
+" Startify
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Disable startify header
+let g:startify_custom_header = []
+
+let g:startify_lists = [
+  \ { 'type': 'files',     'header': ['   Files']            },
+  \ { 'type': 'dir',       'header': ['   Current Directory '. getcwd()] },
+  \ { 'type': 'sessions',  'header': ['   Sessions']       },
+  \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+  \ ]
+
+let g:startify_bookmarks = [
+  \ {'v': '~/dotfiles/vim/vimrc'},
+  \ {'b': '~/dotfiles/bash/bashrc'},
+  \ ]
+
+" Automatically update sessions before leaving Vim and before loading a new
+" session via :SLoad
+let g:startify_session_persistence = 1
+
+let g:startify_session_delete_buffers = 0
+
+" Close NERDTree tabs before saving a session and get the buffer back to the
+" original tabpage.
+let g:startify_session_before_save = [
+  \ 'let $CURRENT_TABPAGE = tabpagenr()',
+  \ 'tabdo NERDTreeClose',
+  \ 'execute $CURRENT_TABPAGE . "tabnext"',
+  \ ]
 
 
 " ALE
@@ -336,17 +400,9 @@ function! LightlineGitBranch()
   return branch !=# '' ? ' '.branch : ''
 endfunction
 
+" Extra: Filename from the project root (git repository)
 " https://github.com/itchyny/lightline.vim/issues/293
-" Filename from the project root (git repository)
 function! LightlineFilename()
-  " let root = fnamemodify(get(b:, 'gitbranch_path'), ':h:h')
-  " let path = expand('%:p')
-  " let modified = &modified ? ' [+]' : ''
-  " if path[:len(root)-1] ==# root
-  "   let filename = path[len(root)+1:]
-  " else
-  "   let filename = expand('%')
-  " endif
   let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
   let modified = &modified ? ' +' : ''
   return filename . modified
@@ -378,17 +434,31 @@ let NERDTreeIgnore = [
 " 2. Load NERDTree and startify if vim is ran without arguments
 augroup nerdtree
   autocmd!
-  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-  autocmd VimEnter * if !argc() | Startify | NERDTree | wincmd w | endif
+  autocmd BufEnter *
+    \ if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree())
+    \ | q
+    \ | endif
+  autocmd VimEnter *
+    \ if !argc()
+    \ | Startify
+    \ | NERDTree
+    \ | wincmd w
+    \ | endif
 augroup END
 
-" Set key to Ctrl-n to open nerd tree
-nnoremap <C-n> :NERDTreeToggle<CR>
+" Set key to Ctrl-n to open nerd tree and make all windows the same width.
+" `:wincmd =` changes the height also but we don't want that.
+nnoremap <C-n> :NERDTreeToggle<CR> :call SetWindowsToEqualWidth()<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
+" Change focus to the NERDTree window if present, else open it.
+" This will help in opening a file in a specific buffer, otherwise it opens
+" the file in the first buffer from the NERDTree window.
+nnoremap <leader>n :NERDTreeFocus<CR>
 
 
 " NERDCommenter
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Custom Delimiters for filetype are in .vim/filetype/*
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 " Allow commenting and inverting empty lines
@@ -399,12 +469,6 @@ let g:NERDCompactSexyComs = 1
 let g:NERDTrimTrailingWhitespace = 1
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
-" Custom delimiters for the specified filetype
-" This did not seem to work when I put it in the ftplugin/racket.vim
-let g:NERDCustomDelimiters = {
-  \ 'racket': { 'left': ';;' , 'leftAlt': ';' }
-  \ }
-
 
 " incsearch
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -420,5 +484,5 @@ let g:indentLine_char = '⎸'
 
 " Vim cool
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Show number of matches in the command-line
+" Show number of matches in the command-line (match 12 of 20)
 let g:CoolTotalMatches = 1

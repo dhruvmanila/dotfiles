@@ -25,4 +25,6 @@ vim/swaps/*
 # Use :Plug... commands to update everything
 vim/plugged
 
+vim/session
+
 .vagrant
