@@ -13,7 +13,6 @@ let mapleader=" "       " leader is space
 call plug#begin('~/.vim/plugged')
 
 " Colorschemes
-" This contains colors for terminal, lightline/airline and dir if using GNU
 Plug 'patstockwell/vim-monokai-tasty'
 Plug 'arcticicestudio/nord-vim'
 
@@ -41,6 +40,10 @@ Plug 'Yggdroot/indentLine'
 " Git plugin
 Plug 'itchyny/vim-gitbranch'
 " Plug 'tpope/vim-fugitive'
+
+" Tmux GUI
+" For now using the autocmd group auto_reload_file_when_changed
+" Plug 'tmux-plugins/vim-tmux-focus-events'
 
 call plug#end()
 
@@ -114,7 +117,7 @@ set linebreak           " Have lines wrap instead of continue off-screen
 
 set scrolloff=12        " Keep cursor in approximately the middle of the screen
 
-" set updatetime=100      " Some plugins require fast updatetime
+set updatetime=100      " Some plugins require fast updatetime
 
 set ttyfast             " Improve redrawing
 
@@ -143,7 +146,8 @@ endif
 
 set encoding=utf-8
 
-set autoread            " reload files when changed on disk, i.e. via `git checkout`
+" Reload files when changed on disk
+set autoread
 
 " Cursor shape for tmux running in iTerm2
 " Cursor settings:
@@ -169,6 +173,10 @@ set hidden              " Allows having hidden buffer (not displayed in any wind
 
 " Allow backspace in insert mode
 set backspace=indent,eol,start
+
+" Automatically insert the current comment leader after hitting <Enter> in
+" Insert mode.
+set formatoptions+=r
 
 " --INSERT-- is unncessary because of lightline
 set noshowmode
@@ -220,11 +228,14 @@ vnoremap <Down>  :echoe "Use j"<CR>
 " Set all the open windows to equal width.
 " `wincmd =` changes the height as well, we will extract the height
 " changes from `winrestcmd` and execute it.
-" Used for :NERDTreeToggle using <CTRL-n>
+" Used when toggling NERDTree on and off
 function! SetWindowsToEqualWidth()
   let restoreCommands = split(winrestcmd(), '|')
   " `=~#` Regexp matches with match case
-  let heightCommands = filter(restoreCommands, { idx, cmd -> cmd =~# '^:\dresize' })
+  let heightCommands = filter(
+    \ restoreCommands,
+    \ { idx, cmd -> cmd =~# '^:\dresize' }
+    \ )
   wincmd =
   execute join(heightCommands, '|')
 endfunction
@@ -243,6 +254,9 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
+
+" Mapping for the custom function
+nnoremap <leader>= :call SetWindowsToEqualWidth()<CR>
 
 " Set the terminal height to 2.5 of the current window and
 " open it in the directory of the file
@@ -276,6 +290,26 @@ augroup filetype_detection
   autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
 augroup END
 
+" Resize windows to equal width when vim resizes (&columns &lines changed)
+augroup equal_window_width_on_vim_resize
+  autocmd!
+  autocmd VimResized * call SetWindowsToEqualWidth()
+augroup END
+
+" Triger `autoread` when files changes on disk and notify after file change
+" https://unix.stackexchange.com/a/383044
+augroup auto_reload_file_when_changed
+  autocmd!
+  autocmd FocusGained,BufEnter,CursorHold,CursorHoldI *
+    \ if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == ''
+    \ | checktime
+    \ | endif
+  autocmd FileChangedShellPost *
+    \ echohl WarningMsg
+    \ | echo "File changed on disk. Buffer reloaded."
+    \ | echohl None
+augroup END
+
 
 " =============================================================================
 "   PLUGIN CONFIG
@@ -287,10 +321,10 @@ augroup END
 let g:startify_custom_header = []
 
 let g:startify_lists = [
-  \ { 'type': 'files',     'header': ['   Files']            },
-  \ { 'type': 'dir',       'header': ['   Current Directory '. getcwd()] },
-  \ { 'type': 'sessions',  'header': ['   Sessions']       },
-  \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+  \ {'type': 'files',     'header': ['   Files']},
+  \ {'type': 'dir',       'header': ['   Current Directory '. getcwd()]},
+  \ {'type': 'sessions',  'header': ['   Sessions']},
+  \ {'type': 'bookmarks', 'header': ['   Bookmarks']},
   \ ]
 
 let g:startify_bookmarks = [
@@ -423,8 +457,18 @@ endfunction
 
 " NERDTree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Automatically delete the buffer of the file you just deleted with NerdTree
+let NERDTreeAutoDeleteBuffer = 1
+
+" Disables display of 'Bookmarks' label and 'Press ? for help' text.
+let NERDTreeMinimalUI = 1
+
+" Show hidden files
+let NERDTreeShowHidden = 1
+
 " Ignore files in NERDTree
 let NERDTreeIgnore = [
+  \ '.DS_Store',
   \ '\.pyc$',
   \ '\.pyo$',
   \ '__pycache__$',
@@ -446,19 +490,19 @@ augroup nerdtree
     \ | endif
 augroup END
 
-" Set key to Ctrl-n to open nerd tree and make all windows the same width.
-" `:wincmd =` changes the height also but we don't want that.
+" NOTE: Make all windows the same width whenever a NERDTree is opened or closed
+" but do not change the height. This is done using `SetWindowsToEqualWidth()`.
+" Set key to Ctrl-n to open nerd tree.
 nnoremap <C-n> :NERDTreeToggle<CR> :call SetWindowsToEqualWidth()<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+nnoremap <C-f> :NERDTreeFind<CR> :call SetWindowsToEqualWidth()<CR>
 " Change focus to the NERDTree window if present, else open it.
 " This will help in opening a file in a specific buffer, otherwise it opens
 " the file in the first buffer from the NERDTree window.
-nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <leader>n :NERDTreeFocus<CR> :call SetWindowsToEqualWidth()<CR>
 
 
 " NERDCommenter
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Custom Delimiters for filetype are in .vim/filetype/*
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 " Allow commenting and inverting empty lines
@@ -469,6 +513,10 @@ let g:NERDCompactSexyComs = 1
 let g:NERDTrimTrailingWhitespace = 1
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
+" Custom delimiters for filetype
+let g:NERDCustomDelimiters = {
+  \ 'racket': { 'left': ';;' , 'leftAlt': ';' }
+  \ }
 
 " incsearch
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
