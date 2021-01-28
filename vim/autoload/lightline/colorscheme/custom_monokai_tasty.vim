@@ -12,6 +12,7 @@ let s:light_blue = { "cterm": 81, "gui": "#62D8F1" }
 let s:magenta = { "cterm": 197, "gui": "#FC1A70" }
 let s:orange = { "cterm": 208, "gui": "#FF9700" }
 
+let s:white = {"cterm": 255, "gui": "#ffffff" }
 let s:light_grey = { "cterm": 250, "gui": "#bcbcbc" }
 let s:grey = { "cterm": 245, "gui": "#8a8a8a" }
 let s:dark_grey = { "cterm": 59, "gui": "#5f5f5f" }
@@ -36,50 +37,50 @@ let s:palette = {
 " right
 let s:palette.normal.right = [
       \ s:add(s:charcoal, s:light_green, 'none'),
-      \ s:add(s:light_grey, s:darkest_grey, 'none'),
-      \ s:add(s:light_green, s:light_charcoal, 'none') ]
+      \ s:add(s:light_green, s:light_charcoal, 'none'),
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.inactive.right = [
       \ s:add(s:charcoal, s:grey, 'none'),
-      \ s:add(s:charcoal, s:dark_grey, 'none'),
-      \ s:add(s:light_grey, s:dark_grey, 'none') ]
+      \ s:add(s:light_grey, s:dark_grey, 'none'),
+      \ s:add(s:white, s:dark_grey, 'none') ]
 let s:palette.command.right = [
       \ s:add(s:charcoal, s:light_blue, 'none'),
-      \ s:add(s:light_grey, s:darkest_grey, 'none'),
-      \ s:add(s:light_blue, s:light_charcoal, 'none') ]
+      \ s:add(s:light_blue, s:light_charcoal, 'none'),
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.insert.right = [
       \ s:add(s:charcoal, s:yellow, 'none'),
-      \ s:add(s:light_grey, s:darkest_grey, 'none'),
-      \ s:add(s:yellow, s:light_charcoal, 'none') ]
+      \ s:add(s:yellow, s:light_charcoal, 'none'),
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.visual.right = [
       \ s:add(s:charcoal, s:purple, 'none'),
-      \ s:add(s:light_grey, s:darkest_grey, 'none'),
-      \ s:add(s:purple, s:light_charcoal, 'none') ]
+      \ s:add(s:purple, s:light_charcoal, 'none'),
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.replace.right = [
       \ s:add(s:charcoal, s:magenta, 'none'),
-      \ s:add(s:light_grey, s:darkest_grey, 'none'),
-      \ s:add(s:magenta, s:light_charcoal, 'none') ]
+      \ s:add(s:magenta, s:light_charcoal, 'none'),
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 
 " left
 let s:palette.normal.left = [
       \ s:add(s:charcoal, s:light_green, 'bold'),
       \ s:add(s:light_green, s:light_charcoal, 'none'),
-      \ s:add(s:light_green, s:darkest_grey, 'none') ]
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.command.left =  [
       \ s:add(s:charcoal, s:light_blue, 'bold'),
       \ s:add(s:light_blue, s:light_charcoal, 'none'),
-      \ s:add(s:light_blue, s:darkest_grey, 'none') ]
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.replace.left = [
       \ s:add(s:charcoal, s:magenta, 'bold'),
       \ s:add(s:magenta, s:light_charcoal, 'none'),
-      \ s:add(s:magenta, s:darkest_grey, 'none') ]
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.insert.left = [
       \ s:add(s:charcoal, s:yellow, 'bold'),
       \ s:add(s:yellow, s:light_charcoal, 'none'),
-      \ s:add(s:yellow, s:darkest_grey, 'none') ]
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.visual.left = [
       \ s:add(s:charcoal, s:purple, 'bold'),
       \ s:add(s:purple, s:light_charcoal, 'none'),
-      \ s:add(s:purple, s:darkest_grey, 'none') ]
+      \ s:add(s:white, s:darkest_grey, 'none') ]
 let s:palette.inactive.left = s:palette.inactive.right[1:]
 
 " middle

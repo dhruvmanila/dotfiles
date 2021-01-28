@@ -14,7 +14,6 @@ call plug#begin('~/.vim/plugged')
 
 " Colorschemes
 Plug 'patstockwell/vim-monokai-tasty'
-Plug 'arcticicestudio/nord-vim'
 
 " Search
 Plug 'romainl/vim-cool'
@@ -23,7 +22,6 @@ Plug 'haya14busa/incsearch.vim'
 " Syntactic language support
 Plug 'vim-python/python-syntax'
 Plug 'dense-analysis/ale'
-Plug 'maximbaz/lightline-ale'
 Plug 'stephpy/vim-yaml'
 Plug 'wlangstroth/vim-racket'
 
@@ -33,13 +31,13 @@ Plug 'preservim/nerdcommenter'
 
 " GUI enhancements
 Plug 'itchyny/lightline.vim'
+Plug 'maximbaz/lightline-ale'
 Plug 'mhinz/vim-startify'
 Plug 'preservim/nerdtree'
 Plug 'Yggdroot/indentLine'
 
 " Git plugin
-Plug 'itchyny/vim-gitbranch'
-" Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 
 " Tmux GUI
 " For now using the autocmd group auto_reload_file_when_changed
@@ -57,9 +55,9 @@ call plug#end()
 " Turn on syntax highlighting.
 syntax on
 
+" FIXME: This does not work in vim inside tmux
 " let g:vim_monokai_tasty_italic = 1
 silent! colorscheme vim-monokai-tasty
-" silent! colorscheme nord
 
 " If you don't know what the name of a particular hightlight is, you can use `What`.
 " It will print out the syntax group that the cursor is currently above.
@@ -174,9 +172,11 @@ set hidden              " Allows having hidden buffer (not displayed in any wind
 " Allow backspace in insert mode
 set backspace=indent,eol,start
 
-" Automatically insert the current comment leader after hitting <Enter> in
+" Format options
+" 'r': Automatically insert the current comment leader after hitting <Enter> in
 " Insert mode.
-set formatoptions+=r
+" 'j': When it makes sense, remove a comment leader when joining lines.
+set formatoptions+=rj
 
 " --INSERT-- is unncessary because of lightline
 set noshowmode
@@ -233,9 +233,9 @@ function! SetWindowsToEqualWidth()
   let restoreCommands = split(winrestcmd(), '|')
   " `=~#` Regexp matches with match case
   let heightCommands = filter(
-    \ restoreCommands,
-    \ { idx, cmd -> cmd =~# '^:\dresize' }
-    \ )
+        \ restoreCommands,
+        \ { idx, cmd -> cmd =~# '^:\dresize' }
+        \ )
   wincmd =
   execute join(heightCommands, '|')
 endfunction
@@ -260,12 +260,19 @@ nnoremap <leader>= :call SetWindowsToEqualWidth()<CR>
 
 " Set the terminal height to 2.5 of the current window and
 " open it in the directory of the file
-map <F6>
-  \ :let $VIM_DIR=expand('%:p:h')<CR>
-  \ :let &termwinsize = float2nr(winheight(0) / 2.5) . "x0"<CR>
-  \ :terminal<CR>
-  \ cd $VIM_DIR<CR>
-  \ clear<CR>
+map <leader>t
+      \ :let $VIM_DIR=expand('%:p:h')<CR>
+      \ :let &termwinsize = float2nr(winheight(0) / 2.5) . "x0"<CR>
+      \ :terminal<CR>
+      \ cd $VIM_DIR<CR>
+      \ clear<CR>
+
+map <leader>vt
+      \ :let $VIM_DIR=expand('%:p:h')<CR>
+      \ :let &termwinsize = ''<CR>
+      \ :vert terminal<CR>
+      \ cd $VIM_DIR<CR>
+      \ clear<CR>
 
 
 " Auto commands
@@ -321,16 +328,16 @@ augroup END
 let g:startify_custom_header = []
 
 let g:startify_lists = [
-  \ {'type': 'files',     'header': ['   Files']},
-  \ {'type': 'dir',       'header': ['   Current Directory '. getcwd()]},
-  \ {'type': 'sessions',  'header': ['   Sessions']},
-  \ {'type': 'bookmarks', 'header': ['   Bookmarks']},
-  \ ]
+      \ {'type': 'files',     'header': ['   Files']},
+      \ {'type': 'dir',       'header': ['   Current Directory '. getcwd()]},
+      \ {'type': 'sessions',  'header': ['   Sessions']},
+      \ {'type': 'bookmarks', 'header': ['   Bookmarks']},
+      \ ]
 
 let g:startify_bookmarks = [
-  \ {'v': '~/dotfiles/vim/vimrc'},
-  \ {'b': '~/dotfiles/bash/bashrc'},
-  \ ]
+      \ {'v': '~/dotfiles/vim/vimrc'},
+      \ {'b': '~/dotfiles/bash/bashrc'},
+      \ ]
 
 " Automatically update sessions before leaving Vim and before loading a new
 " session via :SLoad
@@ -341,10 +348,10 @@ let g:startify_session_delete_buffers = 0
 " Close NERDTree tabs before saving a session and get the buffer back to the
 " original tabpage.
 let g:startify_session_before_save = [
-  \ 'let $CURRENT_TABPAGE = tabpagenr()',
-  \ 'tabdo NERDTreeClose',
-  \ 'execute $CURRENT_TABPAGE . "tabnext"',
-  \ ]
+      \ 'let $CURRENT_TABPAGE = tabpagenr()',
+      \ 'tabdo NERDTreeClose',
+      \ 'execute $CURRENT_TABPAGE . "tabnext"',
+      \ ]
 
 
 " ALE
@@ -386,42 +393,43 @@ nmap <silent> ]a <Plug>(ale_next_wrap)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 let g:lightline = {
-  \ 'colorscheme': 'custom_monokai_tasty',
-  \ 'active': {
-  \   'left': [
-  \     ['mode', 'paste'],
-  \     ['gitbranch', 'readonly'],
-  \     ['filename']
-  \   ],
-  \   'right': [
-  \     ['linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo'],
-  \     ['fileencoding'],
-  \     ['filetype']
-  \   ]
-  \ },
-  \ 'component': {
-  \   'lineinfo': '%3p%%  %3l:%-2c%<',
-  \ },
-  \ 'component_function': {
-  \   'gitbranch': 'LightlineGitBranch',
-  \   'filename': 'LightlineFilename',
-  \   'readonly': 'LightlineReadonly',
-  \   'fileencoding': 'LightlineFileencoding',
-  \   'filetype': 'LightlineFiletype',
-  \ },
-  \ 'component_expand': {
-  \   'linter_infos': 'lightline#ale#infos',
-  \   'linter_warnings': 'lightline#ale#warnings',
-  \   'linter_errors': 'lightline#ale#errors',
-  \ },
-  \ 'component_type': {
-  \   'linter_infos': 'right',
-  \   'linter_warnings': 'warning',
-  \   'linter_errors': 'error',
-  \ },
-  \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
-  \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" },
-  \ }
+      \ 'colorscheme': 'custom_monokai_tasty',
+      \ 'active': {
+      \   'left': [
+      \     ['mode', 'paste'],
+      \     ['gitbranch', 'readonly'],
+      \     ['filename']
+      \   ],
+      \   'right': [
+      \     ['linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo'],
+      \     ['filetype'],
+      \     ['fileformat', 'fileencoding'],
+      \   ]
+      \ },
+      \ 'component': {
+      \   'lineinfo': '%3p%%  %3l:%-2c%<',
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'LightlineGitBranch',
+      \   'filename': 'LightlineFilename',
+      \   'readonly': 'LightlineReadonly',
+      \   'fileencoding': 'LightlineFileencoding',
+      \   'filetype': 'LightlineFiletype',
+      \   'fileformat': 'LightlineFileformat'
+      \ },
+      \ 'component_expand': {
+      \   'linter_infos': 'lightline#ale#infos',
+      \   'linter_warnings': 'lightline#ale#warnings',
+      \   'linter_errors': 'lightline#ale#errors',
+      \ },
+      \ 'component_type': {
+      \   'linter_infos': 'right',
+      \   'linter_warnings': 'warning',
+      \   'linter_errors': 'error',
+      \ },
+      \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+      \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" },
+      \ }
 
 " Ale error indicator for lightline
 let g:lightline#ale#indicator_infos = "i"
@@ -429,8 +437,9 @@ let g:lightline#ale#indicator_warnings = "!"
 let g:lightline#ale#indicator_errors = "✘"
 
 " For vim-fugitive plugin: let branch = FugitiveHead()
+" For vim-gitbranch plugin: let branch = gitbranch#name()
 function! LightlineGitBranch()
-  let branch = gitbranch#name()
+  let branch = FugitiveHead()
   return branch !=# '' ? ' '.branch : ''
 endfunction
 
@@ -454,6 +463,10 @@ function! LightlineFileencoding()
   return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
 endfunction
 
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? (&fileformat !=# '' ? &fileformat : '') : ''
+endfunction
+
 
 " NERDTree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -468,26 +481,28 @@ let NERDTreeShowHidden = 1
 
 " Ignore files in NERDTree
 let NERDTreeIgnore = [
-  \ '.DS_Store',
-  \ '\.pyc$',
-  \ '\.pyo$',
-  \ '__pycache__$',
-  \ ]
+      \ '\.git$',
+      \ '\.DS_Store',
+      \ '\.pyc$',
+      \ '\.pyo$',
+      \ '__pycache__$',
+      \ '\.mypy_cache$',
+      \ ]
 
 " 1. Close vim if only window left is NERDTree
 " 2. Load NERDTree and startify if vim is ran without arguments
 augroup nerdtree
   autocmd!
   autocmd BufEnter *
-    \ if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree())
-    \ | q
-    \ | endif
+        \ if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree())
+        \ | q
+        \ | endif
   autocmd VimEnter *
-    \ if !argc()
-    \ | Startify
-    \ | NERDTree
-    \ | wincmd w
-    \ | endif
+        \ if !argc()
+        \ | Startify
+        \ | NERDTree
+        \ | wincmd w
+        \ | endif
 augroup END
 
 " NOTE: Make all windows the same width whenever a NERDTree is opened or closed
