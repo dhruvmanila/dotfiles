@@ -20,10 +20,6 @@ export HISTCONTROL='ignoreboth';
 export LANG='en_US.UTF-8';
 export LC_ALL='en_US.UTF-8';
 
-# Fixing the italics in vim
-# Still need to fix it in tmux
-export TERM=xterm-256color
-
 # Highlight section titles in manual pages.
 # Colors for less
 # ------ ANSI codes ------

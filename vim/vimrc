@@ -55,8 +55,7 @@ call plug#end()
 " Turn on syntax highlighting.
 syntax on
 
-" FIXME: This does not work in vim inside tmux
-" let g:vim_monokai_tasty_italic = 1
+let g:vim_monokai_tasty_italic = 1
 silent! colorscheme vim-monokai-tasty
 
 " If you don't know what the name of a particular hightlight is, you can use `What`.
@@ -344,6 +343,11 @@ let g:startify_bookmarks = [
 let g:startify_session_persistence = 1
 
 let g:startify_session_delete_buffers = 0
+
+" When opening a file or bookmark, seek and change to the git root directory
+" if any and not to the file directory.
+let g:startify_change_to_dir = 0
+let g:startify_change_to_vcs_root = 1
 
 " Close NERDTree tabs before saving a session and get the buffer back to the
 " original tabpage.
