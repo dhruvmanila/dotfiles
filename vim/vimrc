@@ -3,7 +3,6 @@
 " VI compatible mode is disabled so that VIm things work
 set nocompatible
 
-
 " Set leader key
 let mapleader=" "       " leader is space
 
@@ -56,12 +55,19 @@ call plug#end()
 " Turn on syntax highlighting.
 syntax on
 
-set termguicolors
-let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
-let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
+if exists('+termguicolors')
+  set termguicolors
+  " The commands below are needed for tmux + termguicolors
+  " This is only necessary if you use "set termguicolors".
+  let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
+  let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
+  let g:vim_monokai_tasty_italic = 1
+  silent! colorscheme vim-monokai-tasty
+else
+  silent! colorscheme desert
+  set nocursorline
+endif
 
-let g:vim_monokai_tasty_italic = 1
-silent! colorscheme vim-monokai-tasty
 
 " If you don't know what the name of a particular hightlight is, you can use `What`.
 " It will print out the syntax group that the cursor is currently above.
@@ -73,13 +79,17 @@ if has('autocmd')
   filetype plugin indent on
 endif
 
-if !has('gui_running')
-  set t_Co=256
-endif
+" Vim can autodetect this based on $TERM (e.g. 'xterm-256color')
+" but it can be set to force 256 colors.
+" if !has('gui_running')
+"   set t_Co=256
+" endif
 
 
 " General Config
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set lazyredraw
+
 set number              " show line numbers
 set relativenumber      " show relative numbering
 
@@ -298,7 +308,7 @@ augroup END
 " Help filetype detection
 augroup filetype_detection
   autocmd!
-  autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
+  autocmd BufRead,BufNewFile Vagrantfile,Brewfile set filetype=ruby
 augroup END
 
 " Resize windows to equal width when vim resizes (&columns &lines changed)

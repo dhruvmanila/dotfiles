@@ -479,17 +479,19 @@ function mirror_files() {
   # `dotfiles` repository.
   link "bash/bashrc"                ".bashrc"                || exitcode=1
   link "bash/bash_profile"          ".bash_profile"          || exitcode=1
-  link "assets/inputrc"             ".inputrc"               || exitcode=1
   link "vim/vimrc"                  ".vimrc"                 || exitcode=1
   link "vim"                        ".vim"                   || exitcode=1
   link "tmux/tmux.conf"             ".tmux.conf"             || exitcode=1
   link "python/flake8"              ".config/flake8"         || exitcode=1
   link "python/pylintrc"            ".pylintrc"              || exitcode=1
+  link "assets/inputrc"             ".inputrc"               || exitcode=1
   link "assets/gitignore"           ".gitignore"             || exitcode=1
   link "assets/gitconfig"           ".gitconfig"             || exitcode=1
   link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=1
   link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
   link "assets/ssh/config"          ".ssh/config"            || exitcode=1
+  link "mac/mackup.cfg"             ".mackup.cfg"            || exitcode=1
+  link "mac/mackup"                 ".mackup"                || exitcode=1
 
   success "Dotfiles update complete."
 }
@@ -515,6 +517,7 @@ function update_macos_dock() {
   dockutil --remove all && success "Removed all applications"
   for app in "/Applications/Safari.app" \
     "/Applications/Firefox.app" \
+    "/Applications/Brave Browser.app" \
     "/Applications/PyCharm CE.app" \
     "/Applications/Visual Studio Code.app" \
     "/Applications/iTerm.app" \
