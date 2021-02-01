@@ -3,6 +3,7 @@
 " VI compatible mode is disabled so that VIm things work
 set nocompatible
 
+
 " Set leader key
 let mapleader=" "       " leader is space
 
@@ -54,6 +55,10 @@ call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn on syntax highlighting.
 syntax on
+
+set termguicolors
+let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
+let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
 
 let g:vim_monokai_tasty_italic = 1
 silent! colorscheme vim-monokai-tasty
@@ -410,6 +415,11 @@ let g:lightline = {
       \     ['fileformat', 'fileencoding'],
       \   ]
       \ },
+      \ 'inactive': {
+      \   'right': [
+      \     ['lineinfo']
+      \   ]
+      \ },
       \ 'component': {
       \   'lineinfo': '%3p%%  %3l:%-2c%<',
       \ },
@@ -546,7 +556,7 @@ map g/ <Plug>(incsearch-stay)
 
 " Indent line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:indentLine_char = '⎸'
+let g:indentLine_char = '|'
 
 
 " Vim cool

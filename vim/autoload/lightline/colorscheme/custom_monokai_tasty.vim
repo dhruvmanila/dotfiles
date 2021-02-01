@@ -101,7 +101,7 @@ let s:palette.tabline.tabsel = [ s:add(s:charcoal, s:light_green, 'none') ]
 let s:palette.tabline.middle = [ [ '#8a8a8a', '#3a3a3a', 245, 237 ] ]
 let s:palette.tabline.right = [ s:add(s:light_grey, s:light_charcoal, 'none') ]
 
-let s:palette.normal.error = [ [ '#d0d0d0', '#ff0000', 252, 196 ] ]
+let s:palette.normal.error = [ [ '#262626', '#ff0000', 235, 196 ] ]
 let s:palette.normal.warning = [ [ '#262626', '#ffff00', 235, 226 ] ]
 
 let g:lightline#colorscheme#custom_monokai_tasty#palette = s:palette

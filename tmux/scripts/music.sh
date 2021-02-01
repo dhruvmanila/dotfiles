@@ -2,7 +2,7 @@
 
 # We cannot get the information for streaming track
 # https://dougscripts.com/itunes/2020/12/getting-properties-of-streaming-tracks/
-read -r -d '' SCRIPT <<'EOF'
+read -r -d '' SCRIPT << END
 if application "Music" is running then
 	tell application "Music"
 		if player state is stopped then
@@ -23,7 +23,7 @@ if application "Music" is running then
 		end if
 	end tell
 end if
-EOF
+END
 
 output=$(osascript -e "$SCRIPT")
 
