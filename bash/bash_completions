@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090,SC1091
 # Bash completions
 BREW_PREFIX="$(brew --prefix)"
 GIT_COMPLETION_PATH="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash"
@@ -21,6 +22,11 @@ fi
 # Vagrant auto-complete
 if [[ -r "${VAGRANT_COMPLETION_PATH}" ]]; then
   source "${VAGRANT_COMPLETION_PATH}"
+fi
+
+# Node auto-compelete
+if command -v node &> /dev/null; then
+  eval "$(node --completion-bash)"
 fi
 
 unset BREW_PREFIX GIT_COMPLETION_PATH VAGRANT_COMPLETION_PATH

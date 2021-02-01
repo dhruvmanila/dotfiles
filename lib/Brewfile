@@ -37,6 +37,7 @@ brew "zlib"
 
 brew "pyenv"
 brew "pyenv-virtualenv"
+brew "node"
 
 
 # Editors

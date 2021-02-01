@@ -381,7 +381,13 @@ function check_github_ssh() {
 
   if [[ -f "${HOME}/.ssh/${ssh_filename}.pub" ]]; then
     ssh -T git@github.com &> /dev/null
-    [[ $? -eq 1 ]] && success "GitHub SSH is already authenticated."
+    if [[ $? -eq 1 ]]; then
+      success "GitHub SSH is already authenticated."
+    else
+      error "Failed to authenticate for GitHub SSH keys"
+      error "Key checked: ${HOME}/.ssh/${ssh_filename}.pub"
+      exitcode=1
+    fi
     return
   fi
 
