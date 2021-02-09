@@ -8,3 +8,6 @@ export PATH="${PATH}:${HOME}/dotfiles/bin"
 
 # Setting PATH for private scripts
 export PATH="${PATH}:${HOME}/projects/bin"
+
+# Setting PATH for smlnj
+export PATH="${PATH}:/usr/local/smlnj/bin"

@@ -6,16 +6,26 @@ let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %code: %%s [%severity%]'
 
-" Don't lint on opening the files but when I save them
-" Also, not when I do some edits
+" Lint only when I save the file
 let g:ale_lint_on_enter = 0
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_insert_leave = 0
 
+" Linters
+let g:ale_linters = {
+      \ 'python': ['flake8', 'mypy'],
+      \ 'yaml': ['yamllint']
+      \ }
+
 " Set this variable to 1 to fix files when you save them.
 let g:ale_fix_on_save = 1
-let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace']}
+
+" Formatters
+let g:ale_fixers = {
+      \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+      \ 'python': ['black']
+      \ }
 
 " Custom symbols
 let g:ale_sign_error = '✘'

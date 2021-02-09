@@ -52,16 +52,16 @@ else # macOS `ls`
 fi
 
 # List all files colorized in long format
-alias l='ls -lF ${colorflag}'
+alias l='ls -lhF ${colorflag}'
 
 # List all files colorized in long format, excluding . and ..
-alias la='ls -lAF ${colorflag}'
+alias la='ls -lhAF ${colorflag}'
 
 # List only directories
-alias ld='ls -lF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
+alias ld='ls -lhF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
 
 # List all the directories
-alias lda='ls -lAF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
+alias lda='ls -lhAF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
 
 # Always use color output for `ls`
-alias ls='command ls ${colorflag}'
+alias ls='command ls ${colorflag} -h'

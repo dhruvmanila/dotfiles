@@ -17,7 +17,7 @@ let g:startify_bookmarks = [
 " session via :SLoad
 let g:startify_session_persistence = 1
 
-let g:startify_session_delete_buffers = 0
+let g:startify_session_delete_buffers = 1
 
 " When opening a file or bookmark, seek and change to the git root directory
 " if any and not to the file directory.

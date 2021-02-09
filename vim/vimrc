@@ -14,6 +14,7 @@ call plug#begin('~/.vim/plugged')
 
 " Colorschemes
 Plug 'patstockwell/vim-monokai-tasty'
+Plug 'sainnhe/sonokai'
 
 " Search
 Plug 'romainl/vim-cool'
@@ -27,6 +28,7 @@ Plug 'vim-python/python-syntax'
 Plug 'dense-analysis/ale'
 Plug 'stephpy/vim-yaml'
 Plug 'wlangstroth/vim-racket'
+Plug 'jez/vim-better-sml'
 
 " Text manipulations
 Plug 'preservim/nerdcommenter'
@@ -42,9 +44,11 @@ Plug 'Yggdroot/indentLine'
 " Git plugin
 Plug 'tpope/vim-fugitive'
 
-" Tmux GUI
+" Tmux
 " For now using the autocmd group auto_reload_file_when_changed
 " Plug 'tmux-plugins/vim-tmux-focus-events'
+" Generate tmux statusline according to vim statusline
+Plug 'hoov/tmuxline.vim', {'branch': 'truecolor-lightline'}
 
 call plug#end()
 
@@ -53,44 +57,16 @@ call plug#end()
 "  EDITOR SETTINGS
 " =============================================================================
 
-" Colorscheme
+" General Config
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Turn on syntax highlighting.
 syntax on
-
-if exists('+termguicolors')
-  set termguicolors
-  " The commands below are needed for tmux + termguicolors
-  " This is only necessary if you use "set termguicolors".
-  let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
-  let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
-  let g:vim_monokai_tasty_italic = 1
-  silent! colorscheme vim-monokai-tasty
-else
-  silent! colorscheme desert
-  set nocursorline
-endif
-
-
-" If you don't know what the name of a particular hightlight is, you can use `What`.
-" It will print out the syntax group that the cursor is currently above.
-" Ref: https://www.reddit.com/r/vim/comments/6z4aau/how_to_stop_vim_from_autohighlighting_italics_in/
-command! What echo synIDattr(synID(line('.'), col('.'), 1), 'name')
 
 " Turn on loading of plugin files, indent files and filetype detection
 if has('autocmd')
   filetype plugin indent on
 endif
 
-" Vim can autodetect this based on $TERM (e.g. 'xterm-256color')
-" but it can be set to force 256 colors.
-" if !has('gui_running')
-"   set t_Co=256
-" endif
-
-
-" General Config
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set lazyredraw
 
 set number              " show line numbers
@@ -101,10 +77,8 @@ if has('cmdline_info')
 endif                     " the right side of the bottom bar.
 
 " Global <TAB> settings
-" set expandtab
-" set tabstop=4
-" set shiftwidth=4
-" set softtabstop=4
+" Rest are set as per filetype
+set expandtab
 
 " Use custom symbols to represent invisible characters
 set listchars=tab:▸\
@@ -312,6 +286,22 @@ augroup END
 augroup filetype_detection
   autocmd!
   autocmd BufRead,BufNewFile Vagrantfile,Brewfile set filetype=ruby
+  autocmd BufRead,BufNewFile *.tmux.conf set filetype=tmux
+augroup END
+
+" Various indent guide for filetypes
+" ts = tabstop
+" sw = shiftwidth
+" sts = softtabstop
+" et = expandtab (Globally set)
+" net = noexpandtab
+augroup filetype_indentation
+  autocmd!
+  autocmd FileType gitconfig setl ts=4 sw=4 sts=0
+  autocmd FileType python setl ts=4 sw=4
+  autocmd FileType racket setl ts=2 sw=2 sts=2 comments+=:;;
+  autocmd FileType sml setl ts=4 sw=4
+  autocmd FileType vim setl ts=2 sw=2 sts=2
 augroup END
 
 " Resize windows to equal width when vim resizes (&columns &lines changed)
