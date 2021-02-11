@@ -360,7 +360,7 @@ function check_tmux_plugins() {
   else
     success "tmux plugin manager is already installed."
     header "Updating tmux plugins..."
-    { ~/.tmux/plugins/tpm/bin/update_plugins all && success "Done".; } \
+    { ~/.tmux/plugins/tpm/bin/update_plugins all && success "Done."; } \
       || { error "Failed to update tmux plugins."; exitcode=1; }
   fi
 }

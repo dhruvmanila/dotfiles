@@ -24,11 +24,11 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Syntactic language support
-Plug 'vim-python/python-syntax'
+Plug 'vim-python/python-syntax', {'for': 'python'}
 Plug 'dense-analysis/ale'
-Plug 'stephpy/vim-yaml'
-Plug 'wlangstroth/vim-racket'
-Plug 'jez/vim-better-sml'
+Plug 'stephpy/vim-yaml', {'for': ['yaml', 'yml']}
+Plug 'wlangstroth/vim-racket', {'for': 'racket'}
+Plug 'jez/vim-better-sml', {'for': 'sml'}
 
 " Text manipulations
 Plug 'preservim/nerdcommenter'
@@ -48,7 +48,10 @@ Plug 'tpope/vim-fugitive'
 " For now using the autocmd group auto_reload_file_when_changed
 " Plug 'tmux-plugins/vim-tmux-focus-events'
 " Generate tmux statusline according to vim statusline
-Plug 'hoov/tmuxline.vim', {'branch': 'truecolor-lightline'}
+Plug 'hoov/tmuxline.vim', {'branch': 'truecolor-lightline', 'on': ['Tmuxline', 'TmuxlineSnapshot']}
+
+" Others
+Plug 'tweekmonster/startuptime.vim', {'on': 'StartupTime'}
 
 call plug#end()
 
@@ -300,6 +303,7 @@ augroup filetype_indentation
   autocmd FileType gitconfig setl ts=4 sw=4 sts=0
   autocmd FileType python setl ts=4 sw=4
   autocmd FileType racket setl ts=2 sw=2 sts=2 comments+=:;;
+  autocmd FileType sh setl ts=2 sw=2
   autocmd FileType sml setl ts=4 sw=4
   autocmd FileType vim setl ts=2 sw=2 sts=2
 augroup END

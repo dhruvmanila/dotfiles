@@ -19,6 +19,7 @@ let NERDTreeIgnore = [
 
 " 1. Close vim if only window left is NERDTree
 " 2. Load NERDTree and startify if vim is ran without arguments
+" 3. Disable signcolumn in NERDTree
 augroup nerdtree
   autocmd!
   autocmd BufEnter *
@@ -31,6 +32,7 @@ augroup nerdtree
         \ | NERDTree
         \ | wincmd w
         \ | endif
+  autocmd FileType nerdtree setlocal signcolumn=no
 augroup END
 
 " NOTE: Make all windows the same width whenever a NERDTree is opened or closed

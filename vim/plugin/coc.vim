@@ -1,17 +1,21 @@
 let g:coc_global_extensions = [
       \ 'coc-json',
       \ 'coc-sh',
-      \ 'coc-vimlsp'
+      \ 'coc-vimlsp',
+      \ 'coc-pyright',
       \ ]
 
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-if has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
+let g:coc_status_warning_sign = '!'
+let g:coc_status_error_sign = '✘'
+
+" " Always show the signcolumn, otherwise it would shift the text each time
+" " diagnostics appear/become resolved.
+" if has("patch-8.1.1564")
+"   " Recently vim can merge signcolumn and number column into one
+"   set signcolumn=number
+" else
+"   set signcolumn=yes
+" endif
 
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by

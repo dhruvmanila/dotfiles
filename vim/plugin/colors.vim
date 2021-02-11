@@ -36,6 +36,7 @@ let g:color_scheme_config['sonokai'] = [
       \ 'let g:sonokai_enable_italic = 1',
       \ 'let g:sonokai_disable_italic_comment =  1',
       \ 'let g:sonokai_better_performance = 1',
+      \ "let g:sonokai_sign_column_background = 'none'",
       \ 'colorscheme sonokai',
       \ "let g:lightline_color_scheme = 'sonokai'",
       \ ]

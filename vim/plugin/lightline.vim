@@ -1,5 +1,6 @@
 let g:lightline = {}
 
+" Set in plugin/colors.vim
 let g:lightline.colorscheme = g:lightline_color_scheme
 
 " Ref: https://www.nerdfonts.com/cheat-sheet
@@ -15,21 +16,23 @@ let g:lightline.tabline_subseparator = { 'left': "\ue0bb", 'right': "\ue0b9" }
 let g:lightline.active = {
       \ 'left': [
       \   ['mode', 'paste'],
-      \   ['gitbranch', 'readonly'],
-      \   ['cocstatus', 'filename']
+      \   ['readonly', 'filename', 'fileformat', 'filetype'],
       \ ],
       \ 'right': [
       \   ['linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo'],
-      \   ['filetype'],
-      \   ['fileformat', 'fileencoding'],
+      \   [],
+      \   ['coc_status'],
       \ ]
       \ }
 
-let g:lightline.inactive = {'right': [['lineinfo']]}
+let g:lightline.inactive = {
+      \ 'left': [['filename', 'fileformat', 'filetype']],
+      \ 'right': [['lineinfo']]
+      \ }
 
 let g:lightline.tabline = {
       \ 'left': [['vim_logo', 'tabs']],
-      \ 'right': [['close']]
+      \ 'right': [['gitbranch']]
       \ }
 
 let g:lightline.tab = {
@@ -37,18 +40,21 @@ let g:lightline.tab = {
       \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
 
 let g:lightline.component = {
-      \ 'lineinfo': '%3p%%  %3l:%-2c%<',
-      \ 'vim_logo': "\ue7c5"
+      \ 'lineinfo': '%2p%%  %2l:%-2c%<',
+      \ 'vim_logo': "\ue7c5",
+      \ 'readonly': '%{&readonly?"":""}',
       \ }
 
 let g:lightline.component_function = {
-      \ 'cocstatus': 'coc#status',
+      \ 'coc_status': 'CocStatus',
       \ 'gitbranch': 'LightlineGitBranch',
       \ 'filename': 'LightlineFilename',
-      \ 'readonly': 'LightlineReadonly',
-      \ 'fileencoding': 'LightlineFileencoding',
       \ 'filetype': 'LightlineFiletype',
       \ 'fileformat': 'LightlineFileformat'
+      \ }
+
+let g:lightline.tab_component_function = {
+      \ 'tabnum': 'LightlineTabnum',
       \ }
 
 let g:lightline.component_expand = {
@@ -72,8 +78,17 @@ let g:lightline#ale#indicator_errors = "✘"
 " Use autocmd to force lightline update.
 augroup coc_lightline_update
   autocmd!
-  autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
+  autocmd User CocStatusChange call lightline#update()
+  autocmd User CocDiagnosticChange call lightline#update()
 augroup END
+
+function! CocStatus()
+  return get(g:, 'coc_status', '')
+endfunction
+
+function! LightlineTabnum(num)
+  return a:num . " \ue0bb"
+endfunction
 
 " For vim-fugitive plugin: let branch = FugitiveHead()
 " For vim-gitbranch plugin: let branch = gitbranch#name()
@@ -90,18 +105,10 @@ function! LightlineFilename()
   return filename . modified
 endfunction
 
-function! LightlineReadonly()
-  return &readonly ? '' : ''
-endfunction
-
 function! LightlineFiletype()
   return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 
-function! LightlineFileencoding()
-  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
-endfunction
-
 function! LightlineFileformat()
-  return winwidth(0) > 70 ? (&fileformat !=# '' ? &fileformat : '') : ''
+  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) . '[' . &fileformat . ']' : ''
 endfunction
