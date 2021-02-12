@@ -16,5 +16,6 @@ endif
 " Show quotes in JSON file
 augroup json_conceal_level
   autocmd!
-  autocmd FileType json let g:indentLine_setConceal = 0
+  autocmd BufEnter,BufWinEnter *.json let g:indentLine_setConceal = 0
+  autocmd BufLeave,BufWinLeave *.json let g:indentLine_setConceal = 1
 augroup END
