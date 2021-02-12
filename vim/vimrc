@@ -298,14 +298,11 @@ augroup END
 " sts = softtabstop
 " et = expandtab (Globally set)
 " net = noexpandtab
-augroup filetype_indentation
+augroup filetype_autocommands
   autocmd!
-  autocmd FileType gitconfig setl ts=4 sw=4 sts=0
-  autocmd FileType python setl ts=4 sw=4
-  autocmd FileType racket setl ts=2 sw=2 sts=2 comments+=:;;
-  autocmd FileType sh setl ts=2 sw=2
-  autocmd FileType sml setl ts=4 sw=4
-  autocmd FileType vim setl ts=2 sw=2 sts=2
+  autocmd FileType json,racket,sh,vim setl ts=2 sw=2
+  autocmd FileType gitconfig,python,sml setl ts=4 sw=4
+  autocmd FileType racket setl comments+=:;;
 augroup END
 
 " Resize windows to equal width when vim resizes (&columns &lines changed)
