@@ -5,8 +5,12 @@ let g:coc_global_extensions = [
       \ 'coc-pyright',
       \ ]
 
-let g:coc_status_warning_sign = '!'
+let g:coc_status_warning_sign = ''
 let g:coc_status_error_sign = '✘'
+
+" Trigger key for going to the next snippet position (default)
+let g:coc_snippet_next = '<c-j>'
+let g:coc_snippet_prev = '<c-k>'
 
 " " Always show the signcolumn, otherwise it would shift the text each time
 " " diagnostics appear/become resolved.
