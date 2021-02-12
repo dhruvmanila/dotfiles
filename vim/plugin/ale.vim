@@ -19,7 +19,9 @@ let g:ale_lint_on_insert_leave = 0
 let g:ale_linters_explicit = 1
 let g:ale_linters = {
       \ 'python': ['flake8', 'mypy'],
-      \ 'yaml': ['yamllint']
+      \ 'sh': ['shellcheck'],
+      \ 'sml': ['smlnj'],
+      \ 'yaml': ['yamllint'],
       \ }
 
 " Set this variable to 1 to fix files when you save them.
@@ -33,8 +35,8 @@ let g:ale_fixers = {
 
 " Custom symbols
 let g:ale_sign_error = '✘'
-let g:ale_sign_warning = '!'
-let g:ale_sign_info = 'i'
+let g:ale_sign_warning = ''
+let g:ale_sign_info = 'ℹ'
 
 " Remove background color
 highlight clear ALEErrorSign
