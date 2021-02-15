@@ -26,7 +26,7 @@ brew "bash-completion@2"           # Bash completion
 brew "bashdb"                      # Bash shell debugger
 
 
-# Programming languages
+# Programming languages related
 
 # Pre-requisites for pyenv Python install
 brew "openssl@1.1"
@@ -58,6 +58,7 @@ brew "gh"
 brew "gnupg"
 brew "htop"
 brew "hyperfine"
+brew "jq"
 brew "lnav"
 brew "mackup"
 brew "nnn"
@@ -86,7 +87,8 @@ cask "font-jetbrains-mono-nerd-font"
 
 # GUI Editors
 
-cask "mark-text"                   # Markdown editor
+cask "emacs"
+cask "mark-text"
 cask "racket"
 cask "visual-studio-code"
 cask "pycharm-ce"
@@ -105,6 +107,8 @@ cask "brave-browser"
 cask "calibre"
 cask "spotify"
 cask "iterm2"
+cask "smlnj"
+cask "rectangle"
 cask "virtualbox"
 cask "vagrant"
 cask "wireshark"
