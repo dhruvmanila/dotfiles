@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -x
-
 # Place holder for status left/right
 place_holder="\#{prefix_highlight}"
 
@@ -19,6 +17,7 @@ main() {
   # Separator configuration
   local -r prefix_sep=""
   local -r left_sep_bg="#a9dc76"  # bg_green
+  # local -r left_sep_bg="#78dce8"  # bg_blue
   # local -r right_sep_fg="#49464e"  # bg4
 
   # Combining colors and separator
