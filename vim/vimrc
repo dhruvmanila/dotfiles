@@ -1,31 +1,73 @@
-" Comments in Vimscript start with a `"`.
+"
+"               ██╗   ██╗██╗███╗   ███╗██████╗  ██████╗
+"               ██║   ██║██║████╗ ████║██╔══██╗██╔════╝
+"               ██║   ██║██║██╔████╔██║██████╔╝██║
+"               ╚██╗ ██╔╝██║██║╚██╔╝██║██╔══██╗██║
+"                ╚████╔╝ ██║██║ ╚═╝ ██║██║  ██║╚██████╗
+"                 ╚═══╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝
+"
+" -----------------------------------------------------------------------------
+" CONTENTS - Use '*' to jump to the location
+"
+" |vimrc_plugins|..................................Plugins
+" |vimrc_editor_settings|..........................Editor Settings
+"   |vimrc_general_settings|.......................General Settings
+"   |vimrc_cursor_shape|...........................Cursor Shape
+"   |vimrc_search_settings|........................Search Settings
+" |vimrc_functions|................................Functions
+" |vimrc_mappings|.................................Mappings
+" |vimrc_commands|.................................Commands
+" |vimrc_autocommands|.............................Autocommands
+" |vimrc_plugin_config|............................Plugin Configuration
+"   |vimrc_ale_config|.............................ALE
+"   |vimrc_coc_config|.............................Conquer Of Completion
+"   |vimrc_lightline_config|.......................Lightline
+"   |vimrc_color_scheme_config|....................Color Scheme
+"   |vimrc_incsearch_config|.......................Incsearch
+"   |vimrc_indentline_config|......................Indentline
+"   |vimrc_nerdcommenter_config|...................NERDCommenter
+"   |vimrc_nerdtree_config|........................NERDTree
+"   |vimrc_python_syntax_config|...................Python Syntax
+"   |vimrc_startify_config|........................Startify
+"   |vimrc_tmuxline_config|........................Tmuxline
+"   |vimrc_vim_cool_config|........................Vim Cool
+"   |vimrc_vim_external_config|....................Vim External
+"
+"
+" NOTE:
+" - Use '_' to separate words
+" - Please keep the plugin configuration in alphabetical order
 
-" VI compatible mode is disabled so that VIm things work
-set nocompatible
 
-" Set leader key
-let mapleader=" "       " leader is space
+" Environment
+" -----------------------------------------------------------------------------
+
+" Available: 'vim-monokai-tasty', 'sonokai', 'forest-night'
+let g:vim_color_scheme = 'sonokai'
 
 
 " =============================================================================
-"   PLUGINS
+" PLUGINS                                                       *vimrc_plugins*
 " =============================================================================
+" Ref: https://github.com/junegunn/vim-plug
+
 call plug#begin('~/.vim/plugged')
 
 " Colorschemes
 Plug 'patstockwell/vim-monokai-tasty'
 Plug 'sainnhe/sonokai'
+Plug 'sainnhe/forest-night'
 
 " Search
 Plug 'romainl/vim-cool'
 Plug 'haya14busa/incsearch.vim'
 
-" Auto-complete
+" Auto-complete, linting, formatting and all the good stuff
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'dense-analysis/ale'
 
 " Syntactic language support
 Plug 'vim-python/python-syntax', {'for': 'python'}
-Plug 'dense-analysis/ale'
 Plug 'stephpy/vim-yaml', {'for': ['yaml', 'yml']}
 Plug 'wlangstroth/vim-racket', {'for': 'racket'}
 Plug 'jez/vim-better-sml', {'for': 'sml'}
@@ -45,55 +87,56 @@ Plug 'Yggdroot/indentLine'
 Plug 'tpope/vim-fugitive'
 
 " Tmux
-" For now using the autocmd group auto_reload_file_when_changed
-" Plug 'tmux-plugins/vim-tmux-focus-events'
-" Generate tmux statusline according to vim statusline
 Plug 'hoov/tmuxline.vim', {'branch': 'truecolor-lightline', 'on': ['Tmuxline', 'TmuxlineSnapshot']}
 
 " Others
 Plug 'tweekmonster/startuptime.vim', {'on': 'StartupTime'}
+Plug 'itchyny/vim-external'
 
 call plug#end()
 
 
 " =============================================================================
-"  EDITOR SETTINGS
+" EDITOR SETTINGS                                       *vimrc_editor_settings*
 " =============================================================================
 
-" General Config
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Turn on syntax highlighting.
+" General Settings                                     *vimrc_general_settings*
+" -----------------------------------------------------------------------------
+" VI compatible mode is disabled so that VIm things work
+set nocompatible
+
+let mapleader=" "       " leader is space
 syntax on
 
-" Turn on loading of plugin files, indent files and filetype detection
 if has('autocmd')
   filetype plugin indent on
 endif
 
-set lazyredraw
+if exists('+termguicolors')
+  set termguicolors
+  " The commands below are needed for tmux + termguicolors
+  " This is only necessary if you use "set termguicolors".
+  let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
+  let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
+endif
 
+set lazyredraw
 set number              " show line numbers
 set relativenumber      " show relative numbering
 
-if has('cmdline_info')
-  set showcmd             " Show the command being typed in
-endif                     " the right side of the bottom bar.
+set showcmd             " Show the command being typed in
 
-" Global <TAB> settings
-" Rest are set as per filetype
-set expandtab
+set expandtab           " Expand tabs to spaces
 
-" Use custom symbols to represent invisible characters
-set listchars=tab:▸\
-set listchars+=trail:·
+set listchars=tab:▸\      " Use custom symbols to
+set listchars+=trail:·    " represent invisible symbols
 set listchars+=eol:↴
 set listchars+=nbsp:_
 
 set showmatch           " highlight matching [{()}]
 
-" Always show the status line at the bottom
-set laststatus=2
-set showtabline=2
+set laststatus=2        " Always show statusline
+set showtabline=2       " and tabline
 
 set mouse+=a            " Enable mouse support
 
@@ -125,10 +168,9 @@ set title               " Show the filename in window titlebar
 " set gdefault          " Add the g flag to search/replace by default (deprecated)
 
 " Tab completion for files/buffers
-set wildmenu             " Visual autocomplete for command menu
-set wildmode=longest     " Complete longest common string
-set wildmode+=list       " then list alternatives
-set wildmode+=full       " then complete each full match showing the wildmenu
+set wildmenu                " Visual autocomplete for command menu
+set wildmode=longest:full   " Complete longest common string : show the wildmenu
+set wildmode+=full          " then start completing each full match
 
 " Use the system clipboard as the default register
 set clipboard=unnamed
@@ -137,34 +179,9 @@ if has('unnamedplus')
 endif
 
 set encoding=utf-8
-
-" Reload files when changed on disk
-set autoread
-
-" Cursor shape for tmux running in iTerm2
-" Cursor settings:
-" NOTE: This seems to be incorrect
-"  1 -> blinking block
-"  2 -> solid block
-"  3 -> blinking underscore
-"  4 -> solid underscore
-"  5 -> blinking vertical bar
-"  6 -> solid vertical bar
-" https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"  " INSERT
-  let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"  " REPLACE
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"  " NORMAL (ELSE)
-else
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_SR = "\<Esc>]50;CursorShape=2\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-endif
-
+set autoread            " Reload files when changed on disk
 set hidden              " Allows having hidden buffer (not displayed in any window)
-
-" Allow backspace in insert mode
-set backspace=indent,eol,start
+set backspace=indent,eol,start    " Allow backspace in insert mode
 
 " Format options
 " 'r': Automatically insert the current comment leader after hitting <Enter> in
@@ -176,8 +193,22 @@ set formatoptions+=rj
 set noshowmode
 
 
-" Searching
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Cursor Shape                                             *vimrc_cursor_shape*
+" -----------------------------------------------------------------------------
+" https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
+if exists('$TMUX')
+  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"  " INSERT
+  let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"  " REPLACE
+  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"  " NORMAL (ELSE)
+else
+  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+  let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
+
+" Searching                                             *vimrc_search_settings*
+" -----------------------------------------------------------------------------
 set incsearch           " search as characters are entered
 set hlsearch            " highlight matches
 set ignorecase          " Ignore case in searches by default
@@ -189,7 +220,7 @@ vnoremap <Leader>h :nohlsearch<cr>
 
 
 " Centralize backups, swapfiles and undo history
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" -----------------------------------------------------------------------------
 set backupdir=~/.vim/backups/
 set directory=~/.vim/swaps/
 set undofile
@@ -197,7 +228,7 @@ set undodir=~/.vim/undo/
 
 
 " Lose bad habits
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" -----------------------------------------------------------------------------
 " Try to prevent bad habits like using the arrow keys for movement. This is
 " not the only possible bad habit. For example, holding down the h/j/k/l keys
 " for movement, rather than using more efficient movement commands, is also a
@@ -217,27 +248,53 @@ vnoremap <Up>    :echoe "Use k"<CR>
 vnoremap <Down>  :echoe "Use j"<CR>
 
 
-" Custom functions
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
+" FUNCTIONS                                                   *vimrc_functions*
+" =============================================================================
+
 " Set all the open windows to equal width.
 " `wincmd =` changes the height as well, we will extract the height
 " changes from `winrestcmd` and execute it.
-" Used when toggling NERDTree on and off
+" Use: NERDTree
 function! SetWindowsToEqualWidth()
-  let restoreCommands = split(winrestcmd(), '|')
-  " `=~#` Regexp matches with match case
-  let heightCommands = filter(
-        \ restoreCommands,
+  let l:restoreCommands = split(winrestcmd(), '|')
+  let l:heightCommands = filter(
+        \ l:restoreCommands,
         \ { idx, cmd -> cmd =~# '^:\dresize' }
         \ )
   wincmd =
-  execute join(heightCommands, '|')
+  execute join(l:heightCommands, '|')
 endfunction
 
 
-" Custom mappings
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Ref: Get list of all custom mappings `:map`
+" Set to the given color scheme using all the commands listed in
+" 'color_scheme_config', if it exists.
+" Default: g:vim_color_scheme
+function! SetColorScheme(name = g:vim_color_scheme) abort
+  let g:vim_color_scheme = a:name
+  for l:item in g:color_scheme_config[a:name]
+    execute l:item
+  endfor
+endfunction
+
+
+" Set the lightline color scheme
+function! SetLightlineColorScheme(name) abort
+  let l:filepath = globpath(
+        \ &runtimepath,
+        \ join(['autoload/lightline/colorscheme/', a:name, '.vim'], ''), 0, 1)[0]
+  execute join(['source', l:filepath], ' ')
+  let g:lightline.colorscheme = a:name
+  call lightline#init()
+  call lightline#colorscheme()
+  call lightline#update()
+endfunction
+
+
+" =============================================================================
+" MAPPINGS                                                     *vimrc_mappings*
+" =============================================================================
+" Ref: Get list of all custom mappings `:map [mapping]`
 
 " Unbind some useless/annoying default key bindings.
 " 'Q' in normal mode enters Ex mode. You almost never want this.
@@ -269,8 +326,30 @@ map <leader>vt
       \ clear<CR>
 
 
-" Auto commands
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =============================================================================
+" COMMANDS                                                     *vimrc_commands*
+" =============================================================================
+
+" Basic useful commands
+command! Q :q
+command! Qa :qa
+command! Wa :wa
+command! Wqa :wqa
+command! WQa :wqa
+
+" If you don't know what the name of a particular hightlight is, you can use `What`.
+" It will print out the syntax group that the cursor is currently above.
+" Ref: https://vim.fandom.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor
+command! What
+      \ echo "hi<" . synIDattr(synID(line("."), col("."), 1), "name") . '> trans<'
+      \ . synIDattr(synID(line("."), col("."), 0), "name") . "> lo<"
+      \ . synIDattr(synIDtrans(synID(line("."), col("."), 1)), "name") . ">"
+
+
+" =============================================================================
+" AUTOCOMMANDS                                             *vimrc_autocommands*
+" =============================================================================
+
 " Automatic reloading of .vimrc on save
 " Nested is necessary to correctly reload lightline/airline
 augroup auto_reload_vimrc
@@ -281,15 +360,15 @@ augroup END
 " Highlight current line, but only in active window
 augroup cursor_line_only_in_active_window
   autocmd!
-  autocmd VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-  autocmd WinLeave * setlocal nocursorline
+  autocmd VimEnter,WinEnter,BufWinEnter * setl cursorline
+  autocmd WinLeave * setl nocursorline
 augroup END
 
 " Help filetype detection
 augroup filetype_detection
   autocmd!
-  autocmd BufRead,BufNewFile Vagrantfile,Brewfile set filetype=ruby
-  autocmd BufRead,BufNewFile *.tmux.conf set filetype=tmux
+  autocmd BufRead,BufNewFile Vagrantfile,Brewfile setl ft=ruby
+  autocmd BufRead,BufNewFile *.tmux.conf setl ft=tmux
 augroup END
 
 " Various indent guide for filetypes
@@ -324,3 +403,612 @@ augroup auto_reload_file_when_changed
     \ | echo "File changed on disk. Buffer reloaded."
     \ | echohl None
 augroup END
+
+
+" =============================================================================
+" PLUGIN CONFIG                                           *vimrc_plugin_config*
+" =============================================================================
+
+" ALE                                                        *vimrc_ale_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/dense-analysis/ale
+
+let g:ale_enabled = 1
+
+" Using coc.nvim for lsp
+let g:ale_disable_lsp = 1
+
+" Error message format
+let g:ale_echo_msg_info_str = 'I'
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %code: %%s [%severity%]'
+
+" Lint only when I save the file
+let g:ale_lint_on_enter = 0
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+
+" Linters
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+      \ 'python': ['flake8', 'mypy'],
+      \ 'sh': ['shellcheck'],
+      \ 'sml': ['smlnj'],
+      \ 'yaml': ['yamllint'],
+      \ }
+
+" Set this variable to 1 to fix files when you save them.
+let g:ale_fix_on_save = 1
+
+" Formatters
+let g:ale_fixers = {
+      \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+      \ 'python': ['black', 'isort'],
+      \ }
+
+" Custom symbols
+let g:ale_sign_error = '✘'
+let g:ale_sign_warning = ''
+let g:ale_sign_info = 'ℹ'
+
+" Remove background color
+highlight clear ALEErrorSign
+highlight clear ALEWarningSign
+
+" Navigate between errors
+nmap <silent> [a <Plug>(ale_previous_wrap)
+nmap <silent> ]a <Plug>(ale_next_wrap)
+
+
+" Coc                                                        *vimrc_coc_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/neoclide/coc.nvim
+
+let g:coc_global_extensions = [
+      \ 'coc-json',
+      \ 'coc-sh',
+      \ 'coc-vimlsp',
+      \ 'coc-pyright',
+      \ ]
+
+let g:coc_status_warning_sign = ''
+let g:coc_status_error_sign = '✘'
+
+" Trigger key for going to the next snippet position (default)
+let g:coc_snippet_next = '<c-j>'
+let g:coc_snippet_prev = '<c-k>'
+
+" " Always show the signcolumn, otherwise it would shift the text each time
+" " diagnostics appear/become resolved.
+" if has("patch-8.1.1564")
+"   " Recently vim can merge signcolumn and number column into one
+"   set signcolumn=number
+" else
+"   set signcolumn=yes
+" endif
+
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr>
+      \ pumvisible()
+      \ ? coc#_select_confirm()
+      \ : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use `[c` and `]c` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
+
+" Formatting selected code.
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder.
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Applying codeAction to the selected region.
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Remap <C-f> and <C-b> for scroll float windows/popups.
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
+
+" Use CTRL-S for selections ranges.
+" Requires 'textDocument/selectionRange' support of language server.
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
+" Add `:Format` command to format current buffer.
+command! -nargs=0 Format :call CocAction('format')
+
+" Add `:Fold` command to fold current buffer.
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+
+" Add `:OR` command for organize imports of the current buffer.
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" Add (Neo)Vim's native statusline support.
+" NOTE: Please see `:h coc-status` for integrations with external plugins that
+" provide custom statusline: lightline.vim, vim-airline.
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+" Mappings for CoCList
+" Show all diagnostics. (Collides with coc-code-action)
+" nnoremap <silent><nowait> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list.
+nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
+
+" Lightline                                            *vimrc_lightline_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/itchyny/lightline.vim
+" NOTE:
+" - Lightline configuration should come before color scheme configuration
+" - Lightline colorscheme is set using color_scheme_config
+
+let g:lightline = {}
+
+" Ref: https://www.nerdfonts.com/cheat-sheet
+" \ue0b0 =     \ue0b8 =     \ue0bc = 
+" \ue0b1 =     \ue0b9 =     \ue0be = 
+" \ue0b2 =     \ue0ba = 
+" \ue0b3 =     \ue0bb = 
+let g:lightline.separator = { 'left': "\ue0b8", 'right': "\ue0ba" }
+let g:lightline.subseparator = { 'left': "\ue0b9", 'right': "\ue0bb" }
+let g:lightline.tabline_separator = { 'left': "\ue0bc", 'right': "\ue0be" }
+let g:lightline.tabline_subseparator = { 'left': "\ue0bb", 'right': "\ue0b9" }
+
+let g:lightline.active = {
+      \ 'left': [
+      \   ['mode', 'paste'],
+      \   ['readonly', 'filename', 'fileformat', 'filetype'],
+      \ ],
+      \ 'right': [
+      \   ['linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo'],
+      \   [],
+      \   ['coc_status'],
+      \ ]
+      \ }
+
+let g:lightline.inactive = {
+      \ 'left': [['filename', 'fileformat', 'filetype']],
+      \ 'right': [['lineinfo']]
+      \ }
+
+let g:lightline.tabline = {
+      \ 'left': [['vim_logo', 'tabs']],
+      \ 'right': [['gitbranch']]
+      \ }
+
+let g:lightline.tab = {
+      \ 'active': [ 'tabnum', 'filename', 'modified' ],
+      \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
+
+let g:lightline.component = {
+      \ 'lineinfo': '%2p%%  %2l:%-2c%<',
+      \ 'vim_logo': "\ue7c5",
+      \ 'readonly': '%{&readonly?"":""}',
+      \ }
+
+let g:lightline.component_function = {
+      \ 'coc_status': 'CocStatus',
+      \ 'gitbranch': 'LightlineGitBranch',
+      \ 'filename': 'LightlineFilename',
+      \ 'filetype': 'LightlineFiletype',
+      \ 'fileformat': 'LightlineFileformat'
+      \ }
+
+let g:lightline.tab_component_function = {
+      \ 'tabnum': 'LightlineTabnum',
+      \ }
+
+let g:lightline.component_expand = {
+      \ 'linter_infos': 'lightline#ale#infos',
+      \ 'linter_warnings': 'lightline#ale#warnings',
+      \ 'linter_errors': 'lightline#ale#errors',
+      \ }
+
+let g:lightline.component_type = {
+      \ 'linter_infos': 'right',
+      \ 'linter_warnings': 'warning',
+      \ 'linter_errors': 'error',
+      \ }
+
+
+" Ale error indicator for lightline
+let g:lightline#ale#indicator_infos = "i"
+let g:lightline#ale#indicator_warnings = "!"
+let g:lightline#ale#indicator_errors = "✘"
+
+" Use autocmd to force lightline update.
+augroup coc_lightline_update
+  autocmd!
+  autocmd User CocStatusChange call lightline#update()
+  autocmd User CocDiagnosticChange call lightline#update()
+augroup END
+
+function! CocStatus()
+  return get(g:, 'coc_status', '')
+endfunction
+
+function! LightlineTabnum(num)
+  return a:num . " \ue0bb"
+endfunction
+
+" For vim-fugitive plugin: let branch = FugitiveHead()
+" For vim-gitbranch plugin: let branch = gitbranch#name()
+function! LightlineGitBranch()
+  let branch = FugitiveHead()
+  return branch !=# '' ? ' '.branch : ''
+endfunction
+
+" Extra: Filename from the project root (git repository)
+" https://github.com/itchyny/lightline.vim/issues/293
+function! LightlineFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? ' +' : ''
+  return filename . modified
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) . '[' . &fileformat . ']' : ''
+endfunction
+
+
+" Color scheme                                      *vimrc_color_scheme_config*
+" -----------------------------------------------------------------------------
+" Ref:
+"   vim-monokai-tasty: https://github.com/patstockwell/vim-monokai-tasty
+"   sonokai: https://github.com/sainnhe/sonokai
+"   forest-night: https://github.com/sainnhe/forest-night
+
+" Color scheme configuration list
+let g:color_scheme_config = {}
+
+let g:color_scheme_config['vim-monokai-tasty'] = [
+      \ 'let g:vim_monokai_tasty_italic = 0',
+      \ 'colorscheme vim-monokai-tasty',
+      \ 'call SetLightlineColorScheme("custom_monokai_tasty")',
+      \ ]
+
+" Sonokai Style: 'default', 'atlantis', 'andromeda', 'shusia', 'maia'
+let g:color_scheme_config['sonokai'] = [
+      \ "let g:sonokai_style = 'shusia'",
+      \ 'let g:sonokai_enable_italic = 1',
+      \ 'let g:sonokai_disable_italic_comment =  1',
+      \ 'let g:sonokai_better_performance = 1',
+      \ "let g:sonokai_sign_column_background = 'none'",
+      \ 'colorscheme sonokai',
+      \ 'call SetLightlineColorScheme("sonokai")',
+      \ ]
+
+let g:color_scheme_config['forest-night'] = [
+      \ 'let g:forest_night_enable_italic = 1',
+      \ 'let g:forest_night_disable_italic_comment = 1',
+      \ "let g:forest_night_sign_column_background = 'none'",
+      \ 'let g:forest_night_better_performance = 1',
+      \ 'colorscheme forest-night',
+      \ 'call SetLightlineColorScheme("forest_night")',
+      \ ]
+
+" Set the color scheme if it exists, else default to built in
+try
+  call SetColorScheme()
+catch /.*/
+  colorscheme desert
+  set nocursorline
+  finish
+endtry
+
+
+" Incsearch                                            *vimrc_incsearch_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/haya14busa/incsearch.vim
+
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+
+" Indentline                                          *vimrc_indentline_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/Yggdroot/indentLine
+
+let g:indentLine_char = '¦' " | ¦ ┆ │ ┊
+
+let g:indentLine_showFirstIndentLevel = 0
+" let g:indentLine_concealcursor = ""
+
+let g:indentLine_fileTypeExclude = [
+      \ 'startify',
+      \ 'help',
+      \ 'nerdtree',
+      \ ]
+
+" Use colors from the colorscheme
+if g:vim_color_scheme ==# 'vim-monokai-tasty'
+  let g:indentLine_setColors = 1
+else
+  let g:indentLine_setColors = 0
+endif
+
+" Show quotes in JSON file
+augroup json_conceal_level
+  autocmd!
+  autocmd BufEnter,BufWinEnter *.json let g:indentLine_setConceal = 0
+  autocmd BufLeave,BufWinLeave *.json let g:indentLine_setConceal = 1
+augroup END
+
+
+" NERDCommenter                                    *vimrc_nerdcommenter_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/preservim/nerdcommenter
+
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+
+" Allow commenting and inverting empty lines
+let g:NERDCommentEmptyLines = 1
+
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
+
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+
+" Custom delimiters for filetype
+let g:NERDCustomDelimiters = {
+  \ 'racket': { 'left': ';;' , 'leftAlt': ';' }
+  \ }
+
+
+" NERDTree                                              *vimrc_nerdtree_config*
+" -----------------------------------------------------------------------------
+" Ref:
+
+" Automatically delete the buffer of the file you just deleted with NerdTree
+let NERDTreeAutoDeleteBuffer = 1
+
+" Disables display of 'Bookmarks' label and 'Press ? for help' text.
+let NERDTreeMinimalUI = 1
+
+" Show hidden files
+let NERDTreeShowHidden = 1
+
+" Ignore files in NERDTree
+let NERDTreeIgnore = [
+      \ '\.git$',
+      \ '\.DS_Store',
+      \ '\.pyc$',
+      \ '\.pyo$',
+      \ '__pycache__$',
+      \ '\.mypy_cache$',
+      \ ]
+
+" 1. Close vim if only window left is NERDTree
+" 2. Load NERDTree and startify if vim is ran without arguments
+" 3. Disable signcolumn in NERDTree
+augroup nerdtree
+  autocmd!
+  autocmd BufEnter *
+        \ if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree())
+        \ | q
+        \ | endif
+  autocmd VimEnter *
+        \ if !argc()
+        \ | Startify
+        \ | NERDTree
+        \ | wincmd w
+        \ | endif
+  autocmd FileType nerdtree setlocal signcolumn=no
+augroup END
+
+" NOTE: Make all windows the same width whenever a NERDTree is opened or closed
+" but do not change the height. This is done using `SetWindowsToEqualWidth()`.
+
+" Set key to Ctrl-n to open nerd tree.
+nnoremap <C-n> :NERDTreeToggle<CR> :call SetWindowsToEqualWidth()<CR>
+nnoremap <C-f> :NERDTreeFind<CR> :call SetWindowsToEqualWidth()<CR>
+" Change focus to the NERDTree window if present, else open it.
+" This will help in opening a file in a specific buffer, otherwise it opens
+" the file in the first buffer from the NERDTree window.
+nnoremap <leader>n :NERDTreeFocus<CR> :call SetWindowsToEqualWidth()<CR>
+
+
+" Python syntax                                    *vimrc_python_syntax_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/vim-python/python-syntax
+
+" Enable all syntax highlighting features
+let g:python_highlight_all = 1
+
+
+" Startify                                              *vimrc_startify_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/mhinz/vim-startify
+
+" Disable startify header
+let g:startify_custom_header = []
+
+let g:startify_lists = [
+      \ {'type': 'files',     'header': ['   Files']},
+      \ {'type': 'dir',       'header': ['   Current Directory '. getcwd()]},
+      \ {'type': 'sessions',  'header': ['   Sessions']},
+      \ {'type': 'bookmarks', 'header': ['   Bookmarks']},
+      \ ]
+
+let g:startify_bookmarks = [
+      \ {'v': '~/dotfiles/vim/vimrc'},
+      \ {'b': '~/dotfiles/bash/bashrc'},
+      \ ]
+
+" Automatically update sessions before leaving Vim and before loading a new
+" session via :SLoad
+let g:startify_session_persistence = 1
+
+let g:startify_session_delete_buffers = 1
+
+" When opening a file or bookmark, seek and change to the git root directory
+" if any and not to the file directory.
+let g:startify_change_to_dir = 0
+let g:startify_change_to_vcs_root = 1
+
+" Close NERDTree tabs before saving a session and get the buffer back to the
+" original tabpage.
+let g:startify_session_before_save = [
+      \ 'let $CURRENT_TABPAGE = tabpagenr()',
+      \ 'tabdo NERDTreeClose',
+      \ 'execute $CURRENT_TABPAGE . "tabnext"',
+      \ ]
+
+
+" Tmuxline                                              *vimrc_tmuxline_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/edkolev/tmuxline.vim
+
+let g:tmuxline_status_justify = 'left'
+
+let g:tmuxline_preset = {
+      \ 'a'    : '#S',
+      \ 'win'  : [ '#I', '#W' ],
+      \ 'cwin' : [ '#I', '#W', '#F' ],
+      \ 'x'    : '#[fg=red]#(~/dotfiles/tmux/scripts/music.sh)',
+      \ 'y'    : [ '%H:%M', '%a %d %b', '#(~/dotfiles/tmux/scripts/battery.sh)' ],
+      \ 'z'    : '#H #{prefix_highlight}'
+      \ }
+
+let g:tmuxline_separators = {
+      \ 'left' : "\ue0b8",
+      \ 'left_alt': "\ue0b9",
+      \ 'right' : "\ue0ba",
+      \ 'right_alt' : "\ue0bb",
+      \ 'space' : ' '
+      \ }
+
+" Values represent: [ FG, BG, ATTR ]
+"   FG ang BG are color codes
+"   ATTR (optional) is a comma-delimited string of one or more of
+"   bold, dim, underscore, etc.
+" if g:vim_color_scheme ==# 'sonokai'
+"   let s:p = sonokai#get_palette(g:sonokai_style)
+"   let g:tmuxline_theme = {
+"       \ 'a'    : [ s:p.bg0[0], s:p.bg_blue[0], 'bold' ],
+"       \ 'b'    : [ s:p.fg[0], s:p.bg4[0] ],
+"       \ 'c'    : [ s:p.fg[0], s:p.bg1[0] ],
+"       \ 'x'    : [ s:p.fg[0], s:p.bg1[0] ],
+"       \ 'y'    : [ s:p.fg[0], s:p.bg4[0] ],
+"       \ 'z'    : [ s:p.bg0[0], s:p.bg_blue[0], 'bold' ],
+"       \ 'win'  : [ s:p.fg[0], s:p.bg4[0] ],
+"       \ 'cwin' : [ s:p.bg0[0], s:p.bg_green[0], 'bold' ],
+"       \ 'bg'   : [ s:p.fg[0], s:p.bg1[0] ],
+"       \ }
+" endif
+
+
+" Vim-cool                                              *vimrc_vim_cool_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/romainl/vim-cool
+
+" Show number of matches in the command-line (match 12 of 20)
+let g:CoolTotalMatches = 1
+
+
+" Vim-external                                      *vimrc_vim_external_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/itchyny/vim-external
+
+" map <Leader>e <Plug>(external-editor)
+" map <Leader>n <Plug>(external-explorer)
+map <Leader>b <Plug>(external-browser)
