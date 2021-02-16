@@ -21,11 +21,12 @@
 " |vimrc_plugin_config|............................Plugin Configuration
 "   |vimrc_ale_config|.............................ALE
 "   |vimrc_coc_config|.............................Conquer Of Completion
-"   |vimrc_lightline_config|.......................Lightline
+"     |vimrc_coc_control|..........................Coc control
 "   |vimrc_color_scheme_config|....................Color Scheme
 "   |vimrc_fugitive_config|........................Fugitive
 "   |vimrc_incsearch_config|.......................Incsearch
 "   |vimrc_indentline_config|......................Indentline
+"   |vimrc_lightline_config|.......................Lightline
 "   |vimrc_nerdcommenter_config|...................NERDCommenter
 "   |vimrc_nerdtree_config|........................NERDTree
 "   |vimrc_python_syntax_config|...................Python Syntax
@@ -33,22 +34,25 @@
 "   |vimrc_tmuxline_config|........................Tmuxline
 "   |vimrc_vim_cool_config|........................Vim Cool
 "   |vimrc_vim_external_config|....................Vim External
+" |vimrc_set_color_scheme|.........................Set Vim Color Scheme
 "
 "
 " NOTE:
 " - Use '_' to separate words
-" - Please keep the plugin configuration in alphabetical order except for
-"   lightline and color scheme
+" - Please keep the plugin configuration in alphabetical order
 
 
 " Environment
 " -----------------------------------------------------------------------------
 
-" Available: 'vim-monokai-tasty', 'sonokai', 'forest-night'
-let g:vim_color_scheme = 'sonokai'
+" Available: 'vim-monokai-tasty', 'sonokai', 'gruvbox-material'
+let g:vim_color_scheme = 'gruvbox-material'
 
 " Load Coc for specific filetypes or everytime
 let g:keep_coc_in_control = 1
+
+" Start Coc manually (takes precedence over keep_coc_in_control)
+let g:coc_startup_manual_only = 1
 
 
 " =============================================================================
@@ -61,7 +65,7 @@ call plug#begin('~/.vim/plugged')
 " Colorschemes
 Plug 'patstockwell/vim-monokai-tasty'
 Plug 'sainnhe/sonokai'
-Plug 'sainnhe/forest-night'
+Plug 'sainnhe/gruvbox-material'
 
 " Search
 Plug 'romainl/vim-cool'
@@ -125,10 +129,16 @@ if exists('+termguicolors')
   let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
 endif
 
+set ttyfast             " Improve redrawing
 set lazyredraw
+
+set nocursorline
 set number              " show line numbers
-set relativenumber      " show relative numbering
+" set relativenumber      " show relative numbering
 set signcolumn=yes      " show sign column
+set textwidth=0
+set colorcolumn=80
+set nowrap
 
 set showcmd             " Show the command being typed in
 
@@ -160,13 +170,11 @@ set scrolloff=12        " Keep cursor in approximately the middle of the screen
 
 set updatetime=100      " Some plugins require fast updatetime
 
-set ttyfast             " Improve redrawing
-
 " I: Disable the default Vim startup message
 " c: Don't give messages like "The only match", "Pattern not found", etc.
 set shortmess+=Ic
 
-set ruler               " Show the cursor position
+" set ruler               " Show the cursor position
 set nostartofline       " Don't set cursor to start of line when moving around
 
 set title               " Show the filename in window titlebar
@@ -202,6 +210,9 @@ set noshowmode
 " Cursor Shape                                             *vimrc_cursor_shape*
 " -----------------------------------------------------------------------------
 " https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
+" 0 -> Solid block
+" 1 -> Solid vertical bar
+" 2 -> Solid underscore
 if exists('$TMUX')
   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"  " INSERT
   let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"  " REPLACE
@@ -297,6 +308,20 @@ function! SetLightlineColorScheme(name) abort
 endfunction
 
 
+" Update the tmuxline config according to the current theme and store it under
+" the assets directory and also override the current tmux theme file.
+function! SetTmuxColorScheme(name, lightline_color = "lightline") abort
+  execute 'Tmuxline ' . a:lightline_color
+  execute 'TmuxlineSnapshot! ~/dotfiles/tmux/tmuxline/assets/' . a:name . '.tmux.conf'
+  TmuxlineSnapshot! ~/dotfiles/tmux/tmuxline/current.tmux.conf
+  " Do not run the command on vim startup but only on subsequent calls to
+  " SetColorScheme function.
+  if exists('g:loaded_color_scheme')
+    silent !tmux source-file ~/dotfiles/tmux/tmux.conf
+  endif
+endfunction
+
+
 " =============================================================================
 " MAPPINGS                                                     *vimrc_mappings*
 " =============================================================================
@@ -306,6 +331,11 @@ endfunction
 " 'Q' in normal mode enters Ex mode. You almost never want this.
 nmap Q <Nop>
 
+" Quick save
+noremap <leader>w :w<CR>
+noremap <leader>q :q<CR>
+noremap <leader>wq :wq<CR>
+
 " Move vertically by visual line
 nnoremap j gj
 nnoremap k gk
@@ -314,10 +344,15 @@ nnoremap k gk
 " nnoremap <leader>o o<esc>
 " nnoremap <leader>O O<esc>
 
+" Split with leader (same as that of tmux)
+nnoremap <Leader>- :sp<CR>
+nnoremap <Leader>\| :vsp<CR>
+
 " Buffer management
 nnoremap ]b :bnext<CR>
 nnoremap [b :bprev<CR>
-nnoremap bd :bdelete<CR>
+nnoremap <leader>bd :bdelete<CR>
+nnoremap <leader><leader> <C-^>
 
 " Movement in insert mode
 inoremap <C-h> <C-o>h
@@ -329,15 +364,31 @@ inoremap <C-k> <C-o>k
 xnoremap J :m '>+1<CR>gv=gv
 xnoremap K :m '<-2<CR>gv=gv
 
+" Visual indentation goes back to same selection
+xnoremap < <gv
+xnoremap > >gv
+
 " Quicker window movement
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
+" <tab> / <s-tab> | Circular windows navigation
+" nnoremap <tab>   <c-w>w
+" nnoremap <S-tab> <c-w>W
 
-" Keep the cursor centered
+" Keep the cursor at
+" (t) &scrolloff lines away from the top
+" (z) the center
+nnoremap * *zz
+nnoremap # #zz
+nnoremap n nzz
+nnoremap N Nzz
 nnoremap <C-o> <C-o>zz
 nnoremap <C-i> <C-i>zz
+
+" Search and Replace the word on cursor globally
+nnoremap <Leader>sr :%s/\<<C-r><C-w>\>//g<Left><Left>
 
 " Mapping for the custom function
 nnoremap <leader>= :call SetWindowsToEqualWidth()<CR>
@@ -363,7 +414,8 @@ map <leader>vt
 " COMMANDS                                                     *vimrc_commands*
 " =============================================================================
 
-" Basic useful commands
+" This always happens!
+command! W :w
 command! Q :q
 command! Qa :qa
 command! Wa :wa
@@ -385,17 +437,17 @@ command! What
 
 " Automatic reloading of .vimrc on save
 " Nested is necessary to correctly reload lightline/airline
-augroup auto_reload_vimrc
-  autocmd!
-  autocmd BufWritePost .vimrc,vimrc nested source $MYVIMRC
-augroup END
+" augroup auto_reload_vimrc
+"   autocmd!
+"   autocmd BufWritePost .vimrc,vimrc nested source $MYVIMRC
+" augroup END
 
 " Highlight current line, but only in active window
-augroup cursor_line_only_in_active_window
-  autocmd!
-  autocmd VimEnter,WinEnter,BufWinEnter * setl cursorline
-  autocmd WinLeave * setl nocursorline
-augroup END
+" augroup cursor_line_only_in_active_window
+"   autocmd!
+"   autocmd VimEnter,WinEnter,BufWinEnter * setl cursorline
+"   autocmd WinLeave * setl nocursorline
+" augroup END
 
 " Help filetype detection
 augroup filetype_detection
@@ -412,16 +464,17 @@ augroup END
 " net = noexpandtab
 augroup filetype_autocommands
   autocmd!
+  autocmd FileType help nnoremap <buffer> q :q <CR>
   autocmd FileType json,racket,sh,vim setl ts=2 sw=2
   autocmd FileType gitconfig,python,sml setl ts=4 sw=4
   autocmd FileType racket setl comments+=:;;
 augroup END
 
 " Resize windows to equal width when vim resizes (&columns &lines changed)
-augroup equal_window_width_on_vim_resize
-  autocmd!
-  autocmd VimResized * call SetWindowsToEqualWidth()
-augroup END
+" augroup equal_window_width_on_vim_resize
+"   autocmd!
+"   autocmd VimResized * call SetWindowsToEqualWidth()
+" augroup END
 
 " Triger `autoread` when files changes on disk and notify after file change
 " https://unix.stackexchange.com/a/383044
@@ -501,16 +554,8 @@ nmap <silent> ]a <Plug>(ale_next_wrap)
 " -----------------------------------------------------------------------------
 " Ref: https://github.com/neoclide/coc.nvim
 
-" Keep the coc in control!
-augroup coc_control
-  autocmd!
-  autocmd FileType json,python,sh,vim call CocSetup()
-augroup END
-
-command! -nargs=0 -complete=command CocSetup :call CocSetup()
-
-function! CocSetup()
-  if !exists(':CocStart')
+function! s:coc_setup()
+  if !exists(':CocStart') || exists('g:did_coc_loaded')
     return
   endif
 
@@ -644,7 +689,7 @@ function! CocSetup()
   " Add (Neo)Vim's native statusline support.
   " NOTE: Please see `:h coc-status` for integrations with external plugins that
   " provide custom statusline: lightline.vim, vim-airline.
-  set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+  " set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
   " Mappings for CoCList
   " Show all diagnostics.
@@ -652,7 +697,7 @@ function! CocSetup()
   " Manage extensions.
   nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
   " Show commands.
-  nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
+  " nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
   " Find symbol of current document.
   nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
   " Search workspace symbols.
@@ -665,129 +710,29 @@ function! CocSetup()
   nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 endfunction
 
-if !g:keep_coc_in_control
-  CocSetup
-endif
 
-
-" Lightline                                            *vimrc_lightline_config*
+" Coc control                                               *vimrc_coc_control*
 " -----------------------------------------------------------------------------
-" Ref: https://github.com/itchyny/lightline.vim
-" NOTE:
-" - Lightline configuration should come before color scheme configuration
-" - Lightline colorscheme is set using color_scheme_config
+command! -nargs=0 -complete=command CocSetup :call <SID>coc_setup()
 
-let g:lightline = {}
+if !g:coc_startup_manual_only
+  " Only start for specific filetype
+  augroup coc_control
+    autocmd!
+    autocmd FileType json,python,sh,vim CocSetup
+  augroup END
 
-" Ref: https://www.nerdfonts.com/cheat-sheet
-" \ue0b0 =     \ue0b8 =     \ue0bc = 
-" \ue0b1 =     \ue0b9 =     \ue0be = 
-" \ue0b2 =     \ue0ba = 
-" \ue0b3 =     \ue0bb = 
-let g:lightline.separator = { 'left': "\ue0b8", 'right': "\ue0ba" }
-let g:lightline.subseparator = { 'left': "\ue0b9", 'right': "\ue0bb" }
-let g:lightline.tabline_separator = { 'left': "\ue0bc", 'right': "\ue0be" }
-let g:lightline.tabline_subseparator = { 'left': "\ue0bb", 'right': "\ue0b9" }
+  " Use autocmd to force lightline update.
+  augroup coc_lightline_update
+    autocmd!
+    autocmd User CocStatusChange call lightline#update()
+    autocmd User CocDiagnosticChange call lightline#update()
+  augroup END
 
-let g:lightline.active = {
-      \ 'left': [
-      \   ['mode', 'paste'],
-      \   ['readonly', 'filename', 'fileformat', 'filetype'],
-      \ ],
-      \ 'right': [
-      \   ['linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo'],
-      \   [],
-      \   ['coc_status'],
-      \ ]
-      \ }
-
-let g:lightline.inactive = {
-      \ 'left': [['filename', 'fileformat', 'filetype']],
-      \ 'right': [['lineinfo']]
-      \ }
-
-let g:lightline.tabline = {
-      \ 'left': [['vim_logo', 'tabs']],
-      \ 'right': [['gitbranch']]
-      \ }
-
-let g:lightline.tab = {
-      \ 'active': [ 'tabnum', 'filename', 'modified' ],
-      \ 'inactive': [ 'tabnum', 'filename', 'modified' ] }
-
-let g:lightline.component = {
-      \ 'lineinfo': '%2p%%  %2l:%-2c%<',
-      \ 'vim_logo': "\ue7c5",
-      \ 'readonly': '%{&readonly?"":""}',
-      \ }
-
-let g:lightline.component_function = {
-      \ 'coc_status': 'CocStatus',
-      \ 'gitbranch': 'LightlineGitBranch',
-      \ 'filename': 'LightlineFilename',
-      \ 'filetype': 'LightlineFiletype',
-      \ 'fileformat': 'LightlineFileformat'
-      \ }
-
-let g:lightline.tab_component_function = {
-      \ 'tabnum': 'LightlineTabnum',
-      \ }
-
-let g:lightline.component_expand = {
-      \ 'linter_infos': 'lightline#ale#infos',
-      \ 'linter_warnings': 'lightline#ale#warnings',
-      \ 'linter_errors': 'lightline#ale#errors',
-      \ }
-
-let g:lightline.component_type = {
-      \ 'linter_infos': 'right',
-      \ 'linter_warnings': 'warning',
-      \ 'linter_errors': 'error',
-      \ }
-
-
-" Ale error indicator for lightline
-let g:lightline#ale#indicator_infos = "i"
-let g:lightline#ale#indicator_warnings = "!"
-let g:lightline#ale#indicator_errors = "✘"
-
-" Use autocmd to force lightline update.
-augroup coc_lightline_update
-  autocmd!
-  autocmd User CocStatusChange call lightline#update()
-  autocmd User CocDiagnosticChange call lightline#update()
-augroup END
-
-function! CocStatus()
-  return get(g:, 'coc_status', '')
-endfunction
-
-function! LightlineTabnum(num)
-  return a:num . " \ue0bb"
-endfunction
-
-" For vim-fugitive plugin: let branch = FugitiveHead()
-" For vim-gitbranch plugin: let branch = gitbranch#name()
-function! LightlineGitBranch()
-  let branch = FugitiveHead()
-  return branch !=# '' ? ' '.branch : ''
-endfunction
-
-" Extra: Filename from the project root (git repository)
-" https://github.com/itchyny/lightline.vim/issues/293
-function! LightlineFilename()
-  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
-  let modified = &modified ? ' +' : ''
-  return filename . modified
-endfunction
-
-function! LightlineFiletype()
-  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
-endfunction
-
-function! LightlineFileformat()
-  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) . '[' . &fileformat . ']' : ''
-endfunction
+  if !g:keep_coc_in_control
+    CocSetup
+  endif
+endif
 
 
 " Color scheme                                      *vimrc_color_scheme_config*
@@ -795,7 +740,7 @@ endfunction
 " Ref:
 "   vim-monokai-tasty: https://github.com/patstockwell/vim-monokai-tasty
 "   sonokai: https://github.com/sainnhe/sonokai
-"   forest-night: https://github.com/sainnhe/forest-night
+"   gruvbox-material: https://github.com/sainnhe/gruvbox-material
 
 " Color scheme configuration list
 let g:color_scheme_config = {}
@@ -804,6 +749,7 @@ let g:color_scheme_config['vim-monokai-tasty'] = [
       \ 'let g:vim_monokai_tasty_italic = 0',
       \ 'colorscheme vim-monokai-tasty',
       \ 'call SetLightlineColorScheme("custom_monokai_tasty")',
+      \ 'call SetTmuxColorScheme("monokai-tasty")',
       \ ]
 
 " Sonokai Style: 'default', 'atlantis', 'andromeda', 'shusia', 'maia'
@@ -815,25 +761,22 @@ let g:color_scheme_config['sonokai'] = [
       \ "let g:sonokai_sign_column_background = 'none'",
       \ 'colorscheme sonokai',
       \ 'call SetLightlineColorScheme("sonokai")',
+      \ 'call SetTmuxColorScheme("sonokai-shusia", "lightline_insert")',
       \ ]
 
-let g:color_scheme_config['forest-night'] = [
-      \ 'let g:forest_night_enable_italic = 1',
-      \ 'let g:forest_night_disable_italic_comment = 1',
-      \ "let g:forest_night_sign_column_background = 'none'",
-      \ 'let g:forest_night_better_performance = 1',
-      \ 'colorscheme forest-night',
-      \ 'call SetLightlineColorScheme("forest_night")',
-      \ ]
-
-" Set the color scheme if it exists, else default to built in
-try
-  call SetColorScheme()
-catch /.*/
-  colorscheme desert
-  set nocursorline
-  finish
-endtry
+" Palette: 'original', 'mix', 'material'
+" Background: 'hard', 'medium', 'soft'
+let g:color_scheme_config['gruvbox-material'] = [
+    \ "let g:gruvbox_material_palette = 'original'",
+    \ "let g:gruvbox_material_background = 'medium'",
+    \ 'let g:gruvbox_material_enable_italic = 1',
+    \ 'let g:gruvbox_material_disable_italic_comment = 1',
+    \ "let g:gruvbox_material_sign_column_background = 'none'",
+    \ 'let g:gruvbox_material_better_performance = 1',
+    \ 'colorscheme gruvbox-material',
+    \ 'call SetLightlineColorScheme("gruvbox_material")',
+    \ 'call SetTmuxColorScheme("gruvbox-material")',
+    \ ]
 
 
 " Fugitive                                              *vimrc_fugitive_config*
@@ -881,6 +824,75 @@ augroup json_conceal_level
   autocmd BufEnter,BufWinEnter *.json let g:indentLine_setConceal = 0
   autocmd BufLeave,BufWinLeave *.json let g:indentLine_setConceal = 1
 augroup END
+
+
+" Lightline                                            *vimrc_lightline_config*
+" -----------------------------------------------------------------------------
+" Ref: https://github.com/itchyny/lightline.vim
+" NOTE:
+" - Lightline configuration should come before color scheme configuration
+" - Lightline colorscheme is set using color_scheme_config
+
+let g:lightline = {}
+
+let g:lightline.active = {
+      \ 'left': [
+      \   ['mode', 'paste'],
+      \   ['git_status'],
+      \   ['filepath']
+      \ ],
+      \ 'right': [
+      \   ['linter_errors', 'linter_warnings', 'linter_infos', 'lineinfo'],
+      \   ['filetype', 'fileformat'],
+      \   ['coc_status'],
+      \ ]
+      \ }
+
+let g:lightline.inactive = {
+      \ 'left': [ ['absolutepath'] ],
+      \ 'right': [ ['lineinfo'] ]
+      \ }
+
+let g:lightline.tabline = {
+      \ 'left': [['vim_logo', 'tabs']],
+      \ }
+
+let g:lightline.component = {
+      \ 'vim_logo': "\ue7c5",
+      \ 'lineinfo': '%2p%%  %2l:%-2c%<',
+      \ 'filepath': "%t%{&modified ? ' [+]' : ''}%{&readonly ? ' [RO]' : ''}",
+      \ 'filetype': "%{winwidth(0) > 70 ? (&ft !=# '' ? &ft : 'no ft') : ''}",
+      \ 'fileformat': "%{winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) . '['.&ff.']' : ''}",
+      \ 'git_status': "%{LightlineGitStatus()}",
+      \ 'coc_status': "%{get(g:, 'coc_status', '')}",
+      \ }
+
+let g:lightline.component_expand = {
+      \ 'linter_infos': 'lightline#ale#infos',
+      \ 'linter_warnings': 'lightline#ale#warnings',
+      \ 'linter_errors': 'lightline#ale#errors',
+      \ }
+
+let g:lightline.component_type = {
+      \ 'linter_infos': 'right',
+      \ 'linter_warnings': 'warning',
+      \ 'linter_errors': 'error',
+      \ }
+
+" Ale error indicator for lightline
+let g:lightline#ale#indicator_infos = "i"
+let g:lightline#ale#indicator_warnings = "!"
+let g:lightline#ale#indicator_errors = "✘"
+
+function! LightlineGitStatus()
+  if exists('g:loaded_fugitive')
+    let l:branch = FugitiveHead()
+    if l:branch !=# ''
+      return ' ' . l:branch
+    endif
+    return ''
+  endif
+endfunction
 
 
 " NERDCommenter                                    *vimrc_nerdcommenter_config*
@@ -956,8 +968,6 @@ augroup END
 nnoremap <C-n> :NERDTreeToggle<CR> :call SetWindowsToEqualWidth()<CR>
 nnoremap <C-f> :NERDTreeFind<CR> :call SetWindowsToEqualWidth()<CR>
 " Change focus to the NERDTree window if present, else open it.
-" This will help in opening a file in a specific buffer, otherwise it opens
-" the file in the first buffer from the NERDTree window.
 nnoremap <leader>n :NERDTreeFocus<CR> :call SetWindowsToEqualWidth()<CR>
 
 
@@ -972,6 +982,8 @@ let g:python_highlight_all = 1
 " Startify                                              *vimrc_startify_config*
 " -----------------------------------------------------------------------------
 " Ref: https://github.com/mhinz/vim-startify
+
+nnoremap <space>` :Startify<CR>
 
 " Disable startify header
 let g:startify_custom_header = []
@@ -1013,42 +1025,16 @@ let g:startify_session_before_save = [
 " Ref: https://github.com/edkolev/tmuxline.vim
 
 let g:tmuxline_status_justify = 'left'
+let g:tmuxline_powerline_separators = 0
 
 let g:tmuxline_preset = {
       \ 'a'    : '#S',
-      \ 'win'  : [ '#I', '#W' ],
-      \ 'cwin' : [ '#I', '#W', '#F' ],
-      \ 'x'    : '#[fg=red]#(~/dotfiles/tmux/scripts/music.sh)',
-      \ 'y'    : [ '%H:%M', '%a %d %b', '#(~/dotfiles/tmux/scripts/battery.sh)' ],
-      \ 'z'    : '#H #{prefix_highlight}'
+      \ 'win'  : [ '#I: #W #F' ],
+      \ 'cwin' : [ '#I: #W #F' ],
+      \ 'x'    : '#[fg=white]#(~/dotfiles/tmux/scripts/music.sh) #{prefix_highlight}',
+      \ 'y'    : [ '%a %d %b', '%H:%M', '#(~/dotfiles/tmux/scripts/battery.sh)' ],
+      \ 'z'    : '#H'
       \ }
-
-let g:tmuxline_separators = {
-      \ 'left' : "\ue0b8",
-      \ 'left_alt': "\ue0b9",
-      \ 'right' : "\ue0ba",
-      \ 'right_alt' : "\ue0bb",
-      \ 'space' : ' '
-      \ }
-
-" Values represent: [ FG, BG, ATTR ]
-"   FG ang BG are color codes
-"   ATTR (optional) is a comma-delimited string of one or more of
-"   bold, dim, underscore, etc.
-" if g:vim_color_scheme ==# 'sonokai'
-"   let s:p = sonokai#get_palette(g:sonokai_style)
-"   let g:tmuxline_theme = {
-"       \ 'a'    : [ s:p.bg0[0], s:p.bg_blue[0], 'bold' ],
-"       \ 'b'    : [ s:p.fg[0], s:p.bg4[0] ],
-"       \ 'c'    : [ s:p.fg[0], s:p.bg1[0] ],
-"       \ 'x'    : [ s:p.fg[0], s:p.bg1[0] ],
-"       \ 'y'    : [ s:p.fg[0], s:p.bg4[0] ],
-"       \ 'z'    : [ s:p.bg0[0], s:p.bg_blue[0], 'bold' ],
-"       \ 'win'  : [ s:p.fg[0], s:p.bg4[0] ],
-"       \ 'cwin' : [ s:p.bg0[0], s:p.bg_green[0], 'bold' ],
-"       \ 'bg'   : [ s:p.fg[0], s:p.bg1[0] ],
-"       \ }
-" endif
 
 
 " Vim-cool                                              *vimrc_vim_cool_config*
@@ -1066,3 +1052,21 @@ let g:CoolTotalMatches = 1
 " map <Leader>e <Plug>(external-editor)
 " map <Leader>n <Plug>(external-explorer)
 map <Leader>b <Plug>(external-browser)
+
+
+" Set the color scheme                                 *vimrc_set_color_scheme*
+" -----------------------------------------------------------------------------
+" NOTE: This should come at the end of the file
+
+if exists('g:loaded_color_scheme')
+  finish
+endif
+
+try
+  call SetColorScheme()
+  let g:loaded_color_scheme = 1
+catch /.*/
+  colorscheme desert
+  set nocursorline
+  set notermguicolors
+endtry
