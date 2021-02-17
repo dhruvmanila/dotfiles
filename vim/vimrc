@@ -46,7 +46,7 @@
 " -----------------------------------------------------------------------------
 
 " Available: 'vim-monokai-tasty', 'sonokai', 'gruvbox-material'
-let g:vim_color_scheme = 'gruvbox-material'
+let g:vimrc_colors_name = 'gruvbox-material'
 
 " Load Coc for specific filetypes or everytime
 let g:keep_coc_in_control = 1
@@ -286,9 +286,9 @@ endfunction
 
 " Set to the given color scheme using all the commands listed in
 " 'color_scheme_config', if it exists.
-" Default: g:vim_color_scheme
-function! SetColorScheme(name = g:vim_color_scheme) abort
-  let g:vim_color_scheme = a:name
+" Default: g:vimrc_colors_name
+function! SetColorScheme(name = g:vimrc_colors_name) abort
+  let g:vimrc_colors_name = a:name
   for l:item in g:color_scheme_config[a:name]
     execute l:item
   endfor
@@ -311,12 +311,12 @@ endfunction
 " Update the tmuxline config according to the current theme and store it under
 " the assets directory and also override the current tmux theme file.
 function! SetTmuxColorScheme(name, lightline_color = "lightline") abort
-  execute 'Tmuxline ' . a:lightline_color
-  execute 'TmuxlineSnapshot! ~/dotfiles/tmux/tmuxline/assets/' . a:name . '.tmux.conf'
-  TmuxlineSnapshot! ~/dotfiles/tmux/tmuxline/current.tmux.conf
   " Do not run the command on vim startup but only on subsequent calls to
   " SetColorScheme function.
-  if exists('g:loaded_color_scheme')
+  if exists('g:loaded_vimrc_colors')
+    execute 'Tmuxline ' . a:lightline_color
+    execute 'TmuxlineSnapshot! ~/dotfiles/tmux/tmuxline/assets/' . a:name . '.tmux.conf'
+    TmuxlineSnapshot! ~/dotfiles/tmux/tmuxline/current.tmux.conf
     silent !tmux source-file ~/dotfiles/tmux/tmux.conf
   endif
 endfunction
@@ -812,7 +812,7 @@ let g:indentLine_fileTypeExclude = [
       \ ]
 
 " Use colors from the colorscheme
-if g:vim_color_scheme ==# 'vim-monokai-tasty'
+if g:vimrc_colors_name ==# 'vim-monokai-tasty'
   let g:indentLine_setColors = 1
 else
   let g:indentLine_setColors = 0
@@ -1057,14 +1057,17 @@ map <Leader>b <Plug>(external-browser)
 " Set the color scheme                                 *vimrc_set_color_scheme*
 " -----------------------------------------------------------------------------
 " NOTE: This should come at the end of the file
-
-if exists('g:loaded_color_scheme')
-  finish
-endif
+"
+" It goes like this:
+" Vim startup: Load vim and lightline colorscheme (tmux sourced .tmux.conf)
+" Reload vimrc: If the colorscheme is suppose to be changed, call the function
+"               to update the colorscheme for vim, lightline and tmuxline.
 
 try
-  call SetColorScheme()
-  let g:loaded_color_scheme = 1
+  if !exists('g:colors_name') || g:colors_name !=# g:vimrc_colors_name
+    call SetColorScheme()
+    let g:loaded_vimrc_colors = 1
+  endif
 catch /.*/
   colorscheme desert
   set nocursorline
