@@ -49,10 +49,12 @@ export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 
 # LESS defaults
 # X - leave content on-screen
-# F - quit automatically if less than one screenfull
+# F - quit automatically if less than one screenfull (nnn uses this)
 # R - raw terminal characters
-# i - ignore case in search pattern
-export LESS='-X -F -R -i -J -W --tabs=4 --window=4';
+# i - ignore case in search pattern. This option is ignored if it contains
+#     uppercase characters
+# J - Show status column at the left edge of the screen
+export LESS='-X -R -i -J -W --tabs=4 --window=4';
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8';
@@ -68,3 +70,6 @@ export HOMEBREW_NO_ANALYTICS=1
 # Do not create the lock file on `brew bundle`
 export HOMEBREW_BUNDLE_NO_LOCK=1
 export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
+
+export NNN_PLUG='p:preview-tui'
+export NNN_FIFO=/tmp/nnn.fifo

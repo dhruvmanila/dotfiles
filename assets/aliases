@@ -65,3 +65,7 @@ alias lda='ls -lhAF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
 
 # Always use color output for `ls`
 alias ls='command ls ${colorflag} -h'
+
+# nnn
+# To run a plugin at startup, use the option -P followed by the plugin key.
+alias nnn='nnn -e -D'
