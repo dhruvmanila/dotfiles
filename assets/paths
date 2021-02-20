@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
 # Start PATH from here (default path in MacOS)
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # Setting PATH for useful scripts
-export PATH="${PATH}:${HOME}/dotfiles/bin"
+PATH="${PATH}:${HOME}/dotfiles/bin"
 
 # Setting PATH for private scripts
-export PATH="${PATH}:${HOME}/projects/bin"
+PATH="${PATH}:${HOME}/projects/bin"
 
 # Setting PATH for smlnj
-export PATH="${PATH}:/usr/local/smlnj/bin"
+PATH="${PATH}:/usr/local/smlnj/bin"
+
+# Setting PATH for pipx
+PATH="${PATH}:${HOME}/.local/bin"
+
+export PATH

@@ -73,3 +73,5 @@ export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
 
 export NNN_PLUG='p:preview-tui'
 export NNN_FIFO=/tmp/nnn.fifo
+
+export BAT_THEME="gruvbox"
