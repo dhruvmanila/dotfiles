@@ -22,11 +22,13 @@ fi
 # Vagrant auto-complete
 if [[ -r "${VAGRANT_COMPLETION_PATH}" ]]; then
   source "${VAGRANT_COMPLETION_PATH}"
-fi
-
-# Node auto-compelete
-if command -v node &> /dev/null; then
-  eval "$(node --completion-bash)"
+else
+  echo "Vagrant completion path does not exist."
+  echo "Please update the version in the completion path."
+  echo ""
+  echo "Current version: $(vagrant --version)"
+  echo "Completion path: ${VAGRANT_COMPLETION_PATH}"
+  echo ""
 fi
 
 unset BREW_PREFIX GIT_COMPLETION_PATH VAGRANT_COMPLETION_PATH

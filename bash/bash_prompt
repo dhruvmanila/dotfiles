@@ -23,11 +23,11 @@ function gitstatus_prompt_update() {
   gitstatus_query "$@"                  || return 1  # error
   [[ "$VCS_STATUS_RESULT" == ok-sync ]] || return 0  # not a git repo
 
-  local      reset=$'\e[0m'     # no color
-  local      clean=$'\e[1;32m'  # green foreground
-  local  untracked=$'\e[1;34m'  # blue foreground
-  local   modified=$'\e[1;33m'  # yellow foreground
-  local conflicted=$'\e[1;31m'  # red foreground
+  local      reset="\[\e[0m\]"     # no color
+  local      clean="\[\e[1;32m\]"  # green foreground
+  local  untracked="\[\e[1;34m\]"  # blue foreground
+  local   modified="\[\e[1;33m\]"  # yellow foreground
+  local conflicted="\[\e[1;31m\]"  # red foreground
 
   local p
 
@@ -109,8 +109,8 @@ function build_prompt() {
     PS1+="${white}@${blue}\h "
   fi
 
-  # Working directory full path
-  PS1+="${yellow}\w"
+  # Working directory [full path: \w] [basename: \W]
+  PS1+="${yellow}\W"
 
   # Git repository details
   git_prompt="$(gitstatus_prompt_update "$@")";
@@ -119,8 +119,8 @@ function build_prompt() {
   fi
 
   # --------------- Second line -----------------
-  # Line break
-  PS1+="\n"
+  # Line break / Space
+  PS1+=" "
 
   # Prompt character '$ '
   PS1+="${white}\$ ${reset}"

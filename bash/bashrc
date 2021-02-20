@@ -46,8 +46,3 @@ fi
 if command -v pyenv-virtualenv-init &> /dev/null; then
   eval "$(pyenv virtualenv-init -)"
 fi
-
-# Pip auto-complete
-if command -v pip &> /dev/null; then
-  eval "$(pip completion --bash)"
-fi
