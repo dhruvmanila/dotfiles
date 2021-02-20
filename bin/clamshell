@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Ref: https://superuser.com/a/1571624
+
+sudo printf ""
+printf "\e[1m==> Enabling clamshell mode for 1 minute...\e[0m"
+
+tempfile=$(mktemp /tmp/enableClamshell.XXXXXXXX)
+
+# Disable sleep for 60 seconds and enable it back on so that I don't have to
+# manually enable it or worse case forget to enable it.
+cat << EOF > "$tempfile"
+# This is a helper script. DO NOT run manually.
+sudo pmset -a disablesleep 1
+rm -f $tempfile
+sleep 60
+sudo pmset -a disablesleep 0
+exit 0
+EOF
+
+chmod 755 "$tempfile"
+nohup "$tempfile" &> /dev/null &
+
+sleep 1
+printf "\e[32m DONE \e[0m\n"
