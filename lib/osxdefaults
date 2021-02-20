@@ -133,29 +133,31 @@ sudo pmset -a lidwake 1
 # Restart automatically on power loss
 sudo pmset -a autorestart 1
 
-# Restart automatically if the computer freezes
-sudo systemsetup -setrestartfreeze on
-
-# Sleep the display after 15 minutes
+# Sleep the display after x minutes
 sudo pmset -a displaysleep 10
 
 # Disable machine sleep while charging
 sudo pmset -c sleep 0
 
-# Set machine sleep to 10 minutes on battery
+# Set machine sleep to x minutes on battery
 sudo pmset -b sleep 10
 
-# Set standby delay to 3 hours (default is 3 hour)
+# Set standby delay to x seconds
 sudo pmset -a standbydelay 10800
-
-# Never go into computer sleep mode
-sudo systemsetup -setcomputersleep Off
 
 # Hibernation mode
 # 0: Disable hibernation (speeds up entering sleep mode)
 # 3: Copy RAM to disk so the system state can still be restored in case of a
 #    power failure.
+# 25: Copy RAM to disk and do not power memory while sleeping, restore it from
+#     the disk every time. Slower sleeps, slower wakes, and better battery life.
 sudo pmset -a hibernatemode 3
+
+# Restart automatically if the computer freezes
+sudo systemsetup -setrestartfreeze on
+
+# Never go into computer sleep mode
+sudo systemsetup -setcomputersleep Off
 
 # Remove the sleep image file to save disk space
 # sudo rm /private/var/vm/sleepimage
