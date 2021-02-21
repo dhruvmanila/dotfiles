@@ -13,18 +13,13 @@ Thumbs.db
 .Spotlight-V100
 .Trashes
 
-# local folder
 local/
 
-# vim undo history
 vim/undo/*
-
-# Ignore the swap files
 vim/swaps/*
-
-# Use :Plug... commands to update everything
 vim/plugged
-
 vim/session
 
 .vagrant
+
+/mac/karabiner/automatic_backups/

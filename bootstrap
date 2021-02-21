@@ -117,7 +117,6 @@ function check_dotfiles() {
 function check_xcode_command_line_tools() {
   header "Checking for xcode command line tools..."
   if ! xcode-select -p &> /dev/null; then
-    warning "xcode command line tools are not installed"
     header "Installing xcode command line tools..."
     xcode-select --install > /dev/null
     # wait until the tools are installed...
@@ -167,7 +166,6 @@ function check_homebrew_shallow() {
 function check_homebrew() {
   header "Checking for homebrew..."
   if ! command_exists "brew"; then
-    warning "Homebrew is not installed."
     header "Installing Homebrew..."
     # Install performs `brew update` but the homebrew-core tap is a shallow clone
     # https://github.com/Homebrew/brew/pull/9447
@@ -225,7 +223,6 @@ function check_homebrew() {
 function check_git() {
   header "Checking for Git..."
   if ! command_exists "git"; then
-    warning "Git is not installed"
     header "Installing Git with Homebrew..."
     brew install --formula git
     if command_exists "git"; then
@@ -243,7 +240,6 @@ function check_git() {
 function check_git_repository() {
   header "Checking for Git repository..."
   if ! is_git_repo; then
-    warning "Git repository is not initialized."
     header "Initializing Git repository..."
 
     set -x
@@ -268,20 +264,19 @@ function check_git_repository() {
 
 function check_python() {
   if ! command_exists "pyenv"; then
-    error "pyenv is not installed. Install it using 'brew install --formula pyenv' command."
-    exit 1
+    header "Installing pyenv..."
+    brew install --formula pyenv
   fi
 
   local pyenv_global_python="3.9.1"
   header "Checking for Python ${pyenv_global_python}..."
   if ! pyenv versions | grep -q ${pyenv_global_python}; then
-    warning "Python ${pyenv_global_python} is not installed"
     header "Installing Python ${pyenv_global_python}..."
     if pyenv install ${pyenv_global_python}; then
       success "Successfully installed Python ${pyenv_global_python}"
     else
       error "Failure occured while installing Python ${pyenv_global_python}"
-      return
+      exitcode=1 && return
     fi
   else
     success "Python ${pyenv_global_python} is already installed"
@@ -298,7 +293,10 @@ function check_python() {
   local pip_exec
   pip_exec="$(pyenv root)/versions/${pyenv_global_python}/bin/pip"
   header "Upgrading pip..."
-  $pip_exec install --upgrade pip
+  $pip_exec install --upgrade pip || exitcode=1
+
+  header "Installing pipx..."
+  $pip_exec install --upgrade pipx || exitcode=1
 
   header "Collecting packages from ${DOTFILES_DIRECTORY}/lib/requirements.txt..."
   local -a pip_packages
@@ -307,14 +305,18 @@ function check_python() {
   done < "${DOTFILES_DIRECTORY}/lib/requirements.txt"
   success "Collected ${#pip_packages[@]} packages."
 
+  local pipx_list
+  pipx_list=$(pipx list)
   header "Installing collected packages..."
   for package in "${pip_packages[@]}"; do
     header "Installing ${package}..."
-    if $pip_exec install --upgrade "${package}"; then
-      success "Successfully installed ${package}."
+    if ! echo "$pipx_list" | grep "$package" &> /dev/null; then
+      { pipx install "${package}"; success "Done."; } \
+        || { error "Failed to install ${package}."; exitcode=1; }
     else
-      error "Failed to install ${package}."
-      exitcode=1
+      success "${package} is already installed. Upgrading ${package}..."
+      { pipx upgrade "${package}"; success "Done."; } \
+        || { error "Failed to upgrade ${package}"; exitcode=1; }
     fi
   done
 }
@@ -327,7 +329,6 @@ function check_python() {
 function check_vim_plugins() {
   header "Checking for vim plugins..."
   if [[ ! -d "${HOME}/.vim/plugged" ]]; then
-    warning "Vim plugins are not installed."
     header "Upgrading vim plug..."
     vim +PlugUpgrade +qa && success "Done."
     header "Installing vim plugins..."
@@ -345,7 +346,6 @@ function check_vim_plugins() {
 function check_tmux_plugins() {
   header "Checking for tmux plugins..."
   if [[ ! -d "${HOME}/.tmux/plugins/tpm" ]]; then
-    warning "tmux plugin manager is not installed."
     header "Installing tmux plugin manager..."
     if git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm; then
       success "Successfully installed tmux plugin manager."
@@ -483,21 +483,22 @@ function mirror_files() {
   # Create the necessary symbolic links between the `dotfiles` and `HOME`
   # directory. The `bashrc` sources other files directly from the
   # `dotfiles` repository.
-  link "bash/bashrc"                ".bashrc"                || exitcode=1
-  link "bash/bash_profile"          ".bash_profile"          || exitcode=1
-  link "vim/vimrc"                  ".vimrc"                 || exitcode=1
-  link "vim"                        ".vim"                   || exitcode=1
-  link "tmux/tmux.conf"             ".tmux.conf"             || exitcode=1
-  link "python/flake8"              ".config/flake8"         || exitcode=1
-  link "python/pylintrc"            ".pylintrc"              || exitcode=1
-  link "assets/inputrc"             ".inputrc"               || exitcode=1
-  link "assets/gitignore"           ".gitignore"             || exitcode=1
-  link "assets/gitconfig"           ".gitconfig"             || exitcode=1
-  link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"        || exitcode=1
-  link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"  || exitcode=1
-  link "assets/ssh/config"          ".ssh/config"            || exitcode=1
-  link "mac/mackup.cfg"             ".mackup.cfg"            || exitcode=1
-  link "mac/mackup"                 ".mackup"                || exitcode=1
+  link "bash/bashrc"                ".bashrc"                    || exitcode=1
+  link "bash/bash_profile"          ".bash_profile"              || exitcode=1
+  link "vim/vimrc"                  ".vimrc"                     || exitcode=1
+  link "vim"                        ".vim"                       || exitcode=1
+  link "tmux/tmux.conf"             ".tmux.conf"                 || exitcode=1
+  link "python/flake8"              ".config/flake8"             || exitcode=1
+  link "python/pylintrc"            ".pylintrc"                  || exitcode=1
+  link "assets/inputrc"             ".inputrc"                   || exitcode=1
+  link "assets/gitignore"           ".gitignore"                 || exitcode=1
+  link "assets/gitconfig"           ".gitconfig"                 || exitcode=1
+  link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"            || exitcode=1
+  link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"      || exitcode=1
+  link "assets/ssh/config"          ".ssh/config"                || exitcode=1
+  link "mac/mackup.cfg"             ".mackup.cfg"                || exitcode=1
+  link "mac/mackup"                 ".mackup"                    || exitcode=1
+  link "mac/karabiner"              ".config/karabiner"          || exitcode=1
 
   success "Dotfiles update complete."
 }

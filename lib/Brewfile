@@ -12,21 +12,23 @@ brew "bashdb"
 brew "bat"
 brew "bdw-gc"
 brew "broot"
+brew "openssl@1.1"
+brew "readline"
+brew "sqlite"
+brew "xz"
 brew "datamash"
 brew "dockutil"
 brew "fd"
+brew "ffmpeg"
 brew "fzf"
 brew "gh"
-brew "readline"
-brew "openssl@1.1"
 brew "gnupg"
 brew "htop"
 brew "hyperfine"
 brew "jq"
-brew "sqlite"
 brew "lnav"
-brew "xz"
 brew "mackup"
+brew "mas"
 brew "mlton"
 brew "nnn"
 brew "node"
@@ -73,3 +75,19 @@ cask "vlc"
 cask "whatsapp"
 cask "wireshark"
 cask "zoom"
+mas "Battery Monitor", id: 836505650
+mas "Buffer", id: 1474298973
+mas "Developer", id: 640199958
+mas "GarageBand", id: 682658836
+mas "Grammarly for Safari", id: 1462114288
+mas "Honey", id: 1472777122
+mas "Hotspot Shield", id: 771076721
+mas "iMovie", id: 408981434
+mas "Keynote", id: 409183694
+mas "Numbers", id: 409203825
+mas "Pages", id: 409201541
+mas "Pocket", id: 568494494
+mas "Save to Pocket", id: 1477385213
+mas "SHAREit", id: 1040029915
+mas "Speedtest", id: 1153157709
+mas "The Unarchiver", id: 425424353
