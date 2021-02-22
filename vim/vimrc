@@ -9,6 +9,7 @@
 " -----------------------------------------------------------------------------
 " CONTENTS - Use '*' to jump to the location
 "
+" |vimrc_environment|..............................Environment Settings
 " |vimrc_plugins|..................................Plugins
 " |vimrc_editor_settings|..........................Editor Settings
 "   |vimrc_general_settings|.......................General Settings
@@ -42,7 +43,7 @@
 " - Please keep the plugin configuration in alphabetical order
 
 
-" Environment
+" Environment                                               *vimrc_environment*
 " -----------------------------------------------------------------------------
 
 " Leader is space
@@ -55,7 +56,7 @@ let g:vimrc_colors_name = 'gruvbox-material'
 let g:keep_coc_in_control = 1
 
 " Start Coc manually (takes precedence over keep_coc_in_control)
-let g:coc_startup_manual_only = 1
+let g:coc_startup_manual_only = 0
 
 
 " =============================================================================
@@ -431,7 +432,6 @@ command! Qa :qa
 command! Wa :wa
 command! Wqa :wqa
 command! WQa :wqa
-
 
 
 " =============================================================================
@@ -976,8 +976,9 @@ let g:startify_lists = [
 let g:startify_bookmarks = [
       \ {'v': '~/dotfiles/vim/vimrc'},
       \ {'b': '~/dotfiles/bash/bashrc'},
-      \ {'s': '~/dotfiles/bootstrap'},
-      \ {'t': '~/dotfiles/tmux/tmux.conf'}
+      \ {'d': '~/dotfiles/bin/dot'},
+      \ {'t': '~/dotfiles/tmux/tmux.conf'},
+      \ {'g': '~/dotfiles/assets/gitconfig'}
       \ ]
 
 " Automatically update sessions before leaving Vim and before loading a new

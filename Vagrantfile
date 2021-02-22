@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
     macos.vm.synced_folder ".", "/vagrant", disabled: true
 
     macos.vm.provider "virtualbox" do |vb|
-      vb.gui = true
+      # vb.gui = true
       vb.name = "dotfiles-testing"
       vb.memory = "2048"
       vb.cpus = 2
