@@ -94,7 +94,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'itchyny/lightline.vim'
 Plug 'maximbaz/lightline-ale'
 Plug 'mhinz/vim-startify'
-Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle'}
+Plug 'preservim/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']}
 Plug 'Yggdroot/indentLine'
 
 " Git plugin

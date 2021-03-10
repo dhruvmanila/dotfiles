@@ -23,7 +23,7 @@ BACKUP_DOTFILES=( \
 # Keep everything quoted due to spaces. Order: left to right
 MACOS_DOCK_APPLICATIONS=( \
   "/Applications/Safari.app" \
-  "/Applications/Firefox.app" \
+  # "/Applications/Firefox.app" \
   "/Applications/Brave Browser.app" \
   "/Applications/PyCharm CE.app" \
   "/Applications/Visual Studio Code.app" \

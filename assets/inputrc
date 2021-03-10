@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 
+# No bell please
+set bell-style none
+
+# Briefly move the cursor to an opening parenthesis when a closing parenthesis
+# is inserted.
+set blink-matching-paren on
+
+# Disable Bash 5.1 highlighted paste feature.
+set enable-bracketed-paste off
+
+# Color the common prefix in the completion list
+set colored-completion-prefix on
+
 # Make Tab autocomplete regardless of filename case
 set completion-ignore-case on
 
@@ -9,10 +22,14 @@ set show-all-if-ambiguous on
 # Immediately add a trailing slash when autocompleting symlinks to directories
 set mark-symlinked-directories on
 
-# Use the text that has already been typed as the prefix for searching through
-# commands (i.e. more intelligent Up/Down behavior)
-"\e[B": history-search-forward
-"\e[A": history-search-backward
+# Enabling basic vim emulation
+set editing-mode vi
+set keymap vi-insert
+
+# Show vim mode in the prompt
+set show-mode-in-prompt on
+set vi-cmd-mode-string "\1\e[1;37m\2: \1\e[0m\2"
+set vi-ins-mode-string "\1\e[1;37m\2+ \1\e[0m\2"
 
 # Do not autocomplete hidden files unless the pattern explicitly begins with a dot
 set match-hidden-files off
@@ -38,5 +55,18 @@ set input-meta on
 set output-meta on
 set convert-meta off
 
-# Enabling basic vim emulation
-set editing-mode vi
+# NOTE: All keybindings should come at the end of the file
+# Use the text that has already been typed as the prefix for searching through
+# commands (i.e. more intelligent Up/Down behavior)
+"\C-j": history-search-forward
+"\C-k": history-search-backward
+"\C-l": clear-screen
+
+# Make Tab cycle between possible completions
+# Cycle forward: Tab
+# Cycle backward: Shift-Tab
+TAB: menu-complete
+"\e[Z": menu-complete-backward
+
+# "\C-a": beginning-of-line  # used as tmux prefix
+"\C-e": end-of-line
