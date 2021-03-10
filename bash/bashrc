@@ -46,3 +46,8 @@ fi
 if command -v pyenv-virtualenv-init &> /dev/null; then
   eval "$(pyenv virtualenv-init -)"
 fi
+
+# rbenv init
+if command -v rbenv &> /dev/null; then
+  eval "$(rbenv init -)"
+fi

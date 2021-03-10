@@ -84,6 +84,7 @@ Plug 'vim-python/python-syntax', {'for': 'python'}
 Plug 'stephpy/vim-yaml', {'for': ['yaml', 'yml']}
 Plug 'wlangstroth/vim-racket', {'for': 'racket'}
 Plug 'jez/vim-better-sml', {'for': 'sml'}
+Plug 'cespare/vim-toml', {'for': 'toml'}
 
 " Text manipulations
 Plug 'preservim/nerdcommenter'
@@ -93,7 +94,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'itchyny/lightline.vim'
 Plug 'maximbaz/lightline-ale'
 Plug 'mhinz/vim-startify'
-Plug 'preservim/nerdtree'
+Plug 'preservim/nerdtree', {'on': 'NERDTreeToggle'}
 Plug 'Yggdroot/indentLine'
 
 " Git plugin
@@ -134,19 +135,25 @@ endif
 set ttyfast             " Improve redrawing
 set lazyredraw
 
-set nocursorline
+set cursorline
 set number              " show line numbers
-" set relativenumber      " show relative numbering
+set relativenumber      " show relative numbering
 set signcolumn=yes      " show sign column
-set textwidth=0
+set textwidth=0         " no auto formatting when reached at textwidth
 set colorcolumn=80
-set nowrap
-set equalalways
+
+set wrap                " Visually wrap lines outside the window width
+let &showbreak='↳ '
+set breakindent         " Wrapped lines preserve horizontal blocks of text
+set breakindentopt=sbr
+set linebreak           " Have lines wrap instead of continue off-screen
 
 set showcmd             " Show the command being typed in
 
 set expandtab           " Expand tabs to spaces
+set autoindent
 
+" set list                " Show the invisible symbols
 set listchars=tab:▸\      " Use custom symbols to
 set listchars+=trail:·    " represent invisible symbols
 set listchars+=eol:↴
@@ -167,7 +174,6 @@ set t_vb=
 set splitbelow          " Open new vertical split bottom
 set splitright          " Open new horizontal splits right
 
-set linebreak           " Have lines wrap instead of continue off-screen
 
 set scrolloff=12        " Keep cursor in approximately the middle of the screen
 
@@ -191,9 +197,6 @@ set wildmode+=full          " then start completing each full match
 
 " Use the system clipboard as the default register
 set clipboard=unnamed
-if has('unnamedplus')
-  set clipboard+=unnamedplus
-endif
 
 set encoding=utf-8
 set autoread            " Reload files when changed on disk
@@ -235,8 +238,8 @@ set ignorecase          " Ignore case in searches by default
 set smartcase           " But make it case sensitive if an uppercase is entered
 
 " Turn off search highlight (this becomes useless with vim-cool plugin)
-nnoremap <Leader>h :nohlsearch<cr>
-vnoremap <Leader>h :nohlsearch<cr>
+" nnoremap <Leader>h :nohlsearch<cr>
+" vnoremap <Leader>h :nohlsearch<cr>
 
 
 " Centralize backups, swapfiles and undo history
@@ -343,6 +346,10 @@ noremap <leader>q :q<CR>
 nnoremap j gj
 nnoremap k gk
 
+" Jump to start and end of line using the home row keys
+map H ^
+map L $
+
 " Open new line below and above current line
 " Both the map and the actual keys are of length 2 or 3
 " nnoremap <leader>o o<esc>
@@ -356,6 +363,8 @@ nnoremap <Leader>\| :vsp<CR>
 nnoremap ]b :bnext<CR>
 nnoremap [b :bprev<CR>
 nnoremap <leader>bd :bdelete<CR>
+
+" Fast switching between last and current file
 nnoremap <leader><leader> <C-^>
 
 " Movement in insert mode
@@ -378,13 +387,25 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-h> <C-w>h
 nnoremap <C-l> <C-w>l
 
+" Resize window with arrow keys as I hardly need them
+nnoremap <Up> <C-w>5+
+nnoremap <Down> <C-w>5-
+nnoremap <Left> <C-w>5<
+nnoremap <Right> <C-w>5>
+
+" Replace the selection without overriding the paste register
+vnoremap <Leader>p "_dP
+
+" Yank the entire file and get the cursor back to its original place
+nnoremap <Leader>Y ggyG<C-o><C-o>
+
 " <tab> / <s-tab> | Circular windows navigation
-" nnoremap <tab>   <c-w>w
-" nnoremap <S-tab> <c-w>W
+" nnoremap <TAB>   <c-w>w
+" nnoremap <S-TAB> <c-w>W
 
 " Keep the cursor at
-" (t) &scrolloff lines away from the top
-" (z) the center
+" (zt) &scrolloff lines away from the top
+" (zz) the center
 nnoremap * *zz
 nnoremap # #zz
 nnoremap n nzz
@@ -392,8 +413,8 @@ nnoremap N Nzz
 nnoremap <C-o> <C-o>zz
 nnoremap <C-i> <C-i>zz
 
-" Search and Replace the word on cursor globally
-nnoremap <Leader>r :%s/\<<C-r><C-w>\>/
+" Substitute the word on cursor globally
+nnoremap <Leader>s :%s/\<<C-r><C-w>\>/
 
 " Mapping for the custom function
 nnoremap <leader>= :call SetWindowsToEqualWidth()<CR>
@@ -415,7 +436,7 @@ nmap <leader>vt
       \ clear<CR>
 
 " Ref: https://vim.fandom.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor
-nmap <leader>hi
+nmap <leader>h
       \ :echo "hi<" . synIDattr(synID(line("."), col("."), 1), "name") . '> trans<'
       \ . synIDattr(synID(line("."), col("."), 0), "name") . "> lo<"
       \ . synIDattr(synIDtrans(synID(line("."), col("."), 1)), "name") . ">"<CR>
@@ -446,11 +467,11 @@ command! WQa :wqa
 " augroup END
 
 " Highlight current line, but only in active window
-" augroup cursor_line_only_in_active_window
-"   autocmd!
-"   autocmd VimEnter,WinEnter,BufWinEnter * setl cursorline
-"   autocmd WinLeave * setl nocursorline
-" augroup END
+augroup cursor_line_only_in_active_window
+  autocmd!
+  autocmd VimEnter,WinEnter,BufWinEnter * setl cursorline
+  autocmd WinLeave * setl nocursorline
+augroup END
 
 " Help filetype detection
 augroup filetype_detection
@@ -470,9 +491,10 @@ augroup filetype_autocommands
   " autocmd FileType help nnoremap <buffer> q :q <CR>
   autocmd FileType json,racket,sh,vim setl ts=2 sw=2
   autocmd FileType gitconfig,python,sml setl ts=4 sw=4
+  autocmd FileType python setl colorcolumn=88
   " vim-racket plugin sets it to ';', remove it and set it to ';;'
   autocmd FileType racket setl comments-=:; comments+=:;;
-  autocmd FileType python setl colorcolumn=88
+  autocmd FileType sml setl textwidth=0
 augroup END
 
 " Resize windows to equal width when vim resizes (&columns &lines changed)
@@ -703,6 +725,7 @@ endif
 let g:color_scheme_config = {}
 
 let g:color_scheme_config['vim-monokai-tasty'] = [
+      \ 'set background=dark',
       \ 'let g:vim_monokai_tasty_italic = 0',
       \ 'colorscheme vim-monokai-tasty',
       \ 'call SetLightlineColorScheme("custom_monokai_tasty")',
@@ -711,6 +734,7 @@ let g:color_scheme_config['vim-monokai-tasty'] = [
 
 " Sonokai Style: 'default', 'atlantis', 'andromeda', 'shusia', 'maia'
 let g:color_scheme_config['sonokai'] = [
+      \ 'set background=dark',
       \ "let g:sonokai_style = 'shusia'",
       \ 'let g:sonokai_enable_italic = 1',
       \ 'let g:sonokai_disable_italic_comment =  1',
@@ -724,16 +748,19 @@ let g:color_scheme_config['sonokai'] = [
 " Palette: 'original', 'mix', 'material'
 " Background: 'hard', 'medium', 'soft'
 let g:color_scheme_config['gruvbox-material'] = [
-    \ "let g:gruvbox_material_palette = 'original'",
-    \ "let g:gruvbox_material_background = 'medium'",
-    \ 'let g:gruvbox_material_enable_italic = 1',
-    \ 'let g:gruvbox_material_disable_italic_comment = 1',
-    \ "let g:gruvbox_material_sign_column_background = 'none'",
-    \ 'let g:gruvbox_material_better_performance = 1',
-    \ 'colorscheme gruvbox-material',
-    \ 'call SetLightlineColorScheme("gruvbox_material")',
-    \ 'call SetTmuxColorScheme("gruvbox-material")',
-    \ ]
+      \ 'set background=dark',
+      \ "let g:gruvbox_material_palette = 'original'",
+      \ "let g:gruvbox_material_background = 'medium'",
+      \ 'let g:gruvbox_material_enable_italic = 1',
+      \ 'let g:gruvbox_material_disable_italic_comment = 1',
+      \ "let g:gruvbox_material_sign_column_background = 'none'",
+      \ 'let g:gruvbox_material_better_performance = 1',
+      \ 'colorscheme gruvbox-material',
+      \ 'let s:palette = gruvbox_material#get_palette(g:gruvbox_material_background, g:gruvbox_material_palette)',
+      \ "call gruvbox_material#highlight('smlKeyChar', s:palette.red, s:palette.none)",
+      \ 'call SetLightlineColorScheme("gruvbox_material")',
+      \ 'call SetTmuxColorScheme("gruvbox-material")',
+      \ ]
 
 
 " Fugitive                                              *vimrc_fugitive_config*
@@ -741,7 +768,7 @@ let g:color_scheme_config['gruvbox-material'] = [
 " Ref: https://github.com/tpope/vim-fugitive
 
 nnoremap <leader>gs :G<CR>
-nnoremap <leader>gp :Gpush<CR>
+nnoremap <leader>gp :Git push<CR>
 
 
 " Incsearch                                            *vimrc_incsearch_config*
@@ -987,10 +1014,9 @@ let g:startify_session_persistence = 1
 
 let g:startify_session_delete_buffers = 1
 
-" When opening a file or bookmark, seek and change to the git root directory
-" if any and not to the file directory.
+" When opening a file or bookmark, do not change the PWD
 let g:startify_change_to_dir = 0
-let g:startify_change_to_vcs_root = 1
+let g:startify_change_to_vcs_root = 0
 
 " Close NERDTree tabs before saving a session and get the buffer back to the
 " original tabpage.

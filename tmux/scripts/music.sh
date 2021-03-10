@@ -25,12 +25,4 @@ if application "Music" is running then
 end if
 END
 
-output=$(osascript -e "$SCRIPT")
-
-printf "%s" "$output"
-
-# if [[ -z "$output" ]]; then
-#   printf ""
-# else
-#   printf "#[fg=red,bg=#49464e]#[fg=black,bg=red] %s" "$output"
-# fi
+printf "%s" "$(osascript -e "$SCRIPT")"

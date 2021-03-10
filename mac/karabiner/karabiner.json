@@ -167,6 +167,16 @@
                     "simple_modifications": [
                         {
                             "from": {
+                                "key_code": "delete_forward"
+                            },
+                            "to": [
+                                {
+                                    "consumer_key_code": "eject"
+                                }
+                            ]
+                        },
+                        {
+                            "from": {
                                 "key_code": "left_command"
                             },
                             "to": [
@@ -204,16 +214,6 @@
                                     "key_code": "right_command"
                                 }
                             ]
-                        },
-                        {
-                            "from": {
-                                "key_code": "delete_forward"
-                            },
-                            "to": [
-                                {
-                                    "consumer_key_code": "eject"
-                                }
-                            ]
                         }
                     ]
                 }
@@ -245,7 +245,7 @@
                     },
                     "to": [
                         {
-                            "apple_vendor_top_case_key_code": "illumination_down"
+                            "apple_vendor_keyboard_key_code": "mission_control"
                         }
                     ]
                 },
@@ -255,7 +255,7 @@
                     },
                     "to": [
                         {
-                            "apple_vendor_top_case_key_code": "illumination_up"
+                            "apple_vendor_keyboard_key_code": "launchpad"
                         }
                     ]
                 },
@@ -265,7 +265,7 @@
                     },
                     "to": [
                         {
-                            "apple_vendor_keyboard_key_code": "mission_control"
+                            "apple_vendor_keyboard_key_code": "dashboard"
                         }
                     ]
                 },
@@ -275,7 +275,7 @@
                     },
                     "to": [
                         {
-                            "apple_vendor_keyboard_key_code": "launchpad"
+                            "key_code": "f6"
                         }
                     ]
                 },

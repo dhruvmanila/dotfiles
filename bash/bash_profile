@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Some OSes like Ubuntu/Mac expect bash_profile
-# Redirect to bashrc
 if [[ -f "${HOME}/.bashrc" ]]; then
   source "${HOME}/.bashrc"
 fi

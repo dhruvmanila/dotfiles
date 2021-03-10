@@ -37,15 +37,29 @@ sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.serve
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "
 
-# Set highlight color to graphite
+# Set dark mode
+defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
+
+# Set accent color
+# -1 -> graphite
+#  0 -> red
+#  1 -> orange
+#  2 -> yellow
+#  3 -> green
+#  4 -> blue
+#  5 -> purple
+#  6 -> pink
+defaults write NSGlobalDomain AppleAccentColor -int -1
+
+# Set highlight color
 defaults write NSGlobalDomain AppleHighlightColor -string "0.847059 0.847059 0.862745 Graphite"
+
+# Always show scrollbars
+# Possible values: `WhenScrolling`, `Automatic` and `Always`
+defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
 
 # Set sidebar icon size to medium
 defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
-
-# Always show scrollbars
-defaults write NSGlobalDomain AppleShowScrollBars -string "Always"
-# Possible values: `WhenScrolling`, `Automatic` and `Always`
 
 # Disable the over-the-top focus ring animation
 defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false

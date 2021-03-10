@@ -5,6 +5,6 @@ codespell
 flake8
 ipython
 isort
+line-profiler
 mypy
 pre-commit
-youtube-dl

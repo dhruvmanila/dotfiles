@@ -437,6 +437,12 @@ function upgrade_python() {
 }
 
 
+function upgrade_cli_related() {
+  header "Updating tldr data..."
+  tldr --update
+}
+
+
 function perform_mackup_backup() {
   header "Performing mackup backup..."
   local mackup_test
@@ -511,6 +517,7 @@ case "$1" in
   upgrade)
     upgrade_homebrew
     upgrade_python
+    upgrade_cli_related
     ;;
   *)
     # Default behavior is to do a fresh setup unless the dotfiles directory is

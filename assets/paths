@@ -15,4 +15,7 @@ PATH="${PATH}:/usr/local/smlnj/bin"
 # Setting PATH for pipx
 PATH="${PATH}:${HOME}/.local/bin"
 
+# Setting PATH for tcl-tk
+PATH="/usr/local/opt/tcl-tk/bin:${PATH}"
+
 export PATH
