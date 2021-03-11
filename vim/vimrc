@@ -492,23 +492,6 @@ augroup cursor_line_only_in_active_window
   autocmd WinLeave * setl nocursorline
 augroup END
 
-" Various indent guide for filetypes
-" ts = tabstop
-" sw = shiftwidth
-" sts = softtabstop
-" et = expandtab (Globally set)
-" net = noexpandtab
-augroup filetype_autocommands
-  autocmd!
-  " autocmd FileType help nnoremap <buffer> q :q <CR>
-  autocmd FileType json,racket,sh,vim setl ts=2 sw=2
-  autocmd FileType gitconfig,python,sml setl ts=4 sw=4
-  autocmd FileType python setl colorcolumn=88
-  " vim-racket plugin sets it to ';', remove it and set it to ';;'
-  autocmd FileType racket setl comments-=:; comments+=:;;
-  autocmd FileType sml setl textwidth=0
-augroup END
-
 " Resize windows to equal width when vim resizes (&columns &lines changed)
 " augroup equal_window_width_on_vim_resize
 "   autocmd!
