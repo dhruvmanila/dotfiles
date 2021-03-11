@@ -204,9 +204,9 @@ set hidden              " Allows having hidden buffer (not displayed in any wind
 set backspace=indent,eol,start    " Allow backspace in insert mode
 
 " Format options
-" 'r': Automatically insert the current comment leader after hitting <Enter> in
+" 'r': Automatically insert the current comment Leader after hitting <Enter> in
 " Insert mode.
-" 'j': When it makes sense, remove a comment leader when joining lines.
+" 'j': When it makes sense, remove a comment Leader when joining lines.
 set formatoptions+=rj
 
 " --INSERT-- is unncessary because of lightline
@@ -332,15 +332,19 @@ endfunction
 " MAPPINGS                                                     *vimrc_mappings*
 " =============================================================================
 " Ref: Get list of all custom mappings `:map [mapping]`
+" n -> normal
+" x -> visual
+" v -> visual and select
+" i -> insert
 
 " Unbind some useless/annoying default key bindings.
 " 'Q' in normal mode enters Ex mode. You almost never want this.
 nmap Q <Nop>
 
 " Quick save
-noremap <leader>w :w<CR>
-noremap <leader>q :q<CR>
-" noremap <leader>wq :wq<CR>
+noremap <Leader>w :w<CR>
+noremap <Leader>q :q<CR>
+" noremap <Leader>wq :wq<CR>
 
 " Move vertically by visual line
 nnoremap j gj
@@ -352,20 +356,20 @@ map L $
 
 " Open new line below and above current line
 " Both the map and the actual keys are of length 2 or 3
-" nnoremap <leader>o o<esc>
-" nnoremap <leader>O O<esc>
+" nnoremap <Leader>o o<esc>
+" nnoremap <Leader>O O<esc>
 
-" Split with leader (same as that of tmux)
+" Split with Leader (same as that of tmux)
 nnoremap <Leader>- :sp<CR>
 nnoremap <Leader>\| :vsp<CR>
 
 " Buffer management
-nnoremap ]b :bnext<CR>
-nnoremap [b :bprev<CR>
-nnoremap <leader>bd :bdelete<CR>
+nnoremap <Leader>] :bnext<CR>
+nnoremap <Leader>[ :bprev<CR>
+nnoremap <Leader><BS> :bdelete<CR>
 
 " Fast switching between last and current file
-nnoremap <leader><leader> <C-^>
+nnoremap <Leader><Leader> <C-^>
 
 " Movement in insert mode
 inoremap <C-h> <C-o>h
@@ -394,7 +398,13 @@ nnoremap <Left> <C-w>5<
 nnoremap <Right> <C-w>5>
 
 " Replace the selection without overriding the paste register
-vnoremap <Leader>p "_dP
+xnoremap p "_dp
+
+" Prevent x from overriding what's in the clipboard.
+nnoremap x "_x
+nnoremap X "_X
+vnoremap x "_x
+vnoremap X "_X
 
 " Yank the entire file and get the cursor back to its original place
 nnoremap <Leader>Y ggyG<C-o><C-o>
@@ -414,21 +424,22 @@ nnoremap <C-o> <C-o>zz
 nnoremap <C-i> <C-i>zz
 
 " Substitute the word on cursor globally
-nnoremap <Leader>s :%s/\<<C-r><C-w>\>/
+nnoremap <Leader>s :%s/\<<C-r><C-w>\>//g<Left><Left>
 
 " Mapping for the custom function
-nnoremap <leader>= :call SetWindowsToEqualWidth()<CR>
+nnoremap <Leader>= :call SetWindowsToEqualWidth()<CR>
 
 " Set the terminal height to 2.5 of the current window and
 " open it in the directory of the file
-nmap <leader>t
+nmap <Leader>t
       \ :let $VIM_DIR=expand('%:p:h')<CR>
       \ :let &termwinsize = float2nr(winheight(0) / 2.5) . "x0"<CR>
       \ :terminal<CR>
       \ cd $VIM_DIR<CR>
       \ clear<CR>
 
-nmap <leader>vt
+" Open the terminal in a vertical split
+nmap <Leader>vt
       \ :let $VIM_DIR=expand('%:p:h')<CR>
       \ :let &termwinsize = ''<CR>
       \ :vert terminal<CR>
@@ -436,7 +447,7 @@ nmap <leader>vt
       \ clear<CR>
 
 " Ref: https://vim.fandom.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor
-nmap <leader>h
+nmap <Leader>h
       \ :echo "hi<" . synIDattr(synID(line("."), col("."), 1), "name") . '> trans<'
       \ . synIDattr(synID(line("."), col("."), 0), "name") . "> lo<"
       \ . synIDattr(synIDtrans(synID(line("."), col("."), 1)), "name") . ">"<CR>
@@ -577,7 +588,7 @@ nmap <silent> [a <Plug>(ale_previous_wrap)
 nmap <silent> ]a <Plug>(ale_next_wrap)
 
 
-" Coc                                                        *vimrc_coc_config*
+" Conquer of Completion                                      *vimrc_coc_config*
 " -----------------------------------------------------------------------------
 " Ref: https://github.com/neoclide/coc.nvim
 
@@ -654,7 +665,7 @@ function! s:coc_setup()
   autocmd CursorHold * silent call CocActionAsync('highlight')
 
   " Symbol renaming.
-  nmap <leader>rn <Plug>(coc-rename)
+  nmap <Leader>rn <Plug>(coc-rename)
 
   augroup coc_autocmds
     autocmd!
@@ -674,14 +685,14 @@ function! s:coc_setup()
   omap ac <Plug>(coc-classobj-a)
 
   " Remap <C-f> and <C-b> for scroll float windows/popups.
-  " if has('nvim-0.4.0') || has('patch-8.2.0750')
-  "   nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  "   nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  "   inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-  "   inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-  "   vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-  "   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-  " endif
+  if has('nvim-0.4.0') || has('patch-8.2.0750')
+    nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+    nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+    inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+    inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+    vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+    vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  endif
 
   " Use CTRL-S for selections ranges.
   " Requires 'textDocument/selectionRange' support of language server.
@@ -767,8 +778,8 @@ let g:color_scheme_config['gruvbox-material'] = [
 " -----------------------------------------------------------------------------
 " Ref: https://github.com/tpope/vim-fugitive
 
-nnoremap <leader>gs :G<CR>
-nnoremap <leader>gp :Git push<CR>
+nnoremap <Leader>gs :G<CR>
+nnoremap <Leader>gp :Git push<CR>
 
 
 " Incsearch                                            *vimrc_incsearch_config*
@@ -951,12 +962,8 @@ augroup nerdtree
   autocmd FileType nerdtree setlocal signcolumn=no
 augroup END
 
-" NOTE: Make all windows the same width whenever a NERDTree is opened or closed
-" but do not change the height. This is done using `SetWindowsToEqualWidth()`.
-
-" Set key to Ctrl-n to open nerd tree.
 nnoremap <C-n> :NERDTreeToggle<CR>
-nnoremap <C-f> :NERDTreeFind<CR>
+nnoremap <Leader>f :NERDTreeFind<CR>
 
 
 " Python syntax                                    *vimrc_python_syntax_config*
@@ -971,7 +978,7 @@ let g:python_highlight_all = 1
 " -----------------------------------------------------------------------------
 " Ref: https://github.com/mhinz/vim-startify
 
-nnoremap <space>` :Startify<CR>
+nnoremap <Leader>` :Startify<CR>
 
 augroup start_startify_on_vim_startup
   autocmd!

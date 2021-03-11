@@ -4,8 +4,8 @@
 alias python="python3"
 alias g="git"
 
-# Easy clear
-alias cl="clear"
+# Easy clear (use CTRL-l)
+# alias cl="clear"
 
 # Easier navigation: .., ..., ...., ..... and -
 alias ..="cd .."

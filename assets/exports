@@ -75,4 +75,28 @@ export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
 export NNN_PLUG='p:preview-tui;c:fzcd;o:fzopen'
 export NNN_FIFO=/tmp/nnn.fifo
 
-export BAT_THEME="gruvbox-dark"
+export BAT_THEME='gruvbox-dark'
+export BAT_STYLE='changes,header'
+
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+export FZF_DEFAULT_OPTS='
+  --height=75%
+  --layout=reverse
+  --margin=0,1
+  --prompt="❯ "
+  --bind=ctrl-p:toggle-preview
+  --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54
+'
+# Molokai for fzf
+# --color fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81
+# --color info:144,prompt:161,spinner:135,pointer:135,marker:118
+
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_OPTS='--preview "bat --color=always --line-range :300 {}"'
+
+# Alt-c on Mac is <Esc c> which is pressing c after pressing the escape key
+# You can change it in settings > profile > keys > option > Esc+
+# I prefer not to change it as my Capslock is Control and escape
+export FZF_ALT_C_COMMAND='fd --type d . --hidden --exclude .git'
+export FZF_ALT_C_OPTS='--preview "tree -C {} | head -100"'

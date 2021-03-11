@@ -6,11 +6,20 @@ shopt -s nocaseglob
 # Append to the Bash history file, rather than overwriting it
 shopt -s histappend
 
+# Expand, but don't automatically execute history expansion
+shopt -s histverify
+
 # Autocorrect typos in path names when using `cd`
 shopt -s cdspell
+
+# Autocorrect directory typos when completing
+shopt -s dirspell
 
 # * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
 shopt -s autocd
 
 # * Recursive globbing, e.g. `echo **/*.txt`
 shopt -s globstar
+
+# Automatically expand directory globs when completing
+shopt -s direxpand

@@ -4,6 +4,7 @@
 BREW_PREFIX="$(brew --prefix)"
 GIT_COMPLETION_PATH="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash"
 VAGRANT_COMPLETION_PATH="/opt/vagrant/embedded/gems/2.2.14/gems/vagrant-2.2.14/contrib/bash/completion.sh"
+FZF_COMPLETION_PATH="/usr/local/opt/fzf/shell/completion.bash"
 
 # Add tab completion for many Bash commands
 if which brew &> /dev/null && [[ -r "${BREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
@@ -31,4 +32,9 @@ else
   echo ""
 fi
 
-unset BREW_PREFIX GIT_COMPLETION_PATH VAGRANT_COMPLETION_PATH
+# Fzf auto-complete
+if [[ -r "${FZF_COMPLETION_PATH}" ]]; then
+  source "${FZF_COMPLETION_PATH}"
+fi
+
+unset BREW_PREFIX GIT_COMPLETION_PATH VAGRANT_COMPLETION_PATH FZF_COMPLETION_PATH

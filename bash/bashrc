@@ -51,3 +51,7 @@ fi
 if command -v rbenv &> /dev/null; then
   eval "$(rbenv init -)"
 fi
+
+if [[ -f "/usr/local/opt/fzf/shell/key-bindings.bash" ]]; then
+  source "/usr/local/opt/fzf/shell/key-bindings.bash"
+fi
