@@ -1,0 +1,48 @@
+" Ref:
+"   vim-monokai-tasty: https://github.com/patstockwell/vim-monokai-tasty
+"   sonokai: https://github.com/sainnhe/sonokai
+"   gruvbox-material: https://github.com/sainnhe/gruvbox-material
+
+" Color scheme configuration list
+"
+" Keys: colorscheme name
+" Values: All the commands which will be ran by the function colorscheme#vim
+let g:color_scheme_config = {}
+
+let g:color_scheme_config['vim-monokai-tasty'] = [
+      \ 'set background=dark',
+      \ 'let g:vim_monokai_tasty_italic = 0',
+      \ 'colorscheme vim-monokai-tasty',
+      \ 'call colorscheme#lightline("custom_monokai_tasty")',
+      \ 'call colorscheme#tmux("monokai-tasty")',
+      \ ]
+
+" Sonokai Style: 'default', 'atlantis', 'andromeda', 'shusia', 'maia'
+let g:color_scheme_config['sonokai'] = [
+      \ 'set background=dark',
+      \ "let g:sonokai_style = 'shusia'",
+      \ 'let g:sonokai_enable_italic = 1',
+      \ 'let g:sonokai_disable_italic_comment =  1',
+      \ 'let g:sonokai_better_performance = 1',
+      \ "let g:sonokai_sign_column_background = 'none'",
+      \ 'colorscheme sonokai',
+      \ 'call colorscheme#lightline("sonokai")',
+      \ 'call colorscheme#tmux("sonokai-shusia", "lightline_insert")',
+      \ ]
+
+" Palette: 'original', 'mix', 'material'
+" Background: 'hard', 'medium', 'soft'
+let g:color_scheme_config['gruvbox-material'] = [
+      \ 'set background=dark',
+      \ "let g:gruvbox_material_palette = 'original'",
+      \ "let g:gruvbox_material_background = 'medium'",
+      \ 'let g:gruvbox_material_enable_italic = 1',
+      \ 'let g:gruvbox_material_disable_italic_comment = 1',
+      \ "let g:gruvbox_material_sign_column_background = 'none'",
+      \ 'let g:gruvbox_material_better_performance = 1',
+      \ 'colorscheme gruvbox-material',
+      \ 'let s:palette = gruvbox_material#get_palette(g:gruvbox_material_background, g:gruvbox_material_palette)',
+      \ "call gruvbox_material#highlight('smlKeyChar', s:palette.red, s:palette.none)",
+      \ 'call colorscheme#lightline("gruvbox_material")',
+      \ 'call colorscheme#tmux("gruvbox-material")',
+      \ ]
