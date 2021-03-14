@@ -31,8 +31,8 @@ nnoremap <Leader>- :sp<CR>
 nnoremap <Leader>\| :vsp<CR>
 
 " Buffer management
-nnoremap <Leader>] :bnext<CR>
-nnoremap <Leader>[ :bprev<CR>
+nnoremap ]<Leader> :bnext<CR>
+nnoremap [<Leader> :bprev<CR>
 nnoremap <Leader><BS> :bdelete<CR>
 
 " Fast switching between last and current file
@@ -63,6 +63,10 @@ nnoremap <Up> <C-w>5+
 nnoremap <Down> <C-w>5-
 nnoremap <Left> <C-w>5<
 nnoremap <Right> <C-w>5>
+
+" Easy moving through the command history
+cnoremap <C-k> <Up>
+cnoremap <C-j> <Down>
 
 " Replace the selection without overriding the paste register
 xnoremap p "_dP

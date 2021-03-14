@@ -63,7 +63,9 @@ function! s:coc_setup()
     if (index(['vim','help'], &filetype) >= 0)
       execute 'h '.expand('<cword>')
     elseif (coc#rpc#ready())
-      call CocActionAsync('doHover')
+      if !CocActionAsync('doHover')
+        execute '!' . &keywordprg . " " . expand('<cword>')
+      endif
     else
       execute '!' . &keywordprg . " " . expand('<cword>')
     endif
