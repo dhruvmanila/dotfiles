@@ -36,7 +36,7 @@ set listchars+=nbsp:_
 set showmatch           " highlight matching [{()}]
 
 set laststatus=2        " Always show statusline
-set showtabline=2       " and tabline
+" set showtabline=2       " and tabline
 
 set mouse+=a            " Enable mouse support
 
@@ -58,7 +58,7 @@ set ttimeoutlen=10
 " c: Don't give messages like "The only match", "Pattern not found", etc.
 set shortmess+=Ic
 
-" set ruler               " Show the cursor position
+set ruler               " Show the cursor position
 set nostartofline       " Don't set cursor to start of line when moving around
 
 set title               " Show the filename in window titlebar
@@ -88,7 +88,7 @@ set smartcase           " But make it case sensitive if an uppercase is entered
 set formatoptions+=rj
 
 " --INSERT-- is unncessary because of lightline
-set noshowmode
+" set noshowmode
 
 set nobackup
 set noswapfile

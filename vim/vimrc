@@ -81,10 +81,10 @@ Plug 'preservim/nerdcommenter'
 " Plug 'tpope/vim-surround'
 
 " GUI enhancements
-Plug 'itchyny/lightline.vim'
-Plug 'maximbaz/lightline-ale'
+" Plug 'itchyny/lightline.vim'
+" Plug 'maximbaz/lightline-ale'
 Plug 'mhinz/vim-startify'
-Plug 'preservim/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']}
+" Plug 'preservim/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']}
 " Plug 'lambdalisue/fern.vim'
 Plug 'Yggdroot/indentLine'
 

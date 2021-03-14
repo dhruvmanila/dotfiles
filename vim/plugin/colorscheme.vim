@@ -13,7 +13,6 @@ let g:color_scheme_config['vim-monokai-tasty'] = [
       \ 'set background=dark',
       \ 'let g:vim_monokai_tasty_italic = 0',
       \ 'colorscheme vim-monokai-tasty',
-      \ 'call colorscheme#lightline("custom_monokai_tasty")',
       \ 'call colorscheme#tmux("monokai-tasty")',
       \ ]
 
@@ -26,7 +25,6 @@ let g:color_scheme_config['sonokai'] = [
       \ 'let g:sonokai_better_performance = 1',
       \ "let g:sonokai_sign_column_background = 'none'",
       \ 'colorscheme sonokai',
-      \ 'call colorscheme#lightline("sonokai")',
       \ 'call colorscheme#tmux("sonokai-shusia", "lightline_insert")',
       \ ]
 
@@ -43,6 +41,5 @@ let g:color_scheme_config['gruvbox-material'] = [
       \ 'colorscheme gruvbox-material',
       \ 'let s:palette = gruvbox_material#get_palette(g:gruvbox_material_background, g:gruvbox_material_palette)',
       \ "call gruvbox_material#highlight('smlKeyChar', s:palette.red, s:palette.none)",
-      \ 'call colorscheme#lightline("gruvbox_material")',
       \ 'call colorscheme#tmux("gruvbox-material")',
       \ ]
