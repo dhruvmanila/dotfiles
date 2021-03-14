@@ -23,3 +23,5 @@ vim/session
 .vagrant
 
 /mac/karabiner/automatic_backups/
+
+vim/.netrwhist
