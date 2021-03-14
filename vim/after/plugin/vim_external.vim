@@ -1,5 +1,7 @@
 " Ref: https://github.com/itchyny/vim-external
 
-" map <Leader>e <Plug>(external-editor)
-" map <Leader>n <Plug>(external-explorer)
-map <Leader>b <Plug>(external-browser)
+let g:external_search_engine = 'https://duckduckgo.com/?q='
+
+nmap <Leader>ee <Plug>(external-editor)
+nmap <Leader>en <Plug>(external-explorer)
+nmap <Leader>eb <Plug>(external-browser)
