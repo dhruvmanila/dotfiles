@@ -44,7 +44,7 @@ endfunction
 
 augroup netrw
   autocmd!
-  autocmd FileType netrw set signcolumn=no
+  autocmd FileType netrw setlocal signcolumn=no
   autocmd FileType netrw call <SID>netrw_mapping()
   " autocmd BufEnter * if (winnr("$") == 1 && &filetype == 'netrw') | q | endif
 augroup END

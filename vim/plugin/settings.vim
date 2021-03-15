@@ -58,7 +58,6 @@ set ttimeoutlen=10
 " c: Don't give messages like "The only match", "Pattern not found", etc.
 set shortmess+=Ic
 
-set ruler               " Show the cursor position
 set nostartofline       " Don't set cursor to start of line when moving around
 
 set title               " Show the filename in window titlebar
@@ -87,8 +86,8 @@ set smartcase           " But make it case sensitive if an uppercase is entered
 " 'j': When it makes sense, remove a comment Leader when joining lines.
 set formatoptions+=rj
 
-" --INSERT-- is unncessary because of lightline
-" set noshowmode
+set noshowmode          " Mode if no statusline
+set noruler             " Cursor position if no statusline
 
 set nobackup
 set noswapfile
