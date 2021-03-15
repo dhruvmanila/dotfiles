@@ -49,8 +49,8 @@ let g:startify_change_to_vcs_root = 0
 
 " Close NERDTree tabs before saving a session and get the buffer back to the
 " original tabpage.
-let g:startify_session_before_save = [
-      \ 'let $CURRENT_TABPAGE = tabpagenr()',
-      \ 'tabdo NERDTreeClose',
-      \ 'execute $CURRENT_TABPAGE . "tabnext"',
-      \ ]
+" let g:startify_session_before_save = [
+"       \ 'let $CURRENT_TABPAGE = tabpagenr()',
+"       \ 'tabdo NERDTreeClose',
+"       \ 'execute $CURRENT_TABPAGE . "tabnext"',
+"       \ ]

@@ -33,7 +33,7 @@
 " let g:lightline.component = {
 "       \ 'vim_logo': "\ue7c5",
 "       \ 'lineinfo': '%2p%%  %2l:%-2c%<',
-"       \ 'filepath': "%t%{&modified ? ' [+]' : ''}%{&readonly ? ' [RO]' : ''}",
+"       \ 'filepath': "%f%{&modified ? ' [+]' : ''}%{&readonly ? ' [RO]' : ''}",
 "       \ 'filetype': "%{winwidth(0) > 70 ? (&ft !=# '' ? &ft : 'no ft') : ''}",
 "       \ 'fileformat': "%{winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) . '['.&ff.']' : ''}",
 "       \ 'git_status': "%{LightlineGitStatus()}",
@@ -66,3 +66,8 @@
 "     return ''
 "   endif
 " endfunction
+"
+" augroup lightline_update
+"   autocmd!
+"   autocmd CmdlineEnter,CmdwinEnter * call lightline#update() | redraw
+" augroup END

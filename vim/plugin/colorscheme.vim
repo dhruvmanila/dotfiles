@@ -39,7 +39,9 @@ let g:color_scheme_config['gruvbox-material'] = [
       \ "let g:gruvbox_material_sign_column_background = 'none'",
       \ 'let g:gruvbox_material_better_performance = 1',
       \ 'colorscheme gruvbox-material',
-      \ 'let s:palette = gruvbox_material#get_palette(g:gruvbox_material_background, g:gruvbox_material_palette)',
-      \ "call gruvbox_material#highlight('smlKeyChar', s:palette.red, s:palette.none)",
-      \ 'call colorscheme#tmux("gruvbox-material")',
+      \ 'highlight! link smlKeyChar Red',
+      \ 'highlight! link CursorLineNr MoreMsg',
       \ ]
+" \ 'highlight! link StatusLine TabLineSel',
+" \ 'call colorscheme#lightline("gruvbox_material")',
+" \ 'call colorscheme#tmux("gruvbox-material")',

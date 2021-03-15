@@ -86,8 +86,8 @@ set smartcase           " But make it case sensitive if an uppercase is entered
 " 'j': When it makes sense, remove a comment Leader when joining lines.
 set formatoptions+=rj
 
-set noshowmode          " Mode if no statusline
-set noruler             " Cursor position if no statusline
+set showmode          " Why reinvent the wheel?
+set noruler           " Cursor position
 
 set nobackup
 set noswapfile
