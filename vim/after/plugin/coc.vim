@@ -12,6 +12,7 @@ function! s:coc_setup()
         \ 'coc-sh',
         \ 'coc-vimlsp',
         \ 'coc-pyright',
+        \ 'coc-solargraph',
         \ ]
 
   let g:coc_status_warning_sign = ''
@@ -119,7 +120,7 @@ if !g:coc_startup_manual_only
   " Only start for specific filetype
   augroup coc_control
     autocmd!
-    autocmd FileType json,python,sh,vim CocSetup
+    autocmd FileType json,python,ruby,sh,vim CocSetup
   augroup END
 
   " Use autocmd to force lightline update.

@@ -80,9 +80,9 @@ export BAT_STYLE='changes,header'
 
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
 export FZF_DEFAULT_OPTS='
-  --height=75%
+  --height=50%
   --layout=reverse
-  --margin=0,1
+  --info=inline
   --prompt="❯ "
   --bind=ctrl-p:toggle-preview
   --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
@@ -100,3 +100,13 @@ export FZF_CTRL_T_OPTS='--preview "bat --color=always --line-range :300 {}"'
 # I prefer not to change it as my Capslock is Control and escape
 export FZF_ALT_C_COMMAND='fd --type d . --hidden --exclude .git'
 export FZF_ALT_C_OPTS='--preview "tree -C {} | head -100"'
+
+# From Homebrew:
+# ruby-build installs a non-Homebrew OpenSSL for each Ruby version installed
+# and these are never upgraded.
+#
+# Note: this may interfere with building old versions of Ruby (e.g <2.4) that use
+# OpenSSL <1.1.
+openssl_path=$(brew --prefix openssl@1.1)
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$openssl_path"
+unset openssl_path

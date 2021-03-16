@@ -6,7 +6,7 @@
 
 " Unbind some useless/annoying default key bindings.
 " 'Q' in normal mode enters Ex mode. You almost never want this.
-nnoremap Q :wq<CR>
+nnoremap Q :qa<CR>
 
 " Quick save
 nnoremap <Leader>w :w<CR>

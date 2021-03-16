@@ -13,19 +13,20 @@ command! -nargs=? -complete=dir AFiles
 
 " WIP
 " Most used mappings
-nnoremap <C-p> :Files<CR>
-nnoremap <Leader><Enter> :Buffers<CR>
+nnoremap <silent> <C-p> :Files<CR>
+nnoremap <silent> <Leader><Enter> :Buffers<CR>
 
 " F mappings
-nnoremap <Leader>fh :Helptags<CR>
-nnoremap <Leader>fl :BLines<CR>
-nnoremap <Leader>fm :Maps<CR>
-nnoremap <Leader>fd :Files ~/dotfiles/<CR>
-nnoremap <Leader>fa :AFiles<CR>
+nnoremap <silent> <Leader>fh :Helptags<CR>
+nnoremap <silent> <Leader>fl :BLines<CR>
+nnoremap <silent> <Leader>fm :Maps<CR>
+nnoremap <silent> <Leader>fd :Files ~/dotfiles/<CR>
+nnoremap <silent> <Leader>fa :AFiles<CR>
+nnoremap <silent> <LeadeR>fc :Commands<CR>
 
-nnoremap <Leader>gc :Commits<CR>
-nnoremap <Leader>rg :Rg<CR>
+nnoremap <silent> <Leader>gc :Commits<CR>
+nnoremap <silent> <Leader>rg :Rg<CR>
 
 " Enhanced with fzf
-nnoremap q: :History:<CR>
-nnoremap q/ :History/<CR>
+nnoremap <silent> q: :History:<CR>
+nnoremap <silent> q/ :History/<CR>

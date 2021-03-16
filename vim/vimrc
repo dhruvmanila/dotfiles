@@ -68,6 +68,7 @@ Plug 'junegunn/fzf.vim'
 " Auto-complete, linting, formatting and all the good stuff
 Plug 'neoclide/coc.nvim', {'branch': 'release', 'on': 'CocStart'}
 Plug 'dense-analysis/ale'
+Plug 'liuchengxu/vista.vim'
 
 " Syntactic language support
 Plug 'vim-python/python-syntax', {'for': 'python'}
