@@ -10,7 +10,7 @@ function! s:statusline_init()
   let coc = ' %{statusline#coc()}'
   let ale = ' %{statusline#ale()}'
   let enc = " %{&fenc . '[' . &ff . ']'} "
-  let pos = ' %-8(%l:%c%) [%P]'
+  let pos = '| %-6(%l:%c%) %P '
 
   return '[%n] %f'.mod.ro.ft.flgs.br.sep.coc.ale.enc.pos
 endfunction

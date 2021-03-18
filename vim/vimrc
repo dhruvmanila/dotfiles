@@ -10,11 +10,8 @@
 " High level overview:
 "
 " plugin/*
-"   This is where the configuration for colorscheme and lightline lives which
-"   needs to be sourced before the actual call to colorscheme#vim.
-"
-"   The files basically sets up all the configurations needed to set the
-"   colorscheme for vim, lightline and tmux.
+"   This is where all of the files related to initial setup lives. It includes:
+"   Mappings, Autocommands, Commands, Settings, Statusline, etc.
 "
 " after/plugin/*
 "   This is where configuration for plugins live.
@@ -26,10 +23,8 @@
 "   All of the file type plugins lives here.
 "
 " autoload/*
-"   colorscheme.vim contains the necessary functions to set the colorscheme
-"   for vim, lightline and tmux (using tmuxline)
-"
-"   functions.vim contains the custom functions
+"   This is where all the custom functions and the plugin manager vim-plug
+"   lives.
 
 
 " Environment
@@ -71,11 +66,11 @@ Plug 'dense-analysis/ale'
 Plug 'liuchengxu/vista.vim'
 
 " Syntactic language support
-Plug 'vim-python/python-syntax', {'for': 'python'}
-Plug 'stephpy/vim-yaml', {'for': ['yaml', 'yml']}
-Plug 'wlangstroth/vim-racket', {'for': 'racket'}
-Plug 'jez/vim-better-sml', {'for': 'sml'}
-Plug 'cespare/vim-toml', {'for': 'toml'}
+Plug 'vim-python/python-syntax'
+Plug 'stephpy/vim-yaml'
+Plug 'wlangstroth/vim-racket'
+Plug 'jez/vim-better-sml'
+Plug 'cespare/vim-toml'
 
 " Text manipulations
 Plug 'preservim/nerdcommenter'

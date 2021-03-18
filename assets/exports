@@ -72,12 +72,23 @@ export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_BUNDLE_NO_LOCK=1
 export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
 
+# nnn configuration
+# -d : detail mode
+# -D : show directories in context color with NNN_FCOLORS set
+# -e : open text files in $VISUAL (else $EDITOR, fallback vi) [preferably CLI]
+# -E : use $EDITOR for internal undetached edits
+# -H : show hidden files (toggled with '.')
+# -u : use selection if available, don't prompt to choose between selection and hovered entry
+# -U : show user and group names in status bar
+export NNN_OPTS="dDeHuU"
 export NNN_PLUG='p:preview-tui;c:fzcd;o:fzopen'
 export NNN_FIFO=/tmp/nnn.fifo
 
+# Bat configuration
 export BAT_THEME='gruvbox-dark'
 export BAT_STYLE='changes,header'
 
+# Fzf configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
 export FZF_DEFAULT_OPTS='
   --height=50%

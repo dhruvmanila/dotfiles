@@ -14,7 +14,7 @@ command! -nargs=? -complete=dir AFiles
 " WIP
 " Most used mappings
 nnoremap <silent> <C-p> :Files<CR>
-nnoremap <silent> <Leader><Enter> :Buffers<CR>
+nnoremap <silent> <Leader>; :Buffers<CR>
 
 " F mappings
 nnoremap <silent> <Leader>fh :Helptags<CR>
@@ -22,7 +22,7 @@ nnoremap <silent> <Leader>fl :BLines<CR>
 nnoremap <silent> <Leader>fm :Maps<CR>
 nnoremap <silent> <Leader>fd :Files ~/dotfiles/<CR>
 nnoremap <silent> <Leader>fa :AFiles<CR>
-nnoremap <silent> <LeadeR>fc :Commands<CR>
+nnoremap <silent> <Leader>fc :Commands<CR>
 
 nnoremap <silent> <Leader>gc :Commits<CR>
 nnoremap <silent> <Leader>rg :Rg<CR>

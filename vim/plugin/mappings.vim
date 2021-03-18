@@ -110,13 +110,13 @@ nmap <Leader>t
       \ :let $VIM_DIR=expand('%:p:h')<CR>
       \ :let &termwinsize = float2nr(winheight(0) / 2.5) . "x0"<CR>
       \ :terminal<CR>
-      \ cd $VIM_DIR<CR>
-      \ clear<CR>
+      " \ cd $VIM_DIR<CR>
+      " \ clear<CR>
 
 " Open the terminal in a vertical split
 nmap <Leader>vt
       \ :let $VIM_DIR=expand('%:p:h')<CR>
       \ :let &termwinsize = ''<CR>
       \ :vert terminal<CR>
-      \ cd $VIM_DIR<CR>
-      \ clear<CR>
+      " \ cd $VIM_DIR<CR>
+      " \ clear<CR>

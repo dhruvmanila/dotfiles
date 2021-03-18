@@ -13,7 +13,7 @@ nnoremap <silent> <Leader>vd :Vista finder fzf:coc<CR>
 " Set custom mappings for the Vista buffer
 function! s:vista_buffer_mappings()
   " Use / in the Vista buffer to search using fzf
-  nnoremap <buffer> <silent> :<C-u>call vista#finder#fzf#Run()<CR>
+  nnoremap <buffer> <silent> / :<C-u>call vista#finder#fzf#Run()<CR>
 endfunction
 
 augroup vista_custom

@@ -1,6 +1,6 @@
 " Ref: https://github.com/Yggdroot/indentLine
 
-let g:indentLine_char = '¦' " | ¦ ┆ │ ┊
+let g:indentLine_char = '│' " | ¦ ┆ │ ┊ │
 
 let g:indentLine_showFirstIndentLevel = 0
 " let g:indentLine_concealcursor = ""
