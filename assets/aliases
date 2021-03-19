@@ -65,3 +65,6 @@ alias lda='ls -lhAF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
 
 # Always use color output for `ls`
 alias ls='command ls ${colorflag} -h'
+
+# nnn (to reset less)
+alias nnn='LESS=-R nnn'

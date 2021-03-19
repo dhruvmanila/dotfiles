@@ -2,24 +2,27 @@
 # vim: set ft=sh:
 
 # Disale default conda base getting activated by default
-export CONDA_AUTO_ACTIVATE_BASE=false;
+export CONDA_AUTO_ACTIVATE_BASE=false
+
+# Disable pyenv virtualenv prompt
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
 # Hide the “default interactive shell is now zsh” warning on macOS.
-export BASH_SILENCE_DEPRECATION_WARNING=1;
+export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # Make vim the default editor.
 export EDITOR='vim'
 export VISUAL='vim'
 
 # Increase Bash history size. Allow 32³ entries; the default is 500.
-export HISTSIZE='32768';
-export HISTFILESIZE="${HISTSIZE}";
+export HISTSIZE='32768'
+export HISTFILESIZE="${HISTSIZE}"
 # Omit duplicates and commands that begin with a space from history.
-export HISTCONTROL='ignoreboth';
+export HISTCONTROL='ignoreboth'
 
 # Prefer US English and use UTF-8.
-export LANG='en_US.UTF-8';
-export LC_ALL='en_US.UTF-8';
+export LANG='en_US.UTF-8'
+export LC_ALL='en_US.UTF-8'
 
 # Highlight section titles in manual pages.
 # Colors for less
@@ -55,10 +58,10 @@ export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 # i - ignore case in search pattern. This option is ignored if it contains
 #     uppercase characters
 # J - Show status column at the left edge of the screen
-export LESS='-X -F -R -i -J -W --tabs=4 --window=4';
+export LESS='-X -F -R -i -J -W --tabs=4 --window=4'
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
-export PYTHONIOENCODING='UTF-8';
+export PYTHONIOENCODING='UTF-8'
 
 # Avoid issues with `gpg` as installed via Homebrew.
 # https://stackoverflow.com/a/42265848/96656
@@ -72,7 +75,7 @@ export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_BUNDLE_NO_LOCK=1
 export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
 
-# nnn configuration
+# nnn options
 # -d : detail mode
 # -D : show directories in context color with NNN_FCOLORS set
 # -e : open text files in $VISUAL (else $EDITOR, fallback vi) [preferably CLI]
@@ -81,8 +84,19 @@ export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
 # -u : use selection if available, don't prompt to choose between selection and hovered entry
 # -U : show user and group names in status bar
 export NNN_OPTS="dDeHuU"
-export NNN_PLUG='p:preview-tui;c:fzcd;o:fzopen'
 export NNN_FIFO=/tmp/nnn.fifo
+# export NNN_TRASH=1
+
+# nnn plugins
+# - To run a plugin, press ; followed by the key or Alt+key
+# - To skip directory refresh after running a plugin, prefix with -
+# - To assign keys to arbitrary non-background non-shell-interpreted cli
+#   commands and invoke like plugins, add _ (underscore) before the command.
+#
+# shellcheck disable=SC2016 # (we don't want expansion for $nnn)
+NNN_SHELL_PLUGINS='l:-_git log;x:_chmod +x $nnn'
+NNN_PLUGINS='p:preview-tui;c:fzcd;o:fzopen'
+export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
 
 # Bat configuration
 export BAT_THEME='gruvbox-dark'
