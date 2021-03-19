@@ -346,8 +346,8 @@ function link() {
   # Force create/replace the symlink.
   local source_file="${DOTFILES_DIRECTORY}/${1}"
   local target_file="${HOME}/${2}"
-  echo "==> $target_file -> $source_file"
   if ! [[ -e "$target_file" ]]; then
+    echo "==> $target_file -> $source_file"
     ln -fs "$source_file" "$target_file"
   fi
 }
@@ -364,22 +364,35 @@ function setup_symlink() {
   # directory. The `bashrc` sources other files directly from the
   # `dotfiles` repository.
   header "Creating the necessary symlinks..."
+  # Bash
   link "bash/bashrc"                ".bashrc"
   link "bash/bash_profile"          ".bash_profile"
+  # Vim
   link "vim/vimrc"                  ".vimrc"
   link "vim"                        ".vim"
+  # Tmux
   link "tmux/tmux.conf"             ".tmux.conf"
+  # Python
   link "python/flake8"              ".config/flake8"
   link "python/pylintrc"            ".pylintrc"
+  link "python/ipython/ipython_config.py"  ".ipython/profile_default/ipython_config.py"
+  link "python/ipython/startup"            ".ipython/profile_default/startup"
+  # Shell
   link "assets/inputrc"             ".inputrc"
   link "assets/gitignore"           ".gitignore"
   link "assets/gitconfig"           ".gitconfig"
   link "assets/gpg/gpg.conf"        ".gnupg/gpg.conf"
   link "assets/gpg/gpg-agent.conf"  ".gnupg/gpg-agent.conf"
   link "assets/ssh/config"          ".ssh/config"
+  # Mac
   link "mac/mackup.cfg"             ".mackup.cfg"
   link "mac/mackup"                 ".mackup"
   link "mac/karabiner"              ".config/karabiner"
+  # CLI config
+  link "config/broot"               ".config/broot"
+  link "config/youtube-dl"          ".config/youtube-dl"
+  link "config/bpytop"              ".config/bpytop"
+  link "config/htop"                ".config/htop"
 }
 
 
@@ -406,8 +419,8 @@ function update_macos_dock() {
 
 
 function sync_lib_files() {
-  header "Syncing Brewfile with the currently installed packages..."
-  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle dump -f
+  # header "Syncing Brewfile with the currently installed packages..."
+  # HOMEBREW_NO_AUTO_UPDATE=1 brew bundle dump -f
   header "Syncing requirements.txt with the global Python packages..."
   pipx list \
     | grep package \
@@ -473,6 +486,25 @@ function perform_mackup_restore() {
 }
 
 
+function perform_all_functions() {
+  setup_dotfiles_directory
+  setup_xcode_command_line_tools
+  setup_homebrew
+  setup_homebrew_packages
+  setup_dotfiles_git_repository
+  setup_python
+  setup_python_global_packages
+  # No backup as this is a fresh setup
+  setup_symlink
+  setup_vim_plugins
+  setup_tmux_plugins
+  setup_github_ssh
+  update_macos_settings
+  update_macos_dock
+  perform_mackup_restore
+}
+
+
 # Most of the functions have an initial check to determine whether they need to
 # be run or not. Example: setup_homebrew checks whether homebrew is already
 # installed or not.
@@ -519,28 +551,17 @@ case "$1" in
     upgrade_python
     upgrade_cli_related
     ;;
+  all)
+    perform_all_functions
+    ;;
   *)
     # Default behavior is to do a fresh setup unless the dotfiles directory is
     # already present.
     if ! [[ -d "$DOTFILES_DIRECTORY" ]]; then
-      setup_dotfiles_directory
-      setup_xcode_command_line_tools
-      setup_homebrew
-      setup_homebrew_packages
-      setup_dotfiles_git_repository
-      setup_python
-      setup_python_global_packages
-      # No backup as this is a fresh setup
-      setup_symlink
-      setup_vim_plugins
-      setup_tmux_plugins
-      setup_github_ssh
-      update_macos_settings
-      update_macos_dock
-      perform_mackup_restore
+      perform_all_functions
     else
       printf "Usage: %s " "$(basename "$0")"
-      printf "{backup|brew|dock|macos|link|python|restore|shell|sync|upgrade} "
+      printf "{all|backup|brew|dock|macos|link|python|restore|shell|sync|upgrade} "
       printf "[-f/--force]\n"
     fi
     ;;

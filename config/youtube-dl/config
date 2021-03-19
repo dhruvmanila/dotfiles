@@ -1,0 +1,18 @@
+# Lines starting with # are comments
+# https://github.com/ytdl-org/youtube-dl
+#
+# All options can be overriden on the command line for a specific download
+
+# Format options:
+# Download bestvideo and bestaudio file separately and merge them using ffmpeg
+# or download the best quality single file.
+# https://github.com/ytdl-org/youtube-dl#format-selection
+--format 'bestvideo+bestaudio/best'
+
+# Output format:
+# Also acts as a way to specify a default download location
+# https://github.com/ytdl-org/youtube-dl#output-template
+--output '~/Downloads/youtube-dl/%(title)s.%(ext)s'
+
+# Restrict filenames to only ASCII characters, and avoid "&" and spaces in filenames
+--restrict-filenames
