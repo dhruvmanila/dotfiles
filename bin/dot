@@ -450,6 +450,20 @@ function upgrade_python() {
 }
 
 
+function upgrade_plugins() {
+  header "Upgrading vim plugin manager..."
+  vim +PlugUpgrade +qa
+  header "Cleaning vim plugins..."
+  vim +PlugClean +qa
+  header "Updating vim plugins..."
+  vim +PlugUpdate +qa
+  header "Cleaning tmux plugins..."
+  ~/.tmux/plugins/tpm/bin/clean_plugins
+  header "Updating tmux plugins..."
+  ~/.tmux/plugins/tpm/bin/update_plugins all
+}
+
+
 function upgrade_cli_related() {
   header "Updating tldr data..."
   tldr --update
@@ -550,6 +564,7 @@ case "$1" in
     upgrade_homebrew
     upgrade_python
     upgrade_cli_related
+    upgrade_plugins
     ;;
   all)
     perform_all_functions
