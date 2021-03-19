@@ -37,17 +37,16 @@ fi;
 #   source "${HOME}/.config/broot/launcher/bash/br"
 # fi
 
-# pyenv init
 if command -v pyenv &>/dev/null; then
   eval "$(pyenv init -)"
 fi
 
-# pyenv virtualenv init
-if command -v pyenv-virtualenv-init &> /dev/null; then
-  eval "$(pyenv virtualenv-init -)"
-fi
+# Commenting it out as this slows down the prompt by injecting the function
+# _pyenv_virtualenv_hook to $PROMPT_COMMAND
+# if command -v pyenv-virtualenv-init &> /dev/null; then
+#   eval "$(pyenv virtualenv-init -)"
+# fi
 
-# rbenv init
 if command -v rbenv &> /dev/null; then
   eval "$(rbenv init -)"
 fi
