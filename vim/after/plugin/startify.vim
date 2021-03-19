@@ -27,6 +27,7 @@ let g:startify_lists = [
       \ {'type': 'files',     'header': ['   Files']},
       \ {'type': 'sessions',  'header': ['   Sessions']},
       \ {'type': 'bookmarks', 'header': ['   Bookmarks']},
+      \ {'type': 'commands',  'header': ['   Commands']},
       \ ]
 
 let g:startify_bookmarks = [
@@ -34,7 +35,13 @@ let g:startify_bookmarks = [
       \ {'b': '~/dotfiles/bash/bashrc'},
       \ {'d': '~/dotfiles/bin/dot'},
       \ {'t': '~/dotfiles/tmux/tmux.conf'},
-      \ {'g': '~/dotfiles/assets/gitconfig'}
+      \ {'g': '~/dotfiles/assets/gitconfig'},
+      \ ]
+
+let g:startify_commands = [
+      \ {'pu': ':PlugUpdate'},
+      \ {'pi': ':PlugInstall'},
+      \ {'pc': ':PlugClean'},
       \ ]
 
 " Automatically update sessions before leaving Vim and before loading a new
