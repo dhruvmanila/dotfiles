@@ -1,3 +1,15 @@
+# Brewfile
+#
+# Organized as:
+#
+# - Necessary taps
+# - Brew formulae
+# - Casks
+# - Mac Applications
+
+# Set argument for all `brew install --cask` commands
+cask_args appdir: "~/Applications"
+
 tap "clementtsang/bottom"
 tap "heroku/brew"
 tap "homebrew/bundle"
@@ -6,80 +18,121 @@ tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "romkatv/gitstatus"
-brew "adns"
+
+# Shells and related
 brew "bash"
 brew "bash-completion@2"
 brew "bashdb"
-brew "bat"
-brew "bdw-gc"
+# brew "zsh"
+brew "shellcheck"                    # Linter
+brew "romkatv/gitstatus/gitstatus"   # Fast git status prompt (bash/zsh)
+
+# Programming languages and related
+# Pre-requisites for pyenv Python install
 brew "openssl@1.1"
-brew "broot"
 brew "readline"
 brew "sqlite"
-brew "tcl-tk"
 brew "xz"
-brew "datamash"
-brew "dockutil"
-brew "fd"
-brew "ffmpeg"
-brew "fzf"
-brew "gh"
-brew "gnupg"
+brew "zlib"
+
+brew "pyenv"                 # Python version management
+brew "pyenv-virtualenv"      # Python virtual environment management
+brew "rbenv"                 # Ruby virtual environment management
+brew "node"
+
+# Editors
+brew "neovim", args: ["HEAD"]
+brew "vim"
+
+# System monitoring
 brew "htop"
+brew "lnav"
+brew "clementtsang/bottom/bottom"    # Written in Rust
+
+# File navigation, search and related
+brew "bat"        # (cat) syntax highlighting
+brew "broot"
+brew "fd"         # better find
+brew "fzf"        # fuzzy finder
+brew "ripgrep"    # better grep
+brew "tree"       # File tree viewer
+# TODO: `brew edit nnn` O_NERD=1 for adding file icons
+brew "nnn", args: ["HEAD", "build-from-source"]
+
+# CLI utilities
+brew "adns"
+brew "bdw-gc"
+brew "tcl-tk"
+brew "ctags"
+brew "datamash"
+brew "dockutil"             # Manage Mac dock applications
+brew "ffmpeg"               # Play, record, convert, and stream audio and video
+brew "gh"                   # GitHub CLI client
+brew "gnupg"
 brew "hyperfine"
 brew "jq"
-brew "lnav"
-brew "mackup"
-brew "mas"
+brew "mackup"               # Backup files
+brew "mas"                  # Mac AppStore CLI
 brew "mlton"
-brew "nnn"
-brew "node"
 brew "pinentry-mac"
 brew "pup"
-brew "pyenv"
-brew "pyenv-virtualenv"
-brew "rbenv"
 brew "rename"
-brew "ripgrep"
-brew "shellcheck"
 brew "stow"
 brew "stress"
-brew "tldr"
-brew "tmux"
-brew "tree"
-brew "vim"
-brew "youtube-dl"
-brew "zlib"
-brew "clementtsang/bottom/bottom"
+brew "tldr"                 # Better help
+brew "tmux"                 # Terminal multiplexer
+brew "youtube-dl"           # Download videos from Youtube and others
 brew "heroku/brew/heroku"
-brew "romkatv/gitstatus/gitstatus"
+
+
+# Casks
+
+# Browsers
 cask "brave-browser"
-cask "calibre", args: { appdir: "~/Applications" }
-cask "discord"
-cask "emacs"
 cask "firefox"
 cask "firefox-developer-edition"
+cask "google-chrome"
+
+# GUI Editors
+cask "emacs"
+cask "mark-text"    # Markdown editor
+cask "pycharm-ce"
+cask "racket"       # Includes DrRacket
+cask "visual-studio-code"
+
+# Chat
+cask "discord"
+cask "slack"
+cask "whatsapp"
+cask "zoom"
+
+# Fonts
 cask "font-fira-code-nerd-font"
 cask "font-jetbrains-mono-nerd-font"
-cask "google-chrome", args: { appdir: "~/Applications" }
+
+# Terminals
 cask "iterm2"
-cask "karabiner-elements"
-cask "lunar"
+# cask "kitty"
+
+# Extensions
+cask "karabiner-elements"     # Keyboard customizer for Mac
+cask "lunar"                  # Control display/monitor brightness
 cask "macs-fan-control"
-cask "mark-text"
-cask "pycharm-ce"
-cask "racket"
-cask "rectangle"
-cask "slack"
+cask "rectangle"              # Move/resize windows
+
+# Virtual machine
+cask "virtualbox"
+cask "vagrant", args: { appdir: "~/Applications" }
+
+cask "calibre"         # ebooks
+cask "qbittorrent"
 cask "smlnj"
 cask "spotify"
-cask "vagrant", args: { appdir: "~/Applications" }
-cask "virtualbox"
-cask "visual-studio-code"
 cask "vlc"
-cask "whatsapp"
-cask "wireshark"
-cask "zoom"
+cask "wireshark"       # Network monitoring
+
+
+# Mac applications
 mas "Battery Monitor", id: 836505650
 mas "Buffer", id: 1474298973
 mas "Developer", id: 640199958
