@@ -73,7 +73,9 @@ Plug 'jez/vim-better-sml'
 Plug 'cespare/vim-toml'
 
 " Text manipulations
-Plug 'preservim/nerdcommenter'
+" Plug 'preservim/nerdcommenter'
+Plug 'tpope/vim-commentary'
+" Plug 'tomtom/tcomment_vim'
 " Plug 'tpope/vim-surround'
 
 " GUI enhancements

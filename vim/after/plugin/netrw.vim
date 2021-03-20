@@ -53,6 +53,6 @@ augroup END
 " Another idea: either open the netrw explorer directly when we split using
 " <leader>- or <leader>\|, or not and use a shortcut like <leader>n to open
 " the explorer.
-nmap <Leader>n :Explore<CR>
+nmap <silent> <Leader>n :Explore<CR>
 " nmap <Leader>n :Lexplore<CR>
 " nmap <Leader>f :Lexplore %:p:h<CR>

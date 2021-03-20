@@ -66,3 +66,8 @@ Much easier version:
 :h lua-vim-variables
 
 Mappings: https://github.com/nanotee/nvim-lua-guide#defining-mappings
+
+### Plugins
+
+- Plugin manager: https://github.com/wbthomason/packer.nvim
+- Comment: https://github.com/terrortylor/nvim-comment

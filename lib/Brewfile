@@ -24,6 +24,7 @@ brew "bash"
 brew "bash-completion@2"
 brew "bashdb"
 # brew "zsh"
+# brew "zsh-completion"
 brew "shellcheck"                    # Linter
 brew "romkatv/gitstatus/gitstatus"   # Fast git status prompt (bash/zsh)
 
@@ -68,9 +69,11 @@ brew "datamash"
 brew "dockutil"             # Manage Mac dock applications
 brew "ffmpeg"               # Play, record, convert, and stream audio and video
 brew "gh"                   # GitHub CLI client
+brew "git"                  # Git
 brew "gnupg"
 brew "hyperfine"
 brew "jq"
+brew "less"                 # latest less
 brew "mackup"               # Backup files
 brew "mas"                  # Mac AppStore CLI
 brew "mlton"

@@ -2,6 +2,6 @@
 
 let g:external_search_engine = 'https://duckduckgo.com/?q='
 
-nmap <Leader>ee <Plug>(external-editor)
-nmap <Leader>en <Plug>(external-explorer)
-nmap <Leader>eb <Plug>(external-browser)
+nmap <silent> <Leader>ee <Plug>(external-editor)
+nmap <silent> <Leader>en <Plug>(external-explorer)
+nmap <silent> <Leader>eb <Plug>(external-browser)
