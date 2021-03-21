@@ -35,7 +35,7 @@ set listchars+=trail:·    " represent invisible symbols
 set listchars+=eol:↴
 set listchars+=nbsp:_
 
-set showmatch           " highlight matching [{()}]
+set showmatch           " Jump to matching [{()}] for 'matchtime'
 
 set laststatus=2        " Always show statusline
 " set showtabline=2       " and tabline

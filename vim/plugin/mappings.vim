@@ -21,11 +21,6 @@ nnoremap k gk
 map H ^
 map L $
 
-" Open new line below and above current line
-" Both the map and the actual keys are of length 2 or 3
-" nnoremap <Leader>o o<esc>
-" nnoremap <Leader>O O<esc>
-
 " Split with Leader (same as that of tmux)
 nnoremap <Leader>- :sp<CR>
 nnoremap <Leader>\| :vsp<CR>
@@ -40,7 +35,7 @@ nnoremap <Leader><Leader> <C-^>
 
 " Movement in insert mode
 inoremap <C-h> <C-o>h
-inoremap <C-l> <C-o>a
+inoremap <C-l> <C-o>l
 inoremap <C-j> <C-o>j
 inoremap <C-k> <C-o>k
 
@@ -110,13 +105,9 @@ nmap <Leader>t
       \ :let $VIM_DIR=expand('%:p:h')<CR>
       \ :let &termwinsize = float2nr(winheight(0) / 2.5) . "x0"<CR>
       \ :terminal<CR>
-      " \ cd $VIM_DIR<CR>
-      " \ clear<CR>
 
 " Open the terminal in a vertical split
 nmap <Leader>vt
       \ :let $VIM_DIR=expand('%:p:h')<CR>
       \ :let &termwinsize = ''<CR>
       \ :vert terminal<CR>
-      " \ cd $VIM_DIR<CR>
-      " \ clear<CR>

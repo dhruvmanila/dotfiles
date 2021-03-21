@@ -28,8 +28,8 @@ let g:color_scheme_config['sonokai'] = [
       \ 'call colorscheme#tmux("sonokai-shusia", "lightline_insert")',
       \ ]
 
-" Palette: 'original', 'mix', 'material'
-" Background: 'hard', 'medium', 'soft'
+" palette: 'original', 'mix', 'material'
+" background: 'hard', 'medium', 'soft'
 let g:color_scheme_config['gruvbox-material'] = [
       \ 'set background=dark',
       \ "let g:gruvbox_material_palette = 'original'",
