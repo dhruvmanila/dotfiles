@@ -25,6 +25,8 @@ set linebreak           " Have lines wrap instead of continue off-screen
 set showcmd             " Show the command being typed in
 
 set expandtab           " Expand tabs to spaces
+set shiftwidth=2        " Default settings
+set tabstop=2           " Default settings
 set autoindent
 
 " set list                " Show the invisible symbols
