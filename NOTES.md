@@ -51,6 +51,8 @@ can be slow. To avoid this, set `g:node_host_prog` to the host path: >
 This is not going to be useful as most things will be in lua but just keeping
 it here.
 
+ShaDa (Shared Data) is like viminfo for neovim to persist data across sessions.
+
 ### Options | Variables | Mappings
 
 * Global: `vim.api.nvim_{set|get}_option()`
@@ -69,5 +71,32 @@ Mappings: https://github.com/nanotee/nvim-lua-guide#defining-mappings
 
 ### Plugins
 
+Neovim will autoload everything in the `.config/nvim/plugin/` directory.
+
 - Plugin manager: https://github.com/wbthomason/packer.nvim
 - Comment: https://github.com/terrortylor/nvim-comment
+
+### Config
+
+**Core files will be in the lua/core directory as follows**:
+- Plugins: `./lua/core/plugins.lua` (require it)
+- Options: `./lua/core/options.lua` (require it)
+- Mappings: `./lua/core/mappings.lua`
+- Autocmds: `./lua/core/autocmds.lua`
+- Commands: `./lua/core/commands.lua`
+
+**Plugin configuration will be in one of the below two directories depending on
+whether we are using lua or vim:**
+- New style plugins (lua): `./lua/plugin/*.lua`
+- Old style plugins (vim): `./after/plugin/*.vim`
+_NOTE: Name of the file should configure the plugin with the corresponding name._
+
+All the paths will be specified to `packer.nvim` in the plugin specification
+table in the provided `use` function. When https://github.com/neovim/neovim/pull/13823
+is merged, it will an easier transition or we can just use
+https://github.com/tjdevries/astronauta.nvim but probably not. So, I am sticking
+to providing config paths for now.
+
+**Other files:**
+- Filetype: `./after/filetype/*.vim`
+- Indent: `./after/indent/*.vim`

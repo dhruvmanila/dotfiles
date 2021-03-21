@@ -367,9 +367,10 @@ function setup_symlink() {
   # Bash
   link "bash/bashrc"                ".bashrc"
   link "bash/bash_profile"          ".bash_profile"
-  # Vim
+  # Neovim/Vim
   link "vim/vimrc"                  ".vimrc"
   link "vim"                        ".vim"
+  link "config/nvim"                ".config/nvim"
   # Tmux
   link "tmux/tmux.conf"             ".tmux.conf"
   # Python
