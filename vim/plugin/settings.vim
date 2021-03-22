@@ -86,7 +86,7 @@ set smartcase           " But make it case sensitive if an uppercase is entered
 " 'r': Automatically insert the current comment Leader after hitting <Enter> in
 " Insert mode.
 " 'j': When it makes sense, remove a comment Leader when joining lines.
-set formatoptions+=rj
+set formatoptions+=cqrjn
 
 set showmode          " Why reinvent the wheel?
 set noruler           " Cursor position

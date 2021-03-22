@@ -2,6 +2,24 @@ local M = {}
 local cmd = vim.cmd
 local nvim_set_keymap = vim.api.nvim_set_keymap
 
+-- Helper function to set the neovim options until #13479 merges.
+--
+-- This will make sure each option is set to the respective scope.
+-- Ref: https://github.com/ellisonleao/dotfiles/blob/main/configs/.config/nvim/lua/editor.lua#L40
+M.opt = setmetatable({}, {
+  __index = vim.o,
+  __newindex = function(_, key, value)
+    vim.o[key] = value
+    local scope = vim.api.nvim_get_option_info(key)
+    if scope == "win" then
+      vim.wo[key] = value
+    elseif scope == "buf" then
+      vim.bo[key] = value
+    end
+  end,
+})
+
+
 -- Create autocommand groups based on the given definitions.
 --
 -- @param definitions table<string, string[]>
@@ -35,6 +53,5 @@ function M.map(modes, lhs, rhs, opts)
     nvim_set_keymap(mode, lhs, rhs, opts)
   end
 end
-
 
 return M

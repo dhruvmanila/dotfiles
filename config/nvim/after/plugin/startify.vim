@@ -10,13 +10,11 @@ augroup END
 " Startify header
 let g:ascii_vim = [
       \ '',
-      \ '              ██╗   ██╗██╗███╗   ███╗',
-      \ '              ██║   ██║██║████╗ ████║',
-      \ '              ██║   ██║██║██╔████╔██║',
-      \ '              ╚██╗ ██╔╝██║██║╚██╔╝██║',
-      \ '               ╚████╔╝ ██║██║ ╚═╝ ██║',
-      \ '                ╚═══╝  ╚═╝╚═╝     ╚═╝',
-      \ ''
+      \ '           ____  ___  ____ _   __(_)___ ___    ',
+      \ '          / __ \/ _ \/ __ \ | / / / __ `__ \   ',
+      \ '         / / / /  __/ /_/ / |/ / / / / / / /   ',
+      \ '        /_/ /_/\___/\____/|___/_/_/ /_/ /_/    ',
+      \ '',
       \ ]
 
 let g:startify_custom_header =
@@ -39,9 +37,9 @@ let g:startify_bookmarks = [
       \ ]
 
 let g:startify_commands = [
-      \ {'pu': ':PlugUpdate'},
-      \ {'pi': ':PlugInstall'},
-      \ {'pc': ':PlugClean'},
+      \ {'ps': ':PackerSync'},
+      \ {'pi': ':PackerInstall'},
+      \ {'pc': ':PackerCompile'},
       \ ]
 
 " Automatically update sessions before leaving Vim and before loading a new

@@ -21,7 +21,7 @@ local augroups = {
 
   -- Auto compile plugins on file update
   auto_compile_plugins = {
-    [[BufWritePost plugins.lua PackerCompile]]
+    [[BufWritePost plugins.lua luafile %]]
   }
 }
 

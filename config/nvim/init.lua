@@ -12,7 +12,7 @@
 
 ./lua/core/*.lua  (sourced using `require`)
   This is where all of the files related to initial setup lives which includes
-  plugin specification, options, commands, autocommands, key bindings.
+  plugin specification, options, commands, autocommands, and key bindings.
 
 
 ./lua/plugin/*.lua  (sourced by 'packer.nvim')
@@ -42,8 +42,23 @@ g.mapleader = ' '
 
 -- Setup neovim providers
 g.loaded_python_provider = 0
-g.python3_host_prog = '~/.pyenv/versions/neovim/bin/python3'
-g.node_host_prog = '/usr/local/bin/neovim-node-host'
+g.python3_host_prog      = '~/.pyenv/versions/neovim/bin/python3'
+g.node_host_prog         = '/usr/local/bin/neovim-node-host'
+
+-- Disable built-in plugins
+g.loaded_gzip            = 1
+g.loaded_tar             = 1
+g.loaded_tarPlugin       = 1
+g.loaded_zip             = 1
+g.loaded_zipPlugin       = 1
+g.loaded_getscript       = 1
+g.loaded_getscriptPlugin = 1
+g.loaded_vimball         = 1
+g.loaded_vimballPlugin   = 1
+g.loaded_matchit         = 1
+g.loaded_2html_plugin    = 1
+g.loaded_logiPat         = 1
+g.loaded_rrhelper        = 1
 
 -- Load packer.nvim files
 require('core.plugins')
