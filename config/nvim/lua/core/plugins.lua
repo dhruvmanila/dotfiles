@@ -1,5 +1,6 @@
 local execute = vim.api.nvim_command
 local fn = vim.fn
+local map = vim.api.nvim_set_keymap
 
 local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
 
@@ -7,6 +8,10 @@ if fn.empty(fn.glob(install_path)) > 0 then
   execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
   execute 'packadd packer.nvim'
 end
+
+-- Some useful keybindings (PackerSync -> PackerClean + PackerUpdate)
+map('n', '<Leader>ps', '<Cmd>PackerSync<CR>', {noremap = true})
+map('n', '<Leader>pc', '<Cmd>PackerCompile<CR>', {noremap = true})
 
 --[[
 Notes:
@@ -41,7 +46,14 @@ return require('packer').startup {
     use {
       'nvim-treesitter/nvim-treesitter',
       event = 'BufRead',
-      config = [[require('plugin.treesitter')]]
+      config = [[require('plugin.treesitter')]],
+    }
+
+    -- Treesitter playground to visualize the tree
+    use {
+      'nvim-treesitter/playground',
+      requires = 'nvim-treesitter/nvim-treesitter',
+      cmd = 'TSPlaygroundToggle'
     }
 
     -- Git
@@ -65,6 +77,14 @@ return require('packer').startup {
     -- Neovim alternative written in lua
     -- use 'glepnir/dashboard-nvim'
     use 'mhinz/vim-startify'
+
+    -- File explorer (Mainly used for going through new projects)
+    use {
+      'kyazdani42/nvim-tree.lua',
+      requires = {'kyazdani42/nvim-web-devicons'},
+      keys = {{'n', '<C-n>'}, {'n', '<C-f>'}},
+      config = [[require('plugin.nvim_tree')]]
+    }
 
     -- Indentation tracking
     use {'yggdroot/indentLine', config = [[require('plugin.indentline')]]}

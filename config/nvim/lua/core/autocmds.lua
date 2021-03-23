@@ -1,27 +1,21 @@
 local create_augroups = require('core.utils').create_augroups
 
 local augroups = {
-  -- Highlight current line, but only in active window
-  cursor_line_only_in_active_window = {
+  custom_autocmds = {
+    -- Highlight current line, but only in active window
     [[WinEnter,BufEnter * setlocal cursorline]],
-    [[WinLeave,BufLeave * setlocal nocursorline]]
-  },
+    [[WinLeave,BufLeave * setlocal nocursorline]],
 
-  -- Equalize window dimensions when resizing vim
-  equalize_window = {
-    [[VimResized * wincmd =]]
-  },
+    -- Equalize window dimensions when resizing vim
+    [[VimResized * wincmd =]],
 
-  -- Highlighted yank
-  highlight_yank = {
+    -- Highlighted yank
     [[TextYankPost * silent! lua vim.highlight.on_yank(
       {higroup="IncSearch", timeout=200}
-    )]]
-  },
+    )]],
 
-  -- Auto compile plugins on file update
-  auto_compile_plugins = {
-    [[BufWritePost plugins.lua luafile %]]
+    -- Auto compile plugins on file update
+    [[BufWritePost plugins.lua lua require('core.utils').auto_load_plugins()]],
   }
 }
 

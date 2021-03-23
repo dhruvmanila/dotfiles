@@ -91,3 +91,7 @@ map('n', '<Leader>s', [[:%s/\<<C-r><C-w>\>//g<Left><Left>]])
 -- Set windows to equal width and height
 -- TODO: Maybe use custom function which only sets equal width
 map('n', '<Leader>=', '<Cmd>wincmd =<CR>')
+
+-- Source files
+map('n', '<Leader>sl', ':luafile %<CR>', {silent = true})
+map('n', '<Leader>sv', ':source %<CR>', {silent = true})

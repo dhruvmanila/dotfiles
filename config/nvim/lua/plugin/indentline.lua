@@ -12,5 +12,5 @@ g.indentLine_fileTypeExclude = {
   'txt'
 }
 
--- Color is set by 'gruvbox-material' color scheme
+-- Color is set by the color scheme
 -- g.indentLine_setColors = 0

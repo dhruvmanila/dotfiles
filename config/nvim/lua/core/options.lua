@@ -12,7 +12,7 @@ opt.updatetime    = 100
 opt.clipboard     = 'unnamed'  -- Use OS clipboard
 opt.ignorecase    = true       -- Ignore case in search by default...
 opt.smartcase     = true       -- Unless an uppercase letter is present
-opt.ruler         = false
+opt.ruler         = true       -- TODO: Disable once statusline is configured
 
 -- I: Disable the default Vim startup message
 -- c: Don't give messages like "The only match", "Pattern not found", etc.
@@ -31,6 +31,7 @@ opt.number         = true
 opt.relativenumber = true
 opt.signcolumn     = 'yes:1'
 opt.foldenable     = false
+opt.pumheight      = 15
 
 opt.wrap        = true  -- Visually wrap lines longer than window width
 opt.breakindent = true  -- Every wrapped line will continue visually indented

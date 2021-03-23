@@ -92,3 +92,6 @@ TAB: menu-complete
 
 # "\C-a": beginning-of-line  # used as tmux prefix
 "\C-e": end-of-line
+
+# Expand aliases with Ctrl-space
+Control-Space: alias-expand-line

@@ -68,3 +68,7 @@ alias ls='command ls ${colorflag} -h'
 
 # nnn (to reset less)
 alias nnn='LESS=-R nnn'
+
+# Easy activate/deactivate virtual environments ('p' prefix for Python)
+alias pva='pyenv activate'
+alias pvd='pyenv deactivate'

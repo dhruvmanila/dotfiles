@@ -20,13 +20,16 @@ local cmd = vim.cmd
 
 
 vim.o.background = 'dark'
-g.gruvbox_italicize_comments = false
+g.gruvbox_bold = true
+g.gruvbox_italic = false
 g.gruvbox_invert_selection = false
 g.gruvbox_contrast_dark = 'medium'
+-- g.gruvbox_hls_cursor = 'bright_red'  -- default: 'orange'
+-- g.gruvbox_sign_column = 'dark0'  -- TODO: Not present in gruvbox.nvim
+g.gruvbox_transparent_bg = true 
+
 cmd('colorscheme gruvbox')
 
--- g.gruvbox_bold = ''  -- Not working
--- g.gruvbox_italic = ''
--- g.gruvbox_transparent_bg = '1'
--- g.gruvbox_hls_cursor = 'light0'  -- default: 'orange'
--- g.gruvbox_sign_column = ''
+
+-- g.gruvbox_italicize_comments = false
+-- g.gruvbox_italicize_strings = true

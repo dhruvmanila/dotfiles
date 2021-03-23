@@ -40,6 +40,9 @@ local g = vim.g
 -- Leader key is 'Space'
 g.mapleader = ' '
 
+-- Enable embedded script highlighting for lua
+g.vimsyn_embed = 'l'
+
 -- Setup neovim providers
 g.loaded_python_provider = 0
 g.python3_host_prog      = '~/.pyenv/versions/neovim/bin/python3'
@@ -59,6 +62,7 @@ g.loaded_matchit         = 1
 g.loaded_2html_plugin    = 1
 g.loaded_logiPat         = 1
 g.loaded_rrhelper        = 1
+g.loaded_man             = 1
 
 -- Load packer.nvim files
 require('core.plugins')

@@ -10,7 +10,7 @@ M.opt = setmetatable({}, {
   __index = vim.o,
   __newindex = function(_, key, value)
     vim.o[key] = value
-    local scope = vim.api.nvim_get_option_info(key)
+    local scope = vim.api.nvim_get_option_info(key).scope
     if scope == "win" then
       vim.wo[key] = value
     elseif scope == "buf" then
@@ -52,6 +52,14 @@ function M.map(modes, lhs, rhs, opts)
   for _, mode in ipairs(modes) do
     nvim_set_keymap(mode, lhs, rhs, opts)
   end
+end
+
+-- Helper function to execute when plugins.lua file is changed. This is
+-- triggered using an autocommand.
+function M.auto_compile_plugins()
+  cmd('luafile %')
+  cmd('PackerSync')
+  cmd('PackerCompile')
 end
 
 return M
