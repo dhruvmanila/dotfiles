@@ -63,6 +63,8 @@ g.loaded_2html_plugin    = 1
 g.loaded_logiPat         = 1
 g.loaded_rrhelper        = 1
 g.loaded_man             = 1
+g.loaded_netrw           = 1
+g.loaded_netrwPlugin     = 1
 
 -- Load packer.nvim files
 require('core.plugins')

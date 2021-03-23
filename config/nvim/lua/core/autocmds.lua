@@ -15,7 +15,14 @@ local augroups = {
     )]],
 
     -- Auto compile plugins on file update
-    [[BufWritePost plugins.lua lua require('core.utils').auto_load_plugins()]],
+    [[BufWritePost plugins.lua lua require('core.utils').auto_compile_plugins()]],
+
+    -- Check if file changed when its window is focus, more eager than 'autoread'
+    [[FocusGained,BufEnter * checktime]],
+    [[FileChangedShellPost * 
+      echohl WarningMsg | 
+      echo "File changed on disk. Buffer reloaded." | 
+      echohl None]],
   }
 }
 

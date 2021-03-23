@@ -44,16 +44,16 @@ return require('packer').startup {
 
     -- Treesitter
     use {
-      'nvim-treesitter/nvim-treesitter',
-      event = 'BufRead',
-      config = [[require('plugin.treesitter')]],
-    }
-
-    -- Treesitter playground to visualize the tree
-    use {
-      'nvim-treesitter/playground',
-      requires = 'nvim-treesitter/nvim-treesitter',
-      cmd = 'TSPlaygroundToggle'
+      {
+        'nvim-treesitter/nvim-treesitter',
+        event = 'BufRead',
+        config = [[require('plugin.treesitter')]],
+      },
+      {
+        'nvim-treesitter/playground',
+        requires = 'nvim-treesitter/nvim-treesitter',
+        cmd = 'TSPlaygroundToggle'
+      }
     }
 
     -- Git
@@ -86,15 +86,17 @@ return require('packer').startup {
       config = [[require('plugin.nvim_tree')]]
     }
 
+    -- Path navigator
+    use {
+      {'justinmk/vim-dirvish', config = [[require('plugin.dirvish')]]},
+      {'roginfarrer/vim-dirvish-dovish', branch = 'main'}
+    }
+
     -- Indentation tracking
     use {'yggdroot/indentLine', config = [[require('plugin.indentline')]]}
 
     -- Search
-    use {
-      'romainl/vim-cool',
-      keys = {'/', '?'},
-      config = [[vim.g.CoolTotalMatches = 1]]
-    }
+    use {'romainl/vim-cool', config = [[vim.g.CoolTotalMatches = 1]]}
 
     -- Profiling
     use {'tweekmonster/startuptime.vim', cmd = 'StartupTime'}

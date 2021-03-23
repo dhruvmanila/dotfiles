@@ -85,10 +85,17 @@ _G.packer_plugins = {
   },
   ["vim-cool"] = {
     config = { "vim.g.CoolTotalMatches = 1" },
-    keys = { { "", "/" }, { "", "?" } },
-    loaded = false,
-    needs_bufread = false,
-    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/vim-cool"
+    loaded = true,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/vim-cool"
+  },
+  ["vim-dirvish"] = {
+    config = { "require('plugin.dirvish')" },
+    loaded = true,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/vim-dirvish"
+  },
+  ["vim-dirvish-dovish"] = {
+    loaded = true,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/vim-dirvish-dovish"
   },
   ["vim-easy-align"] = {
     config = { "require('plugin.easy_align')" },
@@ -115,12 +122,16 @@ _G.packer_plugins = {
   }
 }
 
--- Config for: vim-external
-require('plugin.vim_external')
 -- Config for: gruvbox.nvim
 require('plugin.colorscheme')
+-- Config for: vim-cool
+vim.g.CoolTotalMatches = 1
+-- Config for: vim-external
+require('plugin.vim_external')
 -- Config for: indentLine
 require('plugin.indentline')
+-- Config for: vim-dirvish
+require('plugin.dirvish')
 
 -- Command lazy-loads
 vim.cmd [[command! -nargs=* -range -bang -complete=file StartupTime lua require("packer.load")({'startuptime.vim'}, { cmd = "StartupTime", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
@@ -128,13 +139,11 @@ vim.cmd [[command! -nargs=* -range -bang -complete=file TSPlaygroundToggle lua r
 
 -- Keymap lazy-loads
 vim.cmd [[nnoremap <silent> <C-f> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-f>", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[xnoremap <silent> ga <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ga", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <C-n> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-n>", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> <Leader>gp <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "<lt>Leader>gp", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[noremap <silent> / <cmd>lua require("packer.load")({'vim-cool'}, { keys = "/", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> ga <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ga", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> gs <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "gs", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[noremap <silent> ? <cmd>lua require("packer.load")({'vim-cool'}, { keys = "?", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[xnoremap <silent> ga <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ga", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> ga <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ga", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> <Leader>gp <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "<lt>Leader>gp", prefix = "" }, _G.packer_plugins)<cr>]]
 
 vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
