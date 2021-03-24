@@ -25,7 +25,8 @@ nnoremap <silent> <Leader>fa :AFiles<CR>
 nnoremap <silent> <Leader>fc :Commands<CR>
 
 nnoremap <silent> <Leader>gc :Commits<CR>
-nnoremap <silent> <Leader>rg :Rg<CR>
+" To match with telescope.builtin.live_grep key binding
+nnoremap <silent> <Leader>gr :Rg<CR>
 
 " Enhanced with fzf
 nnoremap <silent> q: :History:<CR>

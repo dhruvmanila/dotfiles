@@ -38,9 +38,19 @@ return require('packer').startup {
     use {
       "npxbr/gruvbox.nvim",
       requires = {"rktjmp/lush.nvim"},
-      config = [[require('plugin.colorscheme')]]
+      config = [[require('plugin.colorscheme')]],
     }
-    -- use {'gruvbox-community/gruvbox', config = [[require('plugin.colorscheme')]]}
+
+    -- Fuzzy finder
+    use {
+      'nvim-telescope/telescope.nvim',
+      config = [[require('plugin.telescope')]],
+      requires = {
+        {'nvim-lua/popup.nvim'},
+        {'nvim-lua/plenary.nvim'},
+        {'nvim-telescope/telescope-fzy-native.nvim'}
+      },
+    }
 
     -- Treesitter
     use {

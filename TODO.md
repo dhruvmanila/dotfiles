@@ -3,18 +3,18 @@
 ## Neovim
 
 **(Telescope): Add mappings for the following cases (define it if not present):**
-- [ ] Project files
+- [x] Project files
 - [ ] Dotfiles
 - [ ] Neovim modules directory (~/.local/share/nvim/site/pack/packer/)
-- [ ] Buffers
-- [ ] Command history
+- [x] Buffers
+- [x] Command history
 - [ ] Search history
-- [ ] Helptags
-- [ ] Buffer lines (Maybe just keep 'all buffer lines'?)
-- [ ] All buffer lines
-- [ ] All commands
-- [ ] All mappings
-- [ ] Git commits
+- [x] Helptags
+- [x] Buffer lines (Maybe just keep 'all buffer lines'?)
+- [x] Grep (Rg)
+- [x] Commands
+- [x] Mappings
+- [x] Git commits
 - [ ] Git branches? (checkout/rebase/delete)
 
 **(LSP): Add LSP configuration for following languages:**

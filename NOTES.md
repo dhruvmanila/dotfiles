@@ -100,3 +100,15 @@ to providing config paths for now.
 **Other files:**
 - Filetype: `./after/filetype/*.vim`
 - Indent: `./after/indent/*.vim`
+
+### Telescope
+
+`find_files` options:
+- `find_command` (can provide custom command here)
+- `hidden`
+- `follow`
+- `search_dirs` (search only in these dirs)
+- `cwd` (search in this directory)
+- `entry_marker` (?)
+- `shorten_path` (as the name suggests)
+- other config values

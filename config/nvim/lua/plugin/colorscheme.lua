@@ -11,12 +11,17 @@ local cmd = vim.cmd
 -- vim.o.background = 'dark'
 -- vim.g.gruvbox_material_palette = 'original'
 -- vim.g.gruvbox_material_background = 'medium'
+-- vim.g.gruvbox_material_enable_bold = 1
 -- vim.g.gruvbox_material_enable_italic = 1
 -- vim.g.gruvbox_material_disable_italic_comment = 1
 -- vim.g.gruvbox_material_sign_column_background = 'none'
 -- vim.g.gruvbox_material_better_performance = 1
 -- vim.cmd('colorscheme gruvbox-material')
 -- vim.cmd('highlight! link CursorLineNr MoreMsg')
+-- vim.cmd('highlight! link TSFunction Function')
+-- vim.cmd('highlight! link TSParameter Blue')
+-- vim.cmd('highlight! link TSProperty Blue')
+-- vim.cmd('highlight! link TSField Blue')
 
 
 vim.o.background = 'dark'
@@ -26,10 +31,7 @@ g.gruvbox_invert_selection = false
 g.gruvbox_contrast_dark = 'medium'
 -- g.gruvbox_hls_cursor = 'bright_red'  -- default: 'orange'
 -- g.gruvbox_sign_column = 'dark0'  -- TODO: Not present in gruvbox.nvim
-g.gruvbox_transparent_bg = true 
-
+-- g.gruvbox_transparent_bg = true 
 cmd('colorscheme gruvbox')
-
-
 -- g.gruvbox_italicize_comments = false
 -- g.gruvbox_italicize_strings = true

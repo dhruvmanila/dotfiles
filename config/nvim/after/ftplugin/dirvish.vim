@@ -3,10 +3,19 @@ setlocal nonumber
 setlocal norelativenumber
 
 " Recursive key bindings
+nmap <silent><buffer><nowait> q gq
 nmap <silent><buffer> ? g?
-nmap <silent><buffer> q gq
 nmap <silent><buffer> h -
 nmap <silent><buffer> l i
+
+" Similar to nnn
+nnoremap <silent><buffer> ~ :Dirvish $HOME<CR>
+nnoremap <silent><buffer> ` :Dirvish /<CR>
+
+" Hide dotfiles. Press `R` to "toggle" (reload).
+nnoremap <silent><buffer> .
+      \ :silent keeppatterns g@\v/\.[^\/]+/?$@d _<CR>
+      \ :setlocal conceallevel=3<CR> 
 
 
 if exists('b:dovish_ftplugin')
