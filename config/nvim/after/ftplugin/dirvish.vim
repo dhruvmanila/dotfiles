@@ -1,6 +1,7 @@
 setlocal signcolumn=no
 setlocal nonumber
 setlocal norelativenumber
+setlocal nolist
 
 " Recursive key bindings
 nmap <silent><buffer><nowait> q gq

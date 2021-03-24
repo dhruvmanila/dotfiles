@@ -2,18 +2,13 @@
 
 nnoremap <silent> <Leader>` :Startify<CR>
 
-augroup start_startify_on_vim_startup
-  autocmd!
-  autocmd VimEnter * if !argc() | Startify | endif
-augroup END
-
 " Startify header
 let g:ascii_vim = [
       \ '',
-      \ '           ____  ___  ____ _   __(_)___ ___    ',
-      \ '          / __ \/ _ \/ __ \ | / / / __ `__ \   ',
-      \ '         / / / /  __/ /_/ / |/ / / / / / / /   ',
-      \ '        /_/ /_/\___/\____/|___/_/_/ /_/ /_/    ',
+      \ '     ____  ___  ____ _   __(_)___ ___    ',
+      \ '    / __ \/ _ \/ __ \ | / / / __ `__ \   ',
+      \ '   / / / /  __/ /_/ / |/ / / / / / / /   ',
+      \ '  /_/ /_/\___/\____/|___/_/_/ /_/ /_/    ',
       \ '',
       \ ]
 

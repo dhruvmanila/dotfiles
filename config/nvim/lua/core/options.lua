@@ -22,8 +22,14 @@ opt.shortmess = opt.shortmess .. 'Ic'
 -- each full match
 opt.wildmode = 'longest:full,full'
 
--- opt.list = true, window
--- opt.listchars = 'tab:▸ ,nbsp:_,trail:·,eol:↴ '
+-- menuone: show menu even if there is only one match
+-- preview: show extra information about selection in preview window
+-- noinsert: do not select any text until the user selects a match from the menu
+-- noselect: do not select a match in the menu, force the user to select one
+opt.completeopt = 'menuone,preview,noinsert,noselect'
+
+opt.list = true
+opt.listchars = [[tab:▸ ,nbsp:_,trail:·,eol:↴]]
 
 opt.colorcolumn    = '80'
 opt.cursorline     = true

@@ -46,6 +46,16 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/lush.nvim"
   },
+  ["nvim-lspconfig"] = {
+    config = { "require('plugin.lspconfig')" },
+    loaded = false,
+    needs_bufread = false,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-lspconfig"
+  },
+  ["nvim-lua-guide"] = {
+    loaded = true,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/nvim-lua-guide"
+  },
   ["nvim-tree.lua"] = {
     config = { "require('plugin.nvim_tree')" },
     keys = { { "n", "<C-n>" }, { "n", "<C-f>" } },
@@ -116,7 +126,7 @@ _G.packer_plugins = {
   },
   ["vim-easy-align"] = {
     config = { "require('plugin.easy_align')" },
-    keys = { { "n", "ga" }, { "x", "ga" } },
+    keys = { { "n", "ge" }, { "x", "ge" } },
     loaded = false,
     needs_bufread = false,
     path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/vim-easy-align"
@@ -139,34 +149,35 @@ _G.packer_plugins = {
   }
 }
 
+-- Config for: vim-external
+require('plugin.vim_external')
+-- Config for: telescope.nvim
+require('plugin.telescope')
+-- Config for: indentLine
+require('plugin.indentline')
+-- Config for: vim-dirvish
+require('plugin.dirvish')
 -- Config for: gruvbox.nvim
 require('plugin.colorscheme')
 -- Config for: vim-cool
 vim.g.CoolTotalMatches = 1
--- Config for: vim-dirvish
-require('plugin.dirvish')
--- Config for: indentLine
-require('plugin.indentline')
--- Config for: telescope.nvim
-require('plugin.telescope')
--- Config for: vim-external
-require('plugin.vim_external')
 
 -- Command lazy-loads
-vim.cmd [[command! -nargs=* -range -bang -complete=file TSPlaygroundToggle lua require("packer.load")({'playground'}, { cmd = "TSPlaygroundToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 vim.cmd [[command! -nargs=* -range -bang -complete=file StartupTime lua require("packer.load")({'startuptime.vim'}, { cmd = "StartupTime", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+vim.cmd [[command! -nargs=* -range -bang -complete=file TSPlaygroundToggle lua require("packer.load")({'playground'}, { cmd = "TSPlaygroundToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 
 -- Keymap lazy-loads
-vim.cmd [[xnoremap <silent> ga <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ga", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> ga <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ga", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> gs <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "gs", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <C-n> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-n>", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> <Leader>gp <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "<lt>Leader>gp", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[xnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <C-f> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-f>", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> <Leader>gp <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "<lt>Leader>gp", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> gs <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "gs", prefix = "" }, _G.packer_plugins)<cr>]]
 
 vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Event lazy-loads
+vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'nvim-lspconfig'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
 vim.cmd [[au BufRead * ++once lua require("packer.load")({'nvim-treesitter'}, { event = "BufRead *" }, _G.packer_plugins)]]
 vim.cmd("augroup END")
 END

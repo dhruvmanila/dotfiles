@@ -2,6 +2,7 @@
 local g = vim.g
 local map = vim.api.nvim_set_keymap
 local utils = require('core.utils')
+local tree_cb = require('nvim-tree.config').nvim_tree_callback
 
 g.nvim_tree_ignore = {
   '.git', 
@@ -17,8 +18,6 @@ g.nvim_tree_indent_markers = 1
 -- g.nvim_tree_follow         = 1
 g.nvim_tree_disable_netrw  = 0
 g.nvim_tree_hijack_netrw   = 0
-
-local tree_cb = require('nvim-tree.config').nvim_tree_callback
 
 g.nvim_tree_bindings = {
   ["."] = tree_cb("toggle_dotfiles"),

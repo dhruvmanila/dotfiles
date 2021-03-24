@@ -112,3 +112,37 @@ to providing config paths for now.
 - `entry_marker` (?)
 - `shorten_path` (as the name suggests)
 - other config values
+
+### LSP
+
+LSP Config:
+
+Each language config has its properties which can be changed in the setup
+function. They are defined here: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md
+
+To change how the diagnostics are displayed in the buffer, refer `lsp-handler-configuration`.
+Here's an example to disable virtual text or can even change the spacing between the
+virtual text (https://github.com/neovim/neovim/blob/master/runtime/lua/vim/lsp/diagnostic.lua#L959):
+
+```lua
+vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics,
+  {virtual_text = false}
+)
+```
+
+For triggering document highlight:
+```lua
+if client.resolved_capabilities.document_highlight == true then
+  cmd('augroup lsp_aucmds')
+  cmd('au CursorHold <buffer> lua vim.lsp.buf.document_highlight()')
+  cmd('au CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
+  cmd('augroup END')
+end
+```
+
+Get count for a particular severity, useful in the statusline.
+https://github.com/neovim/neovim/blob/master/runtime/lua/vim/lsp/diagnostic.lua#L416
+
+If we want line diagnostics by a popup menu instead of virtual text:
+https://github.com/neovim/neovim/blob/master/runtime/lua/vim/lsp/diagnostic.lua#L1102:

@@ -33,12 +33,21 @@ return require('packer').startup {
     -- Packer
     use 'wbthomason/packer.nvim'
 
+    use 'nanotee/nvim-lua-guide'
+
     -- Color scheme
     -- use {'sainnhe/gruvbox-material', config = [[require('plugin.colorscheme')]]}
     use {
       "npxbr/gruvbox.nvim",
       requires = {"rktjmp/lush.nvim"},
       config = [[require('plugin.colorscheme')]],
+    }
+
+    -- LSP
+    use {
+      'neovim/nvim-lspconfig',
+      event = 'BufReadPre',
+      config = [[require('plugin.lspconfig')]],
     }
 
     -- Fuzzy finder
@@ -79,7 +88,7 @@ return require('packer').startup {
     -- Pretification
     use {
       'junegunn/vim-easy-align', 
-      keys = {{'n', 'ga'}, {'x', 'ga'}},
+      keys = {{'n', 'ge'}, {'x', 'ge'}},
       config = [[require('plugin.easy_align')]]
     }
 
