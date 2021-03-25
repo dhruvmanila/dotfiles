@@ -32,19 +32,29 @@ local function try_loadstring(s, component, name)
 end
 
 _G.packer_plugins = {
-  ["gruvbox.nvim"] = {
+  ["gruvbox-material"] = {
     config = { "require('plugin.colorscheme')" },
     loaded = true,
-    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/gruvbox.nvim"
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/gruvbox-material"
   },
-  indentLine = {
+  ["indent-blankline.nvim"] = {
     config = { "require('plugin.indentline')" },
     loaded = true,
-    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/indentLine"
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim"
   },
-  ["lush.nvim"] = {
-    loaded = true,
-    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/lush.nvim"
+  ["nvim-colorizer.lua"] = {
+    commands = { "ColorizerToggle" },
+    config = { "require('colorizer').setup()" },
+    loaded = false,
+    needs_bufread = false,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-colorizer.lua"
+  },
+  ["nvim-compe"] = {
+    after_files = { "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_buffer.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_calc.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_emoji.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_nvim_lsp.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_nvim_lua.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_omni.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_path.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_snippets_nvim.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_spell.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_tags.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_treesitter.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_ultisnips.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_vim_lsc.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_vim_lsp.vim", "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe_vsnip.vim" },
+    config = { "require('plugin.completion')" },
+    loaded = false,
+    needs_bufread = false,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe"
   },
   ["nvim-lspconfig"] = {
     config = { "require('plugin.lspconfig')" },
@@ -149,36 +159,38 @@ _G.packer_plugins = {
   }
 }
 
--- Config for: vim-external
-require('plugin.vim_external')
+-- Config for: gruvbox-material
+require('plugin.colorscheme')
 -- Config for: telescope.nvim
 require('plugin.telescope')
--- Config for: indentLine
-require('plugin.indentline')
--- Config for: vim-dirvish
-require('plugin.dirvish')
--- Config for: gruvbox.nvim
-require('plugin.colorscheme')
 -- Config for: vim-cool
 vim.g.CoolTotalMatches = 1
+-- Config for: vim-external
+require('plugin.vim_external')
+-- Config for: vim-dirvish
+require('plugin.dirvish')
+-- Config for: indent-blankline.nvim
+require('plugin.indentline')
 
 -- Command lazy-loads
-vim.cmd [[command! -nargs=* -range -bang -complete=file StartupTime lua require("packer.load")({'startuptime.vim'}, { cmd = "StartupTime", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 vim.cmd [[command! -nargs=* -range -bang -complete=file TSPlaygroundToggle lua require("packer.load")({'playground'}, { cmd = "TSPlaygroundToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+vim.cmd [[command! -nargs=* -range -bang -complete=file ColorizerToggle lua require("packer.load")({'nvim-colorizer.lua'}, { cmd = "ColorizerToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+vim.cmd [[command! -nargs=* -range -bang -complete=file StartupTime lua require("packer.load")({'startuptime.vim'}, { cmd = "StartupTime", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 
 -- Keymap lazy-loads
 vim.cmd [[nnoremap <silent> <C-n> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-n>", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[xnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> <C-f> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-f>", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <Leader>gp <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "<lt>Leader>gp", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> gs <cmd>lua require("packer.load")({'vim-fugitive'}, { keys = "gs", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> <C-f> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-f>", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[xnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
 
 vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Event lazy-loads
-vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'nvim-lspconfig'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
+vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
 vim.cmd [[au BufRead * ++once lua require("packer.load")({'nvim-treesitter'}, { event = "BufRead *" }, _G.packer_plugins)]]
+vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'nvim-lspconfig'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
 vim.cmd("augroup END")
 END
 

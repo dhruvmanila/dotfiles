@@ -37,7 +37,7 @@ require('telescope').setup {
   defaults = {
     prompt_preifx = '❯ ',
     prompt_position = 'top',
-    selection_caret = ' ',
+    selection_caret = '❯ ',
     sorting_strategy = 'ascending',
     layout_strategy = 'horizontal',
     layout_defaults = {

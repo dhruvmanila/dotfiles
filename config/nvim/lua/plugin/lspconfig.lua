@@ -1,24 +1,30 @@
 -- Ref: https://github.com/neovim/nvim-lspconfig
 local lsp = vim.lsp
+local map = vim.api.nvim_set_keymap
 local buf_map = vim.api.nvim_buf_set_keymap
 local create_augroups = require('core.utils').create_augroups
 local lspconfig = require('lspconfig')
 
 -- Utiliy functions
 function _G.reload_lsp()
-  vim.lsp.stop_client(vim.lsp.get_active_clients())
+  lsp.stop_client(lsp.get_active_clients())
   vim.cmd [[edit]]
 end
 
 -- Open the LSP log on the bottom of the tab occupying the full width and
 -- height of about 20.
 function _G.open_lsp_log()
-  local path = vim.lsp.get_log_path()
+  local path = lsp.get_log_path()
   vim.cmd("botright split | resize 20 | edit " .. path)
 end
 
 vim.cmd('command! -nargs=0 LspLog call v:lua.open_lsp_log()')
 vim.cmd('command! -nargs=0 LspRestart call v:lua.reload_lsp()')
+
+-- Useful keybindings (Do I even need them?)
+map('n', '<Leader>ll', '<Cmd>LspLog<CR>', {noremap = true})
+map('n', '<Leader>lr', '<Cmd>LspRestart<CR>', {noremap = true})
+map('n', '<Leader>li', '<Cmd>LspInfo<CR>', {noremap = true})
 
 -- Override the default capabilities and pass it to the language server on
 -- initialization. E.g., adding snippets supports.
@@ -53,7 +59,7 @@ local function on_attach(client)
   -- For plugins with an `on_attach` callback, call them here.
 
   -- Used to setup per filetype
-  local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
+  -- local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
 
   -- Keybindings
   buf_map(0, 'n', '[d', '<Cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', noremap)
@@ -65,19 +71,21 @@ local function on_attach(client)
   buf_map(0, 'n', 'gy', '<Cmd>lua vim.lsp.buf.type_definition()<CR>', noremap)
   buf_map(0, 'n', 'gi', '<Cmd>lua vim.lsp.buf.implementation()<CR>', noremap)
   buf_map(0, 'n', 'gr', '<Cmd>lua vim.lsp.buf.references()<CR>', noremap)
+  buf_map(0, 'n', 'ga', '<Cmd>lua vim.lsp.buf.code_action()<CR>', noremap)
   buf_map(0, 'n', '<C-s>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', noremap)
   buf_map(0, 'n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', noremap)
-  buf_map(0, 'n', 'ga', '<Cmd>lua vim.lsp.buf.code_action()<CR>', noremap)
 
+  -- Setup auto-formatting on save if the language server supports it.
   if client.resolved_capabilities.document_formatting then
     local ext = vim.fn.expand('%:e')
     table.insert(
-      lsp_autocmds, 'BufWritePre *.' .. ext .. ' lua vim.lsp.buf.formatting_sync(nil, 100)'
+      lsp_autocmds, 'BufWritePre *.' .. ext .. ' lua vim.lsp.diagnostic.formatting_sync(nil, 100)'
     )
   end
 
   if client.resolved_capabilities.document_highlight then
     table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.buf.document_highlight()')
+    -- table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics()')
     table.insert(lsp_autocmds, 'CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
   end
 
@@ -89,28 +97,20 @@ local function on_attach(client)
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 end
 
--- TODO: pyright cannot provide formatting, is that so?
+-- TODO: pyright does not provide integration with external tools like mypy,
+-- flake8, black, etc., switch to `pyls`?
+-- Pyright settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md
 lspconfig.pyright.setup {
   on_attach = on_attach,
   settings = {
     pyright = {
-      disableOrganizeImports = true,
-      organizeimports = {
-        provider = 'isort'
-      }
+      disableOrganizeImports = true  -- Using isort
     },
     python = {
       venvPath = os.getenv('HOME') .. '/.pyenv',
       analysis = {
-        typeCheckingMode = 'off'
+        typeCheckingMode = 'off'  -- Using mypy
       },
-      formatting = {
-        provider = 'black'
-      },
-      linting = {
-        mypyEnabled = true,
-        flake8Enabled = true
-      }
     }
   }
 }

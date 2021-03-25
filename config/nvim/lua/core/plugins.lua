@@ -36,18 +36,31 @@ return require('packer').startup {
     use 'nanotee/nvim-lua-guide'
 
     -- Color scheme
-    -- use {'sainnhe/gruvbox-material', config = [[require('plugin.colorscheme')]]}
     use {
-      "npxbr/gruvbox.nvim",
-      requires = {"rktjmp/lush.nvim"},
-      config = [[require('plugin.colorscheme')]],
+      {'sainnhe/gruvbox-material', config = [[require('plugin.colorscheme')]]},
+      {'norcalli/nvim-colorizer.lua',
+        cmd = 'ColorizerToggle',
+        config = [[require('colorizer').setup()]]
+      }
     }
+    -- use {
+    --   "npxbr/gruvbox.nvim",
+    --   requires = {"rktjmp/lush.nvim"},
+    --   config = [[require('plugin.colorscheme')]],
+    -- }
 
     -- LSP
     use {
       'neovim/nvim-lspconfig',
       event = 'BufReadPre',
       config = [[require('plugin.lspconfig')]],
+    }
+
+    -- Auto completion
+    use {
+      'hrsh7th/nvim-compe',
+      event = 'InsertEnter',
+      config = [[require('plugin.completion')]],
     }
 
     -- Fuzzy finder
@@ -112,7 +125,11 @@ return require('packer').startup {
     }
 
     -- Indentation tracking
-    use {'yggdroot/indentLine', config = [[require('plugin.indentline')]]}
+    use {
+      'lukas-reineke/indent-blankline.nvim',
+      branch = 'lua',
+      config = [[require('plugin.indentline')]]
+    }
 
     -- Search
     use {'romainl/vim-cool', config = [[vim.g.CoolTotalMatches = 1]]}
