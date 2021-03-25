@@ -146,3 +146,31 @@ https://github.com/neovim/neovim/blob/master/runtime/lua/vim/lsp/diagnostic.lua#
 
 If we want line diagnostics by a popup menu instead of virtual text:
 https://github.com/neovim/neovim/blob/master/runtime/lua/vim/lsp/diagnostic.lua#L1102:
+
+
+#### Adding VSCode like icons to the completion menu:
+
+Steps taken to make it work on MacOS iTerm2:
+1. Download the codicons.ttf file
+2. Download the font-patcher script along with its dependencies which
+   includes the nerd-fonts/src/ directory and the fontforge binary.
+3. Download the fontforge binary: `brew install --formula fontforge`
+4. Run the following command:
+
+   `fontforge -script font-patcher --complete --custom codicon.ttf --output ~/Library/Fonts --progressbars <font>`
+
+   where, the custom glyph file should be copied to src/glyph directory
+   and the appropriate font should be chosen from src/unpatched-fonts/ directory.
+
+5. Copy the generated font to ~/Library/Fonts directory.
+6. Set the 'non-ascii font' in iTerm2 preferences to the generated font.
+7. Reload the terminal.
+
+Ref:
+* vscode-codicons: https://github.com/microsoft/vscode-codicons
+* vscode-icons: https://code.visualstudio.com/api/references/icons-in-labels
+* nerd-fonts: https://github.com/ryanoasis/nerd-fonts
+* font-patcher: https://github.com/ryanoasis/nerd-fonts/blob/master/font-patcher
+* fontforge: https://github.com/fontforge/fontforge
+* Inspiration: https://github.com/onsails/lspkind-nvim/issues/6
+* Alternative: https://github.com/yamatsum/nvim-nonicons

@@ -50,7 +50,6 @@ cmd('highlight! link TSProperty Blue')
 cmd('highlight! link TSField Blue')
 
 
-
 -- vim.o.background = 'dark'
 -- g.gruvbox_bold = true
 -- g.gruvbox_italic = false
@@ -58,7 +57,7 @@ cmd('highlight! link TSField Blue')
 -- g.gruvbox_invert_selection = false
 -- g.gruvbox_contrast_dark = 'medium'
 -- -- g.gruvbox_hls_cursor = 'bright_red'  -- default: 'orange'
--- -- g.gruvbox_sign_column = 'dark0'  -- TODO: Not present in gruvbox.nvim
+-- g.gruvbox_sign_column = 'dark0'  -- TODO: Not present in gruvbox.nvim
 -- -- g.gruvbox_transparent_bg = true 
 -- cmd('colorscheme gruvbox')
 -- -- g.gruvbox_italicize_strings = true
