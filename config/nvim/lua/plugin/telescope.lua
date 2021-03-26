@@ -1,7 +1,41 @@
 -- Ref: https://github.com/nvim-telescope/telescope.nvim
 local actions = require('telescope.actions')
-local sorters = require('telescope.sorters')
 local map = require('core.utils').map
+
+require('telescope').setup {
+  defaults = {
+    prompt_prefix = require('nvim-nonicons').get('telescope') .. ' ',
+    prompt_position = 'top',
+    selection_caret = '❯ ',
+    sorting_strategy = 'ascending',
+    layout_strategy = 'horizontal',
+    color_devicons = true,
+    layout_defaults = {
+      horizontal = {
+        preview_width = 0.6,
+        width_padding = 0.1,
+        height_padding = 0.1,
+      },
+      vertical = {
+        preview_height = 0.5,
+        width_padding = 0.05,
+        height_padding = 0.05,
+      }
+    },
+    mappings = {
+      i = {
+        ["<C-j>"] = actions.move_selection_next,
+        ["<C-k>"] = actions.move_selection_previous
+      },
+    },
+    extensions = {
+      fzy_native = {
+        override_generic_sorter = false,
+        override_file_sorter = true,
+      }
+    },
+  }
+}
 
 -- Meta
 map('n', '<Leader>te', [[<Cmd>lua require('telescope.builtin').builtin()<CR>]])
@@ -33,40 +67,6 @@ map('n', '<Leader>fn', [[<Cmd>lua require('plugin.telescope').installed_plugins(
 map('n', '<Leader>fa', [[<Cmd>lua require('plugin.telescope').search_all_files()<CR>]])
 
 
-require('telescope').setup {
-  defaults = {
-    prompt_preifx = '❯ ',
-    prompt_position = 'top',
-    selection_caret = '❯ ',
-    sorting_strategy = 'ascending',
-    layout_strategy = 'horizontal',
-    layout_defaults = {
-      horizontal = {
-        preview_width = 0.6,
-        width_padding = 0.1,
-        height_padding = 0.1,
-      },
-      vertical = {
-        preview_height = 0.5,
-        width_padding = 0.05,
-        height_padding = 0.05,
-      }
-    },
-    mappings = {
-      i = {
-        ["<C-j>"] = actions.move_selection_next,
-        ["<C-k>"] = actions.move_selection_previous
-      },
-    },
-    extensions = {
-      fzy_native = {
-        override_generic_sorter = false,
-        override_file_sorter = true,
-      }
-    },
-  }
-}
-
 require('telescope').load_extension('fzy_native')
 
 -- Custom configuration
@@ -77,7 +77,9 @@ function M.search_dotfiles()
     prompt_title = "Search Dotfiles",
     shorten_path = false,
     cwd = "~/dotfiles",
-    hidden = true
+    find_command = {
+      'fd', '--hidden', '--follow', '--exclude', '.git', '--no-ignore'
+    },
   }
 end
 

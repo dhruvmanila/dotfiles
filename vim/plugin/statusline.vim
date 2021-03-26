@@ -15,4 +15,4 @@ function! s:statusline_init()
   return '[%n] %f'.mod.ro.ft.flgs.br.sep.coc.ale.enc.pos
 endfunction
 
-let &statusline = s:statusline_init()
+" let &statusline = s:statusline_init()

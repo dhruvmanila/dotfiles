@@ -11,10 +11,10 @@ export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
 # Make vim the default editor.
-export EDITOR='vim'
-export VISUAL='vim'
+export EDITOR='nvim'
+export VISUAL="$EDITOR"
 
-# Increase Bash history size. Allow 32³ entries; the default is 500.
+# Increase Bash history size.
 export HISTSIZE='32768'
 export HISTFILESIZE="${HISTSIZE}"
 # Omit duplicates and commands that begin with a space from history.

@@ -73,16 +73,14 @@ Plug 'jez/vim-better-sml'
 Plug 'cespare/vim-toml'
 
 " Text manipulations
-" Plug 'preservim/nerdcommenter'
 Plug 'tpope/vim-commentary'
-" Plug 'tomtom/tcomment_vim'
 " Plug 'tpope/vim-surround'
 
 " GUI enhancements
-" Plug 'itchyny/lightline.vim'
-" Plug 'maximbaz/lightline-ale'
+Plug 'itchyny/lightline.vim'
+Plug 'maximbaz/lightline-ale'
 Plug 'mhinz/vim-startify'
-" Plug 'preservim/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']}
+Plug 'preservim/nerdtree', {'on': ['NERDTreeToggle', 'NERDTreeFind']}
 Plug 'Yggdroot/indentLine'
 
 " Git plugin

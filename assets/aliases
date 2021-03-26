@@ -4,6 +4,8 @@
 alias python="python3"
 alias g="git"
 
+alias vi="nvim"
+
 # Easy clear (use CTRL-l)
 # alias cl="clear"
 

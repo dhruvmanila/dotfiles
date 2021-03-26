@@ -41,7 +41,7 @@ let g:color_scheme_config['gruvbox-material'] = [
       \ 'colorscheme gruvbox-material',
       \ 'highlight! link smlKeyChar Red',
       \ 'highlight! link CursorLineNr MoreMsg',
+      \ 'call colorscheme#lightline("gruvbox_material")',
       \ ]
 " \ 'highlight! link StatusLine TabLineSel',
-" \ 'call colorscheme#lightline("gruvbox_material")',
 " \ 'call colorscheme#tmux("gruvbox-material")',

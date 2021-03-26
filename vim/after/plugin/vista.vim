@@ -7,8 +7,8 @@ let g:vista_keep_fzf_colors = 1
 " Show the current position of the symbol in the floating window
 let g:vista_echo_cursor_strategy = 'floating_win'
 
-nnoremap <silent> <Leader>vv :Vista!!<CR>
-nnoremap <silent> <Leader>vd :Vista finder fzf:coc<CR>
+nnoremap <silent> <Leader>vv <Cmd>Vista!!<CR>
+nnoremap <silent> <Leader>vd <Cmd>Vista finder fzf:coc<CR>
 
 " Set custom mappings for the Vista buffer
 function! s:vista_buffer_mappings()

@@ -16,7 +16,7 @@ map('n', '<Leader>pc', '<Cmd>PackerCompile<CR>', {noremap = true})
 --[[
 Notes:
 
-A lot of the plugins will be lazy loaded on keys/commands to improve the 
+A lot of the plugins will be lazy loaded on keys/commands to improve the
 startup time. There are two ways of doing this:
 
 - Keep the plugins keymap separated in the respective plugin configuration file
@@ -33,35 +33,47 @@ return require('packer').startup {
     -- Packer
     use 'wbthomason/packer.nvim'
 
+    -- Nvim Lua help
     use 'nanotee/nvim-lua-guide'
 
     -- Color scheme
-    use {
-      {'sainnhe/gruvbox-material', config = [[require('plugin.colorscheme')]]},
-      {'norcalli/nvim-colorizer.lua',
-        cmd = 'ColorizerToggle',
-        config = [[require('colorizer').setup()]]
-      }
-    }
-    -- use {
-    --   "npxbr/gruvbox.nvim",
-    --   requires = {"rktjmp/lush.nvim"},
-    --   config = [[require('plugin.colorscheme')]],
-    -- }
+    use {'sainnhe/gruvbox-material', config = [[require('plugin.colorscheme')]]}
 
-    -- LSP
+    -- Helpful in visualizing colors live in the editor
     use {
-      'neovim/nvim-lspconfig',
-      event = 'BufReadPre',
-      config = [[require('plugin.lspconfig')]],
+      'norcalli/nvim-colorizer.lua',
+      cmd = 'ColorizerToggle',
+      config = [[require('colorizer').setup()]]
     }
 
-    -- Auto completion
+    -- Statusline
     use {
-      'hrsh7th/nvim-compe',
-      event = 'InsertEnter',
-      config = [[require('plugin.completion')]],
+      'glepnir/galaxyline.nvim',
+      branch = 'main',
+      config = [[require('plugin.statusline')]],
+      opt = true
     }
+
+    -- Icons
+    use 'yamatsum/nvim-nonicons'
+    use 'kyazdani42/nvim-web-devicons'
+
+    -- LSP, auto completion and related
+    use {
+      {
+        'neovim/nvim-lspconfig',
+        event = 'BufReadPre',
+        config = [[require('plugin.lspconfig')]],
+      },
+      {
+        'hrsh7th/nvim-compe',
+        event = 'InsertEnter',
+        config = [[require('plugin.completion')]],
+      },
+    }
+
+    -- Lsp code action indicator
+    use 'kosayoda/nvim-lightbulb'
 
     -- Fuzzy finder
     use {
@@ -79,6 +91,7 @@ return require('packer').startup {
       {
         'nvim-treesitter/nvim-treesitter',
         event = 'BufRead',
+        run = 'TSUpdate',
         config = [[require('plugin.treesitter')]],
       },
       {
@@ -100,7 +113,7 @@ return require('packer').startup {
 
     -- Pretification
     use {
-      'junegunn/vim-easy-align', 
+      'junegunn/vim-easy-align',
       keys = {{'n', 'ge'}, {'x', 'ge'}},
       config = [[require('plugin.easy_align')]]
     }
@@ -108,7 +121,7 @@ return require('packer').startup {
     -- Start screen
     -- Neovim alternative written in lua
     -- use 'glepnir/dashboard-nvim'
-    use 'mhinz/vim-startify'
+    use {'mhinz/vim-startify', config = [[require('plugin.startify')]]}
 
     -- File explorer (Mainly used for going through new projects)
     use {

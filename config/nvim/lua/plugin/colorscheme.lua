@@ -26,6 +26,10 @@ g.gruvbox_material_better_performance = 1
 
 cmd('colorscheme gruvbox-material')
 
+-- Telescope is not doing the lazy loading of nvim-web-devicons
+-- https://github.com/nvim-telescope/telescope.nvim/issues/652
+require('nvim-web-devicons').setup()
+
 -- Second arg is a bool to determine whether the output should be returned or not.
 vim.api.nvim_exec(
 [[
@@ -49,6 +53,12 @@ cmd('highlight! link TSParameter Blue')
 cmd('highlight! link TSProperty Blue')
 cmd('highlight! link TSField Blue')
 
+-- Lsp
+cmd('highlight! link LspDiagnosticsVirtualTextError Red')
+cmd('highlight! link LspDiagnosticsVirtualTextWarning Yellow')
+cmd('highlight! link LspDiagnosticsVirtualTextInformation Blue')
+cmd('highlight! link LspDiagnosticsVirtualTextHint Aqua')
+
 
 -- vim.o.background = 'dark'
 -- g.gruvbox_bold = true
@@ -58,6 +68,6 @@ cmd('highlight! link TSField Blue')
 -- g.gruvbox_contrast_dark = 'medium'
 -- -- g.gruvbox_hls_cursor = 'bright_red'  -- default: 'orange'
 -- g.gruvbox_sign_column = 'dark0'  -- TODO: Not present in gruvbox.nvim
--- -- g.gruvbox_transparent_bg = true 
+-- -- g.gruvbox_transparent_bg = true
 -- cmd('colorscheme gruvbox')
 -- -- g.gruvbox_italicize_strings = true

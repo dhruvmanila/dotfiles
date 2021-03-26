@@ -1,4 +1,6 @@
 -- Ref: https://github.com/neovim/nvim-lspconfig
+local vim = vim
+local cmd = vim.cmd
 local lsp = vim.lsp
 local map = vim.api.nvim_set_keymap
 local buf_map = vim.api.nvim_buf_set_keymap
@@ -6,20 +8,11 @@ local create_augroups = require('core.utils').create_augroups
 local lspconfig = require('lspconfig')
 
 -- Utiliy functions
-function _G.reload_lsp()
-  lsp.stop_client(lsp.get_active_clients())
-  vim.cmd [[edit]]
-end
+cmd([[command! -nargs=0 LspRestart lua vim.lsp.stop_client(vim.lsp.get_active_clients()); vim.cmd("edit")]])
 
 -- Open the LSP log on the bottom of the tab occupying the full width and
 -- height of about 20.
-function _G.open_lsp_log()
-  local path = lsp.get_log_path()
-  vim.cmd("botright split | resize 20 | edit " .. path)
-end
-
-vim.cmd('command! -nargs=0 LspLog call v:lua.open_lsp_log()')
-vim.cmd('command! -nargs=0 LspRestart call v:lua.reload_lsp()')
+cmd([[command! -nargs=0 LspLog lua vim.cmd("botright split | resize 20 | edit " .. vim.lsp.get_log_path())]])
 
 -- Useful keybindings (Do I even need them?)
 map('n', '<Leader>ll', '<Cmd>LspLog<CR>', {noremap = true})
@@ -74,6 +67,10 @@ require('vim.lsp.protocol').CompletionItemKind = {
   ' ' .. ' TypeParameter'; -- = 25;
 }
 
+-- lightbulb: https://github.com/kosayoda/nvim-lightbulb
+cmd [[autocmd CursorHold,CursorHoldI * lua require('nvim-lightbulb').update_lightbulb()]]
+vim.fn.sign_define("LightBulbSign", {text = "💡", texthl = "LspDiagnosticsSignHint"})
+
 -- Just a convenience
 local noremap = {noremap = true}
 
@@ -114,12 +111,12 @@ local function on_attach(client)
   end
 
   if client.resolved_capabilities.document_highlight then
+    -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
     table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.buf.document_highlight()')
     -- table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics()')
     table.insert(lsp_autocmds, 'CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
   end
 
-  -- Treesitter is showing the `next` node as an ERROR?
   if next(lsp_autocmds) ~= nil then
     create_augroups({custom_lsp_autocmds = lsp_autocmds})
   end
@@ -127,9 +124,8 @@ local function on_attach(client)
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 end
 
--- TODO: pyright does not provide integration with external tools like mypy,
--- flake8, black, etc., switch to `pyls`?
--- Pyright settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md
+-- Pyright: https://github.com/microsoft/pyright
+-- Settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md
 lspconfig.pyright.setup {
   on_attach = on_attach,
   settings = {
@@ -144,3 +140,39 @@ lspconfig.pyright.setup {
     }
   }
 }
+
+-- Bash language server: https://github.com/bash-lsp/bash-language-server
+-- Settings: https://github.com/bash-lsp/bash-language-server/blob/master/server/src/config.ts
+lspconfig.bashls.setup {on_attach = on_attach}
+
+-- Lua language server: https://github.com/sumneko/lua-language-server
+-- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#sumneko_lua
+lspconfig.sumneko_lua.setup {
+  on_attach = on_attach,
+  cmd = {
+    os.getenv("HOME") .. "/git/lua-language-server/bin/macOS/lua-language-server",
+    "-E",
+    os.getenv("HOME") .. "/git/lua-language-server/main.lua"
+  },
+  settings = {
+    Lua = {
+      runtime = {
+        version = 'LuaJIT',
+        path = vim.split(package.path, ';'),
+      },
+      diagnostics = {
+        enable = true,
+        globals = {'vim'},
+      },
+      workspace = {
+        library = {
+          [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+          [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+        },
+        preloadFileSize = 1000,  -- Default: 100
+      },
+    },
+  }
+}
+
+

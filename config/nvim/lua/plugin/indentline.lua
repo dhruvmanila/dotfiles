@@ -6,6 +6,7 @@ g.indent_blankline_char = '▏'
 
 g.indent_blankline_filetype_exclude = {
   'help',
+  'man',
   'markdown',
   'lspinfo',
   'packer',

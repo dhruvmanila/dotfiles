@@ -1,6 +1,6 @@
 " Ref: https://github.com/mhinz/vim-startify
 
-nnoremap <silent> <Leader>` :Startify<CR>
+nnoremap <silent> <Leader>` <Cmd>Startify<CR>
 
 augroup start_startify_on_vim_startup
   autocmd!
