@@ -20,6 +20,7 @@ g.gruvbox_material_disable_italic_comment = 1
 g.gruvbox_material_transparent_background = 0
 g.gruvbox_material_menu_selection_background = 'blue'
 g.gruvbox_material_sign_column_background = 'none'
+-- g.gruvbox_material_visual = 'reverse'
 
 -- Generates after/ftplugin/*.vim files for lazy loading
 g.gruvbox_material_better_performance = 1
@@ -30,15 +31,12 @@ cmd('colorscheme gruvbox-material')
 -- https://github.com/nvim-telescope/telescope.nvim/issues/652
 require('nvim-web-devicons').setup()
 
--- Second arg is a bool to determine whether the output should be returned or not.
-vim.api.nvim_exec(
-[[
-let palette = gruvbox_material#get_palette(g:gruvbox_material_background, g:gruvbox_material_palette)
-
-call gruvbox_material#highlight('PmenuSel', palette.bg3, palette.blue, 'bold')
-]],
-false
+local highlight = vim.fn['gruvbox_material#highlight']
+local palette = vim.fn['gruvbox_material#get_palette'](
+  g.gruvbox_material_background, g.gruvbox_material_palette
 )
+
+highlight('PmenuSel', palette.bg3, palette.blue, 'bold')
 
 cmd('highlight! link CursorLineNr MoreMsg')
 

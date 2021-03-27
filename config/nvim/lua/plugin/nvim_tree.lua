@@ -1,11 +1,10 @@
 -- Ref: https://github.com/kyazdani42/nvim-tree.lua
 local g = vim.g
 local map = vim.api.nvim_set_keymap
-local utils = require('core.utils')
 local tree_cb = require('nvim-tree.config').nvim_tree_callback
 
 g.nvim_tree_ignore = {
-  '.git', 
+  '.git',
   '__pycache__',
   '.DS_Store',
   '.pyc',

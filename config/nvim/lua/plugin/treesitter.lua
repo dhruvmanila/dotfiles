@@ -1,6 +1,5 @@
 -- Ref: https://github.com/nvim-treesitter/nvim-treesitter
-
-map = vim.api.nvim_set_keymap
+local map = vim.api.nvim_set_keymap
 
 map('n', '<Leader>tp', '<Cmd>TSPlaygroundToggle<CR>', {noremap = true})
 

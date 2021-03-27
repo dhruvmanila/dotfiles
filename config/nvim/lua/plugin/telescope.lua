@@ -1,5 +1,6 @@
 -- Ref: https://github.com/nvim-telescope/telescope.nvim
 local actions = require('telescope.actions')
+local action_state = require('telescope.actions.state')
 local map = require('core.utils').map
 
 require('telescope').setup {
@@ -42,7 +43,7 @@ map('n', '<Leader>te', [[<Cmd>lua require('telescope.builtin').builtin()<CR>]])
 
 -- Quick file navigation
 map('n', '<C-p>', [[<Cmd>lua require('telescope.builtin').find_files()<CR>]])
-map('n', '<Leader>;', [[<Cmd>lua require('telescope.builtin').buffers()<CR>]])
+map('n', '<Leader>;', [[<Cmd>lua require('plugin.telescope').buffers()<CR>]])
 
 -- Grep
 map('n', '<Leader>fl', [[<Cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]])
@@ -77,9 +78,9 @@ function M.search_dotfiles()
     prompt_title = "Search Dotfiles",
     shorten_path = false,
     cwd = "~/dotfiles",
-    find_command = {
-      'fd', '--hidden', '--follow', '--exclude', '.git', '--no-ignore'
-    },
+    hidden = true,
+    follow = true,
+    file_ignore_patterns = {".git/.*"},
   }
 end
 
@@ -99,6 +100,25 @@ function M.search_all_files()
       'fd', '--type', 'f', '--hidden', '--follow', '--exclude', '.git', '--no-ignore'
     },
   }
+end
+
+-- https://github.com/nvim-telescope/telescope.nvim/issues/621#issuecomment-802222898
+function M.buffers(opts)
+  opts = opts or {}
+  opts.previewer = false
+  opts.sort_lastused = true
+  opts.show_all_buffers = true
+  opts.shorten_path = false
+  opts.attach_mappings = function(prompt_bufnr, map)
+    local delete_buf = function()
+      local selection = action_state.get_selected_entry()
+      actions.close(prompt_bufnr)
+      vim.api.nvim_buf_delete(selection.bufnr, { force = true })
+    end
+    map('i', '<C-x>', delete_buf)
+    return true
+  end
+  require('telescope.builtin').buffers(require('telescope.themes').get_dropdown(opts))
 end
 
 return M

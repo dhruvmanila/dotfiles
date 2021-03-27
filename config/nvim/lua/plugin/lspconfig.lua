@@ -8,10 +8,14 @@ local create_augroups = require('core.utils').create_augroups
 local lspconfig = require('lspconfig')
 
 -- Utiliy functions
-cmd([[command! -nargs=0 LspRestart lua vim.lsp.stop_client(vim.lsp.get_active_clients()); vim.cmd("edit")]])
+function _G.reload_lsp()
+  vim.lsp.stop_client(vim.lsp.get_active_clients())
+  vim.cmd('edit')
+end
 
--- Open the LSP log on the bottom of the tab occupying the full width and
--- height of about 20.
+cmd('command! -nargs=0 LspRestart call v:lua.reload_lsp()')
+
+-- Open the LSP log on the bottom of the tab occupying the full width
 cmd([[command! -nargs=0 LspLog lua vim.cmd("botright split | resize 20 | edit " .. vim.lsp.get_log_path())]])
 
 -- Useful keybindings (Do I even need them?)

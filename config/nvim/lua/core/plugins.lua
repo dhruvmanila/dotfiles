@@ -51,7 +51,6 @@ return require('packer').startup {
       'glepnir/galaxyline.nvim',
       branch = 'main',
       config = [[require('plugin.statusline')]],
-      opt = true
     }
 
     -- Icons
@@ -103,9 +102,17 @@ return require('packer').startup {
 
     -- Git
     use {
-      'tpope/vim-fugitive',
-      keys = {{'n', 'gs'}, {'n', '<Leader>gp'}},
-      config = [[require('plugin.fugitive')]]
+      {
+        'tpope/vim-fugitive',
+        keys = {{'n', 'gs'}, {'n', '<Leader>gp'}},
+        config = [[require('plugin.fugitive')]]
+      },
+      {
+        'lewis6991/gitsigns.nvim',
+        event = {'BufRead', 'BufNewFile'},
+        requires = 'nvim-lua/plenary.nvim',
+        config = [[require('plugin/gitsigns')]]
+      }
     }
 
     -- Comment
