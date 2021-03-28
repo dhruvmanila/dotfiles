@@ -12,7 +12,7 @@ opt.updatetime    = 100
 opt.clipboard     = 'unnamed'  -- Use OS clipboard
 opt.ignorecase    = true       -- Ignore case in search by default...
 opt.smartcase     = true       -- Unless an uppercase letter is present
-opt.ruler         = true       -- TODO: Disable once statusline is configured
+opt.ruler         = false
 
 -- I: Disable the default Vim startup message
 -- c: Don't give messages like "The only match", "Pattern not found", etc.

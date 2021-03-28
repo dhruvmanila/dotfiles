@@ -38,10 +38,10 @@ map('n', '<C-h>', '<C-w>h')
 map('n', '<C-l>', '<C-w>l')
 
 -- Resize window with arrow keys as I hardly need them
-map('n', '<Up>', '<C-w>5+')
-map('n', '<Down>', '<C-w>5-')
-map('n', '<Left>', '<C-w>5<')
-map('n', '<Right>', '<C-w>5>')
+map('n', '<Up>', '<C-w>2+')
+map('n', '<Down>', '<C-w>2-')
+map('n', '<Left>', '<C-w>2<')
+map('n', '<Right>', '<C-w>2>')
 
 -- Easy moving through the command history
 -- <C-p>/<C-n> does the some thing, remove this?

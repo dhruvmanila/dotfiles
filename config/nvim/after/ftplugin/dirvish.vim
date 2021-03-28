@@ -13,8 +13,8 @@ nmap <silent><buffer> l i
 nnoremap <silent><buffer> ~ :Dirvish $HOME<CR>
 nnoremap <silent><buffer> ` :Dirvish /<CR>
 
-nnoremap <silent><buffer> v :call dirvish#open('vsplit', 0)<CR>
-xnoremap <silent><buffer> v :call dirvish#open('vsplit', 0)<CR>
+nnoremap <silent><buffer> v :call dirvish#open('vsplit', 0)<CR>:wincmd p<CR>
+xnoremap <silent><buffer> v :call dirvish#open('vsplit', 0)<CR>:wincmd p<CR>
 
 " Hide dotfiles. Press `R` to "toggle" (reload).
 nnoremap <silent><buffer> .
