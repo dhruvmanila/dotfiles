@@ -7,7 +7,6 @@ local fnamemodify = fn.fnamemodify
 local winwidth = fn.winwidth
 local gl = require('galaxyline')
 local gls = gl.section
-local condition = require('galaxyline.condition')
 local fileinfo = require('galaxyline.provider_fileinfo')
 local get_icon = require("nvim-nonicons").get
 
@@ -72,13 +71,6 @@ colors.inactive_grey = palette.grey0[1]
 
 -- Extract out the required icons.
 local icons = {
-  normal        = get_icon('vim-normal-mode'),
-  insert        = get_icon('vim-insert-mode'),
-  visual        = get_icon('vim-visual-mode'),
-  select        = get_icon('vim-select-mode'),
-  replace       = get_icon('vim-replace-mode'),
-  command       = get_icon('vim-command-mode'),
-  terminal      = get_icon('vim-terminal-mode'),
   question      = get_icon('question'),
   lock          = get_icon('lock'),
   info          = get_icon('info'),
@@ -95,7 +87,7 @@ for k,v in pairs(icons) do
 end
 
 -- Information about the special buffers usually from the plugin filetypes.
--- TODO: quickfix, terminal
+-- TODO: quickfix, terminal, packer
 local special_buffer_info = {
   list = {
     'help',
@@ -133,34 +125,35 @@ local special_buffer_info = {
 
 -- Mode table containing of the respective icon and color for the mode.
 local modes = {
-  n      = {icons.normal,   colors.grey2},
-  no     = {icons.question, colors.grey2},
-  i      = {icons.insert,   colors.bg_green},
-  ic     = {icons.insert,   colors.bg_green},
-  c      = {icons.command,  colors.blue},
-  v      = {icons.visual,   colors.bg_red},
-  V      = {icons.visual,   colors.bg_red},
-  [''] = {icons.visual,   colors.bg_red},
-  R      = {icons.replace,  colors.bg_yellow},
-  s      = {icons.select,   colors.bg_red},
-  S      = {icons.select,   colors.bg_red},
-  [''] = {icons.select,   colors.bg_red},
-  t      = {icons.terminal, colors.purple},
-  ['r?'] = {icons.question, colors.aqua},
-  rm     = {'--More',       colors.aqua},
-  Rv     = {'Virtual',      colors.aqua},
-  ['r']  = {'Hit-Enter',    colors.aqua},
-  ['!']  = {'Shell',        colors.aqua}
+  n      = {'NORMAL',    colors.grey2},
+  no     = {'N·OP',      colors.grey2},
+  i      = {'INSERT',    colors.bg_green},
+  ic     = {'I·COMPL',   colors.bg_green},
+  c      = {'COMMAND',   colors.blue},
+  v      = {'VISUAL',    colors.bg_red},
+  V      = {'V·LINE',    colors.bg_red},
+  [''] = {'V·BLOCK',   colors.bg_red},
+  s      = {'SELECT',    colors.bg_red},
+  S      = {'S·LINE',    colors.bg_red},
+  [''] = {'S·BLOCK',   colors.bg_red},
+  R      = {'REPLACE',   colors.bg_yellow},
+  Rv     = {'V·REPLACE', colors.bg_yellow},
+  ['r']  = {'PROMPT',    colors.aqua},
+  ['r?'] = {'CONFIRM',   colors.aqua},
+  rm     = {'MORE',      colors.aqua},
+  ['!']  = {'SHELL',     colors.aqua},
+  t      = {'TERMINAL',  colors.purple},
 }
 
 ---Limits for responsive statusline
 local dirpath_limit = 100
 local dirpath_cutoff = 15
 local parent_limit = 80
-local file_detail_limit = 80
+local file_detail_limit = 100
 local git_diff_limit = 70
 
--- Conditions:
+
+---Conditions:
 
 ---Are we in the special buffer?
 local function special_buffer()
@@ -172,35 +165,23 @@ local function not_special_buffer()
   return not special_buffer()
 end
 
----Are we not in the special buffer and is the buffer not emoty?
-local function not_special_buffer_and_buffer_not_empty()
-  return not_special_buffer() and condition.buffer_not_empty()
-end
-
----Are we not in the special buffer and are we in a git workspace?
-local function not_special_buffer_and_check_git_workspace()
-  return not_special_buffer() and condition.check_git_workspace()
-end
-
 ---Are we not in the special buffer and window width is less than limit?
 ---@param limit integer
 local function not_special_buffer_and_check_winwidth(limit)
   return function()
-    return not_special_buffer() and winwidth(0) > limit
+    return not special_buffer() and winwidth(0) > limit
   end
 end
+
 
 ---Providers:
 
 ---Mode provider for the statusline. Returns the respective mode icon.
 ---@return string
 local function mode_provider()
-  if special_buffer() then
-    return ''
-  end
   local m = modes[vim.fn.mode()]
   vim.cmd('hi GalaxyViMode guifg=' .. m[2] .. ' guibg=' .. colors.active_bg)
-  return m[1] .. ' '
+  return m[1]
 end
 
 ---File icon information provider.
@@ -216,7 +197,7 @@ local function file_icon_info(field, default_func)
     return function() return '' end
   end
   return function()
-    if contains(special_buffer_info.list, vim.bo.filetype) then
+    if special_buffer() then
       return special_buffer_info[field][vim.bo.filetype]
     end
     return default_func()
@@ -312,13 +293,7 @@ local function file_detail()
   if winwidth(0) < file_detail_limit then
     return ''
   else
-    if encode == 'utf-8' then encode = '' end
-    if format == 'unix' then format = '' end
-    if encode == '' and format == '' then
-      return ''
-    else
-      return encode:upper() .. ' ' .. format:upper()
-    end
+    return encode:upper() .. ' ' .. format:upper() .. ' '
   end
 end
 
@@ -353,13 +328,14 @@ gls.left = {
   {
     ViMode = {
       provider = mode_provider,
+      condition = not_special_buffer,
+      separator = '  ',
+      separator_highlight = {'NONE', colors.active_bg},
     }
   },
   {
     FileIcon = {
       provider = file_icon_info('icon', fileinfo.get_file_icon),
-      separator = ' ',
-      separator_highlight = {'NONE', colors.active_bg},
       highlight = {
         file_icon_info('color', fileinfo.get_file_icon_color) , colors.active_bg
       },
@@ -368,14 +344,14 @@ gls.left = {
   {
     DirPath = {
       provider = dirpath_provider(dirpath_limit, dirpath_cutoff),
-      condition = not_special_buffer_and_buffer_not_empty,
+      condition = not_special_buffer,
       highlight = {colors.active_grey, colors.active_bg}
     }
   },
   {
     ParentName = {
       provider = parent_dir(parent_limit),
-      condition = not_special_buffer_and_buffer_not_empty,
+      condition = not_special_buffer,
       highlight = {colors.green, colors.active_bg, 'bold'}
     }
   },
@@ -400,7 +376,7 @@ gls.left = {
   {
     FileFlags = {
       provider = file_flags,
-      condition = not_special_buffer_and_buffer_not_empty,
+      condition = not_special_buffer,
       highlight = {colors.red, colors.active_bg, 'bold'}
     }
   },
@@ -409,27 +385,27 @@ gls.left = {
 
 gls.right = {
   {
-    FileDetail = {
-      provider = file_detail,
-      condition = not_special_buffer,
-      highlight = {colors.fg, colors.active_bg, 'bold'},
-    }
-  },
-  {
     LineInfo = {
       provider = 'LineColumn',
       condition = not_special_buffer,
+      highlight = {colors.active_grey, colors.active_bg, 'bold'},
+    },
+  },
+  {
+    FileDetail = {
+      provider = file_detail,
+      condition = not_special_buffer,
       separator = ' ',
       separator_highlight = {'NONE', colors.active_bg},
-      highlight = {colors.fg, colors.active_bg, 'bold'},
-    },
+      highlight = {colors.active_grey, colors.active_bg, 'bold'},
+    }
   },
   {
     GitBranch = {
       provider = 'GitBranch',
-      condition = not_special_buffer_and_check_git_workspace,
-      separator = ' ',
-      separator_highlight = {'NONE', colors.active_bg},
+      condition = not_special_buffer,
+      -- separator = ' ',
+      -- separator_highlight = {'NONE', colors.active_bg},
       icon = icons.git_branch,
       highlight = {colors.blue, colors.active_bg ,'bold'},
     }

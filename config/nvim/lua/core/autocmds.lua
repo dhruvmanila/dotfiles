@@ -19,7 +19,7 @@ local augroups = {
     [[BufWritePost plugins.lua PackerSync]],
 
     -- Check if file changed when its window is focus, more eager than 'autoread'
-    [[FocusGained,BufEnter * checktime]],
+    [[FocusGained * checktime]],
     [[FileChangedShellPost * 
       echohl WarningMsg | 
       echo "File changed on disk. Buffer reloaded." | 

@@ -56,7 +56,10 @@ return require('packer').startup {
 
     -- Icons
     use 'yamatsum/nvim-nonicons'
-    use 'kyazdani42/nvim-web-devicons'
+    use {
+      'kyazdani42/nvim-web-devicons',
+      config = 'vim.g.override_nvim_web_devicons = false'
+    }
 
     -- LSP, auto completion and related
     use {

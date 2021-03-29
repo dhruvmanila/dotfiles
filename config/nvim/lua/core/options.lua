@@ -13,6 +13,8 @@ opt.clipboard     = 'unnamed'  -- Use OS clipboard
 opt.ignorecase    = true       -- Ignore case in search by default...
 opt.smartcase     = true       -- Unless an uppercase letter is present
 opt.ruler         = false
+opt.showmode      = false
+opt.cmdheight     = 1
 
 -- I: Disable the default Vim startup message
 -- c: Don't give messages like "The only match", "Pattern not found", etc.
