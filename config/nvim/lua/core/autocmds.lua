@@ -15,7 +15,8 @@ local augroups = {
     )]],
 
     -- Auto compile plugins on file update
-    [[BufWritePost plugins.lua lua require('core.utils').auto_compile_plugins()]],
+    [[BufWritePost plugins.lua luafile %]],
+    [[BufWritePost plugins.lua PackerSync]],
 
     -- Check if file changed when its window is focus, more eager than 'autoread'
     [[FocusGained,BufEnter * checktime]],

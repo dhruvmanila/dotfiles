@@ -26,6 +26,7 @@ g.startify_lists = {
 }
 
 g.startify_commands = {
+  {st = 'StartupTime'},
   {ps = 'PackerSync'},
   {pi = 'PackerInstall'},
   {pc = 'PackerCompile'},

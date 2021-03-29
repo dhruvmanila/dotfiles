@@ -14,7 +14,7 @@ g.nvim_tree_ignore = {
 
 g.nvim_tree_quit_on_open   = 1
 g.nvim_tree_indent_markers = 1
--- g.nvim_tree_follow         = 1
+g.nvim_tree_follow         = 1
 g.nvim_tree_disable_netrw  = 0
 g.nvim_tree_hijack_netrw   = 0
 
@@ -26,11 +26,15 @@ g.nvim_tree_bindings = {
 
 g.nvim_tree_icons = {
   git = {
-    unstaged  = '!',
-    staged    = '+',
-    untracked = '?',
+    unstaged  = "",
+    staged    = "",
+    unmerged  = "",
+    renamed   = "",
+    untracked = "",
+    deleted   = ""
   }
 }
 
 map('n', '<C-n>', '<Cmd>NvimTreeToggle<CR>', {noremap = true})
-map('n', '<C-f>', '<Cmd>NvimTreeFindFile<CR>', {noremap = true})
+
+vim.cmd [[highlight link NvimTreeIndentMarker Comment]]

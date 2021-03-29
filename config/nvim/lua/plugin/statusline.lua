@@ -1,14 +1,15 @@
 local vim = vim
 local g = vim.g
 local fn = vim.fn
+local contains = vim.tbl_contains
 local expand = fn.expand
 local fnamemodify = fn.fnamemodify
+local winwidth = fn.winwidth
 local gl = require('galaxyline')
 local gls = gl.section
 local condition = require('galaxyline.condition')
 local fileinfo = require('galaxyline.provider_fileinfo')
 local get_icon = require("nvim-nonicons").get
-local contains = vim.tbl_contains
 
 --[[
 Gruvbox-material colors reference:
@@ -88,7 +89,13 @@ local icons = {
   directory     = get_icon('file-directory'),
 }
 
+-- All icons are of 2 character wide.
+for k,v in pairs(icons) do
+  icons[k] = v .. ' '
+end
+
 -- Information about the special buffers usually from the plugin filetypes.
+-- TODO: quickfix, terminal
 local special_buffer_info = {
   list = {
     'help',
@@ -99,10 +106,10 @@ local special_buffer_info = {
     'startify',
   },
   name = {
-    help         = function() return 'help [' .. expand('%:t') .. ']' end,
+    help         = function() return 'help [' .. expand('%:t:r') .. ']' end,
     tsplayground = 'TSPlayground',
     NvimTree     = 'NvimTree',
-    dirvish      = vim.fn.bufname,
+    dirvish      = function() return expand('%:~') end,
     fugitive     = 'Fugitive',
     startify     = 'Startify'
   },
@@ -111,7 +118,7 @@ local special_buffer_info = {
     tsplayground = '侮',
     NvimTree     = icons.directory,
     dirvish      = icons.directory,
-    fugitive     = '',
+    fugitive     = ' ',
     startify     = '',
   },
   color = {
@@ -150,16 +157,50 @@ local modes = {
 local dirpath_limit = 100
 local dirpath_cutoff = 15
 local parent_limit = 80
+local file_detail_limit = 80
 local git_diff_limit = 70
+
+-- Conditions:
+
+---Are we in the special buffer?
+local function special_buffer()
+  return contains(special_buffer_info.list, vim.bo.filetype)
+end
+
+---Are we not in the special buffer?
+local function not_special_buffer()
+  return not special_buffer()
+end
+
+---Are we not in the special buffer and is the buffer not emoty?
+local function not_special_buffer_and_buffer_not_empty()
+  return not_special_buffer() and condition.buffer_not_empty()
+end
+
+---Are we not in the special buffer and are we in a git workspace?
+local function not_special_buffer_and_check_git_workspace()
+  return not_special_buffer() and condition.check_git_workspace()
+end
+
+---Are we not in the special buffer and window width is less than limit?
+---@param limit integer
+local function not_special_buffer_and_check_winwidth(limit)
+  return function()
+    return not_special_buffer() and winwidth(0) > limit
+  end
+end
 
 ---Providers:
 
 ---Mode provider for the statusline. Returns the respective mode icon.
 ---@return string
 local function mode_provider()
+  if special_buffer() then
+    return ''
+  end
   local m = modes[vim.fn.mode()]
   vim.cmd('hi GalaxyViMode guifg=' .. m[2] .. ' guibg=' .. colors.active_bg)
-  return m[1] .. ' '  -- Icons are two width
+  return m[1] .. ' '
 end
 
 ---File icon information provider.
@@ -194,12 +235,12 @@ end
 ---@return function
 local function dirpath_provider(transition, cutoff)
   return function()
-    local path = fnamemodify(fn.bufname(), ':~:.')
+    local path = expand('%:~:.')
     local dirpath = fn.pathshorten(fnamemodify(path, ':h:h'))
     local len = #dirpath
     local is_root = dirpath and len == 1
 
-    if is_root or fn.winwidth(0) < transition then
+    if is_root or winwidth(0) < transition then
       return ''
     elseif len > cutoff then
       return '../' .. fnamemodify(dirpath, ':t') .. '/'
@@ -217,15 +258,34 @@ end
 ---@return function
 local function parent_dir(transition)
   return function()
-    local parent = fnamemodify(fn.bufname(), ':~:.:h:t')
+    local parent = expand('%:~:.:h:t')
     local is_root = parent and #parent == 1
-    if is_root or fn.winwidth(0) < transition then
+    if is_root or winwidth(0) < transition then
       return ''
     else
       return parent .. '/'
     end
   end
 end
+
+---Filename provider.
+---Returns the name of the file when in an active window otherwise the entire
+---path to the file.
+---
+---@param active boolean
+---@return string
+local function filename_provider(active)
+  return function()
+    if special_buffer() then
+      return ''
+    elseif active then
+      return expand('%:t')
+    else
+      return expand('%:~:.')
+    end
+  end
+end
+
 
 -- File flags provider.
 -- Returns the appropriate flag for the current window file.
@@ -249,7 +309,7 @@ local function file_detail()
   local encode = vim.bo.fenc ~= '' and vim.bo.fenc or vim.o.enc
   local format = vim.bo.fileformat
 
-  if vim.fn.winwidth(0) < 80 then
+  if winwidth(0) < file_detail_limit then
     return ''
   else
     if encode == 'utf-8' then encode = '' end
@@ -275,36 +335,6 @@ local function special_buffer_name()
   return ''
 end
 
--- Conditions:
-
----Are we in the special buffer?
-local function special_buffer()
-  return contains(special_buffer_info.list, vim.bo.filetype)
-end
-
----Are we not in the special buffer?
-local function not_special_buffer()
-  return not special_buffer()
-end
-
----Are we not in the special buffer and is the buffer not emoty?
-local function not_special_buffer_and_buffer_not_empty()
-  return not_special_buffer() and condition.buffer_not_empty()
-end
-
----Are we not in the special buffer and are we in a git workspace?
-local function not_special_buffer_and_check_git_workspace()
-  return not_special_buffer() and condition.check_git_workspace()
-end
-
----Are we not in the special buffer and window width is less than limit?
----@param limit integer
-local function not_special_buffer_and_check_winwidth(limit)
-  return function()
-    return not_special_buffer() and fn.winwidth(0) > limit
-  end
-end
-
 -- This should be set to an empty string list as this variable is used by
 -- galaxyline to determine which buffers should display the short line. But,
 -- we are using the short line to display the inactive statusline for all
@@ -323,9 +353,6 @@ gls.left = {
   {
     ViMode = {
       provider = mode_provider,
-      condition = not_special_buffer,
-      separator = ' ',
-      separator_highlight = {'NONE', colors.active_bg}
     }
   },
   {
@@ -349,20 +376,24 @@ gls.left = {
     ParentName = {
       provider = parent_dir(parent_limit),
       condition = not_special_buffer_and_buffer_not_empty,
-      highlight = {colors.green, colors.active_bg}
+      highlight = {colors.green, colors.active_bg, 'bold'}
     }
   },
   {
     FileName = {
-      provider = function() return expand('%:t') end,
-      condition = not_special_buffer_and_buffer_not_empty,
+      provider = filename_provider(true),
       highlight = {colors.fg, colors.active_bg, 'bold'}
+    }
+  },
+  {
+    TruncationPoint = {
+      provider = {},
+      separator = '%<',
     }
   },
   {
     SpecialBufferName = {
       provider = special_buffer_name,
-      condition = special_buffer,
       highlight = {colors.fg, colors.active_bg}
     }
   },
@@ -399,7 +430,7 @@ gls.right = {
       condition = not_special_buffer_and_check_git_workspace,
       separator = ' ',
       separator_highlight = {'NONE', colors.active_bg},
-      icon = icons.git_branch .. ' ',
+      icon = icons.git_branch,
       highlight = {colors.blue, colors.active_bg ,'bold'},
     }
   },
@@ -407,7 +438,7 @@ gls.right = {
     DiffAdd = {
       provider = 'DiffAdd',
       condition = not_special_buffer_and_check_winwidth(git_diff_limit),
-      icon = icons.diff_added .. ' ',
+      icon = icons.diff_added,
       highlight = {colors.green, colors.active_bg},
     }
   },
@@ -415,7 +446,7 @@ gls.right = {
     DiffModified = {
       provider = 'DiffModified',
       condition = not_special_buffer_and_check_winwidth(git_diff_limit),
-      icon = icons.diff_modified .. ' ',
+      icon = icons.diff_modified,
       highlight = {colors.blue, colors.active_bg},
     }
   },
@@ -423,7 +454,7 @@ gls.right = {
     DiffRemove = {
       provider = 'DiffRemove',
       condition = not_special_buffer_and_check_winwidth(git_diff_limit),
-      icon = icons.diff_removed .. ' ',
+      icon = icons.diff_removed,
       highlight = {colors.red, colors.active_bg},
     }
   },
@@ -447,26 +478,33 @@ gls.short_line_left = {
   {
     InactiveFileIcon = {
       provider = file_icon_info('icon', fileinfo.get_file_icon),
-      condition = condition.buffer_not_empty,
       separator = ' ',
       separator_highlight = {'NONE', colors.inactive_bg},
-      highlight = {colors.inactive_grey, colors.inactive_bg},
+      highlight = {colors.inactive_grey, colors.inactive_bg}
+    }
+  },
+  {
+    TruncationPoint = {
+      provider = {},
+      separator = '%<',
     }
   },
   {
     InactiveSpecialBufferName = {
       provider = special_buffer_name,
-      condition = special_buffer,
       highlight = {colors.inactive_grey, colors.inactive_bg}
     }
   },
   {
     InactiveFileName = {
-      provider = function() return expand('%') end,
-      condition = not_special_buffer,
-      separator = ' ',
-      separator_highlight = {'NONE', colors.inactive_bg},
+      provider = filename_provider(false),
       highlight = {colors.inactive_grey, colors.inactive_bg}
     }
   },
+  {
+    InactiveEnd = {
+      provider = function() return ' ' end,
+      highlight = {'NONE', colors.inactive_bg}
+    }
+  }
 }

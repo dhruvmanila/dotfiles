@@ -1,7 +1,5 @@
 -- Ref: https://github.com/nvim-telescope/telescope.nvim
 local actions = require('telescope.actions')
-local action_state = require('telescope.actions.state')
-local builtins = require('telescope.builtin')
 local map = require('core.utils').map
 
 require('telescope').setup {
@@ -14,7 +12,7 @@ require('telescope').setup {
     color_devicons = true,
     layout_defaults = {
       horizontal = {
-        preview_width = 0.6,
+        preview_width = 0.5,
         width_padding = 0.1,
         height_padding = 0.1,
       },
@@ -68,7 +66,7 @@ map('n', 'q:', [[<Cmd>lua require('telescope.builtin').command_history()<CR>]])
 map('n', '<Leader>fd', [[<Cmd>lua require('plugin.telescope').search_dotfiles()<CR>]])
 map('n', '<Leader>fn', [[<Cmd>lua require('plugin.telescope').installed_plugins()<CR>]])
 map('n', '<Leader>fa', [[<Cmd>lua require('plugin.telescope').search_all_files()<CR>]])
-map('n', '<Leader>ps', [[<Cmd>lua require('plugin.telescope').project_search()<CR>]])
+map('n', '<Leader>fp', [[<Cmd>lua require('plugin.telescope').project_search()<CR>]])
 
 
 require('telescope').load_extension('fzy_native')
@@ -82,7 +80,7 @@ local M = {}
 -- a function to which we can pass a directory and it will traverse the path
 -- ancestors till it finds the root pattern we passed in.
 function M.project_search()
-  builtins.find_files {
+  require('telescope.builtin').find_files {
     prompt_title = "Project Search",
     shorten_path = false,
     cwd = require('lspconfig.util').root_pattern('.git')(vim.fn.expand('%'))
@@ -90,7 +88,7 @@ function M.project_search()
 end
 
 function M.search_dotfiles()
-  builtins.find_files {
+  require('telescope.builtin').find_files {
     prompt_title = "Search Dotfiles",
     shorten_path = false,
     cwd = "~/dotfiles",
@@ -101,7 +99,7 @@ function M.search_dotfiles()
 end
 
 function M.installed_plugins()
-  builtins.find_files {
+  require('telescope.builtin').find_files {
     prompt_title = "Installed Plugins",
     shorten_path = false,
     cwd = vim.fn.stdpath('data') .. '/site/pack/packer/'
@@ -109,7 +107,7 @@ function M.installed_plugins()
 end
 
 function M.search_all_files()
-  builtins.find_files {
+  require('telescope.builtin').find_files {
     prompt_title = "Search All Files",
     shorten_path = false,
     find_command = {
@@ -121,6 +119,7 @@ end
 -- https://github.com/nvim-telescope/telescope.nvim/issues/621#issuecomment-802222898
 -- Added the ability to delete multiple buffers in one go using multi-selection.
 function M.buffers(opts)
+  local action_state = require('telescope.actions.state')
   opts = opts or {}
   opts.previewer = false
   opts.sort_lastused = true
@@ -146,7 +145,7 @@ function M.buffers(opts)
     map('i', '<C-x>', delete_buf)
     return true
   end
-  builtins.buffers(require('telescope.themes').get_dropdown(opts))
+  require('telescope.builtin').buffers(require('telescope.themes').get_dropdown(opts))
 end
 
 return M

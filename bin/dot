@@ -394,6 +394,7 @@ function setup_symlink() {
   link "config/youtube-dl"          ".config/youtube-dl"
   link "config/bpytop"              ".config/bpytop"
   link "config/htop"                ".config/htop"
+  link "config/luaformatter"        ".config/luaformatter"
 }
 
 
@@ -452,12 +453,10 @@ function upgrade_python() {
 
 
 function upgrade_plugins() {
-  header "Upgrading vim plugin manager..."
-  vim +PlugUpgrade +qa
-  header "Cleaning vim plugins..."
-  vim +PlugClean +qa
-  header "Updating vim plugins..."
-  vim +PlugUpdate +qa
+  header "Upgrading vim plugins..."
+  vim +PlugUpgrade +PlugClean +PlugUpdate +qa
+  header "Upgrading neovim plugins..."
+  nvim +PackerSync +qa
   header "Cleaning tmux plugins..."
   ~/.tmux/plugins/tpm/bin/clean_plugins
   header "Updating tmux plugins..."

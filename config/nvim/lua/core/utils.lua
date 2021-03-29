@@ -54,12 +54,4 @@ function M.map(modes, lhs, rhs, opts)
   end
 end
 
--- Helper function to execute when plugins.lua file is changed. This is
--- triggered using an autocommand.
-function M.auto_compile_plugins()
-  cmd('luafile %')
-  cmd('PackerSync')
-  cmd('PackerCompile')
-end
-
 return M

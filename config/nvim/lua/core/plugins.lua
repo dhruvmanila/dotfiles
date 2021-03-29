@@ -51,6 +51,7 @@ return require('packer').startup {
       'glepnir/galaxyline.nvim',
       branch = 'main',
       config = [[require('plugin.statusline')]],
+      after = 'gruvbox-material'
     }
 
     -- Icons
@@ -111,7 +112,7 @@ return require('packer').startup {
         'lewis6991/gitsigns.nvim',
         event = {'BufRead', 'BufNewFile'},
         requires = 'nvim-lua/plenary.nvim',
-        config = [[require('plugin/gitsigns')]]
+        config = [[require('plugin.gitsigns')]],
       }
     }
 
@@ -134,7 +135,7 @@ return require('packer').startup {
     use {
       'kyazdani42/nvim-tree.lua',
       requires = {'kyazdani42/nvim-web-devicons'},
-      keys = {{'n', '<C-n>'}, {'n', '<C-f>'}},
+      keys = {{'n', '<C-n>'}},
       config = [[require('plugin.nvim_tree')]]
     }
 
