@@ -55,14 +55,22 @@ return require('packer').startup {
     }
 
     -- Icons
-    use 'yamatsum/nvim-nonicons'
     use {
-      'kyazdani42/nvim-web-devicons',
-      config = 'vim.g.override_nvim_web_devicons = false'
+      'yamatsum/nvim-nonicons',
+      {
+        'kyazdani42/nvim-web-devicons',
+        config = 'vim.g.override_nvim_web_devicons = false'
+      }
     }
+
+    -- TODO: remove after #12587 is fixed (upstream bug)
+    use 'antoinemadec/FixCursorHold.nvim'
 
     -- LSP, auto completion and related
     use {
+      -- LSP plugins which needs to be loaded at startup
+      'kosayoda/nvim-lightbulb',
+      'nvim-lua/lsp-status.nvim',
       {
         'neovim/nvim-lspconfig',
         event = 'BufReadPre',
@@ -74,9 +82,6 @@ return require('packer').startup {
         config = [[require('plugin.completion')]],
       },
     }
-
-    -- Lsp code action indicator
-    use 'kosayoda/nvim-lightbulb'
 
     -- Fuzzy finder
     use {
@@ -130,8 +135,7 @@ return require('packer').startup {
     }
 
     -- Start screen
-    -- Neovim alternative written in lua
-    -- use 'glepnir/dashboard-nvim'
+    -- Neovim alternative written in lua 'glepnir/dashboard-nvim'
     use {'mhinz/vim-startify', config = [[require('plugin.startify')]]}
 
     -- File explorer (Mainly used for going through new projects)

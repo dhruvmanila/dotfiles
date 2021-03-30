@@ -32,6 +32,8 @@ g.startify_commands = {
   {pc = 'PackerCompile'},
 }
 
+g.startify_fortune_use_unicode = 1
+
 -- Automatically update sessions before leaving Vim and before loading a new
 -- session via :SLoad
 g.startify_session_persistence = 1

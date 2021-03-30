@@ -79,6 +79,7 @@ local icons = {
   diff_modified = get_icon('diff-modified'),
   diff_removed  = get_icon('diff-removed'),
   directory     = get_icon('file-directory'),
+  package       = get_icon('package'),
 }
 
 -- All icons are of 2 character wide.
@@ -87,7 +88,8 @@ for k,v in pairs(icons) do
 end
 
 -- Information about the special buffers usually from the plugin filetypes.
--- TODO: quickfix, terminal, packer
+-- TODO(buftype): quickfix, terminal
+-- TODO(filetype): git
 local special_buffer_info = {
   list = {
     'help',
@@ -96,6 +98,7 @@ local special_buffer_info = {
     'dirvish',
     'fugitive',
     'startify',
+    'packer',
   },
   name = {
     help         = function() return 'help [' .. expand('%:t:r') .. ']' end,
@@ -103,7 +106,8 @@ local special_buffer_info = {
     NvimTree     = 'NvimTree',
     dirvish      = function() return expand('%:~') end,
     fugitive     = 'Fugitive',
-    startify     = 'Startify'
+    startify     = 'Startify',
+    packer       = 'Packer',
   },
   icon = {
     help         = icons.info,
@@ -112,6 +116,7 @@ local special_buffer_info = {
     dirvish      = icons.directory,
     fugitive     = ' ',
     startify     = '',
+    packer       = icons.package,
   },
   color = {
     help         = colors.yellow,
@@ -120,6 +125,7 @@ local special_buffer_info = {
     dirvish      = colors.blue,
     fugitive     = colors.yellow,
     startify     = 'NONE',
+    packer       = colors.aqua,
   }
 }
 
@@ -180,8 +186,8 @@ end
 ---@return string
 local function mode_provider()
   local m = modes[vim.fn.mode()]
-  vim.cmd('hi GalaxyViMode guifg=' .. m[2] .. ' guibg=' .. colors.active_bg)
-  return m[1]
+  vim.cmd('hi GalaxyViMode guifg=' .. m[2] .. ' guibg=' .. colors.active_bg .. ' gui=bold')
+  return m[1] .. ' '
 end
 
 ---File icon information provider.
@@ -329,8 +335,6 @@ gls.left = {
     ViMode = {
       provider = mode_provider,
       condition = not_special_buffer,
-      separator = '  ',
-      separator_highlight = {'NONE', colors.active_bg},
     }
   },
   {
@@ -404,8 +408,6 @@ gls.right = {
     GitBranch = {
       provider = 'GitBranch',
       condition = not_special_buffer,
-      -- separator = ' ',
-      -- separator_highlight = {'NONE', colors.active_bg},
       icon = icons.git_branch,
       highlight = {colors.blue, colors.active_bg ,'bold'},
     }
@@ -454,8 +456,8 @@ gls.short_line_left = {
   {
     InactiveFileIcon = {
       provider = file_icon_info('icon', fileinfo.get_file_icon),
-      separator = ' ',
-      separator_highlight = {'NONE', colors.inactive_bg},
+      -- separator = ' ',
+      -- separator_highlight = {'NONE', colors.inactive_bg},
       highlight = {colors.inactive_grey, colors.inactive_bg}
     }
   },

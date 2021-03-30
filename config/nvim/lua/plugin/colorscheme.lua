@@ -12,7 +12,7 @@ vim.o.background = 'dark'
 g.gruvbox_material_palette = 'original'
 
 -- background: 'hard', 'medium', 'soft'
-g.gruvbox_material_background = 'hard'
+g.gruvbox_material_background = 'medium'
 
 g.gruvbox_material_enable_bold = 1
 g.gruvbox_material_enable_italic = 1

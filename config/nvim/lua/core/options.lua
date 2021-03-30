@@ -15,6 +15,7 @@ opt.smartcase     = true       -- Unless an uppercase letter is present
 opt.ruler         = false
 opt.showmode      = false
 opt.cmdheight     = 1
+opt.emoji         = false      -- https://www.youtube.com/watch?v=F91VWOelFNE
 
 -- I: Disable the default Vim startup message
 -- c: Don't give messages like "The only match", "Pattern not found", etc.
@@ -37,7 +38,7 @@ opt.colorcolumn    = '80'
 opt.cursorline     = true
 opt.number         = true
 opt.relativenumber = true
-opt.signcolumn     = 'yes:1'
+opt.signcolumn     = 'yes:2'
 opt.foldenable     = false
 opt.pumheight      = 15
 

@@ -55,6 +55,7 @@ map('n', '<Leader>gc', [[<Cmd>lua require('telescope.builtin').git_commits()<CR>
 -- Find neovim stuff
 map('n', '<Leader>fh', [[<Cmd>lua require('telescope.builtin').help_tags()<CR>]])
 map('n', '<Leader>fm', [[<Cmd>lua require('telescope.builtin').keymaps()<CR>]])
+-- TODO: commands should show the underlying code which will be executed like fzf
 map('n', '<Leader>fc', [[<Cmd>lua require('telescope.builtin').commands()<CR>]])
 map('n', '<Leader>hi', [[<Cmd>lua require('telescope.builtin').highlights()<CR>]])
 
@@ -66,6 +67,7 @@ map('n', 'q:', [[<Cmd>lua require('telescope.builtin').command_history()<CR>]])
 map('n', '<Leader>fd', [[<Cmd>lua require('plugin.telescope').search_dotfiles()<CR>]])
 map('n', '<Leader>fn', [[<Cmd>lua require('plugin.telescope').installed_plugins()<CR>]])
 map('n', '<Leader>fa', [[<Cmd>lua require('plugin.telescope').search_all_files()<CR>]])
+-- TODO: mix this with find_files?
 map('n', '<Leader>fp', [[<Cmd>lua require('plugin.telescope').project_search()<CR>]])
 
 
