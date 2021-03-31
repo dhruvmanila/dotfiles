@@ -1,3 +1,4 @@
+setlocal signcolumn=yes:1
 setlocal nonumber
 setlocal norelativenumber
 setlocal nolist

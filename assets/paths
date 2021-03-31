@@ -18,4 +18,8 @@ PATH="${PATH}:${HOME}/.local/bin"
 # Setting PATH for tcl-tk
 PATH="/usr/local/opt/tcl-tk/bin:${PATH}"
 
+# Setting PATH for go
+export GOPATH="${HOME}/go"
+PATH="${PATH}:${GOPATH}/bin"
+
 export PATH

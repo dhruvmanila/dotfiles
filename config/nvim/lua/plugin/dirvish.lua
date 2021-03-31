@@ -11,4 +11,4 @@ g.dirvish_dovish_map_keys = 0
 cmd [[command! -nargs=? -complete=dir Explore Dirvish <args>]]
 cmd [[command! -nargs=? -complete=dir Sexplore belowright split | silent Dirvish <args>]]
 cmd [[command! -nargs=? -complete=dir Vexplore belowright vsplit | silent Dirvish <args>]]
-cmd [[command! -nargs=? -complete=dir Lexplore topleft vsplit | vertical resize 30 | silent Dirvish <args>]]
+cmd [[command! -nargs=? -complete=dir Lexplore topleft vsplit | vertical resize 30 | setlocal winfixwidth | silent Dirvish <args>]]

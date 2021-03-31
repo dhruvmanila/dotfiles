@@ -59,7 +59,7 @@ return require('packer').startup {
       'yamatsum/nvim-nonicons',
       {
         'kyazdani42/nvim-web-devicons',
-        config = 'vim.g.override_nvim_web_devicons = false'
+        -- config = 'vim.g.override_nvim_web_devicons = false'
       }
     }
 
@@ -68,7 +68,6 @@ return require('packer').startup {
 
     -- LSP, auto completion and related
     use {
-      -- LSP plugins which needs to be loaded at startup
       'kosayoda/nvim-lightbulb',
       'nvim-lua/lsp-status.nvim',
       {
@@ -81,6 +80,12 @@ return require('packer').startup {
         event = 'InsertEnter',
         config = [[require('plugin.completion')]],
       },
+    }
+
+    -- Linters and formatters
+    use {
+      {'mfussenegger/nvim-lint', opt = true},  -- New plugin
+      {'mhartington/formatter.nvim', opt = true}  -- TODO: setup the formatters
     }
 
     -- Fuzzy finder
@@ -99,7 +104,7 @@ return require('packer').startup {
       {
         'nvim-treesitter/nvim-treesitter',
         event = 'BufRead',
-        run = 'TSUpdate',
+        run = ':TSUpdate',
         config = [[require('plugin.treesitter')]],
       },
       {

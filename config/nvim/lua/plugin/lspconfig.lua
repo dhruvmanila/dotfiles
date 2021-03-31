@@ -11,6 +11,8 @@ local create_augroups = require('core.utils').create_augroups
 local lspconfig = require('lspconfig')
 local lspstatus = require('lsp-status')
 
+-- For debugging purposes
+-- require('vim.lsp.log').set_level('debug')
 
 ---Utiliy functions, commands and keybindings
 function _G.reload_lsp()
@@ -148,8 +150,8 @@ local function custom_on_attach(client)
   -- local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
 
   -- Keybindings
-  buf_map(0, 'n', '[d', '<Cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', noremap)
-  buf_map(0, 'n', ']d', '<Cmd>lua vim.lsp.diagnostic.goto_next()<CR>', noremap)
+  buf_map(0, 'n', '[d', '<Cmd>lua vim.lsp.diagnostic.goto_prev({enable_popup = false})<CR>', noremap)
+  buf_map(0, 'n', ']d', '<Cmd>lua vim.lsp.diagnostic.goto_next({enable_popup = false})<CR>', noremap)
   -- Calling the function twice will jump into the floating window.
   buf_map(0, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', noremap)
   buf_map(0, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', noremap)
@@ -163,15 +165,17 @@ local function custom_on_attach(client)
 
   -- Setup auto-formatting on save if the language server supports it.
   if client.resolved_capabilities.document_formatting then
-    local ext = vim.fn.expand('%:e')
-    table.insert(lsp_autocmds, 'BufWritePre *.' .. ext .. ' lua vim.lsp.diagnostic.formatting_sync(nil, 1000)'
-    )
+    -- TODO: add keybindings instead of auto-formatting
+    table.insert(lsp_autocmds, 'BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)')
   end
 
   if client.resolved_capabilities.document_highlight then
     -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
     table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.buf.document_highlight()')
-    table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics()')
+    table.insert(
+      lsp_autocmds,
+      'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
+    )
     table.insert(lsp_autocmds, 'CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
   end
 
@@ -181,6 +185,7 @@ local function custom_on_attach(client)
 
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 end
+
 
 ---Server configurations
 local servers = {
@@ -231,6 +236,35 @@ local servers = {
         },
       },
     }
+  },
+
+  -- efm language server: https://github.com/mattn/efm-langserver
+  -- Settings: https://github.com/mattn/efm-langserver/blob/master/schema.json
+  efm = {
+    init_options = { documentFormatting = true },
+    filetypes = {'python'},
+    settings = {
+      rootMarkers = {'.git/'},
+      languages = {
+        python = {
+          {
+            -- lintSource = 'mypy',
+            lintCommand = 'mypy --show-column-numbers --follow-imports silent --ignore-missing-imports',
+            lintFormats = {
+              '%f:%l:%c: %trror: %m',
+              '%f:%l:%c: %tarning: %m',
+              '%f:%l:%c: %tote: %m',
+            },
+          },
+          {
+            -- lintSource = 'flake8',
+            lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
+            lintStdin = true,
+            lintFormats = {'%f:%l:%c: %m'},
+          }
+        }
+      }
+    },
   },
 }
 

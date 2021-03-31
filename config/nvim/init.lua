@@ -45,7 +45,7 @@ g.vimsyn_embed = 'l'
 
 -- Setup neovim providers
 g.loaded_python_provider = 0
-g.python3_host_prog      = '~/.pyenv/versions/neovim/bin/python3'
+g.python3_host_prog      = '~/.neovim/py3/bin/python3'
 g.node_host_prog         = '/usr/local/bin/neovim-node-host'
 
 -- Disable built-in plugins

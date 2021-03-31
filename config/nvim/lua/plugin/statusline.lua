@@ -152,11 +152,11 @@ local modes = {
 }
 
 ---Limits for responsive statusline
-local dirpath_limit = 100
 local dirpath_cutoff = 15
-local parent_limit = 80
+local dirpath_limit = 100
 local file_detail_limit = 100
-local git_diff_limit = 70
+local parent_limit = 80
+local git_diff_limit = 80
 
 
 ---Conditions:
@@ -384,6 +384,41 @@ gls.left = {
       highlight = {colors.red, colors.active_bg, 'bold'}
     }
   },
+}
+
+gls.mid = {
+  {
+    DiagnosticInfo = {
+      provider = 'DiagnosticInfo',
+      condition = not_special_buffer,
+      icon = " ",
+      highlight = {colors.blue, colors.active_bg},
+    }
+  },
+  {
+    DiagnosticHint = {
+      provider = 'DiagnosticHint',
+      condition = not_special_buffer,
+      icon = " ",
+      highlight = {colors.aqua, colors.active_bg},
+    }
+  },
+  {
+    DiagnosticWarn = {
+      provider = 'DiagnosticWarn',
+      condition = not_special_buffer,
+      icon = ' ',
+      highlight = {colors.yellow, colors.active_bg},
+    }
+  },
+  {
+    DiagnosticError = {
+      provider = 'DiagnosticError',
+      condition = not_special_buffer,
+      icon = "✘ ",
+      highlight = {colors.red, colors.active_bg},
+    }
+  }
 }
 
 

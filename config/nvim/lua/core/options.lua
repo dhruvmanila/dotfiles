@@ -38,7 +38,7 @@ opt.colorcolumn    = '80'
 opt.cursorline     = true
 opt.number         = true
 opt.relativenumber = true
-opt.signcolumn     = 'yes:2'
+opt.signcolumn     = 'yes:1'
 opt.foldenable     = false
 opt.pumheight      = 15
 
