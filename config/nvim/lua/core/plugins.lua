@@ -84,7 +84,8 @@ return require('packer').startup {
 
     -- Linters and formatters
     use {
-      {'mfussenegger/nvim-lint', opt = true},  -- New plugin
+      -- {'mfussenegger/nvim-lint', opt = true},  -- New plugin
+      {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]]},  -- New plugin
       {'mhartington/formatter.nvim', opt = true}  -- TODO: setup the formatters
     }
 

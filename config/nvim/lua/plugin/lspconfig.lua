@@ -8,6 +8,8 @@ local map = vim.api.nvim_set_keymap
 local buf_map = vim.api.nvim_buf_set_keymap
 local sign_define = vim.fn.sign_define
 local create_augroups = require('core.utils').create_augroups
+local icons = require('core.icons').icons
+local kind_icons = require('core.icons').lsp_kind
 local lspconfig = require('lspconfig')
 local lspstatus = require('lsp-status')
 
@@ -33,36 +35,6 @@ map('n', '<Leader>ll', '<Cmd>LspLog<CR>', {noremap = true})
 map('n', '<Leader>lr', '<Cmd>LspRestart<CR>', {noremap = true})
 map('n', '<Leader>li', '<Cmd>LspInfo<CR>', {noremap = true})
 
-
--- Setting up the icons for the completion menu and statusline.
-local kind_icons = {
-  Text          = '',
-  Method        = '',
-  Function      = '',
-  Constructor   = '',
-  Field         = '',
-  Variable      = '',
-  Class         = '',
-  Interface     = '',
-  Module        = '',
-  Property      = '',
-  Unit          = '',
-  Value         = '',
-  Enum          = '',
-  Keyword       = '',
-  Snippet       = '',
-  Color         = '',
-  File          = '',
-  Reference     = '',
-  Folder        = '',
-  EnumMember    = '',
-  Constant      = '',
-  Struct        = '',
-  Event         = '',
-  Operator      = '',
-  TypeParameter = '',
-}
-
 -- Adding VSCode like icons to the completion menu.
 -- vscode-codicons: https://github.com/microsoft/vscode-codicons
 require('vim.lsp.protocol').CompletionItemKind = (function()
@@ -73,17 +45,17 @@ require('vim.lsp.protocol').CompletionItemKind = (function()
   return items
 end)()
 
--- TODO: Update default signs
-sign_define("LspDiagnosticsSignError", {text = "✘", texthl = "LspDiagnosticsSignError"})
-sign_define("LspDiagnosticsSignWarning", {text = "", texthl = "LspDiagnosticsSignWarning"})
-sign_define("LspDiagnosticsSignHint", {text = "", texthl = "LspDiagnosticsSignHint"})
-sign_define("LspDiagnosticsSignInformation", {text = "", texthl = "LspDiagnosticsSignInformation"})
+-- Update the default signs
+sign_define("LspDiagnosticsSignError", {text = icons.error})
+sign_define("LspDiagnosticsSignWarning", {text = icons.warning})
+sign_define("LspDiagnosticsSignHint", {text = icons.hint})
+sign_define("LspDiagnosticsSignInformation", {text = icons.info})
 
 ---Handlers configuration
 -- Using `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`
 lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
   lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = false,
+    virtual_text = true,
     underline = true,
     signs = true,
     update_in_insert = false
@@ -111,11 +83,11 @@ lspstatus.config {
     end
   end,
   kind_labels = kind_icons,
+  indicator_errors = icons.error,
+  indicator_warnings = icons.warning,
+  indicator_info = icons.info,
+  indicator_hint = icons.hint,
   -- TODO
-  -- indicator_errors = '',
-  -- indicator_warnings = '',
-  -- indicator_info = '',
-  -- indicator_hint = '',
   -- indicator_ok = '',
   -- status_symbol = ''
 }
@@ -129,7 +101,7 @@ create_augroups(
     {"CursorHold,CursorHoldI * lua require('nvim-lightbulb').update_lightbulb()"}
   }
 )
-sign_define("LightBulbSign", {text = "💡", texthl = "LspDiagnosticsSignHint"})
+sign_define("LightBulbSign", {text = icons.lightbulb, texthl = "LspDiagnosticsSignHint"})
 
 
 -- The main `on_attach` function to be called by each of the language server
@@ -172,10 +144,10 @@ local function custom_on_attach(client)
   if client.resolved_capabilities.document_highlight then
     -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
     table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.buf.document_highlight()')
-    table.insert(
-      lsp_autocmds,
-      'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
-    )
+    -- table.insert(
+    --   lsp_autocmds,
+    --   'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
+    -- )
     table.insert(lsp_autocmds, 'CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
   end
 
@@ -240,32 +212,30 @@ local servers = {
 
   -- efm language server: https://github.com/mattn/efm-langserver
   -- Settings: https://github.com/mattn/efm-langserver/blob/master/schema.json
-  efm = {
-    init_options = { documentFormatting = true },
-    filetypes = {'python'},
-    settings = {
-      rootMarkers = {'.git/'},
-      languages = {
-        python = {
-          {
-            -- lintSource = 'mypy',
-            lintCommand = 'mypy --show-column-numbers --follow-imports silent --ignore-missing-imports',
-            lintFormats = {
-              '%f:%l:%c: %trror: %m',
-              '%f:%l:%c: %tarning: %m',
-              '%f:%l:%c: %tote: %m',
-            },
-          },
-          {
-            -- lintSource = 'flake8',
-            lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
-            lintStdin = true,
-            lintFormats = {'%f:%l:%c: %m'},
-          }
-        }
-      }
-    },
-  },
+  -- efm = {
+  --   init_options = { documentFormatting = true },
+  --   filetypes = {'python'},
+  --   settings = {
+  --     rootMarkers = {'.git/'},
+  --     languages = {
+  --       python = {
+  --         {
+  --           lintCommand = 'mypy --show-column-numbers --follow-imports silent --ignore-missing-imports',
+  --           lintFormats = {
+  --             '%f:%l:%c: %trror: %m',
+  --             '%f:%l:%c: %tarning: %m',
+  --             '%f:%l:%c: %tote: %m',
+  --           },
+  --         },
+  --         {
+  --           lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
+  --           lintStdin = true,
+  --           lintFormats = {'%f:%l:%c: %m'},
+  --         }
+  --       }
+  --     }
+  --   },
+  -- },
 }
 
 -- Override the default capabilities and pass it to the language server on

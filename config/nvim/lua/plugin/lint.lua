@@ -79,7 +79,7 @@ lint.linters = {
     cmd = 'mypy',
     stdin = false,
     args = {
-      '--ignore-missing-imports',
+      -- '--ignore-missing-imports',
       '--show-column-numbers',
       '--follow-imports',
       'silent'
