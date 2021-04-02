@@ -1,5 +1,4 @@
 local vim = vim
-local g = vim.g
 local fn = vim.fn
 local contains = vim.tbl_contains
 local expand = fn.expand
@@ -12,82 +11,26 @@ local temp_icons = require('core.icons').icons
 local spinner_frames = require('core.icons').spinner_frames
 local lsp_messages = require('lsp-status').messages
 
---[[
-Gruvbox-material colors reference:
-Background: 'medium'
-Palette:    'mix'
-NOTE: Change the colors if either the background or palette changes.
-{
-  aqua             = { "#8bba7f", "108"  },
-  bg0              = { "#282828", "235"  },
-  bg1              = { "#32302f", "236"  },
-  bg2              = { "#32302f", "236"  },
-  bg3              = { "#45403d", "237"  },
-  bg4              = { "#45403d", "237"  },
-  bg5              = { "#5a524c", "239"  },
-  bg_current_word  = { "#3c3836", "237"  },
-  bg_diff_blue     = { "#0e363e", "17"   },
-  bg_diff_green    = { "#34381b", "22"   },
-  bg_diff_red      = { "#402120", "52"   },
-  bg_green         = { "#b0b846", "142"  },
-  bg_red           = { "#db4740", "167"  },
-  bg_statusline1   = { "#32302f", "236"  },
-  bg_statusline2   = { "#3a3735", "236"  },
-  bg_statusline3   = { "#504945", "240"  },
-  bg_visual_blue   = { "#374141", "17"   },
-  bg_visual_green  = { "#3b4439", "22"   },
-  bg_visual_red    = { "#4c3432", "52"   },
-  bg_visual_yellow = { "#4f422e", "94"   },
-  bg_yellow        = { "#e9b143", "214"  },
-  blue             = { "#80aa9e", "109"  },
-  fg0              = { "#e2cca9", "223"  },
-  fg1              = { "#e2cca9", "223"  },
-  green            = { "#b0b846", "142"  },
-  grey0            = { "#7c6f64", "243"  },
-  grey1            = { "#928374", "245"  },
-  grey2            = { "#a89984", "246"  },
-  orange           = { "#f28534", "208"  },
-  purple           = { "#d3869b", "175"  },
-  red              = { "#f2594b", "167"  },
-  yellow           = { "#e9b143", "214"  }
-  none             = { "NONE",    "NONE" },
-}
---]]
-
--- local colors = {
---   active_bg = '',
---   inactive_bg = '',
---   active_grey = '',
---   inactive_grey = '',
---   fg = '',
---   red = '',
---   green = '',
---   blue = '',
---   yellow = '',
---   orange = '',
---   purple = '',
---   aqua = ''
--- }
-
-local colors = {}
 local icons = {}
 
-local palette = vim.fn['gruvbox_material#get_palette'](
-  g.gruvbox_material_background, g.gruvbox_material_palette
-)
-
--- We will extract out the gui color from the table as seen in the above comment.
-for name, value in pairs(palette) do colors[name] = value[1] end
-
--- Colors taken out to make the names standard.
-colors.fg = palette.fg0[1]
-colors.active_bg = palette.bg_statusline2[1]
-colors.inactive_bg = palette.bg1[1]
-colors.active_grey = palette.grey2[1]
-colors.inactive_grey = palette.grey0[1]
-
+-- TODO: Does changing the reference change the actual table content?
 -- All icons are of 2 character wide.
 for k, v in pairs(temp_icons) do icons[k] = v .. ' ' end
+
+local colors = {
+  active_bg     = '#3a3735',
+  inactive_bg   = '#32302f',
+  active_fg     = '#e2cca9',
+  inactive_fg   = '#7c6f64',
+  grey          = '#a89984',
+  yellow        = '#e9b143',
+  green         = '#b0b846',
+  orange        = '#f28534',
+  red           = '#f2594b',
+  aqua          = '#8bba7f',
+  blue          = '#80aa9e',
+  purple        = '#d3869b',
+}
 
 -- Information about the special buffers usually from the plugin filetypes.
 -- TODO(buftype): quickfix, terminal
@@ -133,19 +76,19 @@ local special_buffer_info = {
 
 -- Mode table containing of the respective icon and color for the mode.
 local modes = {
-  n      = {'NORMAL', colors.grey2},
-  no     = {'N·OP', colors.grey2},
-  i      = {'INSERT', colors.bg_green},
-  ic     = {'I·COMPL', colors.bg_green},
+  n      = {'NORMAL', colors.grey},
+  no     = {'N·OP', colors.grey},
+  i      = {'INSERT', colors.green},
+  ic     = {'I·COMPL', colors.green},
   c      = {'COMMAND', colors.blue},
-  v      = {'VISUAL', colors.bg_red},
-  V      = {'V·LINE', colors.bg_red},
-  [''] = {'V·BLOCK', colors.bg_red},
-  s      = {'SELECT', colors.bg_red},
-  S      = {'S·LINE', colors.bg_red},
-  [''] = {'S·BLOCK', colors.bg_red},
-  R      = {'REPLACE', colors.bg_yellow},
-  Rv     = {'V·REPLACE', colors.bg_yellow},
+  v      = {'VISUAL', colors.red},
+  V      = {'V·LINE', colors.red},
+  [''] = {'V·BLOCK', colors.red},
+  s      = {'SELECT', colors.red},
+  S      = {'S·LINE', colors.red},
+  [''] = {'S·BLOCK', colors.red},
+  R      = {'REPLACE', colors.yellow},
+  Rv     = {'V·REPLACE', colors.yellow},
   ['r']  = {'PROMPT', colors.aqua},
   ['r?'] = {'CONFIRM', colors.aqua},
   rm     = {'MORE', colors.aqua},
@@ -341,7 +284,7 @@ end
 local function get_lsp_current_function()
   local current_function = vim.b.lsp_current_function
   if current_function and current_function ~= '' then
-    return '(' .. current_function .. ')'
+    return '(' .. current_function .. ') '
   end
 end
 
@@ -383,6 +326,19 @@ local function get_lsp_messages()
   if status ~= '' then return status .. ' ' end
 end
 
+-- local function python_info()
+--   if vim.bo.filetype == 'python' then
+--     local file = io.popen('python -V', 'r')
+--     local output = file:read("*a")
+--     file:close()
+--     local env = fnamemodify(os.getenv('VIRTUAL_ENV'), ':t')
+--     if env and env ~= '' then
+--       return output .. ' (' .. env .. ') '
+--     end
+--     return output
+--   end
+-- end
+
 -- This should be set to an empty string list as this variable is used by
 -- galaxyline to determine which buffers should display the short line. But,
 -- we are using the short line to display the inactive statusline for all
@@ -416,7 +372,7 @@ gls.left = {
     DirPath = {
       provider = dirpath_provider(dirpath_limit, dirpath_cutoff),
       condition = not_special_buffer,
-      highlight = {colors.active_grey, colors.active_bg}
+      highlight = {colors.grey, colors.active_bg}
     }
   },
   {
@@ -429,7 +385,7 @@ gls.left = {
   {
     FileName = {
       provider = filename_provider(true),
-      highlight = {colors.fg, colors.active_bg, 'bold'}
+      highlight = {colors.active_fg, colors.active_bg, 'bold'}
     }
   },
   {
@@ -448,14 +404,14 @@ gls.left = {
   {
     SpecialBufferName = {
       provider = special_buffer_name,
-      highlight = {colors.fg, colors.active_bg}
+      highlight = {colors.active_fg, colors.active_bg}
     }
   },
   {
     LspCurrentFunction = {
       provider = get_lsp_current_function,
       condition = not_special_buffer,
-      highlight = {colors.active_grey, colors.active_bg}
+      highlight = {colors.grey, colors.active_bg}
     }
   }
 }
@@ -500,7 +456,7 @@ gls.right = {
     LineInfo = {
       provider = 'LineColumn',
       condition = not_special_buffer,
-      highlight = {colors.active_grey, colors.active_bg, 'bold'},
+      highlight = {colors.grey, colors.active_bg, 'bold'},
     },
   },
   {
@@ -509,9 +465,15 @@ gls.right = {
       condition = not_special_buffer,
       separator = ' ',
       separator_highlight = {'NONE', colors.active_bg},
-      highlight = {colors.active_grey, colors.active_bg, 'bold'},
+      highlight = {colors.grey, colors.active_bg, 'bold'},
     }
   },
+  -- {
+  --   PythonInfo = {
+  --     provider = python_info,
+  --     highlight = {colors.grey, colors.active_bg},
+  --   }
+  -- },
   {
     GitBranch = {
       provider = git_status_info('head'),
@@ -548,7 +510,7 @@ gls.right = {
     LspMessages = {
       provider = get_lsp_messages,
       condition = not_special_buffer,
-      highlight = {colors.bg0, colors.grey2}
+      highlight = {colors.grey, colors.active_bg}
     }
   }
 }
@@ -558,13 +520,13 @@ gls.short_line_left = {
   {
     InactiveStart = {
       provider = function() return '▊ ' end,
-      highlight = {colors.inactive_grey, colors.inactive_bg}
+      highlight = {colors.inactive_fg, colors.inactive_bg}
     }
   },
   {
     InactiveFileIcon = {
       provider = file_icon_info('icon', fileinfo.get_file_icon),
-      highlight = {colors.inactive_grey, colors.inactive_bg}
+      highlight = {colors.inactive_fg, colors.inactive_bg}
     }
   },
   {
@@ -576,13 +538,13 @@ gls.short_line_left = {
   {
     InactiveSpecialBufferName = {
       provider = special_buffer_name,
-      highlight = {colors.inactive_grey, colors.inactive_bg}
+      highlight = {colors.inactive_fg, colors.inactive_bg}
     }
   },
   {
     InactiveFileName = {
       provider = filename_provider(false),
-      highlight = {colors.inactive_grey, colors.inactive_bg}
+      highlight = {colors.inactive_fg, colors.inactive_bg}
     }
   },
   {

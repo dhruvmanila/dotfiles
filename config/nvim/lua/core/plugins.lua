@@ -51,14 +51,13 @@ return require('packer').startup {
       'glepnir/galaxyline.nvim',
       branch = 'main',
       config = [[require('plugin.statusline')]],
-      after = 'gruvbox-material'
     }
 
     -- Icons
     use {
-      'yamatsum/nvim-nonicons',
+      'kyazdani42/nvim-web-devicons',
       {
-        'kyazdani42/nvim-web-devicons',
+        'yamatsum/nvim-nonicons',
         -- config = 'vim.g.override_nvim_web_devicons = false'
       }
     }
@@ -84,9 +83,8 @@ return require('packer').startup {
 
     -- Linters and formatters
     use {
-      -- {'mfussenegger/nvim-lint', opt = true},  -- New plugin
-      {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]]},  -- New plugin
-      {'mhartington/formatter.nvim', opt = true}  -- TODO: setup the formatters
+      {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]], opt = true},
+      {'lukas-reineke/format.nvim', config = [[require('plugin.format')]], opt = true}
     }
 
     -- Fuzzy finder

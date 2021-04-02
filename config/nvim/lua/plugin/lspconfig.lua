@@ -1,7 +1,6 @@
 -- lspconfig: https://github.com/neovim/nvim-lspconfig
 -- lightbulb: https://github.com/kosayoda/nvim-lightbulb
 -- lspstatus: https://github.com/nvim-lua/lsp-status.nvim
-local vim = vim
 local cmd = vim.cmd
 local lsp = vim.lsp
 local map = vim.api.nvim_set_keymap
@@ -48,14 +47,14 @@ end)()
 -- Update the default signs
 sign_define("LspDiagnosticsSignError", {text = icons.error})
 sign_define("LspDiagnosticsSignWarning", {text = icons.warning})
-sign_define("LspDiagnosticsSignHint", {text = icons.hint})
 sign_define("LspDiagnosticsSignInformation", {text = icons.info})
+sign_define("LspDiagnosticsSignHint", {text = icons.hint})
 
 ---Handlers configuration
 -- Using `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`
 lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
   lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = true,
+    virtual_text = false,
     underline = true,
     signs = true,
     update_in_insert = false
@@ -137,17 +136,18 @@ local function custom_on_attach(client)
 
   -- Setup auto-formatting on save if the language server supports it.
   if client.resolved_capabilities.document_formatting then
-    -- TODO: add keybindings instead of auto-formatting
-    table.insert(lsp_autocmds, 'BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)')
+    buf_map(0, 'n', '<Leader>lf', '<Cmd>lua vim.lsp.buf.formatting()<CR>', noremap)
+    -- TODO: auto format setup as per the configuration option b.auto_format_<ft> ?
+    -- table.insert(lsp_autocmds, 'BufWritePre <buffer> lua vim.lsp.buf.formatting_sync(nil, 1000)')
   end
 
   if client.resolved_capabilities.document_highlight then
     -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
     table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.buf.document_highlight()')
-    -- table.insert(
-    --   lsp_autocmds,
-    --   'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
-    -- )
+    table.insert(
+      lsp_autocmds,
+      'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
+    )
     table.insert(lsp_autocmds, 'CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
   end
 
@@ -161,11 +161,53 @@ end
 
 ---Server configurations
 local servers = {
-  -- Bash language server: https://github.com/bash-lsp/bash-language-server
+  -- https://github.com/bash-lsp/bash-language-server
   -- Settings: https://github.com/bash-lsp/bash-language-server/blob/master/server/src/config.ts
   bashls = {},
 
-  -- Pyright: https://github.com/microsoft/pyright
+  -- https://github.com/mattn/efm-langserver
+  -- Settings: https://github.com/mattn/efm-langserver/blob/master/schema.json
+  efm = {
+    -- cmd = {'efm-langserver', '-logfile', '/tmp/efm.log', '-loglevel', '5'},
+    init_options = { documentFormatting = true },
+    filetypes = {'python'},
+    logfile = '/tmp/efm_langserver.log',
+    loglevel = 5,
+    settings = {
+      rootMarkers = {'.git/'},
+      languages = {
+        python = {
+          {
+            lintCommand = 'mypy --show-column-numbers --follow-imports silent --ignore-missing-imports',
+            lintFormats = {
+              '%f:%l:%c: %trror: %m',
+              '%f:%l:%c: %tarning: %m',
+              '%f:%l:%c: %tote: %m',
+            },
+          },
+          {
+            lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
+            lintStdin = true,
+            lintFormats = {'%f:%l:%c: %m'},
+          },
+          {
+            formatCommand = 'black -',
+            formatStdin = true,
+          },
+          {
+            formatCommand = 'isort --profile black -',
+            formatStdin = true,
+          },
+        },
+      },
+    },
+  },
+
+  -- https://github.com/vscode-langservers/vscode-json-languageserver
+  -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#jsonls
+  jsonls = {},
+
+  -- https://github.com/microsoft/pyright
   -- Settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md
   pyright = {
     settings = {
@@ -181,7 +223,7 @@ local servers = {
     }
   },
 
-  -- Lua language server: https://github.com/sumneko/lua-language-server
+  -- https://github.com/sumneko/lua-language-server
   -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#sumneko_lua
   sumneko_lua = {
     cmd = {
@@ -210,32 +252,12 @@ local servers = {
     }
   },
 
-  -- efm language server: https://github.com/mattn/efm-langserver
-  -- Settings: https://github.com/mattn/efm-langserver/blob/master/schema.json
-  -- efm = {
-  --   init_options = { documentFormatting = true },
-  --   filetypes = {'python'},
-  --   settings = {
-  --     rootMarkers = {'.git/'},
-  --     languages = {
-  --       python = {
-  --         {
-  --           lintCommand = 'mypy --show-column-numbers --follow-imports silent --ignore-missing-imports',
-  --           lintFormats = {
-  --             '%f:%l:%c: %trror: %m',
-  --             '%f:%l:%c: %tarning: %m',
-  --             '%f:%l:%c: %tote: %m',
-  --           },
-  --         },
-  --         {
-  --           lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
-  --           lintStdin = true,
-  --           lintFormats = {'%f:%l:%c: %m'},
-  --         }
-  --       }
-  --     }
-  --   },
-  -- },
+  -- https://github.com/iamcco/vim-language-server
+  vimls = {},
+
+  -- https://github.com/redhat-developer/yaml-language-server
+  -- Settings: https://github.com/redhat-developer/yaml-language-server#language-server-settings
+  yamlls = {},
 }
 
 -- Override the default capabilities and pass it to the language server on

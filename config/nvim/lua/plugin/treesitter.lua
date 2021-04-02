@@ -10,5 +10,10 @@ require('nvim-treesitter.configs').setup {
   },
 
   -- syntax highlighting
-  highlight = {enable = true}
+  highlight = {
+    enable = true,
+    custom_captures = {
+      ["docstring"] = "TSComment",
+    }
+  },
 }
