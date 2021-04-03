@@ -23,7 +23,7 @@ local function parse_mypy_output(output, bufnr)
     local file, lineno, offset, severity, msg = string.match(message, MYPY_PATTERN)
     -- We should only report the errors found in the current file
     -- In `mypy` this can be avoided directly by passing `--follow-imports silent`
-    -- flag but we should also handle it in here.
+    -- flag but we should handle it in here.
     if file == buf_file then
       lineno = tonumber(lineno or 1) - 1
       offset = tonumber(offset or 1) - 1

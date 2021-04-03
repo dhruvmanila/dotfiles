@@ -326,19 +326,6 @@ local function get_lsp_messages()
   if status ~= '' then return status .. ' ' end
 end
 
--- local function python_info()
---   if vim.bo.filetype == 'python' then
---     local file = io.popen('python -V', 'r')
---     local output = file:read("*a")
---     file:close()
---     local env = fnamemodify(os.getenv('VIRTUAL_ENV'), ':t')
---     if env and env ~= '' then
---       return output .. ' (' .. env .. ') '
---     end
---     return output
---   end
--- end
-
 -- This should be set to an empty string list as this variable is used by
 -- galaxyline to determine which buffers should display the short line. But,
 -- we are using the short line to display the inactive statusline for all
@@ -468,12 +455,6 @@ gls.right = {
       highlight = {colors.grey, colors.active_bg, 'bold'},
     }
   },
-  -- {
-  --   PythonInfo = {
-  --     provider = python_info,
-  --     highlight = {colors.grey, colors.active_bg},
-  --   }
-  -- },
   {
     GitBranch = {
       provider = git_status_info('head'),

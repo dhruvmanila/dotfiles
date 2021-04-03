@@ -14,6 +14,6 @@ require('nvim-treesitter.configs').setup {
     enable = true,
     custom_captures = {
       ["docstring"] = "TSComment",
-    }
+    },
   },
 }

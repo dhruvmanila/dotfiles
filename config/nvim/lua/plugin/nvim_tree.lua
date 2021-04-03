@@ -24,6 +24,12 @@ g.nvim_tree_bindings = {
   ["h"] = tree_cb("close_node"),
 }
 
+g.nvim_tree_show_icons = {
+  git = 0,
+  folders = 1,
+  files = 1,
+}
+
 g.nvim_tree_icons = {
   git = {
     unstaged  = "",
@@ -32,7 +38,13 @@ g.nvim_tree_icons = {
     renamed   = "",
     untracked = "",
     deleted   = ""
-  }
+  },
+  folder = {
+    default    = "",
+    open       = "",
+    empty      = "",
+    empty_open = "",
+  },
 }
 
 map('n', '<C-n>', '<Cmd>NvimTreeToggle<CR>', {noremap = true})

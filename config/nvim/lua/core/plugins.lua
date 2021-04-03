@@ -42,8 +42,13 @@ return require('packer').startup {
     -- Helpful in visualizing colors live in the editor
     use {
       'norcalli/nvim-colorizer.lua',
-      cmd = 'ColorizerToggle',
-      config = [[require('colorizer').setup()]]
+      keys = {{'n', '<Leader>cc'}},
+      config = function ()
+        vim.api.nvim_set_keymap(
+          'n', '<Leader>cc', '<Cmd>ColorizerToggle<CR>', {noremap = true}
+        )
+        require('colorizer').setup()
+      end
     }
 
     -- Statusline
@@ -52,6 +57,9 @@ return require('packer').startup {
       branch = 'main',
       config = [[require('plugin.statusline')]],
     }
+
+    -- Buffers displayed on tabline
+    use {'akinsho/nvim-bufferline.lua', config = [[require('plugin.bufferline')]]}
 
     -- Icons
     use {

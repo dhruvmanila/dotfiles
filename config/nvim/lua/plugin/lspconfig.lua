@@ -171,8 +171,6 @@ local servers = {
     -- cmd = {'efm-langserver', '-logfile', '/tmp/efm.log', '-loglevel', '5'},
     init_options = { documentFormatting = true },
     filetypes = {'python'},
-    logfile = '/tmp/efm_langserver.log',
-    loglevel = 5,
     settings = {
       rootMarkers = {'.git/'},
       languages = {

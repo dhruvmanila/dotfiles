@@ -20,10 +20,16 @@ local augroups = {
 
     -- Check if file changed when its window is focus, more eager than 'autoread'
     [[FocusGained * checktime]],
-    [[FileChangedShellPost * 
-      echohl WarningMsg | 
-      echo "File changed on disk. Buffer reloaded." | 
+    [[FileChangedShellPost *
+      echohl WarningMsg |
+      echo "File changed on disk. Buffer reloaded." |
       echohl None]],
+
+    -- Automatically go to insert mode on terminal buffer
+    [[TermOpen * startinsert]],
+
+    -- Remove trailing whitespace on save
+    [[BufWritePre * %s/\s\+$//e]],
   }
 }
 

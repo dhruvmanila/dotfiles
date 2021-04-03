@@ -2,8 +2,8 @@
 
 require('gitsigns').setup {
   signs = {
-    add          = {hl = 'GreenSign' , text = '│'},
-    change       = {hl = 'BlueSign',   text = '│'},
+    add          = {hl = 'GreenSign' , text = '┃'},
+    change       = {hl = 'BlueSign',   text = '┃'},
     delete       = {hl = 'RedSign',    text = '_'},
     topdelete    = {hl = 'RedSign',    text = '‾'},
     changedelete = {hl = 'PurpleSign', text = '~'},

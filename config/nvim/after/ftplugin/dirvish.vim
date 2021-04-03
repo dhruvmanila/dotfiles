@@ -5,7 +5,7 @@ setlocal nolist
 
 " Recursive key bindings
 nmap <silent><buffer><nowait> q gq
-nmap <silent><buffer> ? g?
+nmap <silent><buffer> gh g?
 nmap <silent><buffer> h -
 nmap <silent><buffer> l i
 
