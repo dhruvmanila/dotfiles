@@ -59,7 +59,7 @@ return require('packer').startup {
     }
 
     -- Buffers displayed on tabline
-    use {'akinsho/nvim-bufferline.lua', config = [[require('plugin.bufferline')]]}
+    -- use {'akinsho/nvim-bufferline.lua', config = [[require('plugin.bufferline')]]}
 
     -- Icons
     use {

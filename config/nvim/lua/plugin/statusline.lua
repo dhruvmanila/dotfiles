@@ -76,24 +76,24 @@ local special_buffer_info = {
 
 -- Mode table containing of the respective icon and color for the mode.
 local modes = {
-  n      = {'NORMAL', colors.grey},
+  n      = {'N', colors.grey},
   no     = {'N·OP', colors.grey},
-  i      = {'INSERT', colors.green},
-  ic     = {'I·COMPL', colors.green},
-  c      = {'COMMAND', colors.blue},
-  v      = {'VISUAL', colors.red},
-  V      = {'V·LINE', colors.red},
-  [''] = {'V·BLOCK', colors.red},
-  s      = {'SELECT', colors.red},
-  S      = {'S·LINE', colors.red},
-  [''] = {'S·BLOCK', colors.red},
-  R      = {'REPLACE', colors.yellow},
-  Rv     = {'V·REPLACE', colors.yellow},
-  ['r']  = {'PROMPT', colors.aqua},
-  ['r?'] = {'CONFIRM', colors.aqua},
-  rm     = {'MORE', colors.aqua},
-  ['!']  = {'SHELL', colors.aqua},
-  t      = {'TERMINAL', colors.purple},
+  i      = {'I', colors.green},
+  ic     = {'I·CO', colors.green},
+  c      = {'C', colors.blue},
+  v      = {'V', colors.red},
+  V      = {'V·L', colors.red},
+  [''] = {'V·B', colors.red},
+  s      = {'S', colors.red},
+  S      = {'S·L', colors.red},
+  [''] = {'S·B', colors.red},
+  R      = {'R', colors.yellow},
+  Rv     = {'V·R', colors.yellow},
+  ['r']  = {'P', colors.aqua},
+  ['r?'] = {'C', colors.aqua},
+  rm     = {'M', colors.aqua},
+  ['!']  = {'!', colors.aqua},
+  t      = {'T', colors.purple},
 }
 
 ---LSP server name aliases (displayed in the LSP messages)
@@ -123,12 +123,12 @@ local function not_special_buffer() return not special_buffer() end
 
 ---Providers:
 
----Mode provider for the statusline. Returns the respective mode icon.
+---Mode provider for the statusline.
 ---@return string
 local function mode_provider()
   local m = modes[vim.fn.mode()]
-  vim.cmd('hi GalaxyViMode guifg=' .. m[2] .. ' guibg=' .. colors.active_bg .. ' gui=bold')
-  return m[1] .. ' '
+  vim.cmd('hi GalaxyViMode guifg=' .. colors.inactive_bg .. ' guibg=' .. m[2] .. ' gui=bold')
+  return '  ' .. m[1] .. ' '
 end
 
 ---File icon information provider.
@@ -145,58 +145,60 @@ local function file_icon_info(field, default_func)
   end
   return function()
     if special_buffer() then
-      return special_buffer_info[field][vim.bo.filetype]
+      return '  ' .. special_buffer_info[field][vim.bo.filetype]
     end
-    return default_func()
+    return '  ' .. default_func()
   end
 end
 
--- Filename directory path provider.
--- A responsive provider which returns the path to current files directory in
--- which each directory is shortened except for the tail directory. A maximum
--- of cutoff characters are allowed after which only the tail directory is
--- returned. If the window width becomes less than transition, the provider
--- returns an empty string.
---
+---Filename directory path provider.
+---A responsive provider which returns the path to current files directory in
+---which each directory is shortened except for the tail directory. A maximum
+---of cutoff characters are allowed after which only the tail directory is
+---returned. If the window width becomes less than transition, the provider
+---returns nil.
+---
 ---@param transition integer window width upto which to return the path
 ---@param cutoff integer string length after which only the tail part is returned
 ---@return function
 local function dirpath_provider(transition, cutoff)
   return function()
-    local path = expand('%:~:.')
-    local dirpath = fn.pathshorten(fnamemodify(path, ':h:h'))
-    local len = #dirpath
-    local is_root = dirpath and len == 1
+    if winwidth(0) > transition then
+      local path = expand('%:~:.')
+      local dirpath = fn.pathshorten(fnamemodify(path, ':h:h'))
+      local len = #dirpath
 
-    if not is_root and winwidth(0) > transition then
-      if len > cutoff then
-        return '../' .. fnamemodify(dirpath, ':t') .. '/'
-      else
-        return dirpath .. '/'
+      if dirpath and len ~= 1 then
+        if len > cutoff then
+          return '../' .. fnamemodify(dirpath, ':t') .. '/'
+        else
+          return dirpath .. '/'
+        end
       end
     end
   end
 end
 
--- Filename parent directory provider.
--- Returns the current file directory name if the window width is not less than
--- the transition value.
---
+---Filename parent directory provider.
+---Returns the current file directory name if the window width is not less than
+---the transition value.
+---
 ---@param transition integer window width upto which to return the path
 ---@return function
 local function parent_dir(transition)
   return function()
-    local parent = expand('%:~:.:h:t')
-    local is_root = parent and #parent == 1
-    if not is_root and winwidth(0) > transition then
-      return parent .. '/'
+    if winwidth(0) > transition then
+      local parent = expand('%:~:.:h:t')
+      if parent and #parent ~= 1 then
+        return parent .. '/'
+      end
     end
   end
 end
 
 ---Filename provider.
----Returns the name of the file when in an active window otherwise the entire
----path to the file.
+---Returns the name of the file when in an active window otherwise the path to
+---the file from pwd.
 ---
 ---@param active boolean
 ---@return string
@@ -212,9 +214,8 @@ local function filename_provider(active)
   end
 end
 
--- File flags provider.
--- Returns the appropriate flag for the current window file.
--- Supported flags: Readonly, modified.
+---File flags provider.
+---Supported flags: Readonly, modified.
 local function file_flags()
   if vim.bo.readonly == true then
     return ' ' .. icons.lock
@@ -223,15 +224,11 @@ local function file_flags()
   end
 end
 
--- File details provider.
--- Returns the file encoding and file format according to the current window
--- width. This is displayed only if the file encoding is not 'utf-8' and
--- file format is not 'unix'.
+---File details provider (fileencoding fileformat)
 local function file_detail()
-  local encode = vim.bo.fenc ~= '' and vim.bo.fenc or vim.o.enc
-  local format = vim.bo.fileformat
-
   if winwidth(0) > file_detail_limit then
+    local encode = vim.bo.fenc ~= '' and vim.bo.fenc or vim.o.enc
+    local format = vim.bo.fileformat
     return encode:upper() .. ' ' .. format:upper() .. ' '
   end
 end
@@ -254,9 +251,9 @@ end
 local function git_status_info(field)
   return function()
     local status_dict = vim.b.gitsigns_status_dict
-    if status_dict ~= nil then
+    if status_dict then
       local info = status_dict[field]
-      if info ~= nil then
+      if info then
         if type(info) == 'number' then
           if info > 0 and winwidth(0) > git_diff_limit then
             return info .. ' '
@@ -335,12 +332,6 @@ gl.short_line_list = {''}
 -- For left section, the separator will be rendered on the right side of the
 -- component and vice versa for the right section.
 gls.left = {
-  {
-    ActiveStart = {
-      provider = function() return '▊ ' end,
-      highlight = {colors.yellow, colors.active_bg}
-    }
-  },
   {
     ViMode = {
       provider = mode_provider,
@@ -443,7 +434,7 @@ gls.right = {
     LineInfo = {
       provider = 'LineColumn',
       condition = not_special_buffer,
-      highlight = {colors.grey, colors.active_bg, 'bold'},
+      highlight = {colors.active_fg, colors.active_bg, 'bold'},
     },
   },
   {
@@ -460,7 +451,7 @@ gls.right = {
       provider = git_status_info('head'),
       condition = not_special_buffer,
       icon = icons.git_branch,
-      highlight = {colors.blue, colors.active_bg, 'bold'},
+      highlight = {colors.green, colors.active_bg, 'bold'},
     }
   },
   {
@@ -498,12 +489,6 @@ gls.right = {
 
 -- Used as the inactive statusline
 gls.short_line_left = {
-  {
-    InactiveStart = {
-      provider = function() return '▊ ' end,
-      highlight = {colors.inactive_fg, colors.inactive_bg}
-    }
-  },
   {
     InactiveFileIcon = {
       provider = file_icon_info('icon', fileinfo.get_file_icon),

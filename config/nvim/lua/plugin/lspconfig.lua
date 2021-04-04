@@ -182,11 +182,13 @@ local servers = {
               '%f:%l:%c: %tarning: %m',
               '%f:%l:%c: %tote: %m',
             },
+            lintIgnoreExitCode = true,
           },
           {
             lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
             lintStdin = true,
             lintFormats = {'%f:%l:%c: %m'},
+            lintIgnoreExitCode = true,
           },
           {
             formatCommand = 'black -',

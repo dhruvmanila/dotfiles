@@ -11,19 +11,23 @@ local augroups = {
 
     -- Highlighted yank
     [[TextYankPost * silent! lua vim.highlight.on_yank(
-      {higroup="IncSearch", timeout=200}
+      {higroup="Substitute", timeout=200}
     )]],
 
-    -- Auto compile plugins on file update
+    -- Keep the plugins in sync (clean, update, install, compile)
     [[BufWritePost plugins.lua luafile %]],
     [[BufWritePost plugins.lua PackerSync]],
 
-    -- Check if file changed when its window is focus, more eager than 'autoread'
-    [[FocusGained * checktime]],
+    -- Check if file changed (more eager than 'autoread')
+    -- https://unix.stackexchange.com/a/383044
+    [[FocusGained,BufEnter *
+      if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == ''
+        | checktime
+        | endif]],
     [[FileChangedShellPost *
-      echohl WarningMsg |
-      echo "File changed on disk. Buffer reloaded." |
-      echohl None]],
+      echohl WarningMsg
+      | echo "File changed on disk. Buffer reloaded."
+      | echohl None]],
 
     -- Automatically go to insert mode on terminal buffer
     [[TermOpen * startinsert]],

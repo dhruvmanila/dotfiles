@@ -94,7 +94,10 @@ map('c', '<C-k>', '<Up>')
 map('c', '<C-j>', '<Down>')
 
 -- Movement in insert mode
-map('i', '<C-h>', '<C-o>h')
-map('i', '<C-l>', '<C-o>l')
-map('i', '<C-j>', '<C-o>j')
-map('i', '<C-k>', '<C-o>k')
+-- map('i', '<C-h>', '<C-o>h')
+-- map('i', '<C-l>', '<C-o>l')
+-- map('i', '<C-j>', '<C-o>j')
+-- map('i', '<C-k>', '<C-o>k')
+
+-- Normal mode in terminal
+map('t', '<Esc>', [[<C-\><C-n>]])

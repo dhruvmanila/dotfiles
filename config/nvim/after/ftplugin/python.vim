@@ -1,4 +1,4 @@
-setlocal tabstop=4 
+setlocal tabstop=4
 setlocal shiftwidth=4
 
 " Default is 80
@@ -17,4 +17,3 @@ nnoremap <silent><buffer> gk :call <SID>search_python_docs(expand('<cWORD>'))<CR
 " if luaeval("_G.packer_plugins['nvim-lint'].loaded")
 "   autocmd BufWritePost <buffer> lua require('lint').try_lint()
 " endif
-
