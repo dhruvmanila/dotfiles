@@ -27,12 +27,6 @@ g.gruvbox_material_better_performance = 1
 
 cmd('colorscheme gruvbox-material')
 
--- nvim-nonicons loads the plugin, thus setting the highlights for the icons.
--- But, then we are setting the colorscheme which will reset all the
--- highlights. This is the reason we need to call it after setting up the
--- colorscheme.
-require('nvim-web-devicons').setup()
-
 local highlight = vim.fn['gruvbox_material#highlight']
 local palette = vim.fn['gruvbox_material#get_palette'](
   g.gruvbox_material_background, g.gruvbox_material_palette

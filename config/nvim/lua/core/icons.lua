@@ -1,6 +1,10 @@
 local get_icon = require('nvim-nonicons').get
 local M = {}
 
+-- for k,v in pairs(require('nvim-nonicons.mapping')) do
+--   print(k, vim.fn.nr2char(v))
+-- end
+
 M.lsp_kind = {
   Text          = '',
   Method        = '',
@@ -32,11 +36,10 @@ M.lsp_kind = {
 M.icons = {
   tree          = '侮',
   git_logo      = '',
-  error         = '✘',
-  warning       = '',
-  hint          = '',
+  error         = get_icon('x-circle-fill'),
+  warning       = '',  -- 'alert'
   info          = get_icon('info'),
-  question      = get_icon('question'),
+  hint          = get_icon('question'), -- 'search', 'tools'
   lock          = get_icon('lock'),
   git_branch    = get_icon('git-branch'),
   diff_added    = get_icon('diff-added'),
@@ -45,7 +48,7 @@ M.icons = {
   directory     = get_icon('file-directory'),
   package       = get_icon('package'),
   pencil        = get_icon('pencil'),
-  lightbulb     = get_icon('light-bulb'),  -- Alternative: "💡"
+  lightbulb     = '💡',  -- Alternative: "💡", 'lightbulb'
 }
 
 M.spinner_frames = { '⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷' }

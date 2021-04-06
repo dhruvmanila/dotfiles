@@ -54,7 +54,7 @@ sign_define("LspDiagnosticsSignHint", {text = icons.hint})
 -- Using `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`
 lsp.handlers['textDocument/publishDiagnostics'] = lsp.with(
   lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = false,
+    virtual_text = true,
     underline = true,
     signs = true,
     update_in_insert = false
@@ -133,6 +133,7 @@ local function custom_on_attach(client)
   buf_map(0, 'n', 'ga', '<Cmd>lua vim.lsp.buf.code_action()<CR>', noremap)
   buf_map(0, 'n', '<C-s>', '<Cmd>lua vim.lsp.buf.signature_help()<CR>', noremap)
   buf_map(0, 'n', '<Leader>rn', '<Cmd>lua vim.lsp.buf.rename()<CR>', noremap)
+  buf_map(0, 'n', 'gl', '<Cmd>lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})<CR>', noremap)
 
   -- Setup auto-formatting on save if the language server supports it.
   if client.resolved_capabilities.document_formatting then
@@ -144,10 +145,10 @@ local function custom_on_attach(client)
   if client.resolved_capabilities.document_highlight then
     -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
     table.insert(lsp_autocmds, 'CursorHold <buffer> lua vim.lsp.buf.document_highlight()')
-    table.insert(
-      lsp_autocmds,
-      'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
-    )
+    -- table.insert(
+    --   lsp_autocmds,
+    --   'CursorHold <buffer> lua vim.lsp.diagnostic.show_line_diagnostics({show_header = false})'
+    -- )
     table.insert(lsp_autocmds, 'CursorMoved <buffer> lua vim.lsp.buf.clear_references()')
   end
 

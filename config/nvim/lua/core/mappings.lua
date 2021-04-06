@@ -18,6 +18,10 @@ map('n', 'Y', 'y$')
 map('n', 'j', 'gj')
 map('n', 'k', 'gk')
 
+-- Easy command mode if not using registers explicitly
+-- map('n', "'", ';')
+-- map('n', ';', ':')
+
 -- Split with Leader (same as that of tmux)
 map('n', '<Leader>-', '<Cmd>sp<CR>')
 map('n', '<Leader>|', '<Cmd>vsp<CR>')
@@ -27,8 +31,28 @@ map('n', ']<Leader>', '<Cmd>bnext<CR>')
 map('n', '[<Leader>', '<Cmd>bprev<CR>')
 map('n', '<Leader><BS>', '<Cmd>bdelete<CR>')
 
+-- Quickfix and location list
+map('n', ']q', '<Cmd>cnext<CR>')
+map('n', '[q', '<Cmd>cprev<CR>')
+-- TODO: This slows down <Leader>q
+-- map('n', '<Leader>qo', '<Cmd>copen<CR>')
+-- map('n', '<Leader>qc', '<Cmd>cclose<CR>')
+map('n', ']l', '<Cmd>lnext<CR>')
+map('n', '[l', '<Cmd>lprev<CR>')
+
 -- Fast switching between last and current file
 map('n', '<Leader><Leader>', '<C-^>')
+
+-- Quick cd and lcd
+map('n', '<Leader>cd', '<Cmd>cd %:p:h<CR>')
+map('n', '<Leader>lcd', '<Cmd>lcd %:p:h<CR>')
+
+-- Quick tabs movement (trying out tabs)
+map('n', '<Leader>1', '1gt')
+map('n', '<Leader>2', '2gt')
+map('n', '<Leader>3', '3gt')
+map('n', '<Leader>4', '4gt')
+map('n', '<Leader>5', '5gt')
 
 -- Quicker window movement
 map('n', '<C-j>', '<C-w>j')
@@ -74,7 +98,7 @@ map({'n', 'x'}, 'x', '"_x')
 map({'n', 'x'}, 'X', '"_X')
 
 -- Replace the selection without overriding the paste register
-map('x', 'p', '"_dP')
+map('x', '<Leader>p', '"_dP')
 
 -- Capital JK move code lines/blocks up & down (only in visual mode)
 map('x', 'J', [[:m '>+1<CR>gv=gv]])

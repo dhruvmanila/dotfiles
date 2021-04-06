@@ -1,6 +1,6 @@
 local execute = vim.api.nvim_command
 local fn = vim.fn
-local map = vim.api.nvim_set_keymap
+-- local map = vim.api.nvim_set_keymap
 
 local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
 
@@ -10,8 +10,8 @@ if fn.empty(fn.glob(install_path)) > 0 then
 end
 
 -- Some useful keybindings (PackerSync -> PackerClean + PackerUpdate)
-map('n', '<Leader>ps', '<Cmd>PackerSync<CR>', {noremap = true})
-map('n', '<Leader>pc', '<Cmd>PackerCompile<CR>', {noremap = true})
+-- map('n', '<Leader>ps', '<Cmd>PackerSync<CR>', {noremap = true})
+-- map('n', '<Leader>pc', '<Cmd>PackerCompile<CR>', {noremap = true})
 
 --[[
 Notes:
@@ -58,7 +58,7 @@ return require('packer').startup {
       config = [[require('plugin.statusline')]],
     }
 
-    -- Buffers displayed on tabline
+    -- Buffers displayed on tabline (not liking it much)
     -- use {'akinsho/nvim-bufferline.lua', config = [[require('plugin.bufferline')]]}
 
     -- Icons
@@ -89,7 +89,7 @@ return require('packer').startup {
       },
     }
 
-    -- Linters and formatters
+    -- Linters and formatters (WIP plugins) (for now using efm langserver)
     use {
       {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]], opt = true},
       {'lukas-reineke/format.nvim', config = [[require('plugin.format')]], opt = true}

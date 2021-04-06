@@ -18,21 +18,24 @@ g.ascii_neovim = {
 g.startify_custom_header = 'startify#pad(g:ascii_neovim + startify#fortune#boxed())'
 
 g.startify_lists = {
-  {type = 'sessions',  header = {'   Sessions'}},
-  {type = 'dir',       header = {'   Current Directory ' .. vim.fn.getcwd()}},
-  {type = 'files',     header = {'   Files'}},
-  {type = 'bookmarks', header = {'   Bookmarks'}},
-  {type = 'commands',  header = {'   Commands'}},
+  {type = 'sessions', header = {'   Sessions'}, indices = {"a", "s", "d", "f", "g", "h"}},
+  {type = 'dir',      header = {'   MRU ' .. vim.fn.getcwd()}},
+  {type = 'files',    header = {'   MRU'}},
+  {type = 'commands', header = {'   Commands'}},
 }
 
 g.startify_commands = {
-  {st = 'StartupTime'},
+  {pr = 'StartupTime'},
   {ps = 'PackerSync'},
   {pi = 'PackerInstall'},
   {pc = 'PackerCompile'},
 }
 
+g.startify_session_before_save = {'silent! tabdo NvimTreeClose'}
 g.startify_fortune_use_unicode = 1
+
+-- I use sessions most of the time
+g.startify_files_number = 5
 
 -- Automatically update sessions before leaving Vim and before loading a new
 -- session via :SLoad

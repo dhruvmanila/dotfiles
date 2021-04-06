@@ -144,8 +144,9 @@ local function file_icon_info(field, default_func)
     return function() return '' end
   end
   return function()
-    if special_buffer() then
-      return '  ' .. special_buffer_info[field][vim.bo.filetype]
+    local info = special_buffer_info[field][vim.bo.filetype]
+    if info then
+      return '  ' .. info
     end
     return '  ' .. default_func()
   end

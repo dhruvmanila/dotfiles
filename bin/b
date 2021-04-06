@@ -20,8 +20,12 @@ require 'json'
 FILE = '~/Library/Application Support/BraveSoftware/Brave-Browser/Default/Bookmarks'
 CJK  = /\p{Han}|\p{Katakana}|\p{Hiragana}|\p{Hangul}/
 
+# Build the entries by recursively entering every folder and collecting the
+# name and url information for the entry.
 def build parent, json
-  name = [parent, json['name']].compact.join('/')
+  # compact removes all the nil values
+  # We don't want the bookmark category to be included
+  name = if parent then [parent, json['name']].compact.join('/') else '' end
   if json['type'] == 'folder'
     json['children'].map { |child| build name, child }
   else
@@ -42,11 +46,27 @@ def trim str, width
   str
 end
 
+# Current width of the terminal
 width = `tput cols`.strip.to_i / 2
 json  = JSON.load File.read File.expand_path FILE
+
+# {
+#   "checksum": ...,
+#   "roots": {
+#     "bookmark_bar": {
+#       ...
+#     },
+#     "synced": {
+#       ...
+#     },
+#     "other": {
+#       ...
+#     }
+#   }
+# }
 items = json['roots']
         .values_at(*%w(bookmark_bar synced other))
-        .compact
+        .compact  # remove all the nil values
         .map { |e| build nil, e }
         .flatten
 
