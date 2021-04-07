@@ -87,11 +87,16 @@ return require('packer').startup {
         event = 'InsertEnter',
         config = [[require('plugin.completion')]],
       },
+      {
+        'liuchengxu/vista.vim',
+        keys = {{'n', '<Leader>vv'}},
+        config = [[require('plugin.vista')]],
+      }
     }
 
     -- Linters and formatters (WIP plugins) (for now using efm langserver)
     use {
-      {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]], opt = true},
+      {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]], opt = false},
       {'lukas-reineke/format.nvim', config = [[require('plugin.format')]], opt = true}
     }
 
@@ -123,11 +128,7 @@ return require('packer').startup {
 
     -- Git
     use {
-      {
-        'tpope/vim-fugitive',
-        keys = {{'n', 'gs'}, {'n', '<Leader>gp'}},
-        config = [[require('plugin.fugitive')]]
-      },
+      {'tpope/vim-fugitive', config = [[require('plugin.fugitive')]]},
       {
         'lewis6991/gitsigns.nvim',
         event = {'BufRead', 'BufNewFile'},

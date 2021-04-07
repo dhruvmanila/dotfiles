@@ -4,22 +4,33 @@ setlocal norelativenumber
 setlocal nolist
 
 " Recursive key bindings
-nmap <silent><buffer><nowait> q gq
-nmap <silent><buffer> gh g?
-nmap <silent><buffer> h -
-nmap <silent><buffer> l i
+nmap <silent><buffer><nowait> q <Plug>(dirvish_quit)
+nmap <silent><buffer> h <Plug>(dirvish_up)
 
 " Quick switching the context
 nnoremap <silent><buffer> ~ :Dirvish $HOME<CR>
 nnoremap <silent><buffer> ` :Dirvish /<CR>
 
-nnoremap <silent><buffer> v :call dirvish#open('vsplit', 0)<CR>:wincmd p<CR>
-xnoremap <silent><buffer> v :call dirvish#open('vsplit', 0)<CR>:wincmd p<CR>
+" Better than the default g?
+nnoremap <silent><buffer> gh :help dirvish-mappings<CR>
+
+" Opening files/directories
+nnoremap <silent><buffer> l :call dirvish#open('edit', 0)<CR>
+nnoremap <silent><buffer> s :call dirvish#open('split', 1)<CR>
+xnoremap <silent><buffer> s :call dirvish#open('split', 1)<CR>
+nnoremap <silent><buffer> v :call dirvish#open('vsplit', 1)<CR>
+xnoremap <silent><buffer> v :call dirvish#open('vsplit', 1)<CR>
+
+" 'T' will open in new tab in the background
+nnoremap <silent><buffer> t :call dirvish#open('tabedit', 0)<CR>
+xnoremap <silent><buffer> t :call dirvish#open('tabedit', 0)<CR>
+nnoremap <silent><buffer> T :call dirvish#open('tabedit', 1)<CR>
+xnoremap <silent><buffer> T :call dirvish#open('tabedit', 1)<CR>
 
 " Hide dotfiles. Press `R` to "toggle" (reload).
 nnoremap <silent><buffer> .
       \ :silent keeppatterns g@\v/\.[^\/]+/?$@d _<CR>
-      \ :setlocal conceallevel=3<CR> 
+      \ :setlocal conceallevel=3<CR>
 
 if exists('b:dovish_ftplugin')
   nmap <silent><buffer> nf <Plug>(dovish_create_file)

@@ -10,6 +10,7 @@ require('telescope').setup {
     sorting_strategy = 'ascending',
     layout_strategy = 'horizontal',
     color_devicons = true,
+    file_ignore_patterns = {'__pycache__'},
     layout_defaults = {
       horizontal = {
         preview_width = 0.5,
@@ -26,7 +27,8 @@ require('telescope').setup {
       i = {
         ["<Esc>"] = actions.close,
         ["<C-j>"] = actions.move_selection_next,
-        ["<C-k>"] = actions.move_selection_previous
+        ["<C-k>"] = actions.move_selection_previous,
+        ["<C-q>"] = actions.send_to_qflist,
       },
     },
     extensions = {

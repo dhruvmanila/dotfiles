@@ -5,7 +5,7 @@
 	signingkey = 9601911DE8797432
 
 [core]
-	editor = vim
+	editor = nvim
 	# Use custom `.gitignore`
 	excludesfile = ~/.gitignore
 	ignorecase = false

@@ -168,41 +168,41 @@ local servers = {
 
   -- https://github.com/mattn/efm-langserver
   -- Settings: https://github.com/mattn/efm-langserver/blob/master/schema.json
-  efm = {
-    -- cmd = {'efm-langserver', '-logfile', '/tmp/efm.log', '-loglevel', '5'},
-    init_options = { documentFormatting = true },
-    filetypes = {'python'},
-    settings = {
-      rootMarkers = {'.git/'},
-      languages = {
-        python = {
-          {
-            lintCommand = 'mypy --show-column-numbers --follow-imports silent --ignore-missing-imports',
-            lintFormats = {
-              '%f:%l:%c: %trror: %m',
-              '%f:%l:%c: %tarning: %m',
-              '%f:%l:%c: %tote: %m',
-            },
-            lintIgnoreExitCode = true,
-          },
-          {
-            lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
-            lintStdin = true,
-            lintFormats = {'%f:%l:%c: %m'},
-            lintIgnoreExitCode = true,
-          },
-          {
-            formatCommand = 'black -',
-            formatStdin = true,
-          },
-          {
-            formatCommand = 'isort --profile black -',
-            formatStdin = true,
-          },
-        },
-      },
-    },
-  },
+  -- efm = {
+  --   -- cmd = {'efm-langserver', '-logfile', '/tmp/efm.log', '-loglevel', '5'},
+  --   init_options = { documentFormatting = true },
+  --   filetypes = {'python'},
+  --   settings = {
+  --     rootMarkers = {'.git/'},
+  --     languages = {
+  --       python = {
+  --         {
+  --           lintCommand = 'mypy --show-column-numbers --follow-imports silent --ignore-missing-imports',
+  --           lintFormats = {
+  --             '%f:%l:%c: %trror: %m',
+  --             '%f:%l:%c: %tarning: %m',
+  --             '%f:%l:%c: %tote: %m',
+  --           },
+  --           lintIgnoreExitCode = true,
+  --         },
+  --         {
+  --           lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
+  --           lintStdin = true,
+  --           lintFormats = {'%f:%l:%c: %m'},
+  --           lintIgnoreExitCode = true,
+  --         },
+  --         {
+  --           formatCommand = 'black -',
+  --           formatStdin = true,
+  --         },
+  --         {
+  --           formatCommand = 'isort --profile black -',
+  --           formatStdin = true,
+  --         },
+  --       },
+  --     },
+  --   },
+  -- },
 
   -- https://github.com/vscode-langservers/vscode-json-languageserver
   -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#jsonls

@@ -2,25 +2,16 @@
 
 ## Neovim
 
-**(Telescope): Add mappings for the following cases (define it if not present):**
-- [x] Project files
-- [ ] Dotfiles
-- [ ] Neovim modules directory (~/.local/share/nvim/site/pack/packer/)
-- [x] Buffers
-- [x] Command history
+**Telescope:**
 - [ ] Search history
-- [x] Helptags
 - [x] Buffer lines (Maybe just keep 'all buffer lines'?)
-- [x] Grep (Rg)
-- [x] Commands
-- [x] Mappings
-- [x] Git commits
 - [ ] Git branches? (checkout/rebase/delete)
+- [ ] Neovim source code ?
+- [ ] Python source code or maybe just Lib/ directory
+- [ ] Project files or cwd for <C-p>?
 
-**(LSP): Add LSP configuration for following languages:**
-- [ ] Python (pyright or pyls?)
-- [ ] Bash
-- [ ] Lua
+
+**LSP:**
 
 
 ## Bash
