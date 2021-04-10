@@ -24,12 +24,6 @@ function load_dotfiles() {
 load_dotfiles
 unset load_dotfiles
 
-# Enable tab completion for `g` by marking it as an alias for `git`
-if type _git &> /dev/null; then
-  complete -o default -o nospace -F _git g;
-fi;
-
-
 # if [ -e "${HOME}/.config/broot/launcher/bash/br" ]; then
 #   source "${HOME}/.config/broot/launcher/bash/br"
 # elif type -P "broot"; then
@@ -39,6 +33,7 @@ fi;
 
 if command -v pyenv &>/dev/null; then
   eval "$(pyenv init -)"
+  complete -o default -o nospace -F _pyenv p
 fi
 
 # Commenting it out as this slows down the prompt by injecting the function

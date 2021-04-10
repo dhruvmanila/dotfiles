@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
-# Python3 easy open
 alias python="python3"
 alias g="git"
-
+alias p="pyenv"
+alias dc="docker-compose"
 alias vi="nvim"
 
-# Easy clear (use CTRL-l)
-# alias cl="clear"
+# nnn (to reset less)
+alias nnn='LESS=-R nnn'
+
+# Easy activate/deactivate virtual environments ('p' prefix for Python)
+# alias pva='pyenv activate'
+# alias pvd='pyenv deactivate'
 
 # Easier navigation: .., ..., ...., ..... and -
 alias ..="cd .."
@@ -67,10 +71,3 @@ alias lda='ls -lhAF ${colorflag} | grep -Ei --color=always " [a-z0-9.-]+/$"'
 
 # Always use color output for `ls`
 alias ls='command ls ${colorflag} -h'
-
-# nnn (to reset less)
-alias nnn='LESS=-R nnn'
-
-# Easy activate/deactivate virtual environments ('p' prefix for Python)
-alias pva='pyenv activate'
-alias pvd='pyenv deactivate'

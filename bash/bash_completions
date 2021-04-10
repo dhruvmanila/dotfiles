@@ -2,9 +2,6 @@
 # shellcheck disable=SC1090,SC1091
 # Bash completions
 BREW_PREFIX="$(brew --prefix)"
-GIT_COMPLETION_PATH="/Library/Developer/CommandLineTools/usr/share/git-core/git-completion.bash"
-VAGRANT_COMPLETION_PATH="/opt/vagrant/embedded/gems/2.2.15/gems/vagrant-2.2.15/contrib/bash/completion.sh"
-DOCKER_COMPLETION_PATH="/Applications/Docker.app/Contents/Resources/etc/docker.bash-completion"
 FZF_COMPLETION_PATH="/usr/local/opt/fzf/shell/completion.bash"
 
 # Add tab completion for many Bash commands
@@ -16,31 +13,13 @@ elif [[ -f "/etc/bash_completion" ]]; then
   source "/etc/bash_completion";
 fi;
 
-# Git auto-complete
-if [[ -r "${GIT_COMPLETION_PATH}" ]]; then
-  source "${GIT_COMPLETION_PATH}"
-fi
-
-# Vagrant auto-complete
-if [[ -r "${VAGRANT_COMPLETION_PATH}" ]]; then
-  source "${VAGRANT_COMPLETION_PATH}"
-else
-  echo "Vagrant completion path does not exist."
-  echo "Please update the version in the completion path."
-  echo ""
-  echo "Current version: $(vagrant --version)"
-  echo "Completion path: ${VAGRANT_COMPLETION_PATH}"
-  echo ""
-fi
-
-# Docker completion (docker-compose completion was installed by brew)
-if [[ -r "${DOCKER_COMPLETION_PATH}" ]]; then
-  source "${DOCKER_COMPLETION_PATH}"
-fi
+# Tab completions for aliases
+___git_complete g __git_main
+complete -o default -o nospace -F _docker_compose dc
 
 # Fzf auto-complete
 if [[ -r "${FZF_COMPLETION_PATH}" ]]; then
   source "${FZF_COMPLETION_PATH}"
 fi
 
-unset BREW_PREFIX GIT_COMPLETION_PATH VAGRANT_COMPLETION_PATH FZF_COMPLETION_PATH
+unset BREW_PREFIX FZF_COMPLETION_PATH
