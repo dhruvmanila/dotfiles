@@ -101,10 +101,6 @@ NNN_SHELL_PLUGINS='l:-_git log;x:_chmod +x $nnn'
 NNN_PLUGINS='p:preview-tui;c:fzcd;o:fzopen'
 export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
 
-# Bat configuration
-export BAT_THEME='gruvbox-dark'
-export BAT_STYLE='changes,header'
-
 # Fzf configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
 export FZF_DEFAULT_OPTS='
