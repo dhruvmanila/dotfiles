@@ -21,4 +21,4 @@
 - [ ] fco? (`open` any file in `$EDITOR`)
 
 
-
+- [ ] Update README.md
