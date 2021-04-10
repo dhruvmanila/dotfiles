@@ -96,7 +96,7 @@ return require('packer').startup {
 
     -- Linters and formatters (WIP plugins) (for now using efm langserver)
     use {
-      {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]], opt = false},
+      {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]], opt = true},
       {'lukas-reineke/format.nvim', config = [[require('plugin.format')]], opt = true}
     }
 
@@ -126,6 +126,12 @@ return require('packer').startup {
       }
     }
 
+    -- Language specific
+    use {
+      'cespare/vim-toml',
+      'raimon49/requirements.txt.vim',
+    }
+
     -- Git
     use {
       {'tpope/vim-fugitive', config = [[require('plugin.fugitive')]]},
@@ -134,6 +140,13 @@ return require('packer').startup {
         event = {'BufRead', 'BufNewFile'},
         requires = 'nvim-lua/plenary.nvim',
         config = [[require('plugin.gitsigns')]],
+      },
+      {
+        'f-person/git-blame.nvim',
+        keys = {{'n', 'gb'}},
+        config = function()
+          vim.api.nvim_set_keymap('n', 'gb', '<Cmd>GitBlameToggle<CR>', {noremap = true})
+        end
       }
     }
 

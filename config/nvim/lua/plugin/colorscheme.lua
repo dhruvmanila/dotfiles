@@ -20,6 +20,7 @@ g.gruvbox_material_disable_italic_comment = 1
 g.gruvbox_material_transparent_background = 0
 g.gruvbox_material_menu_selection_background = 'blue'
 g.gruvbox_material_sign_column_background = 'none'
+g.gruvbox_material_virtual_text = 'colored'
 -- g.gruvbox_material_visual = 'reverse'
 
 -- Generates after/ftplugin/*.vim files for lazy loading
@@ -49,7 +50,4 @@ cmd('highlight! link TSProperty Blue')
 cmd('highlight! link TSField Blue')
 
 -- Lsp
-cmd('highlight! link LspDiagnosticsVirtualTextError Red')
-cmd('highlight! link LspDiagnosticsVirtualTextWarning Yellow')
-cmd('highlight! link LspDiagnosticsVirtualTextInformation Blue')
-cmd('highlight! link LspDiagnosticsVirtualTextHint Aqua')
+cmd('highlight! link VirtualTextHint Aqua')

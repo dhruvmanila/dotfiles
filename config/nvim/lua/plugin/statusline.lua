@@ -9,7 +9,7 @@ local gls = gl.section
 local fileinfo = require('galaxyline.provider_fileinfo')
 local temp_icons = require('core.icons').icons
 local spinner_frames = require('core.icons').spinner_frames
-local lsp_messages = require('lsp-status').messages
+local lsp_status = require('lsp-status')
 
 local icons = {}
 
@@ -291,7 +291,7 @@ end
 ---Ref: https://github.com/nvim-lua/lsp-status.nvim/blob/master/lua/lsp-status/statusline.lua#L37
 ---@return string|nil
 local function get_lsp_messages()
-  local messages = lsp_messages()
+  local messages = lsp_status.messages()
   local msgs = {}
 
   for _, msg in ipairs(messages) do

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # vim: set ft=sh:
 
+# For docker-compose (internetarchive/openlibrary)
+export COMPOSE_FILE="docker-compose.yml:docker-compose.override.yml:docker-compose.infogami-local.yml"
+
 # Disale default conda base getting activated by default
 export CONDA_AUTO_ACTIVATE_BASE=false
 
