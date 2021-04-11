@@ -104,11 +104,8 @@ local aliases = {
 }
 
 ---Limits for responsive statusline
-local dirpath_cutoff = 15
-local dirpath_limit = 100
-local file_detail_limit = 120
-local parent_limit = 80
-local git_diff_limit = 100
+local file_detail_limit = 80
+local git_diff_limit = 60
 
 ---Conditions:
 
@@ -152,51 +149,6 @@ local function file_icon_info(field, default_func)
   end
 end
 
----Filename directory path provider.
----A responsive provider which returns the path to current files directory in
----which each directory is shortened except for the tail directory. A maximum
----of cutoff characters are allowed after which only the tail directory is
----returned. If the window width becomes less than transition, the provider
----returns nil.
----
----@param transition integer window width upto which to return the path
----@param cutoff integer string length after which only the tail part is returned
----@return function
-local function dirpath_provider(transition, cutoff)
-  return function()
-    if winwidth(0) > transition then
-      local path = expand('%:~:.')
-      local dirpath = fn.pathshorten(fnamemodify(path, ':h:h'))
-      local len = #dirpath
-
-      if dirpath and len ~= 1 then
-        if len > cutoff then
-          return '../' .. fnamemodify(dirpath, ':t') .. '/'
-        else
-          return dirpath .. '/'
-        end
-      end
-    end
-  end
-end
-
----Filename parent directory provider.
----Returns the current file directory name if the window width is not less than
----the transition value.
----
----@param transition integer window width upto which to return the path
----@return function
-local function parent_dir(transition)
-  return function()
-    if winwidth(0) > transition then
-      local parent = expand('%:~:.:h:t')
-      if parent and #parent ~= 1 then
-        return parent .. '/'
-      end
-    end
-  end
-end
-
 ---Filename provider.
 ---Returns the name of the file when in an active window otherwise the path to
 ---the file from pwd.
@@ -212,16 +164,6 @@ local function filename_provider(active)
     else
       return expand('%:~:.') .. ' '
     end
-  end
-end
-
----File flags provider.
----Supported flags: Readonly, modified.
-local function file_flags()
-  if vim.bo.readonly == true then
-    return ' ' .. icons.lock
-  elseif vim.bo.modifiable then
-    if vim.bo.modified then return ' ' .. icons.pencil end
   end
 end
 
@@ -340,45 +282,43 @@ gls.left = {
     }
   },
   {
-    FileIcon = {
-      provider = file_icon_info('icon', fileinfo.get_file_icon),
-      highlight = {
-        file_icon_info('color', fileinfo.get_file_icon_color) , colors.active_bg
-      },
-    }
-  },
-  {
-    DirPath = {
-      provider = dirpath_provider(dirpath_limit, dirpath_cutoff),
-      condition = not_special_buffer,
-      highlight = {colors.grey, colors.active_bg}
-    }
-  },
-  {
-    ParentName = {
-      provider = parent_dir(parent_limit),
-      condition = not_special_buffer,
-      highlight = {colors.green, colors.active_bg, 'bold'}
-    }
-  },
-  {
-    FileName = {
-      provider = filename_provider(true),
-      highlight = {colors.active_fg, colors.active_bg, 'bold'}
-    }
-  },
-  {
-    FileFlags = {
-      provider = file_flags,
-      condition = not_special_buffer,
-      highlight = {colors.red, colors.active_bg, 'bold'},
-    },
-  },
-  {
     TruncationPoint = {
       provider = {},
-      separator = '%<',
+      separator = '%< ',
+      separator_highlight = {'NONE', colors.active_bg},
     }
+  },
+  {
+    GitBranch = {
+      provider = git_status_info('head'),
+      condition = not_special_buffer,
+      icon = icons.git_branch,
+      highlight = {colors.green, colors.active_bg, 'bold'},
+    }
+  },
+  {
+    DiffAdd = {
+      provider = git_status_info('added'),
+      condition = not_special_buffer,
+      icon = icons.diff_added,
+      highlight = {colors.green, colors.active_bg},
+    }
+  },
+  {
+    DiffModified = {
+      provider = git_status_info('changed'),
+      condition = not_special_buffer,
+      icon = icons.diff_modified,
+      highlight = {colors.blue, colors.active_bg},
+    }
+  },
+  {
+    DiffRemove = {
+      provider = git_status_info('removed'),
+      condition = not_special_buffer,
+      icon = icons.diff_removed,
+      highlight = {colors.red, colors.active_bg},
+    },
   },
   {
     SpecialBufferName = {
@@ -446,38 +386,6 @@ gls.right = {
       separator_highlight = {'NONE', colors.active_bg},
       highlight = {colors.grey, colors.active_bg, 'bold'},
     }
-  },
-  {
-    GitBranch = {
-      provider = git_status_info('head'),
-      condition = not_special_buffer,
-      icon = icons.git_branch,
-      highlight = {colors.green, colors.active_bg, 'bold'},
-    }
-  },
-  {
-    DiffAdd = {
-      provider = git_status_info('added'),
-      condition = not_special_buffer,
-      icon = icons.diff_added,
-      highlight = {colors.green, colors.active_bg},
-    }
-  },
-  {
-    DiffModified = {
-      provider = git_status_info('changed'),
-      condition = not_special_buffer,
-      icon = icons.diff_modified,
-      highlight = {colors.blue, colors.active_bg},
-    }
-  },
-  {
-    DiffRemove = {
-      provider = git_status_info('removed'),
-      condition = not_special_buffer,
-      icon = icons.diff_removed,
-      highlight = {colors.red, colors.active_bg},
-    },
   },
   {
     LspMessages = {

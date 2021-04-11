@@ -47,13 +47,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/galaxyline.nvim"
   },
-  ["git-blame.nvim"] = {
-    config = { "\27LJ\2\nl\0\0\6\0\a\0\t6\0\0\0009\0\1\0009\0\2\0'\2\3\0'\3\4\0'\4\5\0005\5\6\0B\0\5\1K\0\1\0\1\0\1\fnoremap\2\28<Cmd>GitBlameToggle<CR>\agb\6n\20nvim_set_keymap\bapi\bvim\0" },
-    keys = { { "n", "gb" } },
-    loaded = false,
-    needs_bufread = false,
-    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/git-blame.nvim"
-  },
   ["gitsigns.nvim"] = {
     config = { "require('plugin.gitsigns')" },
     loaded = false,
@@ -219,24 +212,24 @@ _G.packer_plugins = {
   }
 }
 
--- Config for: vim-cool
-vim.g.CoolTotalMatches = 1
--- Config for: vim-dirvish
-require('plugin.dirvish')
--- Config for: vim-fugitive
-require('plugin.fugitive')
--- Config for: telescope.nvim
-require('plugin.telescope')
--- Config for: gruvbox-material
-require('plugin.colorscheme')
 -- Config for: indent-blankline.nvim
 require('plugin.indentline')
--- Config for: galaxyline.nvim
-require('plugin.statusline')
--- Config for: vim-external
-require('plugin.vim_external')
 -- Config for: vim-startify
 require('plugin.startify')
+-- Config for: telescope.nvim
+require('plugin.telescope')
+-- Config for: vim-fugitive
+require('plugin.fugitive')
+-- Config for: gruvbox-material
+require('plugin.colorscheme')
+-- Config for: vim-dirvish
+require('plugin.dirvish')
+-- Config for: vim-external
+require('plugin.vim_external')
+-- Config for: galaxyline.nvim
+require('plugin.statusline')
+-- Config for: vim-cool
+vim.g.CoolTotalMatches = 1
 
 -- Command lazy-loads
 vim.cmd [[command! -nargs=* -range -bang -complete=file StartupTime lua require("packer.load")({'startuptime.vim'}, { cmd = "StartupTime", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
@@ -244,19 +237,18 @@ vim.cmd [[command! -nargs=* -range -bang -complete=file TSPlaygroundToggle lua r
 
 -- Keymap lazy-loads
 vim.cmd [[nnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> <Leader>vv <cmd>lua require("packer.load")({'vista.vim'}, { keys = "<lt>Leader>vv", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <C-n> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-n>", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> gb <cmd>lua require("packer.load")({'git-blame.nvim'}, { keys = "gb", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[xnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <Leader>cc <cmd>lua require("packer.load")({'nvim-colorizer.lua'}, { keys = "<lt>Leader>cc", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[xnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> <Leader>vv <cmd>lua require("packer.load")({'vista.vim'}, { keys = "<lt>Leader>vv", prefix = "" }, _G.packer_plugins)<cr>]]
 
 vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Event lazy-loads
 vim.cmd [[au BufNewFile * ++once lua require("packer.load")({'gitsigns.nvim'}, { event = "BufNewFile *" }, _G.packer_plugins)]]
-vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'nvim-lspconfig'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
-vim.cmd [[au BufRead * ++once lua require("packer.load")({'nvim-treesitter', 'gitsigns.nvim'}, { event = "BufRead *" }, _G.packer_plugins)]]
 vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
+vim.cmd [[au BufRead * ++once lua require("packer.load")({'nvim-treesitter', 'gitsigns.nvim'}, { event = "BufRead *" }, _G.packer_plugins)]]
+vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'nvim-lspconfig'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
 vim.cmd("augroup END")
 END
 

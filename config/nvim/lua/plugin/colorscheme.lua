@@ -20,7 +20,7 @@ g.gruvbox_material_disable_italic_comment = 1
 g.gruvbox_material_transparent_background = 0
 g.gruvbox_material_menu_selection_background = 'blue'
 g.gruvbox_material_sign_column_background = 'none'
-g.gruvbox_material_virtual_text = 'colored'
+g.gruvbox_material_diagnostic_virtual_text = 'colored'
 -- g.gruvbox_material_visual = 'reverse'
 
 -- Generates after/ftplugin/*.vim files for lazy loading
@@ -35,6 +35,11 @@ local palette = vim.fn['gruvbox_material#get_palette'](
 
 highlight('PmenuSel', palette.bg3, palette.blue, 'bold')
 highlight('HintFloat', palette.aqua, palette.bg3)
+
+-- Tabline
+cmd('highlight! TabLineSel  guifg=#ebdbb2 guibg=#282828 gui=bold,italic')
+cmd('highlight! TabLine     guifg=#928374 guibg=#242424')
+cmd('highlight! TabLineFill guifg=#928374 guibg=#1e1e1e')
 
 cmd('highlight! link CursorLineNr MoreMsg')
 

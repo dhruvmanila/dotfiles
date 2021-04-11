@@ -16,7 +16,8 @@ opt.ruler         = false
 opt.showmode      = false
 opt.cmdheight     = 1
 opt.emoji         = false      -- https://www.youtube.com/watch?v=F91VWOelFNE
-opt.showtabline   = 1          -- Always show tabline
+opt.showtabline   = 2          -- Always show tabline
+opt.tabline       = '%!v:lua.nvim_tabline()'
 
 -- I: Disable the default Vim startup message
 -- c: Don't give messages like "The only match", "Pattern not found", etc.

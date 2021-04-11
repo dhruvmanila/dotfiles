@@ -47,7 +47,8 @@ M.icons = {
   diff_removed  = get_icon('diff-removed'),
   directory     = get_icon('file-directory'),
   package       = get_icon('package'),
-  pencil        = get_icon('pencil'),
+  modified      = '●',
+  terminal      = get_icon('terminal'),
   lightbulb     = '💡',  -- Alternative: "💡", 'lightbulb'
 }
 

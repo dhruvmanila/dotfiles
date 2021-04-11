@@ -58,9 +58,6 @@ return require('packer').startup {
       config = [[require('plugin.statusline')]],
     }
 
-    -- Buffers displayed on tabline (not liking it much)
-    -- use {'akinsho/nvim-bufferline.lua', config = [[require('plugin.bufferline')]]}
-
     -- Icons
     use {
       'kyazdani42/nvim-web-devicons',
@@ -141,13 +138,6 @@ return require('packer').startup {
         requires = 'nvim-lua/plenary.nvim',
         config = [[require('plugin.gitsigns')]],
       },
-      {
-        'f-person/git-blame.nvim',
-        keys = {{'n', 'gb'}},
-        config = function()
-          vim.api.nvim_set_keymap('n', 'gb', '<Cmd>GitBlameToggle<CR>', {noremap = true})
-        end
-      }
     }
 
     -- Comment

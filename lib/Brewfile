@@ -23,8 +23,8 @@ tap "romkatv/gitstatus"
 brew "bash"
 brew "bash-completion@2"
 brew "bashdb"
-# brew "zsh"
-# brew "zsh-completion"
+brew "zsh"
+brew "zsh-completion"
 brew "shellcheck"                    # Linter
 brew "romkatv/gitstatus/gitstatus"   # Fast git status prompt (bash/zsh)
 
@@ -40,6 +40,7 @@ brew "pyenv"                 # Python version management
 brew "pyenv-virtualenv"      # Python virtual environment management
 brew "rbenv"                 # Ruby virtual environment management
 brew "node"
+brew "go"                    # Go language
 
 # Editors
 brew "neovim", args: ["HEAD"]
@@ -66,19 +67,22 @@ brew "bdw-gc"
 brew "tcl-tk"
 brew "ctags"
 brew "datamash"
+brew "docker-compose"
 brew "dockutil"             # Manage Mac dock applications
 brew "ffmpeg"               # Play, record, convert, and stream audio and video
+brew "fontforge"            # Used for NERDFonts patcher script
 brew "gh"                   # GitHub CLI client
 brew "git"                  # Git
 brew "gnupg"
 brew "hyperfine"
-brew "jq"
+brew "jq"                   # JSON processor
 brew "less"                 # latest less
 brew "mackup"               # Backup files
 brew "mas"                  # Mac AppStore CLI
 brew "mlton"
 brew "pinentry-mac"
-brew "pup"
+brew "pup"                  # Parse HTML at commandline
+brew "pv"                   # Monitor data's progress through a pipe
 brew "rename"
 brew "stow"
 brew "stress"
@@ -86,6 +90,10 @@ brew "tldr"                 # Better help
 brew "tmux"                 # Terminal multiplexer
 brew "youtube-dl"           # Download videos from Youtube and others
 brew "heroku/brew/heroku"
+
+# Completions
+brew "docker-completion"
+brew "vagrant-completion"
 
 
 # Casks
@@ -109,13 +117,13 @@ cask "slack"
 cask "whatsapp"
 cask "zoom"
 
-# Fonts
-cask "font-fira-code-nerd-font"
-cask "font-jetbrains-mono-nerd-font"
+# Fonts (patched manually using NERDFont patcher)
+# cask "font-fira-code-nerd-font"
+# cask "font-jetbrains-mono-nerd-font"
 
 # Terminals
 cask "iterm2"
-# cask "kitty"
+cask "kitty"
 
 # Extensions
 cask "karabiner-elements"     # Keyboard customizer for Mac
@@ -126,6 +134,7 @@ cask "rectangle"              # Move/resize windows
 # Virtual machine
 cask "virtualbox"
 cask "vagrant", args: { appdir: "~/Applications" }
+cask "docker"
 
 cask "calibre"         # ebooks
 cask "qbittorrent"
