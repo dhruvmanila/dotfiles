@@ -6,6 +6,7 @@ g.vista_sidebar_width = 35
 g.vista_sidebar_keepalt = 1
 g.vista_echo_cursor = 0
 g.vista_update_on_text_changed = 1
+g.vista_disable_statusline = 1
 
 g.vista_executive_for = {
   markdown = 'toc',

@@ -6,6 +6,7 @@ local icons = require('core.icons').icons
 local spinner_frames = require('core.icons').spinner_frames
 local utils = require('core.utils')
 local lsp_status = require('lsp-status')
+local contains = vim.tbl_contains
 
 -- Colors are taken from the current colorscheme
 -- TODO: When changing the colorscheme, define its own set and create a table
@@ -79,30 +80,35 @@ local aliases = {
   sumneko_lua = 'Sumneko',
 }
 
----Special buffer types which can include filetype or buftype value.
-local special_buffer_types = {
-  'qf',
-  'terminal',
-  'help',
-  'tsplayground',
-  'NvimTree',
-  'dirvish',
-  'fugitive',
-  'startify',
-  'packer',
-}
-
 ---Special buffer information table.
 ---
 ---This includes three components:
+---types: List containing special buffer filetype or buftype.
+---mode: List containing types for which to display the mode.
 ---name: The name value to be displayed. It can be either a string or a
 ---      function where the `ctx` variable will be passed as the only argument.
----icon: The icon for the buffer
----color: The color of the icon
+---icon: Table containing the icon and its color for the buffer
 ---
 ---Special buffers included in `special_buffer_info` can be excluded from this
 ---table which will mean to not display anything for that buffer.
 local special_buffer_info = {
+  types = {
+    'qf',
+    'terminal',
+    'help',
+    'tsplayground',
+    'NvimTree',
+    'dirvish',
+    'fugitive',
+    'startify',
+    'packer',
+    'gitcommit',
+    'vista_kind',
+  },
+  mode = {
+    'terminal',
+    'gitcommit',
+  },
   name = {
     qf = function(ctx)
       local title = utils.get_var('w', ctx.curwin, 'quickfix_title')
@@ -118,6 +124,10 @@ local special_buffer_info = {
     dirvish = function(ctx) return fn.fnamemodify(ctx.bufname, ':~') end,
     fugitive = 'Fugitive',
     packer = 'Packer',
+    gitcommit = 'Commit message',
+    vista_kind = function(_)
+      return 'Vista' .. ' [' .. vim.g.vista.provider .. ']'
+    end,
   },
   icon = {
     qf = icons.lists,
@@ -128,6 +138,8 @@ local special_buffer_info = {
     dirvish = icons.directory,
     fugitive = icons.git_logo,
     packer = icons.package,
+    gitcommit = icons.git_commit,
+    vista_kind = icons.tag,
   },
   color = {
     qf = 'StRed',
@@ -138,6 +150,8 @@ local special_buffer_info = {
     dirvish = 'StBlue',
     fugitive = 'StYellow',
     packer = 'StAqua',
+    gitcommit = 'StYellow',
+    vista_kind = 'StBlue',
   },
 }
 
@@ -262,8 +276,8 @@ end
 ---@param ctx table
 ---@return boolean
 local function special_buffer(ctx)
-  return vim.tbl_contains(special_buffer_types, ctx.filetype) or
-    vim.tbl_contains(special_buffer_types, ctx.buftype)
+  return contains(special_buffer_info.types, ctx.filetype) or
+    contains(special_buffer_info.types, ctx.buftype)
 end
 
 ---Returns the name of the special buffer as per the name table values of
@@ -292,7 +306,8 @@ local function special_buffer_statusline(ctx, inactive)
   local color = special_buffer_info.color[typ]
   local hl = (inactive or not color) and '' or wrap_hl(color)
   local name_hl = inactive and '' or wrap_hl('StSpecialBuffer')
-  local prefix = (typ == 'terminal' and not inactive) and mode_component() or '▌'
+  local prefix = (not inactive and contains(special_buffer_info.mode, typ)) and
+    mode_component() or '▌'
 
   return prefix .. ' ' .. hl .. icon .. '%* ' .. name_hl .. name
 end

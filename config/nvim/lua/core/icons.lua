@@ -42,6 +42,7 @@ M.icons = {
   hint          = get_icon('question'), -- 'search', 'tools'
   lock          = get_icon('lock'),
   git_branch    = get_icon('git-branch'),
+  git_commit    = get_icon('git-commit'),
   diff_added    = get_icon('diff-added'),
   diff_modified = get_icon('diff-modified'),
   diff_removed  = get_icon('diff-removed'),
@@ -52,6 +53,7 @@ M.icons = {
   lightbulb     = '💡',  -- '💡', 'lightbulb'
   lines         = get_icon('three-bars'),
   lists         = get_icon('list-unordered'),
+  tag           = get_icon('tag'),  -- ''
 }
 
 M.spinner_frames = { '⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷' }

@@ -31,7 +31,11 @@ g.startify_commands = {
   {pc = 'PackerCompile'},
 }
 
-g.startify_session_before_save = {'silent! tabdo NvimTreeClose'}
+g.startify_session_before_save = {
+  'let $CURRENT_TABPAGE = tabpagenr()',
+  'silent! tabdo NvimTreeClose',
+  'execute $CURRENT_TABPAGE . "tabnext"',
+}
 g.startify_fortune_use_unicode = 1
 
 -- I use sessions most of the time
