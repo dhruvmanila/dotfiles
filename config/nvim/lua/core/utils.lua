@@ -54,4 +54,60 @@ function M.map(modes, lhs, rhs, opts)
   end
 end
 
+---TODO: eventually move to using `nvim_set_hl` however for the time being
+---that expects colors to be specified as rgb not hex.
+---@param name string
+---@param opts table
+function M.highlight(name, opts)
+  local force = opts.force or false
+  if name and vim.tbl_count(opts) > 0 then
+    if opts.link and opts.link ~= "" then
+      vim.cmd("highlight" .. (force and "!" or "") .. " link " .. name .. " " .. opts.link)
+    else
+      local hi_cmd = {"highlight", name}
+      if opts.guifg and opts.guifg ~= "" then
+        table.insert(hi_cmd, "guifg=" .. opts.guifg)
+      end
+      if opts.guibg and opts.guibg ~= "" then
+        table.insert(hi_cmd, "guibg=" .. opts.guibg)
+      end
+      if opts.gui and opts.gui ~= "" then
+        table.insert(hi_cmd, "gui=" .. opts.gui)
+      end
+      if opts.guisp and opts.guisp ~= "" then
+        table.insert(hi_cmd, "guisp=" .. opts.guisp)
+      end
+      if opts.cterm and opts.cterm ~= "" then
+        table.insert(hi_cmd, "cterm=" .. opts.cterm)
+      end
+      vim.cmd(table.concat(hi_cmd, " "))
+    end
+  end
+end
+
+---"Safe" version of `nvim_<|win|buf|tabpage>_get_var()` that returns `nil` if
+---the variable is not set.
+---@param scope string (g|w|b|t) (Default: g)
+---@param handle integer
+---@param name string
+---@return nil|string
+function M.get_var(scope, handle, name)
+  local result, func, args
+  scope = scope or 'g'
+  if scope == 'g' then
+    func, args = vim.api.nvim_get_var, {name}
+  elseif scope == 'w' then
+    func, args = vim.api.nvim_win_get_var, {handle, name}
+  elseif scope == 'b' then
+    func, args = vim.api.nvim_buf_get_var, {handle, name}
+  elseif scope == 't' then
+    func, args = vim.api.nvim_tabpage_get_var, {handle, name}
+  end
+
+  pcall(function()
+    result = func(unpack(args))
+  end)
+  return result
+end
+
 return M

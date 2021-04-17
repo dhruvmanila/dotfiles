@@ -47,9 +47,11 @@ M.icons = {
   diff_removed  = get_icon('diff-removed'),
   directory     = get_icon('file-directory'),
   package       = get_icon('package'),
-  modified      = '●',
+  modified      = '●',  -- 'dot-fill'
   terminal      = get_icon('terminal'),
-  lightbulb     = '💡',  -- Alternative: "💡", 'lightbulb'
+  lightbulb     = '💡',  -- '💡', 'lightbulb'
+  lines         = get_icon('three-bars'),
+  lists         = get_icon('list-unordered'),
 }
 
 M.spinner_frames = { '⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷' }

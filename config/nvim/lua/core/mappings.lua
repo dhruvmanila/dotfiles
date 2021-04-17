@@ -125,3 +125,9 @@ map('c', '<C-j>', '<Down>')
 
 -- Normal mode in terminal
 map('t', '<Esc>', [[<C-\><C-n>]])
+
+-- Movements in terminal
+-- map('t', '<C-h>', [[<C-\><C-n><C-w>h]])
+-- map('t', '<C-j>', [[<C-\><C-n><C-w>j]])
+-- map('t', '<C-k>', [[<C-\><C-n><C-w>k]])
+-- map('t', '<C-l>', [[<C-\><C-n><C-w>l]])

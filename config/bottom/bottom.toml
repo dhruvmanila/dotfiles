@@ -26,7 +26,7 @@ rate = 1500
 group_processes = true
 
 # Whether to make process searching case sensitive by default.
-case_sensitive = true
+case_sensitive = false
 
 # Whether to make process searching look for matching the entire word by default.
 #whole_word = false
@@ -149,11 +149,11 @@ mem_as_value = true
 [[row]]
   ratio=7
   [[row.child]]
-    ratio=5
+    ratio=6
     [[row.child.child]]
       type="proc"
   [[row.child]]
-    ratio=5
+    ratio=4
     [[row.child.child]]
       ratio=4
       type="mem"

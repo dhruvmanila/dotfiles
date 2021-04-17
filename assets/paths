@@ -22,4 +22,7 @@ PATH="/usr/local/opt/tcl-tk/bin:${PATH}"
 export GOPATH="${HOME}/go"
 PATH="${PATH}:${GOPATH}/bin"
 
+# Setting PATH for BasicTex
+PATH="/Library/TeX/texbin:${PATH}"
+
 export PATH

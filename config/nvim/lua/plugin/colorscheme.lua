@@ -2,9 +2,9 @@
 -- sonokai: https://github.com/sainnhe/sonokai
 -- gruvbox-material: https://github.com/sainnhe/gruvbox-material
 -- gruvbox (lua version): https://github.com/npxbr/gruvbox.nvim
-
 local g = vim.g
 local cmd = vim.cmd
+-- local highlight = require('core.utils').highlight
 
 vim.o.background = 'dark'
 
@@ -27,6 +27,12 @@ g.gruvbox_material_diagnostic_virtual_text = 'colored'
 g.gruvbox_material_better_performance = 1
 
 cmd('colorscheme gruvbox-material')
+
+-- Load the statusline and tabline
+-- This should be called after setting the colorscheme as that resets the
+-- higlights.
+require('core.statusline')
+require('core.tabline')
 
 local highlight = vim.fn['gruvbox_material#highlight']
 local palette = vim.fn['gruvbox_material#get_palette'](

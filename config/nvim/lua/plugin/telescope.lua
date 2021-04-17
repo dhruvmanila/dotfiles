@@ -87,7 +87,7 @@ function M.project_search()
   require('telescope.builtin').find_files {
     prompt_title = "Project Search",
     shorten_path = false,
-    cwd = require('lspconfig.util').root_pattern('.git')(vim.fn.expand('%'))
+    cwd = require('lspconfig.util').root_pattern('.git', 'requirements.txt')(vim.fn.expand('%'))
   }
 end
 
@@ -129,8 +129,8 @@ function M.buffers(opts)
   opts.sort_lastused = true
   opts.show_all_buffers = true
   opts.shorten_path = false
-  opts.results_height = 20
-  opts.attach_mappings = function(prompt_bufnr, map)
+  opts.results_height = math.min(vim.o.lines - 10, #vim.fn.getbufinfo({buflisted = 1}))
+  opts.attach_mappings = function(prompt_bufnr, keymap)
     local delete_buf = function()
       local current_picker = action_state.get_current_picker(prompt_bufnr)
       local multi_selection = current_picker:get_multi_selection()
@@ -146,7 +146,7 @@ function M.buffers(opts)
         end
       end
     end
-    map('i', '<C-x>', delete_buf)
+    keymap('i', '<C-x>', delete_buf)
     return true
   end
   require('telescope.builtin').buffers(require('telescope.themes').get_dropdown(opts))

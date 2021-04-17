@@ -63,8 +63,3 @@
      return ''
    endif
  endfunction
-
- " augroup lightline_update
- "   autocmd!
- "   autocmd CmdlineEnter * call lightline#update() | redraw
- " augroup END

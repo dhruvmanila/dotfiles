@@ -51,13 +51,6 @@ return require('packer').startup {
       end
     }
 
-    -- Statusline
-    use {
-      'glepnir/galaxyline.nvim',
-      branch = 'main',
-      config = [[require('plugin.statusline')]],
-    }
-
     -- Icons
     use {
       'kyazdani42/nvim-web-devicons',

@@ -81,6 +81,7 @@ brew "mackup"               # Backup files
 brew "mas"                  # Mac AppStore CLI
 brew "mlton"
 brew "pinentry-mac"
+brew "postgresql"           # Database
 brew "pup"                  # Parse HTML at commandline
 brew "pv"                   # Monitor data's progress through a pipe
 brew "rename"
@@ -141,7 +142,7 @@ cask "qbittorrent"
 cask "smlnj"
 cask "spotify"
 cask "vlc"
-cask "wireshark"       # Network monitoring
+# cask "wireshark"       # Network monitoring
 
 
 # Mac applications

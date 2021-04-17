@@ -55,19 +55,15 @@ end
 ---@param is_active boolean
 ---@return string
 local function tabline_label(tabnr, is_active)
-  local tab_hl, sep
-  if is_active then
-    tab_hl = '%#TabLineSel#'
-    sep = '▌'
-  else
-    tab_hl = '%#TabLine#'
-    sep = ' '
-  end
-
   local buflist = fn.tabpagebuflist(tabnr)
   local winnr = fn.tabpagewinnr(tabnr)
   local buffer = Buffer:new(buflist[winnr])
   local flags = buffer:flags()
+
+  local icon_hl = is_active and buffer.icon_highlight or 'TabLine'
+  local flag_hl = is_active and 'YellowSign' or 'TabLine'
+  local tab_hl = is_active and '%#TabLineSel#' or '%#TabLine#'
+  local sep = is_active and '▌' or ' '
 
   return tab_hl
     .. sep
@@ -75,13 +71,13 @@ local function tabline_label(tabnr, is_active)
     .. ' '
     .. tabnr
     .. '.  '
-    .. '%#' .. buffer.icon_highlight .. '#'
+    .. '%#' .. icon_hl .. '#'
     .. buffer.icon
     .. tab_hl
     .. ' '
     .. buffer.filename
     .. '  '
-    .. '%#YellowSign#'
+    .. '%#' .. flag_hl .. '#'
     .. flags
     .. tab_hl
     .. ' '
@@ -106,8 +102,10 @@ function _G.nvim_tabline()
     local is_active = i == current_tabpage
     line = line .. tabline_label(i, is_active)
   end
-  line = line .. '%#TabLineFill#'   -- After the last tab fill with TabLineFill
-  line = line .. '%T'               -- Ends mouse click target region(s)
-  line = line .. '%=' .. current_dir()
+  line = line
+    .. '%#TabLineFill#'   -- After the last tab fill with TabLineFill
+    .. '%T'               -- Ends mouse click target region(s)
+    .. '%='
+    .. current_dir()
   return line
 end

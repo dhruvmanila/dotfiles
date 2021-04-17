@@ -12,7 +12,7 @@ g.nvim_tree_ignore = {
   '.mypy_cache'
 }
 
-g.nvim_tree_quit_on_open   = 1
+g.nvim_tree_quit_on_open   = 0
 g.nvim_tree_indent_markers = 1
 g.nvim_tree_follow         = 1
 g.nvim_tree_disable_netrw  = 0

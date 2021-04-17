@@ -85,7 +85,7 @@ function build_prompt() {
   local -r blue="\[\e[1;34m\]";
   local -r white="\[\e[1;37m\]";
 
-  PS1=""
+  PS1="\n"
 
   # --------------- First line -----------------
   # Prompt - [exitcode] [(root)] [@hostname] pwd [on branch [status]]
@@ -110,7 +110,7 @@ function build_prompt() {
   fi
 
   # Working directory [full path: \w] [basename: \W]
-  PS1+="${yellow}\W"
+  PS1+="${yellow}\w"
 
   # Git repository details
   git_prompt="$(gitstatus_prompt_update "$@")";
@@ -120,7 +120,7 @@ function build_prompt() {
 
   # --------------- Second line -----------------
   # Line break / Space
-  PS1+=" "
+  PS1+="\n"
 
   # Prompt character '$ '
   PS1+="${white}❯ ${reset}"
