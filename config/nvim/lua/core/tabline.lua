@@ -90,16 +90,6 @@ local function tabline_label(tabnr, is_active)
     .. ' '
 end
 
----Provide the directory path to current file from the working directory
----@return string
--- local function current_dir()
---   local dir = fn.expand('%:p:~:.:h')
---   if dir and #dir > 1 then
---     return '%#Normal#  ' .. icons.directory .. ' %#TabLineSel#' .. dir .. '  '
---   end
---   return ''
--- end
-
 ---Provide the tabline
 ---@return string
 function _G.nvim_tabline()
@@ -113,7 +103,6 @@ function _G.nvim_tabline()
     .. '%#TabLineFill#'   -- After the last tab fill with TabLineFill
     .. '%T'               -- Ends mouse click target region(s)
     .. '%='
-    -- .. current_dir()
   return line
 end
 
