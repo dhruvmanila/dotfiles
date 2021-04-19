@@ -26,12 +26,11 @@ end
 ---@param ctx table
 ---@return string
 local function filename(ctx, is_active)
+  local modifier = is_active and ':~:.' or ':p:t'
   if ctx.bufname and #ctx.bufname > 0 then
-    if is_active then
-      return fn.fnamemodify(ctx.bufname, ':~:.')
-    else
-      return fn.fnamemodify(ctx.bufname, ':p:t')
-    end
+    return fn.fnamemodify(ctx.bufname, modifier)
+  elseif ctx.buftype == 'prompt' then
+    return ctx.filetype == 'TelescopePrompt' and ctx.filetype or '[Prompt]'
   else
     return '[No Name]'
   end
