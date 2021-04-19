@@ -26,7 +26,7 @@ end
 ---@param ctx table
 ---@return string
 local function filename(ctx, is_active)
-  local modifier = is_active and ':~:.' or ':p:t'
+  local modifier = (is_active and ctx.filetype ~= 'help') and ':~:.' or ':p:t'
   if ctx.bufname and #ctx.bufname > 0 then
     return fn.fnamemodify(ctx.bufname, modifier)
   elseif ctx.buftype == 'prompt' then
