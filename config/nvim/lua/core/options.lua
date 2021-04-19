@@ -17,7 +17,6 @@ opt.showmode      = false
 opt.cmdheight     = 1
 opt.emoji         = false      -- https://www.youtube.com/watch?v=F91VWOelFNE
 opt.showtabline   = 2          -- Always show tabline
-opt.tabline       = '%!v:lua.nvim_tabline()'
 
 -- I: Disable the default Vim startup message
 -- c: Don't give messages like "The only match", "Pattern not found", etc.
@@ -28,7 +27,6 @@ opt.shortmess = opt.shortmess .. 'Ic'
 opt.wildmode = 'longest:full,full'
 
 -- menuone: show menu even if there is only one match
--- preview: show extra information about selection in preview window
 -- noinsert: do not select any text until the user selects a match from the menu
 -- noselect: do not select a match in the menu, force the user to select one
 opt.completeopt = 'menuone,noinsert,noselect'

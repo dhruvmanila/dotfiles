@@ -4,7 +4,7 @@ local map = require('core.utils').map
 
 require('telescope').setup {
   defaults = {
-    prompt_prefix = require('nvim-nonicons').get('telescope') .. ' ',
+    prompt_prefix = require('core.icons').icons.telescope .. ' ',
     prompt_position = 'top',
     selection_caret = '❯ ',
     sorting_strategy = 'ascending',

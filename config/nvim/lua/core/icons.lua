@@ -54,6 +54,9 @@ M.icons = {
   lines         = get_icon('three-bars'),
   lists         = get_icon('list-unordered'),
   tag           = get_icon('tag'),  -- ''
+  telescope     = get_icon('telescope'),
+  book          = get_icon('book'),
+  python        = get_icon('python'),
 }
 
 M.spinner_frames = { '⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷' }

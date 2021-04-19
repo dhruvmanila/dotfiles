@@ -1,6 +1,5 @@
 local execute = vim.api.nvim_command
 local fn = vim.fn
--- local map = vim.api.nvim_set_keymap
 
 local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
 
@@ -8,10 +7,6 @@ if fn.empty(fn.glob(install_path)) > 0 then
   execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
   execute 'packadd packer.nvim'
 end
-
--- Some useful keybindings (PackerSync -> PackerClean + PackerUpdate)
--- map('n', '<Leader>ps', '<Cmd>PackerSync<CR>', {noremap = true})
--- map('n', '<Leader>pc', '<Cmd>PackerCompile<CR>', {noremap = true})
 
 --[[
 Notes:
@@ -53,7 +48,10 @@ return require('packer').startup {
 
     -- Icons
     use {
-      'kyazdani42/nvim-web-devicons',
+      {
+        'kyazdani42/nvim-web-devicons',
+        config = [[require('plugin.nvim_web_devicons')]]
+      },
       {
         'yamatsum/nvim-nonicons',
         -- config = 'vim.g.override_nvim_web_devicons = false'

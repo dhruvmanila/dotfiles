@@ -100,6 +100,7 @@ export NNN_FIFO=/tmp/nnn.fifo
 NNN_SHELL_PLUGINS='l:-_git log;x:_chmod +x $nnn'
 NNN_PLUGINS='p:preview-tui;c:fzcd;o:fzopen'
 export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
+unset NNN_SHELL_PLUGINS NNN_PLUGINS
 
 # Fzf configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'

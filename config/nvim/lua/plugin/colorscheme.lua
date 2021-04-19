@@ -3,8 +3,7 @@
 -- gruvbox-material: https://github.com/sainnhe/gruvbox-material
 -- gruvbox (lua version): https://github.com/npxbr/gruvbox.nvim
 local g = vim.g
-local cmd = vim.cmd
--- local highlight = require('core.utils').highlight
+local highlight = require('core.utils').highlight
 
 vim.o.background = 'dark'
 
@@ -26,7 +25,7 @@ g.gruvbox_material_diagnostic_virtual_text = 'colored'
 -- Generates after/ftplugin/*.vim files for lazy loading
 g.gruvbox_material_better_performance = 1
 
-cmd('colorscheme gruvbox-material')
+vim.cmd('colorscheme gruvbox-material')
 
 -- Load the statusline and tabline
 -- This should be called after setting the colorscheme as that resets the
@@ -34,31 +33,26 @@ cmd('colorscheme gruvbox-material')
 require('core.statusline')
 require('core.tabline')
 
-local highlight = vim.fn['gruvbox_material#highlight']
 local palette = vim.fn['gruvbox_material#get_palette'](
   g.gruvbox_material_background, g.gruvbox_material_palette
 )
 
-highlight('PmenuSel', palette.bg3, palette.blue, 'bold')
-highlight('HintFloat', palette.aqua, palette.bg3)
+highlight('PmenuSel', {guifg = palette.bg3[1], guibg = palette.blue[1], gui = 'bold'})
+highlight('HintFloat', {guifg = palette.aqua[1], guibg = palette.bg3[1]})
 
--- Tabline
-cmd('highlight! TabLineSel  guifg=#ebdbb2 guibg=#282828 gui=bold,italic')
-cmd('highlight! TabLine     guifg=#928374 guibg=#242424')
-cmd('highlight! TabLineFill guifg=#928374 guibg=#1e1e1e')
-
-cmd('highlight! link CursorLineNr MoreMsg')
+-- Current line number
+highlight('CursorLineNr', {force = true, link = 'MoreMsg'})
 
 -- Telescope.nvim
-cmd('highlight! link TelescopeSelection CursorLine')
-cmd('highlight! link TelescopeSelectionCaret Red')
-cmd('highlight! link TelescopeMatching Blue')
+highlight('TelescopeSelection', {force = true, link = 'CursorLine'})
+highlight('TelescopeSelectionCaret', {force = true, link = 'Red'})
+highlight('TelescopeMatching', {force = true, link = 'Blue'})
 
 -- Treesitter
-cmd('highlight! link TSFunction Function')
-cmd('highlight! link TSParameter Blue')
-cmd('highlight! link TSProperty Blue')
-cmd('highlight! link TSField Blue')
+highlight('TSFunction', {force = true, link = 'Function'})
+highlight('TSParameter', {force = true, link = 'Blue'})
+highlight('TSProperty', {force = true, link = 'Blue'})
+highlight('TSField', {force = true, link = 'Blue'})
 
 -- Lsp
-cmd('highlight! link VirtualTextHint Aqua')
+highlight('VirtualTextHint', {force = true, link = 'Aqua'})

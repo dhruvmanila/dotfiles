@@ -37,11 +37,13 @@ local highlights = {
   StTerminalMode = {guifg = colors.active_bg, guibg = colors.purple, gui = 'bold'},
   StRed = {guifg = colors.red, guibg = colors.active_bg},
   StGreen = {guifg = colors.green, guibg = colors.active_bg},
+  StGreenBold = {guifg = colors.green, guibg = colors.active_bg, gui = 'bold'},
   StBlue = {guifg = colors.blue, guibg = colors.active_bg},
   StAqua = {guifg = colors.aqua, guibg = colors.active_bg},
   StYellow = {guifg = colors.yellow, guibg = colors.active_bg},
+  StYellowBold = {guifg = colors.yellow, guibg = colors.active_bg, gui = 'bold'},
   StGrey = {guifg = colors.grey, guibg = colors.active_bg},
-  StGitBranch = {guifg = colors.green, guibg = colors.active_bg, gui = 'bold'},
+  StOrange = {guifg = colors.orange, guibg = colors.active_bg},
   StSpecialBuffer = {guifg = colors.active_fg, guibg = colors.active_bg, gui = 'bold'}
 }
 
@@ -85,6 +87,7 @@ local aliases = {
 ---This includes three components:
 ---types: List containing special buffer filetype or buftype.
 ---mode: List containing types for which to display the mode.
+---lineinfo: List containing types for which to display the lineinfo.
 ---name: The name value to be displayed. It can be either a string or a
 ---      function where the `ctx` variable will be passed as the only argument.
 ---icon: Table containing the icon and its color for the buffer
@@ -104,29 +107,43 @@ local special_buffer_info = {
     'packer',
     'gitcommit',
     'vista_kind',
+    'man',
   },
   mode = {
     'terminal',
     'gitcommit',
   },
+  lineinfo = {
+    'man',
+    'gitcommit',
+    'help',
+  },
   name = {
+    terminal = 'Terminal',
+    tsplayground = 'TSPlayground',
+    NvimTree = 'NvimTree',
+    fugitive = 'Fugitive',
+    packer = 'Packer',
+    gitcommit = 'Commit message',
+
     qf = function(ctx)
       local title = utils.get_var('w', ctx.curwin, 'quickfix_title')
       title = title and '[' .. title .. ']' or ''
       return 'Quickfix List ' .. title .. ' %l/%L'
     end,
-    terminal = 'Terminal',
+
     help = function(ctx)
       return 'help [' .. fn.fnamemodify(ctx.bufname, ':t:r') .. ']'
     end,
-    tsplayground = 'TSPlayground',
-    NvimTree = 'NvimTree',
+
     dirvish = function(ctx) return fn.fnamemodify(ctx.bufname, ':~') end,
-    fugitive = 'Fugitive',
-    packer = 'Packer',
-    gitcommit = 'Commit message',
+
     vista_kind = function(_)
       return 'Vista' .. ' [' .. vim.g.vista.provider .. ']'
+    end,
+
+    man = function(ctx)
+      return 'Man' .. ' [' .. fn.fnamemodify(ctx.bufname, ':t') .. ']'
     end,
   },
   icon = {
@@ -140,6 +157,7 @@ local special_buffer_info = {
     packer = icons.package,
     gitcommit = icons.git_commit,
     vista_kind = icons.tag,
+    man = icons.book,
   },
   color = {
     qf = 'StRed',
@@ -152,6 +170,7 @@ local special_buffer_info = {
     packer = 'StAqua',
     gitcommit = 'StYellow',
     vista_kind = 'StBlue',
+    man = 'StOrange',
   },
 }
 
@@ -169,6 +188,15 @@ end
 local function mode_component()
   local mode_info = modes[fn.mode()]
   return wrap_hl(mode_info[3]) .. ' ' .. mode_info[1] .. ' %*'
+end
+
+---Return the line information.
+---Current format: ℓ 12/245 𝚌 15
+---@param hl string
+---@return string
+local function lineinfo(hl)
+  hl = hl and wrap_hl(hl) or wrap_hl('StNormalMode')
+  return hl .. ' ℓ %2l/%L ' .. '𝚌 %-2c%< '
 end
 
 -- TODO: Do I even need this?
@@ -200,6 +228,23 @@ local function git_status_info(field, icon, hl)
   return ''
 end
 
+---Return the Python virtual environment name if we are in any.
+---@param ctx table
+---@return string
+local function python_venv(ctx, hl)
+  if ctx.filetype == 'python' then
+    local env = os.getenv('VIRTUAL_ENV')
+    if env then
+      return wrap_hl(hl)
+        .. icons.python
+        .. ' '
+        .. fn.fnamemodify(env, ':t')
+        .. '%* '
+    end
+  end
+  return ''
+end
+
 ---Return the diagnostics information for the given severity if > 0.
 ---@param ctx table
 ---@param severity string
@@ -209,7 +254,7 @@ end
 local function lsp_diagnostics(ctx, severity, icon, hl)
   local count = vim.lsp.diagnostic.get_count(ctx.curbuf, severity)
   if count > 0 then
-    return ' ' .. wrap_hl(hl) .. icon .. ' ' .. count
+    return wrap_hl(hl) .. icon .. ' ' .. count .. ' '
   end
   return ''
 end
@@ -218,9 +263,10 @@ end
 ---@param hl string
 ---@return string
 local function lsp_current_function(hl)
+  hl = hl and wrap_hl(hl) or ''
   local current_function = vim.b.lsp_current_function
   if current_function and current_function ~= '' then
-    return wrap_hl(hl) .. '(' .. current_function .. ')'
+    return hl .. '(' .. current_function .. ')'
   end
   return ''
 end
@@ -229,7 +275,7 @@ end
 ---Ref: https://github.com/nvim-lua/lsp-status.nvim/blob/master/lua/lsp-status/statusline.lua#L37
 ---@return string
 local function lsp_messages()
-  local messages = lsp_status.messages()
+  local messages = fn.uniq(lsp_status.messages())
   local msgs = {}
 
   for _, msg in ipairs(messages) do
@@ -269,7 +315,7 @@ local function inactive_statusline(ctx)
   local extension = fn.fnamemodify(ctx.bufname, ':e')
   local filename = fn.fnamemodify(ctx.bufname, ':p:t')
   local icon, _ = devicons.get_icon(filename, extension, {default = true})
-  return ' ' .. icon .. ' ' .. fn.fnamemodify(ctx.bufname, ':~:.')
+  return ' ' .. icon .. ' %<' .. fn.fnamemodify(ctx.bufname, ':~:.') .. ' '
 end
 
 ---Determine whether we are in a special buffer or not.
@@ -300,7 +346,7 @@ end
 ---@param inactive boolean
 ---@return string
 local function special_buffer_statusline(ctx, inactive)
-  local typ = (ctx.filetype and ctx.filetype ~= '') and ctx.filetype or ctx.buftype
+  local typ = ctx.filetype ~= '' and ctx.filetype or ctx.buftype
   local name = special_buffer_name(ctx, typ)
   local icon = special_buffer_info.icon[typ] or ''
   local color = special_buffer_info.color[typ]
@@ -308,8 +354,18 @@ local function special_buffer_statusline(ctx, inactive)
   local name_hl = inactive and '' or wrap_hl('StSpecialBuffer')
   local prefix = (not inactive and contains(special_buffer_info.mode, typ)) and
     mode_component() or '▌'
+  local suffix = (not inactive and contains(special_buffer_info.lineinfo, typ))
+    and lineinfo() or ''
 
-  return prefix .. ' ' .. hl .. icon .. '%* ' .. name_hl .. name
+  return prefix
+    .. ' '
+    .. hl
+    .. icon
+    .. '%* '
+    .. name_hl
+    .. name
+    .. '%='
+    .. suffix
 end
 
 ---Provide the statusline for different types of buffers including active,
@@ -327,9 +383,6 @@ function _G.nvim_statusline()
     bufname = fn.bufname(curbuf),
     filetype = curbo.filetype,
     buftype = curbo.buftype,
-    -- fileformat = curbo.fileformat,
-    -- shiftwidth = curbo.shiftwidth,
-    -- expandtab = curbo.expandtab,
   }
 
   if special_buffer(ctx) then
@@ -339,11 +392,12 @@ function _G.nvim_statusline()
   end
 
   return mode_component()
-    -- TODO: Simplify git_status_info calls
-    .. git_status_info('head', icons.git_branch, 'StGitBranch')
-    .. git_status_info('added', icons.diff_added, 'StGreen')
-    .. git_status_info('changed', icons.diff_modified, 'StBlue')
-    .. git_status_info('removed', icons.diff_removed, 'StRed')
+    -- TODO: Do I even need the diff count?
+    .. git_status_info('head', icons.git_branch, 'StGreenBold')
+    .. '%<'
+    -- .. git_status_info('added', icons.diff_added, 'StGreen')
+    -- .. git_status_info('changed', icons.diff_modified, 'StBlue')
+    -- .. git_status_info('removed', icons.diff_removed, 'StRed')
     .. ' '
     .. lsp_current_function('StGrey')
     .. '%='
@@ -351,10 +405,8 @@ function _G.nvim_statusline()
     .. lsp_diagnostics(ctx, 'Hint', icons.hint, 'StAqua')
     .. lsp_diagnostics(ctx, 'Warning', icons.warning, 'StYellow')
     .. lsp_diagnostics(ctx, 'Error', icons.error, 'StRed')
-    .. ' '
-    .. wrap_hl('StNormalMode')
-    .. ' %2p%% '
-    .. icons.lines .. ' %2l:%-2c%< '
+    .. python_venv(ctx, 'StYellowBold')
+    .. lineinfo()
     .. lsp_messages()
 end
 
