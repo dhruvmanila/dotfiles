@@ -1,12 +1,14 @@
 -- Ref:
 -- https://github.com/akinsho/dotfiles/blob/main/.config/nvim/lua/as/statusline
 local fn = vim.fn
+local contains = vim.tbl_contains
 local devicons = require('nvim-web-devicons')
 local icons = require('core.icons').icons
 local spinner_frames = require('core.icons').spinner_frames
 local utils = require('core.utils')
 local lsp_status = require('lsp-status')
-local contains = vim.tbl_contains
+
+local M = {}
 
 -- Colors are taken from the current colorscheme
 -- TODO: When changing the colorscheme, define its own set and create a table
@@ -231,16 +233,13 @@ end
 ---Return the Python virtual environment name if we are in any.
 ---@param ctx table
 ---@return string
-local function python_venv(ctx, hl)
+local function python_version(ctx, hl)
   if ctx.filetype == 'python' then
     local env = os.getenv('VIRTUAL_ENV')
-    if env then
-      return wrap_hl(hl)
-        .. icons.python
-        .. ' '
-        .. fn.fnamemodify(env, ':t')
-        .. '%* '
-    end
+    local version = vim.g.current_python_version
+    env = env and '(' .. fn.fnamemodify(env, ':t') .. ') ' or ''
+    version = version and version .. ' ' or ''
+    return wrap_hl(hl) .. version .. env .. '%*'
   end
   return ''
 end
@@ -405,13 +404,52 @@ function _G.nvim_statusline()
     .. lsp_diagnostics(ctx, 'Hint', icons.hint, 'StAqua')
     .. lsp_diagnostics(ctx, 'Warning', icons.warning, 'StYellow')
     .. lsp_diagnostics(ctx, 'Error', icons.error, 'StRed')
-    .. python_venv(ctx, 'StYellowBold')
+    .. python_version(ctx, 'StYellowBold')
     .. lineinfo()
     .. lsp_messages()
 end
+
+---Create a timer for the given task and interval.
+---@param interval integer (ms)
+---@param task function
+---@return nil
+local function job(interval, task)
+  -- A one-shot job to initialize the data
+  vim.defer_fn(task, 100)
+  -- Start the job every 'interval' milliseconds ad infinitum
+  fn.timer_start(interval, task, {['repeat'] = -1})
+end
+
+---Function to start a job which sets the current Python version used in the
+---statusline.
+local function set_python_version()
+  fn.jobstart(
+    'python --version',
+    {
+      stdout_buffered = true,
+      on_stdout = function(_, data, _)
+        if data and data[1] ~= '' then
+          vim.g.current_python_version = data[1]
+        end
+      end
+    }
+  )
+end
+
+function M.start_python_version_job()
+  job(2000, set_python_version)
+end
+
+utils.create_augroups({
+  statusline_jobs = {
+    [[FileType python lua require('core.statusline').start_python_version_job()]],
+  }
+})
 
 -- :h qf.vim, disable quickfix statusline
 vim.g.qf_disable_statusline = 1
 
 -- Set the statusline
 vim.o.statusline = "%!v:lua.nvim_statusline()"
+
+return M
