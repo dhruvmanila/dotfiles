@@ -92,7 +92,7 @@ end
 ---@param name string
 ---@return nil|string
 function M.get_var(scope, handle, name)
-  local result, func, args
+  local func, args
   scope = scope or 'g'
   if scope == 'g' then
     func, args = vim.api.nvim_get_var, {name}
@@ -104,10 +104,10 @@ function M.get_var(scope, handle, name)
     func, args = vim.api.nvim_tabpage_get_var, {handle, name}
   end
 
-  pcall(function()
-    result = func(unpack(args))
-  end)
-  return result
+  local ok, result = pcall(func, unpack(args))
+  if ok then
+    return result
+  end
 end
 
 return M
