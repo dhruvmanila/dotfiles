@@ -66,21 +66,11 @@ g.loaded_rrhelper        = 1
 g.loaded_netrw           = 1
 g.loaded_netrwPlugin     = 1
 
--- Load packer.nvim files
+-- Load the core files
 require('core.plugins')
-
--- Load the statusline and tabline
 require('core.statusline')
 require('core.tabline')
-
--- Load neovim options
 require('core.options')
-
--- Load neovim commands
 require('core.commands')
-
--- Load neovim autocommands
 require('core.autocmds')
-
--- Load neovim key bindings
 require('core.mappings')
