@@ -11,13 +11,15 @@ local lsp_status = require('lsp-status')
 local M = {}
 
 -- Colors are taken from the current colorscheme
--- TODO: When changing the colorscheme, define its own set and create a table
--- with each entry as a map from g.colors_name to colors value.
+-- TODO: Any way of taking the values directly from the common highligh groups?
 local colors = {
   active_bg     = '#3a3735',
   inactive_bg   = '#32302f',
   active_fg     = '#e2cca9',
   inactive_fg   = '#7c6f64',
+}
+
+local palette = {
   grey          = '#a89984',
   yellow        = '#e9b143',
   green         = '#b0b846',
@@ -28,71 +30,46 @@ local colors = {
   purple        = '#d3869b',
 }
 
+---Table to create special highlight groups.
 local highlights = {
   StatusLine = {guifg = colors.active_fg, guibg = colors.active_bg},
   StatusLineNC = {guifg = colors.inactive_fg, guibg = colors.inactive_bg},
-  StNormalMode = {guifg = colors.active_bg, guibg = colors.grey, gui = 'bold'},
-  StInsertMode = {guifg = colors.active_bg, guibg = colors.green, gui = 'bold'},
-  StVisualMode = {guifg = colors.active_bg, guibg = colors.red, gui = 'bold'},
-  StReplaceMode = {guifg = colors.active_bg, guibg = colors.yellow, gui = 'bold'},
-  StCommandMode = {guifg = colors.active_bg, guibg = colors.blue, gui = 'bold'},
-  StTerminalMode = {guifg = colors.active_bg, guibg = colors.purple, gui = 'bold'},
-  StRed = {guifg = colors.red, guibg = colors.active_bg},
-  StGreen = {guifg = colors.green, guibg = colors.active_bg},
-  StGreenBold = {guifg = colors.green, guibg = colors.active_bg, gui = 'bold'},
-  StBlue = {guifg = colors.blue, guibg = colors.active_bg},
-  StAqua = {guifg = colors.aqua, guibg = colors.active_bg},
-  StYellow = {guifg = colors.yellow, guibg = colors.active_bg},
-  StYellowBold = {guifg = colors.yellow, guibg = colors.active_bg, gui = 'bold'},
-  StGrey = {guifg = colors.grey, guibg = colors.active_bg},
-  StOrange = {guifg = colors.orange, guibg = colors.active_bg},
   StSpecialBuffer = {guifg = colors.active_fg, guibg = colors.active_bg, gui = 'bold'}
 }
 
----Setting the highlights
-for hl_name, opts in pairs(highlights) do
-  utils.highlight(hl_name, opts)
+---Create the highlight groups for the statusline from the given palette.
+---This will create groups with names as 'St<colorname><attribute>' where
+---colorname is Capitalized and attribute can be '', 'Bold' or 'Italic'
+---@param prefix string (Default: 'St')
+function M.statusline_highlights(prefix)
+  prefix = prefix or 'St'
+  for name, hex in pairs(palette) do
+    name = name:gsub('^%l', string.upper)
+    utils.highlight(prefix .. name, {guifg = hex, guibg = colors.active_bg})
+    utils.highlight(
+      prefix .. name .. 'Bold',
+      {guifg = hex, guibg = colors.active_bg, gui = 'bold'}
+    )
+    utils.highlight(
+      prefix .. name .. 'Italic',
+      {guifg = hex, guibg = colors.active_bg, gui = 'italic'}
+    )
+  end
+
+  ---Setting the special highlight groups.
+  for hl_name, opts in pairs(highlights) do
+    utils.highlight(hl_name, opts)
+  end
 end
-
----Mode data
----1. Full  2. Short  3. Highlight
-local modes = {
-  n      = {'NORMAL',    'N',    'StNormalMode'},
-  no     = {'N·OpPd',    'N·OP', 'StNormalMode'},
-  i      = {'INSERT',    'I',    'StInsertMode'},
-  ic     = {'I·COMPL',   'I·CO', 'StInsertMode'},
-  c      = {'COMMAND',   'C',    'StCommandMode'},
-  v      = {'VISUAL',    'V',    'StVisualMode'},
-  V      = {'V·LINE',    'V·L',  'StVisualMode'},
-  [''] = {'V·BLOCK',   'V·B',  'StVisualMode'},
-  s      = {'SELECT',    'S',    'StVisualMode'},
-  S      = {'S·LINE',    'S·L',  'StVisualMode'},
-  [''] = {'S·BLOCK',   'S·B',  'StVisualMode'},
-  R      = {'REPLACE',   'R',    'StReplaceMode'},
-  Rv     = {'V·REPLACE', 'V·R',  'StReplaceMode'},
-  ['r']  = {'PROMPT',    'P',    'StNormalMode'},
-  ['r?'] = {'CONFIRM',   'C',    'StNormalMode'},
-  rm     = {'MORE',      'M',    'StNormalMode'},
-  ['!']  = {'SHELL',     '!',    'StNormalMode'},
-  t      = {'TERMINAL',  'T',    'StTerminalMode'},
-}
-
----LSP server name aliases (displayed in the LSP messages)
-local aliases = {
-  pyright = 'Pyright',
-  bash_ls = 'Bash LS',
-  sumneko_lua = 'Sumneko',
-}
 
 ---Special buffer information table.
 ---
----This includes three components:
+---This includes the following components:
 ---types: List containing special buffer filetype or buftype.
----mode: List containing types for which to display the mode.
----lineinfo: List containing types for which to display the lineinfo.
 ---name: The name value to be displayed. It can be either a string or a
 ---      function where the `ctx` variable will be passed as the only argument.
----icon: Table containing the icon and its color for the buffer
+---icon: Table containing the icon for the special buffer.
+---color: Table containing the color of the icon.
 ---
 ---Special buffers included in `special_buffer_info` can be excluded from this
 ---table which will mean to not display anything for that buffer.
@@ -111,15 +88,6 @@ local special_buffer_info = {
     'vista_kind',
     'man',
   },
-  mode = {
-    'terminal',
-    'gitcommit',
-  },
-  lineinfo = {
-    'man',
-    'gitcommit',
-    'help',
-  },
   name = {
     terminal = 'Terminal',
     tsplayground = 'TSPlayground',
@@ -131,21 +99,24 @@ local special_buffer_info = {
     qf = function(ctx)
       local title = utils.get_var('w', ctx.curwin, 'quickfix_title')
       title = title and '[' .. title .. ']' or ''
-      return 'Quickfix List ' .. title .. ' %l/%L'
+      return 'Quickfix List ' .. title .. '  %l/%L'
     end,
 
     help = function(ctx)
-      return 'help [' .. fn.fnamemodify(ctx.bufname, ':t:r') .. ']'
+      return 'help [' .. fn.fnamemodify(ctx.bufname, ':t:r') .. ']  %l/%L'
     end,
 
-    dirvish = function(ctx) return fn.fnamemodify(ctx.bufname, ':~') end,
+    dirvish = function(ctx)
+      return '%<' .. fn.fnamemodify(ctx.bufname, ':~') .. ' '
+    end,
 
     vista_kind = function(_)
       return 'Vista' .. ' [' .. vim.g.vista.provider .. ']'
     end,
 
     man = function(ctx)
-      return 'Man' .. ' [' .. fn.fnamemodify(ctx.bufname, ':t') .. ']'
+      local title = fn.fnamemodify(ctx.bufname, ':t')
+      return 'Man' .. ' [' .. title .. ']  %l/%L'
     end,
   },
   icon = {
@@ -176,37 +147,28 @@ local special_buffer_info = {
   },
 }
 
-
 ---Wrap the highlight for statusline.
 ---@param hl string
 ---@return string
 local function wrap_hl(hl)
-  return '%#' .. hl .. '#'
-end
-
----Return the mode component.
----the mode text.
----@return string
-local function mode_component()
-  local mode_info = modes[fn.mode()]
-  return wrap_hl(mode_info[3]) .. ' ' .. mode_info[1] .. ' %*'
+  return hl and '%#' .. hl .. '#' or ''
 end
 
 ---Return the line information.
----Current format: ℓ 12/245 𝚌 15
+---Current format: total:col
 ---@param hl string
 ---@return string
 local function lineinfo(hl)
-  hl = hl and wrap_hl(hl) or wrap_hl('StNormalMode')
-  return hl .. ' ℓ %2l/%L ' .. '𝚌 %-2c%< '
+  hl = wrap_hl(hl)
+  return hl .. ' %L:%-2c%< '  -- ℓ 𝚌
 end
 
 -- TODO: Do I even need this?
--- local function file_detail()
---   local encode = vim.bo.fenc ~= '' and vim.bo.fenc or vim.o.enc
---   local format = vim.bo.fileformat
---   return encode:upper() .. ' ' .. format:upper() .. ' '
--- end
+local function file_detail(hl)
+  local encode = vim.bo.fenc ~= '' and vim.bo.fenc or vim.o.enc
+  local format = vim.bo.fileformat
+  return ' ' .. wrap_hl(hl) .. encode:upper() .. ' ' .. format:upper() .. ' %*'
+end
 
 ---Return the Git status information according to the given field value.
 ---@param field string (head|added|changed|removed)
@@ -238,48 +200,59 @@ local function python_version(ctx, hl)
     local env = os.getenv('VIRTUAL_ENV')
     local version = vim.g.current_python_version
     env = env and '(' .. fn.fnamemodify(env, ':t') .. ') ' or ''
-    version = version and version .. ' ' or ''
+    version = version and ' ' .. version .. ' ' or ''
     return wrap_hl(hl) .. version .. env .. '%*'
+  end
+  return ''
+end
+
+---Return the number of GitHub notifications.
+---@param hl string
+---@return string
+local function github_notifications(hl)
+  local notifications = vim.g.github_notifications
+  if notifications then
+    return wrap_hl(hl) .. icons.github .. ' ' .. notifications .. ' %*'
   end
   return ''
 end
 
 ---Return the diagnostics information for the given severity if > 0.
 ---@param ctx table
----@param severity string
----@param icon string
----@param hl string
+---@param opts table
 ---@return string
-local function lsp_diagnostics(ctx, severity, icon, hl)
-  local count = vim.lsp.diagnostic.get_count(ctx.curbuf, severity)
-  if count > 0 then
-    return wrap_hl(hl) .. icon .. ' ' .. count .. ' '
+local function lsp_diagnostics(ctx, opts)
+  local curbuf = ctx.curbuf
+  local result = ''
+  for _, o in ipairs(opts) do
+    local count = vim.lsp.diagnostic.get_count(curbuf, o.severity)
+    if count > 0 then
+      result = result .. wrap_hl(o.hl) .. o.icon .. ' ' .. count .. ' %*'
+    end
   end
-  return ''
+  return result ~= '' and ' ' .. result or result
 end
 
 ---Return the current function value from the LSP server.
 ---@param hl string
 ---@return string
 local function lsp_current_function(hl)
-  hl = hl and wrap_hl(hl) or ''
   local current_function = vim.b.lsp_current_function
   if current_function and current_function ~= '' then
-    return hl .. '(' .. current_function .. ')'
+    return wrap_hl(hl) .. ' ' .. current_function .. ' %*'
   end
   return ''
 end
 
 ---Neovim LSP messages
 ---Ref: https://github.com/nvim-lua/lsp-status.nvim/blob/master/lua/lsp-status/statusline.lua#L37
----@return string
+---@return string|nil
 local function lsp_messages()
   local messages = fn.uniq(lsp_status.messages())
   local msgs = {}
 
   for _, msg in ipairs(messages) do
-    local name = aliases[msg.name] or msg.name
-    local client_name = '[' .. name .. ']'
+    local client_name = 'LSP[' .. msg.name .. ']:'
     local contents
     if msg.progress then
       contents = msg.title
@@ -304,17 +277,22 @@ local function lsp_messages()
   end
 
   local status = vim.trim(table.concat(msgs, ' '))
-  if status ~= '' then return status .. ' ' else return '' end
+  if status ~= '' then return status .. ' ' end
 end
 
 ---Create the statusline for the inactive buffer.
 ---@param ctx table
 ---@return string
-local function inactive_statusline(ctx)
+local function inactive_statusline(ctx, prefix)
   local extension = fn.fnamemodify(ctx.bufname, ':e')
   local filename = fn.fnamemodify(ctx.bufname, ':p:t')
   local icon, _ = devicons.get_icon(filename, extension, {default = true})
-  return ' ' .. icon .. ' %<' .. fn.fnamemodify(ctx.bufname, ':~:.') .. ' '
+  return prefix
+    .. ' '
+    .. icon
+    .. ' %<'
+    .. fn.fnamemodify(ctx.bufname, ':~:.')
+    .. ' '
 end
 
 ---Determine whether we are in a special buffer or not.
@@ -344,17 +322,13 @@ end
 ---@param ctx table
 ---@param inactive boolean
 ---@return string
-local function special_buffer_statusline(ctx, inactive)
+local function special_buffer_statusline(ctx, inactive, prefix)
   local typ = ctx.filetype ~= '' and ctx.filetype or ctx.buftype
   local name = special_buffer_name(ctx, typ)
   local icon = special_buffer_info.icon[typ] or ''
   local color = special_buffer_info.color[typ]
-  local hl = (inactive or not color) and '' or wrap_hl(color)
+  local hl = inactive and '' or wrap_hl(color)
   local name_hl = inactive and '' or wrap_hl('StSpecialBuffer')
-  local prefix = (not inactive and contains(special_buffer_info.mode, typ)) and
-    mode_component() or '▌'
-  local suffix = (not inactive and contains(special_buffer_info.lineinfo, typ))
-    and lineinfo() or ''
 
   return prefix
     .. ' '
@@ -364,13 +338,13 @@ local function special_buffer_statusline(ctx, inactive)
     .. name_hl
     .. name
     .. '%='
-    .. suffix
 end
 
 ---Provide the statusline for different types of buffers including active,
 ---inactive, special buffers such as NvimTree, Terminal, quickfix, etc.
 ---@return string
 function _G.nvim_statusline()
+  local prefix = '▌'
   local curwin = vim.g.statusline_winid or 0
   local curbuf = vim.api.nvim_win_get_buf(curwin)
   local curbo = vim.bo[curbuf]
@@ -385,13 +359,20 @@ function _G.nvim_statusline()
   }
 
   if special_buffer(ctx) then
-    return special_buffer_statusline(ctx, inactive)
+    return special_buffer_statusline(ctx, inactive, prefix)
   elseif inactive then
-    return inactive_statusline(ctx)
+    return inactive_statusline(ctx, prefix)
   end
 
-  return mode_component()
-    -- TODO: Do I even need the diff count?
+  local messages = lsp_messages()
+  if messages then
+    return wrap_hl('StSpecialBuffer') .. prefix .. ' ' .. messages
+  end
+
+  return wrap_hl('StAqua')
+    .. prefix
+    .. '%*'
+    .. lineinfo('StSpecialBuffer')
     .. git_status_info('head', icons.git_branch, 'StGreenBold')
     .. '%<'
     -- .. git_status_info('added', icons.diff_added, 'StGreen')
@@ -400,13 +381,18 @@ function _G.nvim_statusline()
     .. ' '
     .. lsp_current_function('StGrey')
     .. '%='
-    .. lsp_diagnostics(ctx, 'Information', icons.info, 'StBlue')
-    .. lsp_diagnostics(ctx, 'Hint', icons.hint, 'StAqua')
-    .. lsp_diagnostics(ctx, 'Warning', icons.warning, 'StYellow')
-    .. lsp_diagnostics(ctx, 'Error', icons.error, 'StRed')
-    .. python_version(ctx, 'StYellowBold')
-    .. lineinfo()
-    .. lsp_messages()
+    .. github_notifications('StOrange')
+    .. python_version(ctx, 'StBlueBold')
+    .. file_detail()
+    .. lsp_diagnostics(
+      ctx,
+      {
+        {severity = 'Information', icon = icons.info, hl = 'StBlue'},
+        {severity = 'Hint', icon = icons.hint, hl = 'StAqua'},
+        {severity = 'Warning', icon = icons.warning, hl = 'StYellow'},
+        {severity = 'Error', icon = icons.error, hl = 'StRed'},
+      }
+    )
 end
 
 ---Create a timer for the given task and interval.
@@ -420,8 +406,7 @@ local function job(interval, task)
   fn.timer_start(interval, task, {['repeat'] = -1})
 end
 
----Function to start a job which sets the current Python version used in the
----statusline.
+---Function to start a job which sets the current Python version.
 local function set_python_version()
   fn.jobstart(
     'python --version',
@@ -436,13 +421,39 @@ local function set_python_version()
   )
 end
 
-function M.start_python_version_job()
-  job(2000, set_python_version)
+---Function to start a job which sets the number of GitHub notifications.
+local function fetch_github_notifications()
+  fn.jobstart(
+    "gh api notifications",
+    {
+      stdout_buffered = true,
+      on_stdout = function(_, data, _)
+        if data and data[1] ~= "" then
+          local notifications = vim.fn.json_decode(data)
+          vim.g.github_notifications = #notifications
+        end
+      end
+    }
+  )
+end
+
+function M.python_version_job()
+  if fn.executable('python') > 0 then
+    job(5 * 1000, set_python_version)
+  end
+end
+
+function M.github_notifications_job()
+  if fn.executable('gh') > 0 then
+    job(5 * 60 * 1000, fetch_github_notifications)
+  end
 end
 
 utils.create_augroups({
-  statusline_jobs = {
-    [[FileType python lua require('core.statusline').start_python_version_job()]],
+  custom_statusline = {
+    [[VimEnter,ColorScheme * lua require('core.statusline').statusline_highlights()]],
+    [[FileType python lua require('core.statusline').python_version_job()]],
+    [[VimEnter * lua require('core.statusline').github_notifications_job()]],
   }
 })
 

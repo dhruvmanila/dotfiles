@@ -13,7 +13,7 @@ opt.clipboard     = 'unnamed'  -- Use OS clipboard
 opt.ignorecase    = true       -- Ignore case in search by default...
 opt.smartcase     = true       -- Unless an uppercase letter is present
 opt.ruler         = false
-opt.showmode      = false
+opt.showmode      = true
 opt.cmdheight     = 1
 opt.emoji         = false      -- https://www.youtube.com/watch?v=F91VWOelFNE
 opt.showtabline   = 2          -- Always show tabline

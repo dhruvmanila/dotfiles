@@ -69,6 +69,10 @@ g.loaded_netrwPlugin     = 1
 -- Load packer.nvim files
 require('core.plugins')
 
+-- Load the statusline and tabline
+require('core.statusline')
+require('core.tabline')
+
 -- Load neovim options
 require('core.options')
 

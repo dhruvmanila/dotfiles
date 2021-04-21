@@ -56,7 +56,8 @@ M.icons = {
   tag           = get_icon('tag'),  -- ''
   telescope     = get_icon('telescope'),
   book          = get_icon('book'),
-  python        = get_icon('python'),
+  github        = get_icon('mark-github'),
+  rocket        = get_icon('rocket'),
 }
 
 M.spinner_frames = { '⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷' }

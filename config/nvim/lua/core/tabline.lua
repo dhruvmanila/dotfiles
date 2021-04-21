@@ -1,12 +1,22 @@
 local fn = vim.fn
 local icons = require('core.icons').icons
 local devicons = require('nvim-web-devicons')
-local highlight = require('core.utils').highlight
+local utils = require('core.utils')
+
+local M = {}
+
+local highlights = {
+  TabLineSel = {guifg = '#ebdbb2', guibg = '#282828', gui = 'bold'},
+  TabLine = {guifg = '#928374', guibg = '#242424'},
+  TabLineFill = {guifg = '#928374', guibg = '#1e1e1e'},
+}
 
 ---Setting up the highlights
-highlight('TabLineSel', {guifg = '#ebdbb2', guibg = '#282828', gui = 'bold'})
-highlight('TabLine', {guifg = '#928374', guibg = '#242424'})
-highlight('TabLineFill', {guifg = '#928374', guibg = '#1e1e1e'})
+function M.tabline_highlights()
+  for hl_name, opts in pairs(highlights) do
+    utils.highlight(hl_name, opts)
+  end
+end
 
 ---File flags provider.
 ---Supported flags: Readonly, modified.
@@ -26,7 +36,7 @@ end
 ---@param ctx table
 ---@return string
 local function filename(ctx, is_active)
-  local modifier = (is_active and ctx.filetype ~= 'help') and ':~:.' or ':p:t'
+  local modifier = (is_active and ctx.filetype ~= 'help' and ctx.buftype ~= 'terminal') and ':~:.' or ':p:t'
   if ctx.bufname and #ctx.bufname > 0 then
     return fn.fnamemodify(ctx.bufname, modifier)
   elseif ctx.buftype == 'prompt' then
@@ -108,3 +118,11 @@ end
 
 -- Set the tabline
 vim.o.tabline = '%!v:lua.nvim_tabline()'
+
+utils.create_augroups({
+  custom_tabline = {
+    [[VimEnter,ColorScheme * lua require('core.tabline').tabline_highlights()]],
+  }
+})
+
+return M

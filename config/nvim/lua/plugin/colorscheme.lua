@@ -27,12 +27,6 @@ g.gruvbox_material_better_performance = 1
 
 vim.cmd('colorscheme gruvbox-material')
 
--- Load the statusline and tabline
--- This should be called after setting the colorscheme as that resets the
--- higlights.
-require('core.statusline')
-require('core.tabline')
-
 local palette = vim.fn['gruvbox_material#get_palette'](
   g.gruvbox_material_background, g.gruvbox_material_palette
 )
