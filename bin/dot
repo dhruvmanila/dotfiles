@@ -34,6 +34,7 @@ MACOS_DOCK_APPLICATIONS=( \
   "/System/Applications/Books.app" \
   "/Applications/Slack.app" \
   "/Applications/Discord.app" \
+  "/Applications/Docker.app"
 )
 
 # Colors

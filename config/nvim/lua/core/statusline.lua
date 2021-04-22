@@ -199,9 +199,11 @@ local function python_version(ctx, hl)
   if ctx.filetype == 'python' then
     local env = os.getenv('VIRTUAL_ENV')
     local version = vim.g.current_python_version
-    env = env and '(' .. fn.fnamemodify(env, ':t') .. ') ' or ''
-    version = version and ' ' .. version .. ' ' or ''
-    return wrap_hl(hl) .. version .. env .. '%*'
+    if env or version then
+      env = env and '(' .. fn.fnamemodify(env, ':t') .. ') ' or ''
+      version = version and ' ' .. version .. ' ' or ''
+      return wrap_hl(hl) .. version .. env .. '%*'
+    end
   end
   return ''
 end
@@ -211,7 +213,7 @@ end
 ---@return string
 local function github_notifications(hl)
   local notifications = vim.g.github_notifications
-  if notifications then
+  if notifications and notifications > 0 then
     return wrap_hl(hl) .. icons.github .. ' ' .. notifications .. ' %*'
   end
   return ''

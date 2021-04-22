@@ -34,11 +34,15 @@ map('n', '<Leader><BS>', '<Cmd>bdelete<CR>')
 -- Quickfix and location list
 map('n', ']q', '<Cmd>cnext<CR>')
 map('n', '[q', '<Cmd>cprev<CR>')
+map('n', ']Q', '<Cmd>clast<CR>')
+map('n', '[Q', '<Cmd>cfirst<CR>')
 -- TODO: This slows down <Leader>q
 -- map('n', '<Leader>qo', '<Cmd>copen<CR>')
 -- map('n', '<Leader>qc', '<Cmd>cclose<CR>')
 map('n', ']l', '<Cmd>lnext<CR>')
 map('n', '[l', '<Cmd>lprev<CR>')
+map('n', ']L', '<Cmd>llast<CR>')
+map('n', '[L', '<Cmd>lfirst<CR>')
 
 -- Fast switching between last and current file
 map('n', '<Leader><Leader>', '<C-^>')
@@ -46,6 +50,7 @@ map('n', '<Leader><Leader>', '<C-^>')
 -- Quick cd and lcd
 map('n', '<Leader>cd', '<Cmd>cd %:p:h<CR>')
 map('n', '<Leader>lcd', '<Cmd>lcd %:p:h<CR>')
+map('n', '<Leader>tcd', '<Cmd>tcd %:p:h<CR>')
 
 -- Quick tabs movement (trying out tabs)
 map('n', '<Leader>1', '1gt')

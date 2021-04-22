@@ -2,6 +2,15 @@
 local actions = require('telescope.actions')
 local map = require('core.utils').map
 
+local should_reload = true
+
+if should_reload then
+  local RELOAD = require('plenary.reload').reload_module
+  RELOAD('plenary')
+  RELOAD('popup')
+  RELOAD('telescope')
+end
+
 require('telescope').setup {
   defaults = {
     prompt_prefix = require('core.icons').icons.telescope .. ' ',
@@ -40,6 +49,10 @@ require('telescope').setup {
   }
 }
 
+-- Load the extensions
+require('telescope').load_extension('fzy_native')
+require('telescope').load_extension('bookmarks')
+
 -- Meta
 map('n', '<Leader>te', [[<Cmd>lua require('telescope.builtin').builtin()<CR>]])
 
@@ -71,9 +84,6 @@ map('n', '<Leader>fn', [[<Cmd>lua require('plugin.telescope').installed_plugins(
 map('n', '<Leader>fa', [[<Cmd>lua require('plugin.telescope').search_all_files()<CR>]])
 -- TODO: mix this with find_files?
 map('n', '<Leader>fp', [[<Cmd>lua require('plugin.telescope').project_search()<CR>]])
-
-
-require('telescope').load_extension('fzy_native')
 
 -- Custom configuration
 local M = {}
@@ -129,6 +139,7 @@ function M.buffers(opts)
   opts.sort_lastused = true
   opts.show_all_buffers = true
   opts.shorten_path = false
+  opts.width = math.min(vim.o.columns - 20, 110)
   opts.results_height = math.min(vim.o.lines - 10, #vim.fn.getbufinfo({buflisted = 1}))
   opts.attach_mappings = function(prompt_bufnr, keymap)
     local delete_buf = function()
