@@ -7,10 +7,6 @@
 
 ### init.lua
 
-`g:vimsyn_embed` allows users to embed script highlighting within vim script.
-This is not going to be useful as most things will be in lua but just keeping
-it here.
-
 ShaDa (Shared Data) is like viminfo for neovim to persist data across sessions.
 
 ### Plugins
@@ -47,15 +43,37 @@ to providing config paths for now.
 
 ### Telescope
 
-`find_files` options:
-- `find_command` (can provide custom command here)
-- `hidden`
-- `follow`
-- `search_dirs` (search only in these dirs)
-- `cwd` (search in this directory)
-- `entry_marker` (?)
-- `shorten_path` (as the name suggests)
-- other config values
+#### Telescope browser bookmarks plugin
+
+I have a script (thanks to @junegunn) which can fzf over my Brave bookmarks, but
+for that I have to be in a terminal. With the advent of telescope, I have the
+tools necessary to create a small extension to do the same thing directly from
+Neovim using telescope and so I did :)
+
+Now, I have decided to convert that into a plugin for other people as well.
+This will be my notes regarding the process into what sort of information is
+required and how to use the telescope API to create such an extension with
+user configuration options.
+
+**First step: Each browser has its own file where it stores the bookmarks in
+some format like JSON**
+
+- Safari: ~/Library/Safari/Bookmarks.plist (out of option lol)
+- Firefox: only stores backup in a non-parsable JSON format :(
+
+- Chrome (mac): ~/Library/Application Support/Google/Chrome/Default/Bookmarks
+- Chrome (unix): ~/.config/google-chrome/Default/Bookmarks OR ~/.config/chromium/Default/Bookmarks
+- Chrome (win):
+- Brave (mac): ~/Library/Application Support/BraveSoftware/Brave-Browser/Default/Bookmarks
+- Brave (unix):
+- Brave (win):
+
+_Chrome and Brave have the same location as Brave uses Chromium_
+
+_Supported filetypes: Brave and Chrome JSON specification_
+
+_Option: Can we just have the location from the user as an option? We could then
+verify whether we can parse that fileformat_
 
 ### LSP
 

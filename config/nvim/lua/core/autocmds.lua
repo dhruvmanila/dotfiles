@@ -10,9 +10,7 @@ local augroups = {
     [[VimResized * wincmd =]],
 
     -- Highlighted yank
-    [[TextYankPost * silent! lua vim.highlight.on_yank(
-      {higroup="Substitute", timeout=200}
-    )]],
+    [[TextYankPost * silent! lua vim.highlight.on_yank({higroup="Substitute", timeout=200})]],
 
     -- Keep the plugins in sync (clean, update, install, compile)
     [[BufWritePost plugins.lua luafile %]],

@@ -6,7 +6,7 @@ map('n', '<Leader>tp', '<Cmd>TSPlaygroundToggle<CR>', {noremap = true})
 require('nvim-treesitter.configs').setup {
   -- one of 'all', 'language', or a list of languages
   ensure_installed = {
-    'bash', 'c', 'json', 'lua', 'python', 'query', 'regex', 'ruby', 'toml'
+    'bash', 'c', 'html', 'json', 'lua', 'python', 'query', 'regex', 'ruby', 'toml'
   },
 
   -- syntax highlighting

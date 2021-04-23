@@ -88,14 +88,22 @@ return require('packer').startup {
       {'lukas-reineke/format.nvim', config = [[require('plugin.format')]], opt = true}
     }
 
-    -- Fuzzy finder
+    -- Telescope and family
     use {
-      'nvim-telescope/telescope.nvim',
-      config = [[require('plugin.telescope')]],
-      requires = {
-        {'nvim-lua/popup.nvim'},
-        {'nvim-lua/plenary.nvim'},
-        {'nvim-telescope/telescope-fzy-native.nvim'}
+      {
+        'nvim-telescope/telescope.nvim',
+        config = [[require('plugin.telescope')]],
+        requires = {
+          {'nvim-lua/popup.nvim'},
+          {'nvim-lua/plenary.nvim'},
+          {'nvim-telescope/telescope-fzy-native.nvim'}
+        },
+      },
+      "dhruvmanila/telescope-bookmarks.nvim",
+      "nvim-telescope/telescope-github.nvim",
+      {
+        "nvim-telescope/telescope-arecibo.nvim",
+        rocks = {"openssl", "lua-http-parser"}
       },
     }
 

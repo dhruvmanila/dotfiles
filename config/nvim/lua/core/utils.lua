@@ -1,5 +1,5 @@
 local M = {}
-local cmd = vim.cmd
+local cmd = vim.api.nvim_command
 local nvim_set_keymap = vim.api.nvim_set_keymap
 
 -- Helper function to set the neovim options until #13479 merges.

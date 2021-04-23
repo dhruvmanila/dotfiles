@@ -14,7 +14,7 @@ try
 lua << END
   local time
   local profile_info
-  local should_profile = true
+  local should_profile = false
   if should_profile then
     local hrtime = vim.loop.hrtime
     profile_info = {}
@@ -185,9 +185,21 @@ _G.packer_plugins = {
     needs_bufread = false,
     path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/startuptime.vim"
   },
+  ["telescope-arecibo.nvim"] = {
+    loaded = true,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/telescope-arecibo.nvim"
+  },
+  ["telescope-bookmarks.nvim"] = {
+    loaded = true,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/telescope-bookmarks.nvim"
+  },
   ["telescope-fzy-native.nvim"] = {
     loaded = true,
     path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/telescope-fzy-native.nvim"
+  },
+  ["telescope-github.nvim"] = {
+    loaded = true,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/telescope-github.nvim"
   },
   ["telescope.nvim"] = {
     config = { "require('plugin.telescope')" },
@@ -248,42 +260,42 @@ _G.packer_plugins = {
 }
 
 time("Defining packer_plugins", false)
--- Config for: vim-fugitive
-time("Config for vim-fugitive", true)
-require('plugin.fugitive')
-time("Config for vim-fugitive", false)
 -- Config for: vim-startify
 time("Config for vim-startify", true)
 require('plugin.startify')
 time("Config for vim-startify", false)
--- Config for: vim-cool
-time("Config for vim-cool", true)
-vim.g.CoolTotalMatches = 1
-time("Config for vim-cool", false)
--- Config for: nvim-web-devicons
-time("Config for nvim-web-devicons", true)
-require('plugin.nvim_web_devicons')
-time("Config for nvim-web-devicons", false)
--- Config for: vim-dirvish
-time("Config for vim-dirvish", true)
-require('plugin.dirvish')
-time("Config for vim-dirvish", false)
--- Config for: telescope.nvim
-time("Config for telescope.nvim", true)
-require('plugin.telescope')
-time("Config for telescope.nvim", false)
--- Config for: vim-external
-time("Config for vim-external", true)
-require('plugin.vim_external')
-time("Config for vim-external", false)
 -- Config for: gruvbox-material
 time("Config for gruvbox-material", true)
 require('plugin.colorscheme')
 time("Config for gruvbox-material", false)
+-- Config for: vim-cool
+time("Config for vim-cool", true)
+vim.g.CoolTotalMatches = 1
+time("Config for vim-cool", false)
+-- Config for: vim-fugitive
+time("Config for vim-fugitive", true)
+require('plugin.fugitive')
+time("Config for vim-fugitive", false)
+-- Config for: vim-dirvish
+time("Config for vim-dirvish", true)
+require('plugin.dirvish')
+time("Config for vim-dirvish", false)
+-- Config for: nvim-web-devicons
+time("Config for nvim-web-devicons", true)
+require('plugin.nvim_web_devicons')
+time("Config for nvim-web-devicons", false)
+-- Config for: vim-external
+time("Config for vim-external", true)
+require('plugin.vim_external')
+time("Config for vim-external", false)
 -- Config for: indent-blankline.nvim
 time("Config for indent-blankline.nvim", true)
 require('plugin.indentline')
 time("Config for indent-blankline.nvim", false)
+-- Config for: telescope.nvim
+time("Config for telescope.nvim", true)
+require('plugin.telescope')
+time("Config for telescope.nvim", false)
 
 -- Command lazy-loads
 time("Defining lazy-load commands", true)
@@ -293,21 +305,21 @@ time("Defining lazy-load commands", false)
 
 -- Keymap lazy-loads
 time("Defining lazy-load keymaps", true)
-vim.cmd [[nnoremap <silent> <Leader>vv <cmd>lua require("packer.load")({'vista.vim'}, { keys = "<lt>Leader>vv", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[xnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <C-n> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-n>", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <Leader>cc <cmd>lua require("packer.load")({'nvim-colorizer.lua'}, { keys = "<lt>Leader>cc", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[xnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> <Leader>vv <cmd>lua require("packer.load")({'vista.vim'}, { keys = "<lt>Leader>vv", prefix = "" }, _G.packer_plugins)<cr>]]
 time("Defining lazy-load keymaps", false)
 
 vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Event lazy-loads
 time("Defining lazy-load event autocommands", true)
-vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
+vim.cmd [[au BufRead * ++once lua require("packer.load")({'gitsigns.nvim', 'nvim-treesitter'}, { event = "BufRead *" }, _G.packer_plugins)]]
 vim.cmd [[au BufNewFile * ++once lua require("packer.load")({'gitsigns.nvim'}, { event = "BufNewFile *" }, _G.packer_plugins)]]
+vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
 vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'nvim-lspconfig'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
-vim.cmd [[au BufRead * ++once lua require("packer.load")({'nvim-treesitter', 'gitsigns.nvim'}, { event = "BufRead *" }, _G.packer_plugins)]]
 time("Defining lazy-load event autocommands", false)
 vim.cmd("augroup END")
 if should_profile then save_profiles() end
