@@ -90,20 +90,23 @@ return require('packer').startup {
 
     -- Telescope and family
     use {
+      "~/projects/telescope-bookmarks.nvim",
       {
         'nvim-telescope/telescope.nvim',
         config = [[require('plugin.telescope')]],
         requires = {
           {'nvim-lua/popup.nvim'},
           {'nvim-lua/plenary.nvim'},
-          {'nvim-telescope/telescope-fzy-native.nvim'}
         },
       },
-      "dhruvmanila/telescope-bookmarks.nvim",
-      "nvim-telescope/telescope-github.nvim",
+      'nvim-telescope/telescope-fzy-native.nvim',
+      {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'},
       {
         "nvim-telescope/telescope-arecibo.nvim",
-        rocks = {"openssl", "lua-http-parser"}
+        rocks = {
+          "lua-http-parser",
+          {'openssl', env = {OPENSSL_DIR='/usr/local/Cellar/openssl@1.1/1.1.1k'}}
+        }
       },
     }
 

@@ -1,6 +1,8 @@
 -- Ref: https://github.com/nvim-telescope/telescope.nvim
 local actions = require('telescope.actions')
-local map = require('core.utils').map
+local themes = require('telescope.themes')
+local utils = require('core.utils')
+local map = utils.map
 
 local should_reload = true
 
@@ -14,12 +16,12 @@ end
 require('telescope').setup {
   defaults = {
     prompt_prefix = require('core.icons').icons.telescope .. ' ',
-    prompt_position = 'top',
     selection_caret = '❯ ',
+    prompt_position = 'top',
     sorting_strategy = 'ascending',
     layout_strategy = 'horizontal',
     color_devicons = true,
-    file_ignore_patterns = {'__pycache__'},
+    file_ignore_patterns = {'__pycache__', '.mypy_cache'},
     layout_defaults = {
       horizontal = {
         preview_width = 0.5,
@@ -43,14 +45,19 @@ require('telescope').setup {
   },
   extensions = {
     fzy_native = {
-      override_generic_sorter = false,
+      override_generic_sorter = true,
       override_file_sorter = true,
+    },
+    fzf = {
+      override_generic_sorter = true,
+      override_file_sorter = true,
+      case_mode = 'smart_case',
     },
     arecibo = {
       selected_engine = 'duckduckgo',
       url_open_command = 'open',
       show_http_headers = false,
-      show_domain_icons = true,
+      show_domain_icons = false,
     },
     bookmarks = {
       selected_browser = 'brave',
@@ -59,60 +66,94 @@ require('telescope').setup {
   },
 }
 
+---TODO: Any way to lazy load telescope extensions? Same as from packer.nvim?
+---Helper function to load the telescope extensions without blowing up.
+---It only emits a small warning :)
+---@param extensions table
+local function load_telescope_extensions(extensions)
+  for _, name in ipairs(extensions) do
+    local ok, _ = pcall(require('telescope').load_extension, name)
+    if not ok then
+      vim.api.nvim_echo(
+        {{'[Telescope] Failed to load the extension: ' .. name, 'WarningMsg'}}, true, {}
+      )
+    end
+  end
+end
+
 -- Load the extensions
-require('telescope').load_extension('fzy_native')
--- require('telescope').load_extension("arecibo")
-require('telescope').load_extension('bookmarks')
-require('telescope').load_extension('github_stars')
-require('telescope').load_extension('gh')
+load_telescope_extensions({
+  'fzf',
+  -- 'fzy_native',
+  'arecibo',
+  'bookmarks',
+  'github_stars',
+})
 
 -- Meta
 map('n', '<Leader>te', [[<Cmd>lua require('telescope.builtin').builtin()<CR>]])
 
--- Quick file navigation
-map('n', '<C-p>', [[<Cmd>lua require('telescope.builtin').find_files()<CR>]])
+-- Files
+map('n', '<C-p>', [[<Cmd>lua require('plugin.telescope').find_files()<CR>]])
 map('n', '<Leader>;', [[<Cmd>lua require('plugin.telescope').buffers()<CR>]])
-
--- Grep
-map('n', '<Leader>fl', [[<Cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]])
-map('n', '<Leader>gr', [[<Cmd>lua require('telescope.builtin').live_grep()<CR>]])
+map('n', '<C-f>', [[<Cmd>lua require('plugin.telescope').current_buffer()<CR>]])
+map('n', '<Leader>rp', [[<Cmd>lua require('plugin.telescope').grep_prompt()<CR>]])
+map('n', '<Leader>rg', [[<Cmd>lua require('plugin.telescope').live_grep()<CR>]])
+map('n', '<Leader>fd', [[<Cmd>lua require('plugin.telescope').search_dotfiles()<CR>]])
+map('n', '<Leader>fp', [[<Cmd>lua require('plugin.telescope').installed_plugins()<CR>]])
+map('n', '<Leader>fa', [[<Cmd>lua require('plugin.telescope').search_all_files()<CR>]])
 
 -- Git
 map('n', '<Leader>gc', [[<Cmd>lua require('telescope.builtin').git_commits()<CR>]])
+map('n', '<Leader>gs', [[<Cmd>lua require('plugin.telescope').github_stars()<CR>]])
 
--- Find neovim stuff
-map('n', '<Leader>fh', [[<Cmd>lua require('telescope.builtin').help_tags()<CR>]])
-map('n', '<Leader>fm', [[<Cmd>lua require('telescope.builtin').keymaps()<CR>]])
-map('n', '<Leader>fc', [[<Cmd>lua require('telescope.builtin').commands()<CR>]])
-map('n', '<Leader>hi', [[<Cmd>lua require('telescope.builtin').highlights()<CR>]])
-
--- Enhanced with Telescope (NOTE: Use <nowait> for 'q' only keymap)
-map('n', 'q:', [[<Cmd>lua require('telescope.builtin').command_history()<CR>]])
--- TODO: same thing for 'q/' (not present in telescope)
-
--- Custom config maps
-map('n', '<Leader>fd', [[<Cmd>lua require('plugin.telescope').search_dotfiles()<CR>]])
-map('n', '<Leader>fn', [[<Cmd>lua require('plugin.telescope').installed_plugins()<CR>]])
-map('n', '<Leader>fa', [[<Cmd>lua require('plugin.telescope').search_all_files()<CR>]])
-map('n', '<Leader>fp', [[<Cmd>lua require('plugin.telescope').project_search()<CR>]])
+-- Neovim (NOTE: Use <nowait> for 'q' only keymap)
+map('n', '<Leader>fh', [[<Cmd>lua require('plugin.telescope').help_tags()<CR>]])
+map('n', '<Leader>fm', [[<Cmd>lua require('plugin.telescope').keymaps()<CR>]])
+map('n', '<Leader>fc', [[<Cmd>lua require('plugin.telescope').commands()<CR>]])
+map('n', '<Leader>hi', [[<Cmd>lua require('plugin.telescope').highlights()<CR>]])
+map('n', '<Leader>fo', [[<Cmd>lua require('plugin.telescope').vim_options()<CR>]])
+map('n', 'q:', [[<Cmd>lua require('plugin.telescope').command_history()<CR>]])
 
 -- Extensions
-map('n', '<Leader>fb', [[<Cmd>Telescope bookmarks<CR>]])
--- map('n', '<Leader>fw', [[<Cmd>lua require("telescope").extensions.arecibo.websearch()<CR>]])
+map('n', '<Leader>fb', [[<Cmd>lua require('plugin.telescope').bookmarks()<CR>]])
+map('n', '<Leader>fw', [[<Cmd>lua require('plugin.telescope').arecibo()<CR>]])
 
--- Custom configuration
+-- Entrypoints which will allow me to configure each command individually.
 local M = {}
 
--- Project search using the '.git' pattern, defaults to the current directory.
---
--- This uses the root_pattern function from lspconfig.util module which returns
--- a function to which we can pass a directory and it will traverse the path
--- ancestors till it finds the root pattern we passed in.
-function M.project_search()
+---Default no previewer dropdown theme opts.
+local function no_previewer()
+  return themes.get_dropdown {
+    width = 0.8,
+    results_height = 0.8,
+    previewer = false,
+  }
+end
+
+function M.find_files()
+  local cwd = utils.get_project_root()
   require('telescope.builtin').find_files {
-    prompt_title = "Project Search",
+    prompt_title = 'Find Files (' .. vim.fn.fnamemodify(cwd, ':t') .. ')',
     shorten_path = false,
-    cwd = require('lspconfig.util').root_pattern('.git', 'requirements.txt')(vim.fn.expand('%'))
+    cwd = cwd,
+  }
+end
+
+function M.grep_prompt()
+  local cwd = utils.get_project_root()
+  require('telescope.builtin').grep_string {
+    cwd = cwd,
+    shorten_path = true,
+    search = vim.fn.input('Grep String > '),
+  }
+end
+
+function M.live_grep()
+  local cwd = utils.get_project_root()
+  require('telescope.builtin').live_grep {
+    cwd = cwd,
+    shorten_path = true,
   }
 end
 
@@ -123,7 +164,7 @@ function M.search_dotfiles()
     cwd = "~/dotfiles",
     hidden = true,
     follow = true,
-    file_ignore_patterns = {".git/.*"},
+    file_ignore_patterns = {".git/"},
   }
 end
 
@@ -145,6 +186,56 @@ function M.search_all_files()
   }
 end
 
+function M.help_tags()
+  require('telescope.builtin').help_tags {
+    layout_config = {
+      preview_width = 0.65,
+      width_padding = 0.10,
+    }
+  }
+end
+
+function M.highlights()
+  require('telescope.builtin').highlights {
+    layout_config = {
+      preview_width = 0.65,
+      width_padding = 0.10,
+    }
+  }
+end
+
+function M.current_buffer()
+  require('telescope.builtin').current_buffer_fuzzy_find(no_previewer())
+end
+
+function M.vim_options()
+  require('telescope.builtin').vim_options(no_previewer())
+end
+
+function M.keymaps()
+  require('telescope.builtin').keymaps(no_previewer())
+end
+
+function M.commands()
+  require('telescope.builtin').commands(no_previewer())
+end
+
+function M.command_history()
+  require('telescope.builtin').command_history(no_previewer())
+end
+
+function M.arecibo()
+  require('telescope').extensions.arecibo.websearch(no_previewer())
+end
+
+function M.bookmarks()
+  require('telescope').extensions.bookmarks.bookmarks(no_previewer())
+end
+
+function M.github_stars()
+  require('telescope').extensions.github_stars.github_stars(no_previewer())
+end
+
 -- https://github.com/nvim-telescope/telescope.nvim/issues/621#issuecomment-802222898
 -- Added the ability to delete multiple buffers in one go using multi-selection.
 function M.buffers(opts)
@@ -155,13 +246,17 @@ function M.buffers(opts)
   opts.show_all_buffers = true
   opts.shorten_path = false
   opts.width = math.min(vim.o.columns - 20, 110)
-  opts.results_height = math.min(vim.o.lines - 10, #vim.fn.getbufinfo({buflisted = 1}))
-  opts.attach_mappings = function(prompt_bufnr, keymap)
+  -- Height ranges from 10 to #lines - 10 (depending on the number of buffers)
+  opts.results_height = math.max(
+    10, math.min(vim.o.lines - 10, #vim.fn.getbufinfo({buflisted = 1}))
+  )
+
+  opts.attach_mappings = function(prompt_bufnr, tele_map)
     local delete_buf = function()
       local current_picker = action_state.get_current_picker(prompt_bufnr)
       local multi_selection = current_picker:get_multi_selection()
 
-      if next(multi_selection) == nil then
+      if vim.tbl_isempty(multi_selection) then
         local selection = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
         vim.api.nvim_buf_delete(selection.bufnr, {force = true})
@@ -172,10 +267,11 @@ function M.buffers(opts)
         end
       end
     end
-    keymap('i', '<C-x>', delete_buf)
+    tele_map('i', '<C-x>', delete_buf)
     return true
   end
-  require('telescope.builtin').buffers(require('telescope.themes').get_dropdown(opts))
+
+  require('telescope.builtin').buffers(themes.get_dropdown(opts))
 end
 
 return M

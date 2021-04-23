@@ -4,30 +4,21 @@ if not has_telescope then
   error("This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)")
 end
 
-local Job = require('plenary.job')
 local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local config = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
+local utils = require('telescope.utils')
 
 local max_length = 0
 
 local function collect_github_stars()
-  if vim.fn.executable("gh") == 0 then
-    error("GitHub CLI tool ('gh') is required")
-  end
-
   local stars = {}
-  local stderr = {}
-  local output, code = Job:new({
-    command = 'gh',
-    args = {'api', 'user/starred', '--paginate'},
-    on_stderr = function(_, data)
-      table.insert(stderr, data)
-    end
-  }):sync()
+  local output, code, stderr = utils.get_os_command_output(
+    {'gh', 'api', 'user/starred', '--paginate'}
+  )
 
   if code > 0 then
     error(vim.fn.join(stderr, "\n"))

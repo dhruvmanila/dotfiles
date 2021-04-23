@@ -19,7 +19,6 @@ M.opt = setmetatable({}, {
   end,
 })
 
-
 -- Create autocommand groups based on the given definitions.
 --
 -- @param definitions table<string, string[]>
@@ -107,6 +106,21 @@ function M.get_var(scope, handle, name)
   local ok, result = pcall(func, unpack(args))
   if ok then
     return result
+  end
+end
+
+---Return the current working directory using the following given root pattern.
+---Default: Current working directory
+---@param pattern table (Default: {'.git', 'requirements.txt'})
+---@return string
+function M.get_project_root(pattern)
+  local ok, util = pcall(require, 'lspconfig.util')
+
+  if ok then
+    pattern = pattern or {'.git', 'requirements.txt'}
+    return util.root_pattern(pattern)(vim.fn.expand('%')) or vim.loop.cwd()
+  else
+    return vim.loop.cwd()
   end
 end
 

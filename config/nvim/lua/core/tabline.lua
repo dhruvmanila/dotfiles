@@ -33,11 +33,22 @@ local function buf_flags(ctx)
 end
 
 ---Return the filename for the given context.
+---If the buffer is active, then return the filepath from the Git root if we're
+---in a Git repository else return the full path.
+---
+---For non-active buffers, 'help' filetype and 'terminal' buftype,
+---return the filename (tail part).
 ---@param ctx table
 ---@return string
 local function filename(ctx, is_active)
-  local modifier = (is_active and ctx.filetype ~= 'help' and ctx.buftype ~= 'terminal') and ':~:.' or ':p:t'
   if ctx.bufname and #ctx.bufname > 0 then
+    local modifier
+    if is_active and ctx.filetype ~= 'help' and ctx.buftype ~= 'terminal' then
+      local worktree = vim.fn.FugitiveWorkTree()
+      modifier = worktree ~= '' and ':s?' .. worktree .. '/??' or ':~:.'
+    else
+      modifier = ':p:t'
+    end
     return fn.fnamemodify(ctx.bufname, modifier)
   elseif ctx.buftype == 'prompt' then
     return ctx.filetype == 'TelescopePrompt' and ctx.filetype or '[Prompt]'
