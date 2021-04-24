@@ -25,7 +25,7 @@ CJK  = /\p{Han}|\p{Katakana}|\p{Hiragana}|\p{Hangul}/
 def build parent, json
   # compact removes all the nil values
   # We don't want the bookmark category to be included
-  name = if parent then [parent, json['name']].compact.join('/') else '' end
+  name = parent && (parent != '' && parent + "/" + json['name'] || json['name']) || ''
   if json['type'] == 'folder'
     json['children'].map { |child| build name, child }
   else

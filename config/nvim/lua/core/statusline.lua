@@ -160,7 +160,7 @@ end
 ---@return string
 local function lineinfo(hl)
   hl = wrap_hl(hl)
-  return hl .. ' %L:%-2c%< '  -- ℓ 𝚌
+  return hl .. ' %L:%-2c' .. ' %*'  -- ℓ 𝚌
 end
 
 -- TODO: Do I even need this?
