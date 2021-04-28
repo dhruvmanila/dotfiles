@@ -31,7 +31,7 @@ local function parse_data(data)
       _CachedGithubStars.stars,
       {
         name = repo.full_name,
-        description = repo.description,
+        description = repo.description ~= vim.NIL and repo.description or "",
         url = repo.html_url,
       }
     )
@@ -98,12 +98,12 @@ local function github_stars(opts)
           name = entry.name,
           description = entry.description,
           url = entry.url,
-          ordinal = entry.name,
+          ordinal = entry.name .. ' ' .. entry.description,
         }
       end,
     },
     previewer = false,
-    sorter = config.file_sorter(opts),
+    sorter = config.generic_sorter(opts),
     attach_mappings = function(prompt_bufnr)
       actions.select_default:replace(function()
         local selection = action_state.get_selected_entry()

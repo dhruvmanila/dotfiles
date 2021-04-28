@@ -1,6 +1,4 @@
-local create_augroups = require('core.utils').create_augroups
-
-local augroups = {
+require('core.utils').create_augroups {
   custom_autocmds = {
     -- Highlight current line, but only in active window
     [[WinEnter,BufEnter * setlocal cursorline]],
@@ -18,10 +16,7 @@ local augroups = {
 
     -- Check if file changed (more eager than 'autoread')
     -- https://unix.stackexchange.com/a/383044
-    [[FocusGained,BufEnter *
-      if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == ''
-        | checktime
-        | endif]],
+    [[FocusGained,BufEnter * if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif]],
     [[FileChangedShellPost *
       echohl WarningMsg
       | echo "File changed on disk. Buffer reloaded."
@@ -30,9 +25,7 @@ local augroups = {
     -- Automatically go to insert mode on terminal buffer
     [[TermOpen * startinsert]],
 
-    -- Remove trailing whitespace on save
+    -- Remove trailing whitespace on save FIXME: | execute "normal \<C-o>"
     [[BufWritePre * %s/\s\+$//e]],
   }
 }
-
-create_augroups(augroups)

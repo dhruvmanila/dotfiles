@@ -28,9 +28,6 @@ return require('packer').startup {
     -- Packer
     use 'wbthomason/packer.nvim'
 
-    -- Nvim Lua help
-    use 'nanotee/nvim-lua-guide'
-
     -- Color scheme
     use {'sainnhe/gruvbox-material', config = [[require('plugin.colorscheme')]]}
 
@@ -92,14 +89,14 @@ return require('packer').startup {
     use {
       "~/projects/telescope-bookmarks.nvim",
       {
-        'nvim-telescope/telescope.nvim',
+        '~/git/telescope.nvim',
         config = [[require('plugin.telescope')]],
         requires = {
           {'nvim-lua/popup.nvim'},
           {'nvim-lua/plenary.nvim'},
         },
       },
-      'nvim-telescope/telescope-fzy-native.nvim',
+      {'nvim-telescope/telescope-fzy-native.nvim', opt = true},
       {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'},
       {
         "nvim-telescope/telescope-arecibo.nvim",
@@ -129,6 +126,7 @@ return require('packer').startup {
     use {
       'cespare/vim-toml',
       'raimon49/requirements.txt.vim',
+      {'tjdevries/tree-sitter-lua', opt = true},
     }
 
     -- Git

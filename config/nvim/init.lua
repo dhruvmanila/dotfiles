@@ -67,6 +67,7 @@ g.loaded_netrw           = 1
 g.loaded_netrwPlugin     = 1
 
 -- Load the core files
+require('core.globals')
 require('core.plugins')
 require('core.statusline')
 require('core.tabline')

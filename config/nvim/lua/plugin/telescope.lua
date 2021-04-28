@@ -7,7 +7,6 @@ local map = utils.map
 local should_reload = true
 
 if should_reload then
-  local RELOAD = require('plenary.reload').reload_module
   RELOAD('plenary')
   RELOAD('popup')
   RELOAD('telescope')
@@ -44,10 +43,6 @@ require('telescope').setup {
     },
   },
   extensions = {
-    fzy_native = {
-      override_generic_sorter = true,
-      override_file_sorter = true,
-    },
     fzf = {
       override_generic_sorter = true,
       override_file_sorter = true,
@@ -84,7 +79,6 @@ end
 -- Load the extensions
 load_telescope_extensions({
   'fzf',
-  -- 'fzy_native',
   'arecibo',
   'bookmarks',
   'github_stars',
@@ -172,6 +166,7 @@ function M.installed_plugins()
   require('telescope.builtin').find_files {
     prompt_title = "Installed Plugins",
     shorten_path = false,
+    follow = true,
     cwd = vim.fn.stdpath('data') .. '/site/pack/packer/'
   }
 end
@@ -239,7 +234,7 @@ end
 -- https://github.com/nvim-telescope/telescope.nvim/issues/621#issuecomment-802222898
 -- Added the ability to delete multiple buffers in one go using multi-selection.
 function M.buffers(opts)
-  local action_state = require('telescope.actions.state')
+  -- local action_state = require('telescope.actions.state')
   opts = opts or {}
   opts.previewer = false
   opts.sort_lastused = true
@@ -251,25 +246,25 @@ function M.buffers(opts)
     10, math.min(vim.o.lines - 10, #vim.fn.getbufinfo({buflisted = 1}))
   )
 
-  opts.attach_mappings = function(prompt_bufnr, tele_map)
-    local delete_buf = function()
-      local current_picker = action_state.get_current_picker(prompt_bufnr)
-      local multi_selection = current_picker:get_multi_selection()
+  -- opts.attach_mappings = function(prompt_bufnr, tele_map)
+  --   local delete_buf = function()
+  --     local current_picker = action_state.get_current_picker(prompt_bufnr)
+  --     local multi_selection = current_picker:get_multi_selection()
 
-      if vim.tbl_isempty(multi_selection) then
-        local selection = action_state.get_selected_entry()
-        actions.close(prompt_bufnr)
-        vim.api.nvim_buf_delete(selection.bufnr, {force = true})
-      else
-        actions.close(prompt_bufnr)
-        for _, selection in ipairs(multi_selection) do
-          vim.api.nvim_buf_delete(selection.bufnr, {force = true})
-        end
-      end
-    end
-    tele_map('i', '<C-x>', delete_buf)
-    return true
-  end
+  --     if vim.tbl_isempty(multi_selection) then
+  --       local selection = action_state.get_selected_entry()
+  --       actions.close(prompt_bufnr)
+  --       vim.api.nvim_buf_delete(selection.bufnr, {force = true})
+  --     else
+  --       actions.close(prompt_bufnr)
+  --       for _, selection in ipairs(multi_selection) do
+  --         vim.api.nvim_buf_delete(selection.bufnr, {force = true})
+  --       end
+  --     end
+  --   end
+  --   tele_map('i', '<C-x>', delete_buf)
+  --   return true
+  -- end
 
   require('telescope.builtin').buffers(themes.get_dropdown(opts))
 end

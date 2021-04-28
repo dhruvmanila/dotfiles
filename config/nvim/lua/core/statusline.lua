@@ -163,33 +163,41 @@ local function lineinfo(hl)
   return hl .. ' %L:%-2c' .. ' %*'  -- ℓ 𝚌
 end
 
--- TODO: Do I even need this?
+---Return the file encoding and file format.
+---@param hl string
+---@return string
 local function file_detail(hl)
   local encode = vim.bo.fenc ~= '' and vim.bo.fenc or vim.o.enc
   local format = vim.bo.fileformat
   return ' ' .. wrap_hl(hl) .. encode:upper() .. ' ' .. format:upper() .. ' %*'
 end
 
----Return the Git status information according to the given field value.
----@param field string (head|added|changed|removed)
----@param icon string
+---Return the Git branch name (requires fugitive.vim)
 ---@param hl string
 ---@return string
-local function git_status_info(field, icon, hl)
+local function git_branch(hl)
+  local head = vim.fn.FugitiveHead()
+  if head and head ~= '' then
+    return ' ' .. wrap_hl(hl) .. icons.git_branch .. ' ' .. head .. '%* '
+  end
+  return ""
+end
+
+---Return the Git diff count information (requires gitsigns.nvim)
+---@param opts table
+---@return string
+local function git_diff_info(opts)
+  local result = ''
   local status_dict = vim.b.gitsigns_status_dict
-  if status_dict then
-    local info = status_dict[field]
-    if info then
-      if type(info) == 'number' then
-        if info > 0 then
-          return ' ' .. wrap_hl(hl) .. icon .. ' ' .. info .. '%*'
-        end
-      elseif info ~= '' then
-        return ' ' .. wrap_hl(hl) .. icon .. ' ' .. info .. '%*'
+  if status_dict and not vim.tbl_isempty(status_dict) then
+    for _, o in ipairs(opts) do
+      local count = status_dict[o.field]
+      if count and count > 0 then
+        result = result .. wrap_hl(o.hl) .. o.icon .. ' ' .. count .. ' %*'
       end
     end
   end
-  return ''
+  return result
 end
 
 ---Return the Python virtual environment name if we are in any.
@@ -217,6 +225,27 @@ local function github_notifications(hl)
     return wrap_hl(hl) .. icons.github .. ' ' .. notifications .. ' %*'
   end
   return ''
+end
+
+---Return the currently active neovim LSP client if any.
+---@param ctx table
+---@return string
+local function lsp_clients(ctx, hl)
+  local result = {}
+  local clients = vim.lsp.buf_get_clients(ctx.curbuf)
+  for id, client in pairs(clients) do
+    local filetypes = client.config.filetypes
+    if filetypes and vim.fn.index(filetypes, ctx.filetype) ~= -1 then
+      table.insert(result, client.name .. ":" .. id)
+    end
+  end
+
+  if not vim.tbl_isempty(result) then
+    result = table.concat(result, " ")
+    return ' ' .. wrap_hl(hl) .. icons.rocket .. ' ' .. result .. '%* '
+  else
+    return ''
+  end
 end
 
 ---Return the diagnostics information for the given severity if > 0.
@@ -375,36 +404,37 @@ function _G.nvim_statusline()
     .. prefix
     .. '%*'
     .. lineinfo('StSpecialBuffer')
-    .. git_status_info('head', icons.git_branch, 'StGreenBold')
+    .. git_branch('StGreenBold')
     .. '%<'
-    -- .. git_status_info('added', icons.diff_added, 'StGreen')
-    -- .. git_status_info('changed', icons.diff_modified, 'StBlue')
-    -- .. git_status_info('removed', icons.diff_removed, 'StRed')
-    .. ' '
+    -- .. git_diff_info({
+    --     {field = 'added', icon = icons.diff_added, hl = 'StGreen'},
+    --     {field = 'modified', icon = icons.diff_modified, hl = 'StBlue'},
+    --     {field = 'removed', icon = icons.diff_removed, hl = 'StRed'},
+    --   })
     .. lsp_current_function('StGrey')
     .. '%='
     .. github_notifications('StOrange')
     .. python_version(ctx, 'StBlueBold')
-    .. file_detail()
+    .. lsp_clients(ctx, 'StGreenBold')
+    .. file_detail('StGreyBold')
     .. lsp_diagnostics(
-      ctx,
-      {
-        {severity = 'Information', icon = icons.info, hl = 'StBlue'},
-        {severity = 'Hint', icon = icons.hint, hl = 'StAqua'},
-        {severity = 'Warning', icon = icons.warning, hl = 'StYellow'},
-        {severity = 'Error', icon = icons.error, hl = 'StRed'},
-      }
-    )
+        ctx,
+        {
+          {severity = 'Information', icon = icons.info, hl = 'StBlue'},
+          {severity = 'Hint', icon = icons.hint, hl = 'StAqua'},
+          {severity = 'Warning', icon = icons.warning, hl = 'StYellow'},
+          {severity = 'Error', icon = icons.error, hl = 'StRed'},
+        }
+      )
 end
 
 ---Create a timer for the given task and interval.
----@param interval integer (ms)
+---@param interval number (ms)
 ---@param task function
----@return nil
 local function job(interval, task)
   -- A one-shot job to initialize the data
   vim.defer_fn(task, 100)
-  -- Start the job every 'interval' milliseconds ad infinitum
+  -- Start the job every `interval` milliseconds ad infinitum
   fn.timer_start(interval, task, {['repeat'] = -1})
 end
 
