@@ -239,7 +239,6 @@ function M.github_stars()
   require('telescope').extensions.github_stars.github_stars(no_previewer())
 end
 
--- TODO: change the name to installed_plugins and remove the old one
 function M.installed_plugins()
   require('telescope').extensions.installed_plugins.installed_plugins(
     themes.get_dropdown {

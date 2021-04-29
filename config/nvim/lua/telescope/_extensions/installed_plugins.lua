@@ -67,7 +67,9 @@ local function installed_plugins(opts)
         local selection = action_state.get_selected_entry()
         actions.close(prompt_bufnr)
 
-        require('plugin.telescope').find_files_in_dir(selection.path, {})
+        vim.schedule(function()
+          require('plugin.telescope').find_files_in_dir(selection.path, {})
+        end)
       end
 
       map('i', '<C-f>', find_files_in_plugin)
