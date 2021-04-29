@@ -82,6 +82,7 @@ load_telescope_extensions({
   'arecibo',
   'bookmarks',
   'github_stars',
+  'installed_plugins',
 })
 
 -- Meta
@@ -125,13 +126,23 @@ local function no_previewer()
   }
 end
 
+---Generic function to find files in given directory.
+---Also used in installed_plugins extension
+function M.find_files_in_dir(dir, opts)
+  local dir_opts = {
+    prompt_title = "Find Files (" .. vim.fn.fnamemodify(dir, ":t") .. ")",
+    cwd = dir,
+  }
+  dir_opts = vim.tbl_deep_extend("force", dir_opts, opts)
+  require('telescope.builtin').find_files(dir_opts)
+end
+
 function M.find_files()
   local cwd = utils.get_project_root()
-  require('telescope.builtin').find_files {
-    prompt_title = 'Find Files (' .. vim.fn.fnamemodify(cwd, ':t') .. ')',
+  M.find_files_in_dir(cwd, {
     shorten_path = false,
     cwd = cwd,
-  }
+  })
 end
 
 function M.grep_prompt()
@@ -152,24 +163,21 @@ function M.live_grep()
 end
 
 function M.search_dotfiles()
-  require('telescope.builtin').find_files {
-    prompt_title = "Search Dotfiles",
+  M.find_files_in_dir("~/dotfiles", {
     shorten_path = false,
-    cwd = "~/dotfiles",
     hidden = true,
     follow = true,
     file_ignore_patterns = {".git/"},
-  }
+  })
 end
 
-function M.installed_plugins()
-  require('telescope.builtin').find_files {
-    prompt_title = "Installed Plugins",
-    shorten_path = false,
-    follow = true,
-    cwd = vim.fn.stdpath('data') .. '/site/pack/packer/'
-  }
-end
+-- function M.installed_plugins()
+--   M.find_files_in_dir(vim.fn.stdpath('data') .. '/site/pack/packer/', {
+--     prompt_title = "Installed Plugins",
+--     shorten_path = false,
+--     follow = true,
+--   })
+-- end
 
 function M.search_all_files()
   require('telescope.builtin').find_files {
@@ -231,6 +239,17 @@ function M.github_stars()
   require('telescope').extensions.github_stars.github_stars(no_previewer())
 end
 
+-- TODO: change the name to installed_plugins and remove the old one
+function M.installed_plugins()
+  require('telescope').extensions.installed_plugins.installed_plugins(
+    themes.get_dropdown {
+      width = _CachedPluginInfo.max_length + 10,
+      results_height = 0.8,
+      previewer = false,
+    }
+  )
+end
+
 -- https://github.com/nvim-telescope/telescope.nvim/issues/621#issuecomment-802222898
 -- Added the ability to delete multiple buffers in one go using multi-selection.
 function M.buffers(opts)
@@ -245,26 +264,11 @@ function M.buffers(opts)
   opts.results_height = math.max(
     10, math.min(vim.o.lines - 10, #vim.fn.getbufinfo({buflisted = 1}))
   )
-
-  -- opts.attach_mappings = function(prompt_bufnr, tele_map)
-  --   local delete_buf = function()
-  --     local current_picker = action_state.get_current_picker(prompt_bufnr)
-  --     local multi_selection = current_picker:get_multi_selection()
-
-  --     if vim.tbl_isempty(multi_selection) then
-  --       local selection = action_state.get_selected_entry()
-  --       actions.close(prompt_bufnr)
-  --       vim.api.nvim_buf_delete(selection.bufnr, {force = true})
-  --     else
-  --       actions.close(prompt_bufnr)
-  --       for _, selection in ipairs(multi_selection) do
-  --         vim.api.nvim_buf_delete(selection.bufnr, {force = true})
-  --       end
-  --     end
-  --   end
-  --   tele_map('i', '<C-x>', delete_buf)
-  --   return true
-  -- end
+  opts.attach_mappings = function(_, tele_map)
+    tele_map('i', '<C-x>', actions.delete_buffer)
+    tele_map('n', '<C-x>', actions.delete_buffer)
+    return true
+  end
 
   require('telescope.builtin').buffers(themes.get_dropdown(opts))
 end

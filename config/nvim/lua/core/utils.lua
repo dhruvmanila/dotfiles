@@ -124,4 +124,10 @@ function M.get_project_root(pattern)
   end
 end
 
+---Emit a warning message.
+---@param msg string
+function M.warn(msg)
+  vim.api.nvim_echo({{msg, "WarningMsg"}}, true, {})
+end
+
 return M

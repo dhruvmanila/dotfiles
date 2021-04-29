@@ -1,3 +1,4 @@
+local packer = require('packer')
 local execute = vim.api.nvim_command
 local fn = vim.fn
 
@@ -7,6 +8,27 @@ if fn.empty(fn.glob(install_path)) > 0 then
   execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
   execute 'packadd packer.nvim'
 end
+
+-- By always resetting, the plugins which were removed will be removed from
+-- this table as well.
+_CachedPluginInfo = {plugins = {}, max_length = 0}
+
+-- Extending packer.nvim to store plugin info to be used by
+-- :Telescope packer_plugins
+packer.set_handler('type', function(_, plugin, type)
+  local name = type == "local" and "local/" .. plugin.short_name or plugin.name
+  local length = #name
+
+  if length > _CachedPluginInfo.max_length then
+    _CachedPluginInfo.max_length = length
+  end
+
+  table.insert(_CachedPluginInfo.plugins, {
+    name = name,
+    path = plugin.install_path,
+    url = type == "git" and plugin.url or nil,
+  })
+end)
 
 --[[
 Notes:
@@ -23,7 +45,7 @@ startup. Add the plugin configuration to be lazy loaded on the commands to
 which the keys were bound to.
 
 --]]
-return require('packer').startup {
+packer.startup {
   function(use)
     -- Packer
     use 'wbthomason/packer.nvim'
