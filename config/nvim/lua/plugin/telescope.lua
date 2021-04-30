@@ -39,6 +39,8 @@ require('telescope').setup {
         ["<C-j>"] = actions.move_selection_next,
         ["<C-k>"] = actions.move_selection_previous,
         ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
+        ["<C-s>"] = actions.select_horizontal,
+        ["<C-x>"] = false,
       },
     },
   },
@@ -83,6 +85,7 @@ load_telescope_extensions({
   'bookmarks',
   'github_stars',
   'installed_plugins',
+  'startify_sessions',
 })
 
 -- Meta
@@ -113,6 +116,7 @@ map('n', 'q:', [[<Cmd>lua require('plugin.telescope').command_history()<CR>]])
 -- Extensions
 map('n', '<Leader>fb', [[<Cmd>lua require('plugin.telescope').bookmarks()<CR>]])
 map('n', '<Leader>fw', [[<Cmd>lua require('plugin.telescope').arecibo()<CR>]])
+map('n', '<Leader>fs', [[<Cmd>lua require('plugin.telescope').startify_sessions()<CR>]])
 
 -- Entrypoints which will allow me to configure each command individually.
 local M = {}
@@ -188,6 +192,16 @@ function M.installed_plugins()
   )
 end
 
+function M.startify_sessions()
+  require('telescope').extensions.startify_sessions.startify_sessions(
+    themes.get_dropdown {
+      width = 40,
+      results_height = 0.5,
+      previewer = false,
+    }
+  )
+end
+
 function M.search_all_files()
   require('telescope.builtin').find_files {
     prompt_title = "Search All Files",
@@ -201,8 +215,8 @@ end
 function M.help_tags()
   require('telescope.builtin').help_tags {
     layout_config = {
-      preview_width = 0.60,
-      width_padding = 0.15,
+      preview_width = 0.65,
+      width_padding = 0.14,
     }
   }
 end

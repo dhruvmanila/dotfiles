@@ -4,13 +4,15 @@ if not has_telescope then
   error("This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)")
 end
 
-local Job = require('plenary.job')
+local Job = require("plenary.job")
 local finders = require("telescope.finders")
 local pickers = require("telescope.pickers")
 local config = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
+
+local warn = require("core.utils").warn
 
 -- Keep the values around between reloads
 _CachedGithubStars = _CachedGithubStars or {stars = {}, max_length = 0}
@@ -66,6 +68,14 @@ local function collect_github_stars()
   }):start()
 end
 
+--- Defines the action to open the selection in the browser.
+local function open_in_browser(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
+  actions.close(prompt_bufnr)
+
+  os.execute('open' .. ' "' .. selection.url .. '" &> /dev/null')
+end
+
 --- This extension will show the users GitHub stars with the repository
 --- description and provide an action to open it in the default browser.
 ---
@@ -86,9 +96,7 @@ local function github_stars(opts)
 
   -- TODO: start the job again? run the job synchronously?
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    vim.api.nvim_echo(
-      {{'[Telescope] No GitHub stars are cached yet.', 'WarningMsg'}}, true, {}
-    )
+    warn('[Telescope] No GitHub stars are cached yet.')
     return nil
   end
 
@@ -103,7 +111,7 @@ local function github_stars(opts)
   local function make_display(entry)
     return displayer {
       entry.name,
-      {entry.description, "Comment"},
+      {entry.description, "CommentItalic"},
     }
   end
 
@@ -123,13 +131,8 @@ local function github_stars(opts)
     },
     previewer = false,
     sorter = config.generic_sorter(opts),
-    attach_mappings = function(prompt_bufnr)
-      actions.select_default:replace(function()
-        local selection = action_state.get_selected_entry()
-        actions.close(prompt_bufnr)
-
-        os.execute('open' .. ' "' .. selection.url .. '" &> /dev/null')
-      end)
+    attach_mappings = function()
+      actions.select_default:replace(open_in_browser)
       -- TODO: refresh the telescope window
       -- map('i', '<C-l>', collect_github_stars)
       return true
