@@ -234,10 +234,7 @@ local function lsp_clients(ctx, hl)
   local result = {}
   local clients = vim.lsp.buf_get_clients(ctx.curbuf)
   for id, client in pairs(clients) do
-    local filetypes = client.config.filetypes
-    if filetypes and vim.fn.index(filetypes, ctx.filetype) ~= -1 then
-      table.insert(result, client.name .. ":" .. id)
-    end
+    table.insert(result, client.name .. ":" .. id)
   end
 
   if not vim.tbl_isempty(result) then

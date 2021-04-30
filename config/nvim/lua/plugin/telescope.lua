@@ -23,8 +23,8 @@ require('telescope').setup {
     file_ignore_patterns = {'__pycache__', '.mypy_cache'},
     layout_defaults = {
       horizontal = {
-        preview_width = 0.5,
-        width_padding = 0.1,
+        preview_width = 0.55,
+        width_padding = 0.05,
         height_padding = 0.1,
       },
       vertical = {
@@ -38,7 +38,7 @@ require('telescope').setup {
         ["<Esc>"] = actions.close,
         ["<C-j>"] = actions.move_selection_next,
         ["<C-k>"] = actions.move_selection_previous,
-        ["<C-q>"] = actions.send_to_qflist,
+        ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
       },
     },
   },
@@ -48,12 +48,12 @@ require('telescope').setup {
       override_file_sorter = true,
       case_mode = 'smart_case',
     },
-    arecibo = {
-      selected_engine = 'duckduckgo',
-      url_open_command = 'open',
-      show_http_headers = false,
-      show_domain_icons = false,
-    },
+    -- arecibo = {
+    --   selected_engine = 'duckduckgo',
+    --   url_open_command = 'open',
+    --   show_http_headers = false,
+    --   show_domain_icons = false,
+    -- },
     bookmarks = {
       selected_browser = 'brave',
       url_open_command = 'open',
@@ -79,7 +79,7 @@ end
 -- Load the extensions
 load_telescope_extensions({
   'fzf',
-  'arecibo',
+  -- 'arecibo',
   'bookmarks',
   'github_stars',
   'installed_plugins',
@@ -141,7 +141,6 @@ function M.find_files()
   local cwd = utils.get_project_root()
   M.find_files_in_dir(cwd, {
     shorten_path = false,
-    cwd = cwd,
   })
 end
 
@@ -179,6 +178,16 @@ end
 --   })
 -- end
 
+function M.installed_plugins()
+  require('telescope').extensions.installed_plugins.installed_plugins(
+    themes.get_dropdown {
+      width = _CachedPluginInfo.max_length + 10,
+      results_height = 0.8,
+      previewer = false,
+    }
+  )
+end
+
 function M.search_all_files()
   require('telescope.builtin').find_files {
     prompt_title = "Search All Files",
@@ -192,8 +201,8 @@ end
 function M.help_tags()
   require('telescope.builtin').help_tags {
     layout_config = {
-      preview_width = 0.65,
-      width_padding = 0.10,
+      preview_width = 0.60,
+      width_padding = 0.15,
     }
   }
 end
@@ -239,20 +248,9 @@ function M.github_stars()
   require('telescope').extensions.github_stars.github_stars(no_previewer())
 end
 
-function M.installed_plugins()
-  require('telescope').extensions.installed_plugins.installed_plugins(
-    themes.get_dropdown {
-      width = _CachedPluginInfo.max_length + 10,
-      results_height = 0.8,
-      previewer = false,
-    }
-  )
-end
-
 -- https://github.com/nvim-telescope/telescope.nvim/issues/621#issuecomment-802222898
 -- Added the ability to delete multiple buffers in one go using multi-selection.
 function M.buffers(opts)
-  -- local action_state = require('telescope.actions.state')
   opts = opts or {}
   opts.previewer = false
   opts.sort_lastused = true

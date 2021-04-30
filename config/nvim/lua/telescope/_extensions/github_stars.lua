@@ -15,10 +15,12 @@ local entry_display = require("telescope.pickers.entry_display")
 -- Keep the values around between reloads
 _CachedGithubStars = _CachedGithubStars or {stars = {}, max_length = 0}
 
+--- Parse the data received from running the GitHub stars job.
+---@data string
 local function parse_data(data)
   -- As we're paginating the results, GitHub will separate the page results as:
-  -- [{...}, {...}] [{...}, {...}] ...
-  -- JSON does not like random symbols and so a small hack ;)
+  -- [{...}, {...}][{...}, {...}] ...
+  -- Replace the middle "][" with a "," to make it a valid JSON string.
   data = data:gsub("%]%[", ",")
   local json_data = vim.fn.json_decode(data)
 
@@ -38,6 +40,8 @@ local function parse_data(data)
   end
 end
 
+--- Start a new asynchronous job to collect the user GitHub stars using
+--- GitHub's CLI tool `gh`.
 local function collect_github_stars()
   local stderr = {}
 
@@ -62,6 +66,21 @@ local function collect_github_stars()
   }):start()
 end
 
+--- This extension will show the users GitHub stars with the repository
+--- description and provide an action to open it in the default browser.
+---
+--- The information is cached using an asynchronous job which is started when
+--- this plugin is loaded. It is stored in a global variable
+--- (`_CachedGithubStars`) which contains the following two fields:
+---   - `stars`: List of tables each containing respository information:
+---     - `name`: Full repository name (user/repo)
+---     - `url`: GitHub url
+---     - `description`: Repository description
+---   - `max_length`: Maximum length of the `name` field from above
+---
+--- Default action (<CR>) will open the GitHub URL in the default browser.
+---@opts table
+---@return nil
 local function github_stars(opts)
   opts = opts or {}
 

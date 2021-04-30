@@ -13,11 +13,54 @@ local entry_display = require("telescope.pickers.entry_display")
 
 local warn = require("core.utils").warn
 
+---Defines the action to open the selection in the browser.
+local function open_in_browser(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
+
+  if not selection.url then
+    error(selection.name .. " is a local plugin.")
+    return nil
+  end
+
+  actions.close(prompt_bufnr)
+  os.execute('open' .. ' "' .. selection.url .. '" &> /dev/null')
+end
+
+---Defines the action to open the selection in a new Telescope finder with the
+---current working directory being set to the selected plugin installation path.
+local function find_files_in_plugin(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
+  actions.close(prompt_bufnr)
+
+  vim.schedule(function()
+    require('plugin.telescope').find_files_in_dir(selection.path, {})
+  end)
+end
+
+--- This extension will show the currently installed neovim plugins using
+--- packer.nvim and provide actions to either open the plugin homepage in the
+--- browser or a telescope finder for plugin files.
+---
+--- The information regarding the plugins is cached in `core.plugins` as a
+--- global variable (`_CachedPluginInfo`) which contains the following
+--- two fields:
+---   - `plugins`: List of tables each containing plugin information:
+---     - `name`: Full name as provided by the user (user/repo)
+---     - `url`: GitHub url
+---     - `path`: Local path to the installation directory
+---   - `max_length`: Maximum length of the `name` field from above
+---
+--- There are two actions available:
+---   - Default action (<CR>) will open the GitHub URL in the default browser.
+---   - <C-f> will open a new telescope finder with current working
+---     set to the plugin installation path.
+---@param opts table
+---@return nil
 local function installed_plugins(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedPluginInfo.plugins) then
-    warn('[Telescope] No plugin info was cached.')
+    warn('[Telescope] Plugin information was not cached')
     return nil
   end
 
@@ -50,28 +93,8 @@ local function installed_plugins(opts)
     },
     previewer = false,
     sorter = config.generic_sorter(opts),
-    attach_mappings = function(prompt_bufnr, map)
-      actions.select_default:replace(function()
-        local selection = action_state.get_selected_entry()
-
-        if not selection.url then
-          error("[Telescope] Selection is a local plugin.")
-          return nil
-        end
-
-        actions.close(prompt_bufnr)
-        os.execute('open' .. ' "' .. selection.url .. '" &> /dev/null')
-      end)
-
-      local function find_files_in_plugin()
-        local selection = action_state.get_selected_entry()
-        actions.close(prompt_bufnr)
-
-        vim.schedule(function()
-          require('plugin.telescope').find_files_in_dir(selection.path, {})
-        end)
-      end
-
+    attach_mappings = function(_, map)
+      actions.select_default:replace(open_in_browser)
       map('i', '<C-f>', find_files_in_plugin)
       map('n', '<C-f>', find_files_in_plugin)
       return true
