@@ -33,14 +33,16 @@ local palette = vim.fn['gruvbox_material#get_palette'](
 
 highlight('PmenuSel', {guifg = palette.bg3[1], guibg = palette.blue[1], gui = 'bold'})
 highlight('HintFloat', {guifg = palette.aqua[1], guibg = palette.bg3[1]})
+-- highlight('CommentItalic', {guifg = palette.grey1[1], gui = 'italic'})
 
 -- Current line number
 highlight('CursorLineNr', {force = true, link = 'MoreMsg'})
 
 -- Telescope.nvim
-highlight('TelescopeSelection', {force = true, link = 'CursorLine'})
-highlight('TelescopeSelectionCaret', {force = true, link = 'Red'})
+highlight('TelescopeSelection', {force = true, link = 'Visual'})
+highlight('TelescopeSelectionCaret', {force = true, link = 'Yellow'})
 highlight('TelescopeMatching', {force = true, link = 'Blue'})
+-- highlight('TelescopeBorder', {force = true, link = 'Normal'})
 
 -- Treesitter
 highlight('TSFunction', {force = true, link = 'Function'})

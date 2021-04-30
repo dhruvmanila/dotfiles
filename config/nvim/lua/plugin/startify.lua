@@ -1,55 +1,87 @@
 -- Ref: https://github.com/mhinz/vim-startify
 local g = vim.g
+local icons = require('core.icons').icons
 
 vim.api.nvim_set_keymap('n', '<Leader>`', '<Cmd>Startify<CR>', {noremap = true})
 
--- Startify header
-g.ascii_neovim = {
-  '',
-  '  ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗',
-  '  ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║',
-  '  ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║',
-  '  ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║',
-  '  ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║',
-  '  ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝',
-  '',
+--- NOTE: By wrapping the header and footer into a function, we can generate the
+--- respective table as per the current context.
+
+--- Generate and return the Startify header.
+---@return table
+function StartifyHeader()
+  return {
+    '',
+    '',
+    '███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗',
+    '████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║',
+    '██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║',
+    '██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║',
+    '██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║',
+    '╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝',
+    '',
+    '',
+  }
+end
+
+--- Generate and return the Startify footer.
+---@return table
+function StartifyFooter()
+  local loaded_plugins = 0
+  for _, info in pairs(_G.packer_plugins) do
+    if info.loaded then
+      loaded_plugins = loaded_plugins + 1
+    end
+  end
+
+  return {
+    '',
+    icons.package .. '  neovim loaded ' .. loaded_plugins .. ' plugins',
+    '',
+  }
+end
+
+--- Set the corresponding header and footer.
+g.startify_custom_header = "startify#center(luaeval('StartifyHeader()'))"
+g.startify_custom_footer = "startify#center(luaeval('StartifyFooter()'))"
+
+g.startify_lists = {{type = 'commands'}}
+
+local commands = {
+  {l = {icons.pin .. '  Open Last Session', 'SLoad __LAST__'}},
+  {s = {icons.globe ..  '  Find Sessions', "lua require('plugin.telescope').startify_sessions()"}},
+  {h = {icons.history .. '  Recently Opened Files', 'Telescope oldfiles'}},
+  {f = {icons.file .. '  Find Files', "lua require('plugin.telescope').find_files()"}},
+  {p = {icons.stopwatch .. '  StartupTime', 'StartupTime'}},
 }
 
-g.startify_custom_header = 'startify#pad(g:ascii_neovim + startify#fortune#boxed())'
+local max_length = 0
+for _, v in ipairs(commands) do
+  for _, c in pairs(v) do
+    max_length = math.max(max_length, type(c) == 'table' and #c[1] or #c)
+  end
+end
 
-g.startify_lists = {
-  {type = 'sessions', header = {'   Sessions'}, indices = {"a", "s", "d", "f", "g", "h"}},
-  {type = 'dir',      header = {'   MRU ' .. vim.fn.getcwd()}},
-  {type = 'files',    header = {'   MRU'}},
-  {type = 'commands', header = {'   Commands'}},
-}
-
-g.startify_commands = {
-  {pr = 'StartupTime'},
-  {ps = 'PackerSync'},
-  {pi = 'PackerInstall'},
-  {pc = 'PackerCompile'},
-}
+g.startify_commands = commands
+g.startify_center = max_length + 5
 
 g.startify_session_before_save = {
   'let $CURRENT_TABPAGE = tabpagenr()',
   'silent! tabdo NvimTreeClose',
   'execute $CURRENT_TABPAGE . "tabnext"',
 }
+
 g.startify_fortune_use_unicode = 1
 
--- I use sessions most of the time
-g.startify_files_number = 5
-
--- Automatically update sessions before leaving Vim and before loading a new
--- session via :SLoad
 g.startify_session_persistence = 1
-
--- Sort sessions by modified time instead of alphabetically
 g.startify_session_sort = 1
-
 g.startify_session_delete_buffers = 1
 
--- When opening a file or bookmark, do not change the PWD
 g.startify_change_to_dir = 0
 g.startify_change_to_vcs_root = 0
+
+-- local function get_last_session_name()
+--   local session_dir = vim.fn["startify#get_session_path"]()
+--   local last_session_path = vim.fn.resolve(session_dir .. "/__LAST__")
+--   return vim.fn.fnamemodify(last_session_path, ":t")
+-- end

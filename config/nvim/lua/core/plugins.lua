@@ -173,7 +173,7 @@ packer.startup {
     }
 
     -- Start screen
-    -- Neovim alternative written in lua 'glepnir/dashboard-nvim'
+    use {'glepnir/dashboard-nvim', opt = true}
     use {'mhinz/vim-startify', config = [[require('plugin.startify')]]}
 
     -- File explorer (Mainly used for going through new projects)
@@ -205,5 +205,12 @@ packer.startup {
 
     -- Open external browsers, editor, finder from Neovim
     use {'itchyny/vim-external', config = [[require('plugin.vim_external')]]}
-  end
+  end,
+
+  config = {
+    profile = {
+      enable = true,
+      threshold = 0,  -- ms
+    }
+  },
 }

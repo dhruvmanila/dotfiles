@@ -11,7 +11,8 @@ g.indent_blankline_filetype_exclude = {
   'lspinfo',
   'packer',
   'startify',
-  'txt'
+  'txt',
+  'dashboard',
 }
 
 g.indent_blankline_buftype_exclude = {'terminal'}

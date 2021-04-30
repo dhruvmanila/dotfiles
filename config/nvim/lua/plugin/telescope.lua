@@ -216,7 +216,7 @@ function M.help_tags()
   require('telescope.builtin').help_tags {
     layout_config = {
       preview_width = 0.65,
-      width_padding = 0.14,
+      width_padding = 0.10,
     }
   }
 end

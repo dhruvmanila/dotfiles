@@ -111,7 +111,7 @@ local function github_stars(opts)
   local function make_display(entry)
     return displayer {
       entry.name,
-      {entry.description, "CommentItalic"},
+      {entry.description, "Comment"},
     }
   end
 

@@ -11,6 +11,14 @@ local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
 
+--- Return the current session name.
+local function get_current_session_name()
+  local this_session = vim.api.nvim_get_vvar("this_session")
+  if this_session and this_session ~= "" then
+    return vim.fn.fnamemodify(vim.fn.resolve(this_session), ":t")
+  end
+end
+
 --- Load the selected startify session.
 local function load_session(prompt_bufnr)
   local selection = action_state.get_selected_entry()
@@ -43,7 +51,9 @@ local function startify_sessions(opts)
   opts = opts or {}
 
   local results = {}
+  local current_session = get_current_session_name()
   for _, name in ipairs(vim.fn["startify#session_list"]("")) do
+    if name == current_session then name = name .. " (*)" end
     table.insert(results, {name = name})
   end
 
