@@ -40,7 +40,8 @@ opt.number         = true
 opt.relativenumber = true
 opt.signcolumn     = 'yes:1'
 opt.foldenable     = false
-opt.pumheight      = 15
+opt.pumheight      = 30
+opt.pumblend       = 15
 
 opt.wrap        = true  -- Visually wrap lines longer than window width
 opt.breakindent = true  -- Every wrapped line will continue visually indented

@@ -1,6 +1,6 @@
 -- Ref: https://github.com/mhinz/vim-startify
 local g = vim.g
-local icons = require('core.icons').icons
+-- local icons = require('core.icons').icons
 
 vim.api.nvim_set_keymap('n', '<Leader>`', '<Cmd>Startify<CR>', {noremap = true})
 
@@ -80,7 +80,6 @@ g.startify_session_before_save = {
 g.startify_fortune_use_unicode = 1
 
 g.startify_session_persistence = 1
-g.startify_session_sort = 1
 g.startify_session_delete_buffers = 1
 
 g.startify_change_to_dir = 0
