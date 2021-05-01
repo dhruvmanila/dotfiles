@@ -36,7 +36,7 @@ function StartifyFooter()
 
   return {
     '',
-    icons.package .. '  neovim loaded ' .. loaded_plugins .. ' plugins',
+    'neovim loaded ' .. loaded_plugins .. ' plugins',
     '',
   }
 end
@@ -45,25 +45,31 @@ end
 g.startify_custom_header = "startify#center(luaeval('StartifyHeader()'))"
 g.startify_custom_footer = "startify#center(luaeval('StartifyFooter()'))"
 
-g.startify_lists = {{type = 'commands'}}
+-- local function custom_command_set()
+--   return {
+--     {line = 'Help reference', cmd = 'h reference'},
+--   }
+-- end
 
-local commands = {
-  {l = {icons.pin .. '  Open Last Session', 'SLoad __LAST__'}},
-  {s = {icons.globe ..  '  Find Sessions', "lua require('plugin.telescope').startify_sessions()"}},
-  {h = {icons.history .. '  Recently Opened Files', 'Telescope oldfiles'}},
-  {f = {icons.file .. '  Find Files', "lua require('plugin.telescope').find_files()"}},
-  {p = {icons.stopwatch .. '  StartupTime', 'StartupTime'}},
-}
+-- g.startify_lists = {{type = 'commands'}, {type = custom_command_set}}
 
-local max_length = 0
-for _, v in ipairs(commands) do
-  for _, c in pairs(v) do
-    max_length = math.max(max_length, type(c) == 'table' and #c[1] or #c)
-  end
-end
+-- local commands = {
+--   {l = {icons.pin .. '  Open Last Session', 'SLoad __LAST__'}},
+--   {s = {icons.globe ..  '  Find Sessions', "lua require('plugin.telescope').startify_sessions()"}},
+--   {h = {icons.history .. '  Recently Opened Files', 'Telescope oldfiles'}},
+--   {f = {icons.file .. '  Find Files', "lua require('plugin.telescope').find_files()"}},
+--   {p = {icons.stopwatch .. '  StartupTime', 'StartupTime'}},
+-- }
 
-g.startify_commands = commands
-g.startify_center = max_length + 5
+-- local max_length = 0
+-- for _, v in ipairs(commands) do
+--   for _, c in pairs(v) do
+--     max_length = math.max(max_length, type(c) == 'table' and #c[1] or #c)
+--   end
+-- end
+
+-- g.startify_commands = commands
+-- g.startify_center = max_length + 5
 
 g.startify_session_before_save = {
   'let $CURRENT_TABPAGE = tabpagenr()',
@@ -79,9 +85,3 @@ g.startify_session_delete_buffers = 1
 
 g.startify_change_to_dir = 0
 g.startify_change_to_vcs_root = 0
-
--- local function get_last_session_name()
---   local session_dir = vim.fn["startify#get_session_path"]()
---   local last_session_path = vim.fn.resolve(session_dir .. "/__LAST__")
---   return vim.fn.fnamemodify(last_session_path, ":t")
--- end

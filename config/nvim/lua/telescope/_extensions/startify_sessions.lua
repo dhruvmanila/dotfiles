@@ -22,6 +22,10 @@ end
 --- Load the selected startify session.
 local function load_session(prompt_bufnr)
   local selection = action_state.get_selected_entry()
+  if selection.name:find("*") then
+    print("Selected session is currectly active")
+    return
+  end
   actions.close(prompt_bufnr)
   vim.fn["startify#session_load"](false, selection.name)
 end
