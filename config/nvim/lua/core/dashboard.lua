@@ -34,20 +34,6 @@ dashboard.opts = {
   signcolumn = 'no',
 }
 
---- Append the given lines in the current buffer. If `hl` is provided then add
---- the given highlight group to the respective lines.
----@param lines table
----@param hl string
-local function append(lines, hl)
-  local linenr = fn.line('$')
-  api.nvim_buf_set_lines(0, linenr, linenr, false, lines)
-  if hl then
-    for idx = linenr, linenr + #lines do
-      api.nvim_buf_add_highlight(0, -1, hl, idx, 1, -1)
-    end
-  end
-end
-
 --- Add the key value to the right end of the given line with the appropriate
 --- padding as per the `length` value.
 ---@param line table
@@ -94,7 +80,7 @@ local entries = {
   {
     key = 'l',
     description = last_session_description,
-    command = 'SLoad __LAST__',
+    command = 'SLoad!',
   },
   {
     key = 's',
@@ -133,16 +119,34 @@ local function generate_footer()
   }
 end
 
+--- Append the given lines in the current buffer. If `hl` is provided then add
+--- the given highlight group to the respective lines.
+---@param lines table
+---@param hl string
+local function append(lines, hl)
+  local linenr = api.nvim_buf_line_count(0)
+  api.nvim_buf_set_lines(0, linenr, linenr, false, lines)
+  if hl then
+    for idx = linenr, linenr + #lines do
+      api.nvim_buf_add_highlight(0, -1, hl, idx, 1, -1)
+    end
+  end
+end
+
 --- Add paddings on the left side of every line to make it look like its in the
 --- center of the current window.
 ---@param lines table
 ---@return table
 local function center(lines)
   local longest_line = math.max(unpack(vim.tbl_map(function(line)
-    return fn.strwidth(line)
+    return api.nvim_strwidth(line)
   end, lines)))
+
   local shift = math.floor(api.nvim_win_get_width(0) / 2 - longest_line / 2)
-  return vim.tbl_map(function(line) return string.rep(" ", shift) .. line end, lines)
+
+  return vim.tbl_map(function(line)
+    return string.rep(" ", shift) .. line
+  end, lines)
 end
 
 --- Perform either of the three process for the given/saved options:
@@ -169,7 +173,7 @@ end
 --- Register the entry into the dashboard table for the current line
 ---@param entry table
 local function register_entry(entry)
-  local line = fn.line('$')
+  local line = api.nvim_buf_line_count(0)
   dashboard.entries[line] = {
     line = line,
     key = entry.key,
@@ -189,7 +193,7 @@ local function set_entries()
   end
 end
 
---- Set the required mappings including:
+--- Set the required mappings which includes:
 ---   - <CR>: open the entry at the current cursor position
 ---   - q: quit the dashboard buffer
 ---   - `key`: open the entry for the registered entry
@@ -209,28 +213,26 @@ local function set_mappings()
 end
 
 --- Reset the saved options
---- NOTE: This is just a temporary hack as neovim does not seem to be
---- resetting them.
 function M.reset_opts()
-  print("resetting the opts...")
   option_process(dashboard.saved_opts, 'set')
   dashboard.saved_opts = {}
 end
 
---- Cleanup performed before saving the session like closing the NvimTree
---- buffer, quitting the Dashboard buffer.
+--- Cleanup performed before saving the session. This includes:
+---   - Closing the NvimTree buffer
+---   - Quitting the Dashboard buffer
 function M.session_cleanup()
   if api.nvim_buf_get_option(0, 'filetype') == 'dashboard' then
     local calling_buffer = fn.bufnr('#')
     if calling_buffer > 0 then
-      cmd('buffer ' .. calling_buffer)
+      api.nvim_set_current_buf(calling_buffer)
     end
   end
 
   if _G.packer_plugins['nvim-tree.lua'].loaded then
     local curtab = api.nvim_get_current_tabpage()
     cmd('silent tabdo NvimTreeClose')
-    cmd('tabnext ' .. curtab)
+    api.nvim_set_current_tabpage(curtab)
   end
 end
 
@@ -239,7 +241,7 @@ end
 function M.close()
   local buflisted = vim.tbl_filter(function(bufnr)
     return fn.buflisted(bufnr) == 1
-  end, fn.range(0, fn.bufnr('$')))
+  end, api.nvim_list_bufs())
 
   if #buflisted ~= 0 then
     if api.nvim_buf_is_loaded(fn.bufnr('#')) and fn.bufnr('#') ~= fn.bufnr('%') then
@@ -247,7 +249,7 @@ function M.close()
     else
       cmd('bnext')
     end
- else
+  else
     cmd('quit')
   end
 end
@@ -257,7 +259,7 @@ end
 --- the entry at the given line (coming from pressing `key`).
 ---@param line nil|number
 function M.open_entry(line)
-  line = line or fn.line('.')
+  line = line or api.nvim_win_get_cursor(0)[1]
   local entry = dashboard.entries[line]
   local command_type = type(entry.command)
 
@@ -300,8 +302,9 @@ function M.set_cursor()
   api.nvim_win_set_cursor(0, {newline, fixed_column})
 end
 
---- Initialization for the dashboard.
-function M.init(on_vimenter)
+--- Open the dashboard buffer in the current buffer if it is empty or create
+--- a new buffer for the current window.
+function M.open(on_vimenter)
   if on_vimenter and (vim.o.insertmode or not vim.o.modifiable) then
     return
   end
@@ -324,10 +327,6 @@ function M.init(on_vimenter)
   -- Set the dashboard buffer options
   option_process(dashboard.opts, 'set')
 
-  -- cmd([[
-  -- silent! setlocal bufhidden=wipe colorcolumn= foldcolumn=0 matchpairs= modifiable nobuflisted nocursorcolumn nocursorline nolist nonumber noreadonly norelativenumber nospell noswapfile signcolumn=no synmaxcol&
-  -- ]])
-
   -- Set the header
   local header = generate_header()
   append(empty_line)
@@ -337,8 +336,7 @@ function M.init(on_vimenter)
   -- Set the sections
   dashboard.entries = {}
   set_entries()
-  -- Remove the last empty line added after the last section
-  cmd('silent $delete _')
+  api.nvim_buf_set_lines(0, -2, -1, false, {})
 
   -- Compute first and last line offset
   --
@@ -349,7 +347,7 @@ function M.init(on_vimenter)
   --     +--------------+   |      |      +------+
   --                    |   |      |      |
   dashboard.firstline = 1 + 2 + #header + 1
-  dashboard.lastline = fn.line('$')
+  dashboard.lastline = api.nvim_buf_line_count(0)
 
   -- Set the footer
   append(empty_line)
@@ -369,15 +367,13 @@ function M.init(on_vimenter)
   dashboard.newline = dashboard.firstline
   api.nvim_win_set_cursor(0, {dashboard.firstline, 0})
 
-  -- Fixed column position to the first letter of the second word (skipping
+  -- Fix column position to the first letter of the second word (skipping
   -- the icon)
   cmd('normal! ^ w')
   dashboard.fixed_column = api.nvim_win_get_cursor(0)[2]
 
-  -- Whenever the cursor is moved, move it to the appropriate position
-  cmd[[autocmd dashboard CursorMoved <buffer> lua require('core.dashboard').set_cursor()]]
-  cmd[[autocmd dashboard BufWipeout dashboard ++once lua require('core.dashboard').reset_opts()]]
-
+  cmd("autocmd dashboard CursorMoved <buffer> lua require('core.dashboard').set_cursor()")
+  cmd("autocmd dashboard BufWipeout dashboard ++once lua require('core.dashboard').reset_opts()")
   cmd('silent! %foldopen!')
   cmd('normal! zb')
 end

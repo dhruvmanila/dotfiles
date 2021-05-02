@@ -28,7 +28,7 @@ augroup END
 
 function! s:on_vimenter()
   if !argc() && line2byte('$') == -1
-    lua require('core.dashboard').init(true)
+    lua require('core.dashboard').open(true)
   endif
   autocmd! dashboard VimEnter
 endfunction
@@ -37,6 +37,6 @@ silent autocmd! startify QuickFixCmdPre
 silent autocmd! startify QuickFixCmdPost
 silent delcommand Startify
 
-command! -nargs=0 -bar Dashboard lua require('core.dashboard').init(false)
+command! -nargs=0 -bar Dashboard lua require('core.dashboard').open(false)
 
 nnoremap <silent> <leader>` <Cmd>Dashboard<CR>
