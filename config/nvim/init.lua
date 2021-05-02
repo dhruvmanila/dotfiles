@@ -43,6 +43,9 @@ g.mapleader = ' '
 -- Enable embedded script highlighting for lua
 g.vimsyn_embed = 'l'
 
+-- Default sessions directory
+g.neovim_session_dir = vim.fn.stdpath('data') .. '/session'
+
 -- Setup neovim providers
 g.loaded_python_provider = 0
 g.python3_host_prog      = '~/.neovim/py3/bin/python3'

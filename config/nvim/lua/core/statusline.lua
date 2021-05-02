@@ -83,6 +83,7 @@ local special_buffer_info = {
     'dirvish',
     'fugitive',
     'startify',
+    'dashboard',
     'packer',
     'gitcommit',
     'vista_kind',
