@@ -1,8 +1,8 @@
 require('core.utils').create_augroups {
   custom_autocmds = {
-    -- Highlight current line, but only in active window
-    [[WinEnter,BufEnter * setlocal cursorline]],
-    [[WinLeave,BufLeave * setlocal nocursorline]],
+    -- Highlight current cursorline (cul), but only in active window
+    [[WinEnter,BufEnter * if !&cul && &ft !~# '^\(dashboard\)' | setl cul | endif]],
+    [[WinLeave,BufLeave * if &cul && &ft !~# '^\(dashboard\)' | setl nocul | endif]],
 
     -- Equalize window dimensions when resizing vim
     [[VimResized * wincmd =]],

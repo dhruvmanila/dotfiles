@@ -47,6 +47,7 @@ M.icons = {
   -- diff_modified = get_icon('diff-modified'),
   -- diff_removed  = get_icon('diff-removed'),
   file          = get_icon('file'),
+  files         = '',
   directory     = get_icon('file-directory'),
   package       = get_icon('package'),
   modified      = '●',  -- 'dot-fill'
@@ -63,6 +64,7 @@ M.icons = {
   globe         = get_icon('globe'),
   stopwatch     = get_icon('stopwatch'),
   pin           = get_icon('pin'),
+  tools         = get_icon('tools'),
 }
 
 M.spinner_frames = { '⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷' }

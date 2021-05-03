@@ -44,7 +44,8 @@ g.mapleader = ' '
 g.vimsyn_embed = 'l'
 
 -- Default sessions directory
-g.neovim_session_dir = vim.fn.stdpath('data') .. '/session'
+-- This is set here as it is accessed by Dashboard as well
+g.startify_session_dir = vim.fn.stdpath('data') .. '/session'
 
 -- Setup neovim providers
 g.loaded_python_provider = 0

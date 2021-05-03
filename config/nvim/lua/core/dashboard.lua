@@ -18,7 +18,6 @@ local dashboard = {}
 -- Dashboard buffer/window options
 dashboard.opts = {
   bufhidden = 'wipe',
-  buflisted = false,
   colorcolumn = '',
   foldcolumn = '0',
   matchpairs = '',
@@ -45,18 +44,32 @@ local function add_key(line, key, length)
 end
 
 --- Last session entry description.
+--- This also sets the global variable `startify_last_session_name` to be used
+--- to load the session.
+---@return table
 local function last_session_description()
-  local path = fn.resolve(vim.g.neovim_session_dir .. '/__LAST__')
-  local name = fn.fnamemodify(path, ':t')
-  return {icons.pin .. '  Last session (' .. name ..')'}
+  local last_session = ''
+  local last_edited = 0
+  local session_dir = vim.g.startify_session_dir
+
+  for _, name in ipairs(fn.readdir(session_dir)) do
+    if name ~= '__LAST__' then
+      local path = session_dir .. '/' .. name
+      local time = fn.getftime(path)
+      if time > last_edited then
+        last_session = name
+        last_edited = time
+      end
+    end
+  end
+
+  vim.g.startify_last_session_name = last_session
+  return {icons.pin .. '  Last session (' .. last_session ..')'}
 end
 
 --- Generate and return the header of the start page.
 ---@return table
 local function generate_header()
-  local v = vim.version()
-  v = 'v' .. v.major .. '.' .. v.minor .. '.' .. v.patch
-
   return {
     '',
     '███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗',
@@ -65,11 +78,17 @@ local function generate_header()
     '██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║',
     '██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║',
     '╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝',
-    '',
-    '                  Neovim ' .. v .. '',
-    '',
-    '',
   }
+end
+
+local function generate_sub_header()
+  local v = vim.version()
+  v = 'Neovim v' .. v.major .. '.' .. v.minor .. '.' .. v.patch
+
+  -- NVIM v0.5.0-dev+b227cedf8 | Build type: Release | LuaJIT 2.1.0-beta3
+  -- local v = fn.split(api.nvim_exec('version', true), '\n')
+  -- v = table.concat({unpack(version, 1, 3)}, " | ")
+  return {v, '', ''}
 end
 
 --- Dashboard sections. Every element is a dictionary with the following keys:
@@ -80,12 +99,17 @@ local entries = {
   {
     key = 'l',
     description = last_session_description,
-    command = 'SLoad!',
+    command = 'lua vim.cmd("SLoad " .. vim.g.startify_last_session_name)',
   },
   {
     key = 's',
     description = {icons.globe .. '  Find sessions'},
     command = "lua require('plugin.telescope').startify_sessions()",
+  },
+  {
+    key = 'e',
+    description = {icons.file .. '  New file'},
+    command = 'enew',
   },
   {
     key = 'h',
@@ -94,8 +118,18 @@ local entries = {
   },
   {
     key = 'f',
-    description = {icons.file .. '  Find files'},
+    description = {icons.files .. '  Find files'},
     command = "lua require('plugin.telescope').find_files()",
+  },
+  {
+    key = 'd',
+    description = {icons.tools .. '  Find in dotfiles'},
+    command = "lua require('plugin.telescope').search_dotfiles()",
+  },
+  {
+    key = 'b',
+    description = {icons.directory .. '  File browser'},
+    command = 'Telescope file_browser',
   },
   {
     key = 'p',
@@ -111,12 +145,7 @@ local function generate_footer()
     return plugin.loaded
   end, _G.packer_plugins)
 
-  return {
-    '',
-    '',
-    'Neovim loaded ' .. loaded_plugins .. ' plugins',
-    '',
-  }
+  return {'', '', 'Neovim loaded ' .. loaded_plugins .. ' plugins', ''}
 end
 
 --- Append the given lines in the current buffer. If `hl` is provided then add
@@ -202,7 +231,6 @@ local function set_mappings()
   local opts = {noremap = true, silent = true, nowait = true}
 
   -- Basic keymap
-  buf_map(0, 'n', 'e', '<Cmd>enew<CR>', opts)
   buf_map(0, 'n', '<CR>', "<Cmd>lua require('core.dashboard').open_entry()<CR>", opts)
   buf_map(0, 'n', 'q', "<Cmd>lua require('core.dashboard').close()<CR>", opts)
 
@@ -239,11 +267,12 @@ end
 --- Close the dashboard buffer and either quit neovim or move back to the
 --- original buffer.
 function M.close()
+  local curbuflisted = fn.buflisted(api.nvim_get_current_buf())
   local buflisted = vim.tbl_filter(function(bufnr)
     return fn.buflisted(bufnr) == 1
   end, api.nvim_list_bufs())
 
-  if #buflisted ~= 0 then
+  if #buflisted - curbuflisted ~= 0 then
     if api.nvim_buf_is_loaded(fn.bufnr('#')) and fn.bufnr('#') ~= fn.bufnr('%') then
       cmd('buffer #')
     else
@@ -276,20 +305,14 @@ end
 --- mainly the `oldline` and `newline` position.
 function M.set_cursor()
   local oldline  = dashboard.newline
-  local newline, col = unpack(api.nvim_win_get_cursor(0))
+  local newline = api.nvim_win_get_cursor(0)[1]
   local fixed_column = dashboard.fixed_column
 
-  -- Direction: right (+1), left (-1), up (-1), down (+1)
-  local movement
-  if oldline == newline and col ~= fixed_column then
-    movement = 2 * (col > fixed_column and 1 or 0) - 1
-    newline = newline + movement
-  else
-    movement = 2 * (newline > oldline and 1 or 0) - 1
-  end
+  -- Direction: up (-1) or down (+1) (no horizontal movements are registered)
+  local movement = 2 * (newline > oldline and 1 or 0) - 1
 
   -- Skip blank lines between entries
-  if fn.empty(api.nvim_buf_get_lines(0, newline, newline + 1, false)[1]) then
+  if api.nvim_buf_get_lines(0, newline - 1, newline, false)[1] == "" then
     newline = newline + movement
   end
 
@@ -320,7 +343,7 @@ function M.open(on_vimenter)
 
   -- Create a new, unnamed buffer
   if fn.line2byte('$') ~= -1 then
-    local bufnr = api.nvim_create_buf(false, true)
+    local bufnr = api.nvim_create_buf(true, true)
     api.nvim_win_set_buf(0, bufnr)
   end
 
@@ -329,8 +352,11 @@ function M.open(on_vimenter)
 
   -- Set the header
   local header = generate_header()
+  local sub_header = generate_sub_header()
   append(empty_line)
   append(center(header), 'Yellow')
+  append(empty_line)
+  append(center(sub_header), 'Yellow')
   append(empty_line)
 
   -- Set the sections
@@ -339,14 +365,8 @@ function M.open(on_vimenter)
   api.nvim_buf_set_lines(0, -2, -1, false, {})
 
   -- Compute first and last line offset
-  --
-  -- `nvim_buf_set_lines`
-  -- uses zero-based index
-  --     |             empty line           empty line
-  --     |                  | header lines       |
-  --     +--------------+   |      |      +------+
-  --                    |   |      |      |
-  dashboard.firstline = 1 + 2 + #header + 1
+  -- `nvim_buf_set_lines` uses zero-based index, thus the first 1
+  dashboard.firstline = 1 + 2 + #header + 1 + #sub_header + 1
   dashboard.lastline = api.nvim_buf_line_count(0)
 
   -- Set the footer

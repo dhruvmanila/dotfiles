@@ -173,7 +173,6 @@ packer.startup {
     }
 
     -- Start screen
-    use {'glepnir/dashboard-nvim', opt = true}
     use {'mhinz/vim-startify', config = [[require('plugin.startify')]]}
 
     -- File explorer (Mainly used for going through new projects)
@@ -202,6 +201,8 @@ packer.startup {
 
     -- Profiling
     use {'tweekmonster/startuptime.vim', cmd = 'StartupTime'}
+
+    use 'tpope/vim-scriptease'
 
     -- Open external browsers, editor, finder from Neovim
     use {'itchyny/vim-external', config = [[require('plugin.vim_external')]]}
