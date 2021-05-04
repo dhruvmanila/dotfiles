@@ -13,6 +13,7 @@ g.indent_blankline_filetype_exclude = {
   'startify',
   'txt',
   'dashboard',
+  'Outline',
 }
 
 g.indent_blankline_buftype_exclude = {'terminal'}

@@ -25,6 +25,9 @@ g.gruvbox_material_diagnostic_virtual_text = 'colored'
 -- Generates after/ftplugin/*.vim files for lazy loading
 g.gruvbox_material_better_performance = 1
 
+-- Don't do highlight clear
+g.colors_name = 'gruvbox-material'
+
 vim.cmd('colorscheme gruvbox-material')
 
 local palette = vim.fn['gruvbox_material#get_palette'](
@@ -33,7 +36,7 @@ local palette = vim.fn['gruvbox_material#get_palette'](
 
 highlight('PmenuSel', {guifg = palette.bg3[1], guibg = palette.blue[1], gui = 'bold'})
 highlight('HintFloat', {guifg = palette.aqua[1], guibg = palette.bg3[1]})
--- highlight('CommentItalic', {guifg = palette.grey1[1], gui = 'italic'})
+highlight('GreyItalic', {guifg = palette.grey1[1], gui = 'italic'})
 
 -- Current line number
 highlight('CursorLineNr', {force = true, link = 'MoreMsg'})
@@ -52,3 +55,6 @@ highlight('TSField', {force = true, link = 'Blue'})
 
 -- Lsp
 highlight('VirtualTextHint', {force = true, link = 'Aqua'})
+
+-- Symbols outline
+highlight('FocusedSymbol', {force = true, link = 'CurrentWord'})

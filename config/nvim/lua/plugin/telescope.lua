@@ -1,5 +1,6 @@
 -- Ref: https://github.com/nvim-telescope/telescope.nvim
 local actions = require('telescope.actions')
+local action_state = require('telescope.actions.state')
 local themes = require('telescope.themes')
 local utils = require('core.utils')
 local map = utils.map
@@ -10,6 +11,36 @@ if should_reload then
   RELOAD('plenary')
   RELOAD('popup')
   RELOAD('telescope')
+end
+
+-- Namespace to hold custom actions
+local custom_actions = {}
+
+-- Yank the selected entry into the selection register '*'
+custom_actions.yank_entry = function(prompt_bufnr)
+  local entry = action_state.get_selected_entry()
+  actions.close(prompt_bufnr)
+  vim.fn.setreg(vim.api.nvim_get_vvar('register'), entry.value)
+
+  vim.schedule(function()
+    print("[telescope] Yanked: " .. entry.value)
+  end)
+end
+
+-- Delete the selected buffer or all the buffers selected using multi selection.
+custom_actions.delete_buffer = function (prompt_bufnr)
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  local multi_selection = current_picker:get_multi_selection()
+  actions.close(prompt_bufnr)
+
+  if vim.tbl_isempty(multi_selection) then
+    local selection = action_state.get_selected_entry()
+    vim.api.nvim_buf_delete(selection.bufnr, {force = true})
+  else
+    for _, selection in ipairs(multi_selection) do
+      vim.api.nvim_buf_delete(selection.bufnr, {force = true})
+    end
+  end
 end
 
 require('telescope').setup {
@@ -42,6 +73,7 @@ require('telescope').setup {
         ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
         ["<C-s>"] = actions.select_horizontal,
         ["<C-x>"] = false,
+        ["<C-y>"] = custom_actions.yank_entry,
       },
     },
   },
@@ -60,6 +92,7 @@ require('telescope').setup {
     bookmarks = {
       selected_browser = 'brave',
       url_open_command = 'open',
+      -- url_open_plugin = 'vim_external',
     },
   },
 }
@@ -89,35 +122,42 @@ load_telescope_extensions({
   'startify_sessions',
 })
 
+-- Helper function to set the keymaps for telescope functions
+local function tele_map(key, funcname, module)
+  module = module or 'plugin.telescope'
+  map('n', key, '<Cmd>lua require("' .. module .. '").' .. funcname .. '()<CR>')
+end
+
 -- Meta
-map('n', '<Leader>te', [[<Cmd>lua require('telescope.builtin').builtin()<CR>]])
+tele_map('<Leader>te', 'builtin', 'telescope.builtin')
 
 -- Files
-map('n', '<C-p>', [[<Cmd>lua require('plugin.telescope').find_files()<CR>]])
-map('n', '<Leader>;', [[<Cmd>lua require('plugin.telescope').buffers()<CR>]])
-map('n', '<C-f>', [[<Cmd>lua require('plugin.telescope').current_buffer()<CR>]])
-map('n', '<Leader>rp', [[<Cmd>lua require('plugin.telescope').grep_prompt()<CR>]])
-map('n', '<Leader>rg', [[<Cmd>lua require('plugin.telescope').live_grep()<CR>]])
-map('n', '<Leader>fd', [[<Cmd>lua require('plugin.telescope').search_dotfiles()<CR>]])
-map('n', '<Leader>fp', [[<Cmd>lua require('plugin.telescope').installed_plugins()<CR>]])
-map('n', '<Leader>fa', [[<Cmd>lua require('plugin.telescope').search_all_files()<CR>]])
+tele_map('<C-p>',      'find_files')
+tele_map('<Leader>;',  'buffers')
+tele_map('<C-f>',      'current_buffer')
+tele_map('<Leader>rp', 'grep_prompt')
+tele_map('<Leader>rg', 'live_grep')
+tele_map('<Leader>fd', 'search_dotfiles')
+tele_map('<Leader>fp', 'installed_plugins')
+tele_map('<Leader>fa', 'search_all_files')
 
 -- Git
-map('n', '<Leader>gc', [[<Cmd>lua require('telescope.builtin').git_commits()<CR>]])
-map('n', '<Leader>gs', [[<Cmd>lua require('plugin.telescope').github_stars()<CR>]])
+tele_map('<Leader>gc', 'git_commits', 'telescope.builtin')
+tele_map('<Leader>gs', 'github_stars')
 
 -- Neovim (NOTE: Use <nowait> for 'q' only keymap)
-map('n', '<Leader>fh', [[<Cmd>lua require('plugin.telescope').help_tags()<CR>]])
-map('n', '<Leader>fm', [[<Cmd>lua require('plugin.telescope').keymaps()<CR>]])
-map('n', '<Leader>fc', [[<Cmd>lua require('plugin.telescope').commands()<CR>]])
-map('n', '<Leader>hi', [[<Cmd>lua require('plugin.telescope').highlights()<CR>]])
-map('n', '<Leader>fo', [[<Cmd>lua require('plugin.telescope').vim_options()<CR>]])
-map('n', 'q:', [[<Cmd>lua require('plugin.telescope').command_history()<CR>]])
+tele_map('<Leader>fh', 'help_tags')
+tele_map('<Leader>fm', 'keymaps')
+tele_map('<Leader>fc', 'commands')
+tele_map('<Leader>hi', 'highlights')
+tele_map('<Leader>fo', 'vim_options')
+tele_map('q:',         'command_history')
+tele_map('q/',         'search_history')
 
 -- Extensions
-map('n', '<Leader>fb', [[<Cmd>lua require('plugin.telescope').bookmarks()<CR>]])
-map('n', '<Leader>fw', [[<Cmd>lua require('plugin.telescope').arecibo()<CR>]])
-map('n', '<Leader>fs', [[<Cmd>lua require('plugin.telescope').startify_sessions()<CR>]])
+tele_map('<Leader>fb', 'bookmarks')
+-- tele_map('<Leader>fw', 'arecibo')
+tele_map('<Leader>fs', 'startify_sessions')
 
 -- Entrypoints which will allow me to configure each command individually.
 local M = {}
@@ -174,14 +214,6 @@ function M.search_dotfiles()
     file_ignore_patterns = {".git/"},
   })
 end
-
--- function M.installed_plugins()
---   M.find_files_in_dir(vim.fn.stdpath('data') .. '/site/pack/packer/', {
---     prompt_title = "Installed Plugins",
---     shorten_path = false,
---     follow = true,
---   })
--- end
 
 function M.installed_plugins()
   require('telescope').extensions.installed_plugins.installed_plugins(
@@ -248,7 +280,23 @@ function M.commands()
 end
 
 function M.command_history()
-  require('telescope.builtin').command_history(no_previewer())
+  require('telescope.builtin').command_history(
+    themes.get_dropdown {
+      width = math.min(100, vim.o.columns - 20),
+      results_height = 0.8,
+      previewer = false,
+    }
+  )
+end
+
+function M.search_history()
+  require('telescope.builtin').search_history(
+    themes.get_dropdown {
+      width = math.min(100, vim.o.columns - 20),
+      results_height = 0.8,
+      previewer = false,
+    }
+  )
 end
 
 function M.arecibo()
@@ -265,24 +313,25 @@ end
 
 -- https://github.com/nvim-telescope/telescope.nvim/issues/621#issuecomment-802222898
 -- Added the ability to delete multiple buffers in one go using multi-selection.
-function M.buffers(opts)
-  opts = opts or {}
-  opts.previewer = false
-  opts.sort_lastused = true
-  opts.show_all_buffers = true
-  opts.shorten_path = false
-  opts.width = math.min(vim.o.columns - 20, 110)
-  -- Height ranges from 10 to #lines - 10 (depending on the number of buffers)
-  opts.results_height = math.max(
-    10, math.min(vim.o.lines - 10, #vim.fn.getbufinfo({buflisted = 1}))
-  )
-  opts.attach_mappings = function(_, tele_map)
-    tele_map('i', '<C-x>', actions.delete_buffer)
-    tele_map('n', '<C-x>', actions.delete_buffer)
-    return true
-  end
+function M.buffers()
+  require('telescope.builtin').buffers(themes.get_dropdown {
+    previewer = false,
+    sort_lastused = true,
+    show_all_buffers = true,
+    shorten_path = false,
+    width = math.min(vim.o.columns - 20, 110),
 
-  require('telescope.builtin').buffers(themes.get_dropdown(opts))
+    -- Height ranges from 10 to #lines - 10 (depending on the number of buffers)
+    results_height = math.max(
+      10, math.min(vim.o.lines - 10, #vim.fn.getbufinfo({buflisted = 1}))
+    ),
+
+    attach_mappings = function(_, tmap)
+      tmap('i', '<C-x>', custom_actions.delete_buffer)
+      tmap('n', '<C-x>', custom_actions.delete_buffer)
+      return true
+    end,
+  })
 end
 
 return M

@@ -33,16 +33,6 @@ dashboard.opts = {
   signcolumn = 'no',
 }
 
---- Add the key value to the right end of the given line with the appropriate
---- padding as per the `length` value.
----@param line table
----@param key string
----@param length number
----@return table
-local function add_key(line, key, length)
-  return {line[1] .. string.rep(" ", length - #line[1]) .. key}
-end
-
 --- Last session entry description.
 --- This also sets the global variable `startify_last_session_name` to be used
 --- to load the session.
@@ -99,7 +89,7 @@ local entries = {
   {
     key = 'l',
     description = last_session_description,
-    command = 'lua vim.cmd("SLoad " .. vim.g.startify_last_session_name)',
+    command = 'call startify#session_load(0, g:startify_last_session_name)',
   },
   {
     key = 's',
@@ -148,6 +138,16 @@ local function generate_footer()
   return {'', '', 'Neovim loaded ' .. loaded_plugins .. ' plugins', ''}
 end
 
+--- Add the key value to the right end of the given line with the appropriate
+--- padding as per the `length` value.
+---@param line table
+---@param key string
+---@param length number
+---@return table
+local function add_key(line, key, length)
+  return {line[1] .. string.rep(" ", length - #line[1]) .. key}
+end
+
 --- Append the given lines in the current buffer. If `hl` is provided then add
 --- the given highlight group to the respective lines.
 ---@param lines table
@@ -184,18 +184,16 @@ end
 ---@param opts table|nil
 ---@param process string - set|save
 local function option_process(opts, process)
-  if process == "set" then
-    for name, value in pairs(opts) do
-      local scope = api.nvim_get_option_info(name).scope
-      api["nvim_" .. scope .. "_set_option"](0, name, value)
+  for name, value in pairs(opts) do
+    local scope = api.nvim_get_option_info(name).scope
+    scope = (scope == "buf" or scope == "win") and scope .. "_" or ""
+    if process == "set" then
+      api["nvim_" .. scope .. "set_option"](0, name, value)
+    elseif process == "save" then
+      dashboard.saved_opts[name] = api["nvim_" .. scope .. "get_option"](0, name)
+    else
+      error("Unknown 'process' value: " .. process)
     end
-  elseif process == "save" then
-    for name, _ in pairs(opts) do
-      local scope = api.nvim_get_option_info(name).scope
-      dashboard.saved_opts[name] = api["nvim_" .. scope .. "_get_option"](0, name)
-    end
-  else
-    error("Unknown 'process' value: " .. process)
   end
 end
 
@@ -387,8 +385,7 @@ function M.open(on_vimenter)
   dashboard.newline = dashboard.firstline
   api.nvim_win_set_cursor(0, {dashboard.firstline, 0})
 
-  -- Fix column position to the first letter of the second word (skipping
-  -- the icon)
+  -- Fix column position to the first letter of the second word (skipping the icon)
   cmd('normal! ^ w')
   dashboard.fixed_column = api.nvim_win_get_cursor(0)[2]
 
@@ -398,7 +395,8 @@ function M.open(on_vimenter)
   cmd('normal! zb')
 end
 
--- For debugging purposes
+-- For debugging purposes:
+-- lua print(vim.inspect(_G.package.loaded['core.dashboard']._dashboard))
 M._dashboard = dashboard
 
 return M

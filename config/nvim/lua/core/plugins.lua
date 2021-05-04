@@ -98,7 +98,13 @@ packer.startup {
         'liuchengxu/vista.vim',
         keys = {{'n', '<Leader>vv'}},
         config = [[require('plugin.vista')]],
-      }
+      },
+      {
+        'simrat39/symbols-outline.nvim',
+        keys = {{'n', '<Leader>so'}},
+        config = "require('plugin.symbols_outline')",
+      },
+      'aca/pylance.nvim',
     }
 
     -- Linters and formatters (WIP plugins) (for now using efm langserver)
@@ -111,7 +117,7 @@ packer.startup {
     use {
       "~/projects/telescope-bookmarks.nvim",
       {
-        '~/git/telescope.nvim',
+        'nvim-telescope/telescope.nvim',
         config = [[require('plugin.telescope')]],
         requires = {
           {'nvim-lua/popup.nvim'},
