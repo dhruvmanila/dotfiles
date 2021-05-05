@@ -62,14 +62,20 @@ function M.statusline_highlights(prefix)
   end
 end
 
+---Wrap the highlight for statusline.
+---@param hl string
+---@return string
+local function wrap_hl(hl)
+  return hl and '%#' .. hl .. '#' or ''
+end
+
 ---Special buffer information table.
 ---
 ---This includes the following components:
 ---types: List containing special buffer filetype or buftype.
----name: The name value to be displayed. It can be either a string or a
+---line: The line value to be displayed. It can be either a string or a
 ---      function where the `ctx` variable will be passed as the only argument.
----icon: Table containing the icon for the special buffer.
----color: Table containing the color of the icon.
+---icon: Table containing the icon color and icon for the special buffer.
 ---
 ---Special buffers included in `special_buffer_info` can be excluded from this
 ---table which will mean to not display anything for that buffer.
@@ -89,7 +95,7 @@ local special_buffer_info = {
     'vista_kind',
     'man',
   },
-  name = {
+  line = {
     terminal = 'Terminal',
     tsplayground = 'TSPlayground',
     NvimTree = 'NvimTree',
@@ -119,41 +125,28 @@ local special_buffer_info = {
       local title = fn.fnamemodify(ctx.bufname, ':t')
       return 'Man' .. ' [' .. title .. ']  %l/%L'
     end,
+
+    dashboard = function(ctx)
+      local quit = wrap_hl('StGreyItalic') .. "Press 'q' to quit "
+      local dir = fn.fnamemodify(ctx.bufname, ':~:s?Dashboard??')
+      return dir .. '%=' .. quit
+    end,
   },
   icon = {
-    qf = icons.lists,
-    terminal = icons.terminal,
-    help = icons.info,
-    tsplayground = icons.tree,
-    NvimTree = icons.directory,
-    dirvish = icons.directory,
-    fugitive = icons.git_logo,
-    packer = icons.package,
-    gitcommit = icons.git_commit,
-    vista_kind = icons.tag,
-    man = icons.book,
-  },
-  color = {
-    qf = 'StRed',
-    terminal = 'StYellow',
-    help = 'StYellow',
-    tsplayground = 'StGreen',
-    NvimTree = 'StBlue',
-    dirvish = 'StBlue',
-    fugitive = 'StYellow',
-    packer = 'StAqua',
-    gitcommit = 'StYellow',
-    vista_kind = 'StBlue',
-    man = 'StOrange',
+    qf = {'StRed', icons.lists},
+    terminal = {'StYellow', icons.terminal},
+    help = {'StYellow', icons.info},
+    tsplayground = {'StGreen', icons.tree},
+    NvimTree = {'StBlue', icons.directory},
+    dirvish = {'StBlue', icons.directory},
+    fugitive = {'StYellow', icons.git_logo},
+    packer = {'StAqua', icons.package},
+    gitcommit = {'StYellow', icons.git_commit},
+    vista_kind = {'StBlue', icons.tag},
+    man = {'StOrange', icons.book},
+    dashboard = {'StBlue', icons.directory},
   },
 }
-
----Wrap the highlight for statusline.
----@param hl string
----@return string
-local function wrap_hl(hl)
-  return hl and '%#' .. hl .. '#' or ''
-end
 
 ---Return the line information.
 ---Current format: total:col
@@ -337,12 +330,12 @@ end
 ---@param ctx table
 ---@param typ string
 ---@return string
-local function special_buffer_name(ctx, typ)
-  local name = special_buffer_info.name[typ] or ''
-  if type(name) == 'function' then
-    return name(ctx)
+local function special_buffer_line(ctx, typ)
+  local line = special_buffer_info.line[typ] or ''
+  if type(line) == 'function' then
+    return line(ctx)
   else
-    return name
+    return line
   end
 end
 
@@ -353,9 +346,8 @@ end
 ---@return string
 local function special_buffer_statusline(ctx, inactive, prefix)
   local typ = ctx.filetype ~= '' and ctx.filetype or ctx.buftype
-  local name = special_buffer_name(ctx, typ)
-  local icon = special_buffer_info.icon[typ] or ''
-  local color = special_buffer_info.color[typ]
+  local line = special_buffer_line(ctx, typ)
+  local color, icon = unpack(special_buffer_info.icon[typ] or {'', ''})
   local hl = inactive and '' or wrap_hl(color)
   local name_hl = inactive and '' or wrap_hl('StSpecialBuffer')
 
@@ -365,8 +357,7 @@ local function special_buffer_statusline(ctx, inactive, prefix)
     .. icon
     .. '%* '
     .. name_hl
-    .. name
-    .. '%='
+    .. line
 end
 
 ---Provide the statusline for different types of buffers including active,

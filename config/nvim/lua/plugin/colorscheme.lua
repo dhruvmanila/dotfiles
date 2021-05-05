@@ -54,7 +54,14 @@ highlight('TSProperty', {force = true, link = 'Blue'})
 highlight('TSField', {force = true, link = 'Blue'})
 
 -- Lsp
+highlight('FloatBorder', {force = true, link = 'Grey'})
 highlight('VirtualTextHint', {force = true, link = 'Aqua'})
+-- With border, background color same as that of Normal
+highlight('NormalFloat', {force = true, link = 'Normal'})
+highlight('LspDiagnosticsFloatingError', {force = true, link = 'VirtualTextError'})
+highlight('LspDiagnosticsFloatingWarning', {force = true, link = 'VirtualTextWarning'})
+highlight('LspDiagnosticsFloatingInformation', {force = true, link = 'VirtualTextInformation'})
+highlight('LspDiagnosticsFloatingHint', {force = true, link = 'VirtualTextHint'})
 
 -- Symbols outline
 highlight('FocusedSymbol', {force = true, link = 'CurrentWord'})

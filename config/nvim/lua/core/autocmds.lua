@@ -25,7 +25,7 @@ require('core.utils').create_augroups {
     -- Automatically go to insert mode on terminal buffer
     [[TermOpen * startinsert]],
 
-    -- Remove trailing whitespace on save FIXME: | execute "normal \<C-o>"
-    [[BufWritePre * %s/\s\+$//e]],
+    -- Remove trailing whitespace and lines on save
+    [[BufWritePre * call utils#trim_trailing_whitespace() | call utils#trim_trailing_lines()]],
   }
 }

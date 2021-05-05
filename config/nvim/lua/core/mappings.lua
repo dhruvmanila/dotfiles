@@ -22,9 +22,8 @@ map('n', 'k', 'gk')
 -- map('n', "'", ';')
 -- map('n', ';', ':')
 
--- Split with Leader (same as that of tmux)
+-- Split with Leader
 map('n', '<Leader>-', '<Cmd>sp<CR>')
-map('n', '<Leader>|', '<Cmd>vsp<CR>')
 
 -- Buffer management
 map('n', ']<Leader>', '<Cmd>bnext<CR>')
@@ -45,7 +44,7 @@ map('n', ']L', '<Cmd>llast<CR>')
 map('n', '[L', '<Cmd>lfirst<CR>')
 
 -- Fast switching between last and current file
-map('n', '<Leader><Leader>', '<C-^>')
+map('n', '<Leader><Leader>', '<Cmd>buffer#<CR>')
 
 -- Quick cd and lcd
 map('n', '<Leader>cd', '<Cmd>cd %:p:h<CR>')
@@ -69,11 +68,11 @@ map('n', '<C-k>', '<C-w>k')
 map('n', '<C-h>', '<C-w>h')
 map('n', '<C-l>', '<C-w>l')
 
--- Resize window with arrow keys as I hardly need them
-map('n', '<Up>', '<C-w>2+')
-map('n', '<Down>', '<C-w>2-')
-map('n', '<Left>', '<C-w>2<')
-map('n', '<Right>', '<C-w>2>')
+-- Use alt + hjkl to resize windows
+map('n', '<M-j>', '<Cmd>resize -2<CR>')
+map('n', '<M-k>', '<Cmd>resize +2<CR>')
+map('n', '<M-h>', '<Cmd>vertical resize -2<CR>')
+map('n', '<M-l>', '<Cmd>vertical resize +2<CR>')
 
 -- Keep the cursor at the center
 -- (zt) &scrolloff lines away from the top
@@ -107,7 +106,7 @@ map({'n', 'x'}, 'x', '"_x')
 map({'n', 'x'}, 'X', '"_X')
 
 -- Replace the selection without overriding the paste register
-map('x', '<Leader>p', '"_dP')
+map('x', 'p', '"_dP')
 
 -- Capital JK move code lines/blocks up & down (only in visual mode)
 map('x', 'J', [[:m '>+1<CR>gv=gv]])

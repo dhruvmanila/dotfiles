@@ -51,7 +51,9 @@ packer.startup {
     use 'wbthomason/packer.nvim'
 
     -- Color scheme
-    use {'sainnhe/gruvbox-material', config = [[require('plugin.colorscheme')]]}
+    -- TODO: suggest to load colors only for installed plugins
+    -- TODO: or port it to lua and have only the ones which I use
+    use {'sainnhe/gruvbox-material', config = "require('plugin.colorscheme')"}
 
     -- Helpful in visualizing colors live in the editor
     use {
@@ -69,61 +71,66 @@ packer.startup {
     use {
       {
         'kyazdani42/nvim-web-devicons',
-        config = [[require('plugin.nvim_web_devicons')]]
+        config = "require('plugin.nvim_web_devicons')"
       },
-      {
-        'yamatsum/nvim-nonicons',
-        -- config = 'vim.g.override_nvim_web_devicons = false'
-      }
+      'yamatsum/nvim-nonicons',
     }
 
     -- TODO: remove after #12587 is fixed (upstream bug)
     use 'antoinemadec/FixCursorHold.nvim'
+    use '~/git/totally-not-hacked-pylance.nvim'
 
     -- LSP, auto completion and related
     use {
-      'kosayoda/nvim-lightbulb',
       'nvim-lua/lsp-status.nvim',
+      {'kosayoda/nvim-lightbulb', opt = true},
       {
         'neovim/nvim-lspconfig',
         event = 'BufReadPre',
-        config = [[require('plugin.lspconfig')]],
+        config = "require('plugin.lspconfig')",
       },
       {
         'hrsh7th/nvim-compe',
         event = 'InsertEnter',
-        config = [[require('plugin.completion')]],
+        config = "require('plugin.completion')",
       },
+      {'glepnir/lspsaga.nvim', opt = true},
+      -- TODO: keep either of them
       {
         'liuchengxu/vista.vim',
         keys = {{'n', '<Leader>vv'}},
-        config = [[require('plugin.vista')]],
+        config = "require('plugin.vista')",
       },
       {
         'simrat39/symbols-outline.nvim',
         keys = {{'n', '<Leader>so'}},
-        config = "require('plugin.symbols_outline')",
+        setup = "require('plugin.symbols_outline')",
+        config = function()
+          vim.api.nvim_set_keymap(
+            'n', '<Leader>so', '<Cmd>SymbolsOutline<CR>', {noremap = true}
+          )
+        end,
       },
-      'aca/pylance.nvim',
     }
 
     -- Linters and formatters (WIP plugins) (for now using efm langserver)
     use {
-      {'mfussenegger/nvim-lint', config = [[require('plugin.lint')]], opt = true},
-      {'lukas-reineke/format.nvim', config = [[require('plugin.format')]], opt = true}
+      {'mfussenegger/nvim-lint', config = "require('plugin.lint')", opt = true},
+      {'lukas-reineke/format.nvim', config = "require('plugin.format')", opt = true}
     }
 
     -- Telescope and family
     use {
-      "~/projects/telescope-bookmarks.nvim",
       {
         'nvim-telescope/telescope.nvim',
-        config = [[require('plugin.telescope')]],
+        event = 'VimEnter',
+        config = "require('plugin.telescope')",
         requires = {
           {'nvim-lua/popup.nvim'},
           {'nvim-lua/plenary.nvim'},
         },
       },
+      {"~/projects/telescope-bookmarks.nvim"},
       {'nvim-telescope/telescope-fzy-native.nvim', opt = true},
       {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'},
       {
@@ -131,7 +138,8 @@ packer.startup {
         rocks = {
           "lua-http-parser",
           {'openssl', env = {OPENSSL_DIR='/usr/local/Cellar/openssl@1.1/1.1.1k'}}
-        }
+        },
+        opt = true,
       },
     }
 
@@ -139,14 +147,14 @@ packer.startup {
     use {
       {
         'nvim-treesitter/nvim-treesitter',
-        event = 'BufRead',
+        event = {'BufRead', 'BufNewFile'},
         run = ':TSUpdate',
-        config = [[require('plugin.treesitter')]],
+        config = "require('plugin.treesitter')",
       },
       {
         'nvim-treesitter/playground',
+        cmd = 'TSPlaygroundToggle',
         requires = 'nvim-treesitter/nvim-treesitter',
-        cmd = 'TSPlaygroundToggle'
       }
     }
 
@@ -159,12 +167,12 @@ packer.startup {
 
     -- Git
     use {
-      {'tpope/vim-fugitive', config = [[require('plugin.fugitive')]]},
+      {'tpope/vim-fugitive', config = "require('plugin.fugitive')"},
       {
         'lewis6991/gitsigns.nvim',
-        event = {'BufRead', 'BufNewFile'},
+        event = {'BufReadPre', 'BufNewFile'},
         requires = 'nvim-lua/plenary.nvim',
-        config = [[require('plugin.gitsigns')]],
+        config = "require('plugin.gitsigns')",
       },
     }
 
@@ -175,23 +183,24 @@ packer.startup {
     use {
       'junegunn/vim-easy-align',
       keys = {{'n', 'ge'}, {'x', 'ge'}},
-      config = [[require('plugin.easy_align')]]
+      config = "require('plugin.easy_align')"
     }
 
-    -- Start screen
-    use {'mhinz/vim-startify', config = [[require('plugin.startify')]]}
+    -- Using only the plugin management functionalities
+    use 'mhinz/vim-startify'
 
     -- File explorer (Mainly used for going through new projects)
     use {
       'kyazdani42/nvim-tree.lua',
       requires = {'kyazdani42/nvim-web-devicons'},
       keys = {{'n', '<C-n>'}},
-      config = [[require('plugin.nvim_tree')]]
+      config = "require('plugin.nvim_tree')"
     }
 
     -- Path navigator
     use {
-      {'justinmk/vim-dirvish', config = [[require('plugin.dirvish')]]},
+      {'justinmk/vim-dirvish', config = "require('plugin.dirvish')"},
+      -- TODO: use vim-eunuch instead
       {'roginfarrer/vim-dirvish-dovish', branch = 'main'}
     }
 
@@ -199,10 +208,12 @@ packer.startup {
     use {
       'lukas-reineke/indent-blankline.nvim',
       branch = 'lua',
-      config = [[require('plugin.indentline')]]
+      event = {'BufRead', 'BufNewFile'},
+      config = "require('plugin.indentline')"
     }
 
     -- Search
+    -- TODO: Convert this to lua :)
     use {'romainl/vim-cool', config = [[vim.g.CoolTotalMatches = 1]]}
 
     -- Profiling
@@ -211,7 +222,7 @@ packer.startup {
     use 'tpope/vim-scriptease'
 
     -- Open external browsers, editor, finder from Neovim
-    use {'itchyny/vim-external', config = [[require('plugin.vim_external')]]}
+    use {'itchyny/vim-external', config = "require('plugin.vim_external')"}
   end,
 
   config = {

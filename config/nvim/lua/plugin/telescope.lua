@@ -92,12 +92,10 @@ require('telescope').setup {
     bookmarks = {
       selected_browser = 'brave',
       url_open_command = 'open',
-      -- url_open_plugin = 'vim_external',
     },
   },
 }
 
----TODO: Any way to lazy load telescope extensions? Same as from packer.nvim?
 ---Helper function to load the telescope extensions without blowing up.
 ---It only emits a small warning :)
 ---@param extensions table
