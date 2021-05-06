@@ -26,6 +26,6 @@ require('core.utils').create_augroups {
     [[TermOpen * startinsert]],
 
     -- Remove trailing whitespace and lines on save
-    [[BufWritePre * call utils#trim_trailing_whitespace() | call utils#trim_trailing_lines()]],
+    [[BufWritePre * TrimTrailingWhitespace | TrimTrailingLines]],
   }
 }

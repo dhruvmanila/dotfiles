@@ -17,6 +17,7 @@ opt.showmode      = true
 opt.cmdheight     = 1
 opt.emoji         = false      -- https://www.youtube.com/watch?v=F91VWOelFNE
 opt.showtabline   = 2          -- Always show tabline
+opt.synmaxcol     = 200
 
 -- I: Disable the default Vim startup message
 -- c: Don't give messages like "The only match", "Pattern not found", etc.

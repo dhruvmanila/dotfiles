@@ -69,6 +69,7 @@ g.loaded_rrhelper        = 1
 -- g.loaded_man             = 1
 g.loaded_netrw           = 1
 g.loaded_netrwPlugin     = 1
+g.loaded_tutor_mode_plugin = 1
 
 -- Load the core files
 require('core.globals')

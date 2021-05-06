@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# Open a CLI script in vim
+viw() {
+  $EDITOR "$(which "$1")"
+}
+
 # Switch iterm2 profile (does not work in tmux)
 function it2prof() {
   if [[ $# -ne 1 ]]; then

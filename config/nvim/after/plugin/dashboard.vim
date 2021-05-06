@@ -39,4 +39,4 @@ silent delcommand Startify
 command! -nargs=0 -bar Dashboard lua require('core.dashboard').open(false)
 command! -nargs=0 -bar Startify Dashboard
 
-nnoremap <silent> , <Cmd>Dashboard<CR>
+nnoremap <silent> <leader>` <Cmd>Dashboard<CR>

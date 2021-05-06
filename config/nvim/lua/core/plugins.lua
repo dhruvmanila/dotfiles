@@ -78,7 +78,7 @@ packer.startup {
 
     -- TODO: remove after #12587 is fixed (upstream bug)
     use 'antoinemadec/FixCursorHold.nvim'
-    use '~/git/totally-not-hacked-pylance.nvim'
+    use '~/git/pylance.nvim'
 
     -- LSP, auto completion and related
     use {

@@ -111,11 +111,17 @@ export FZF_DEFAULT_OPTS='
   --prompt="❯ "
   --bind=ctrl-p:toggle-preview
   --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
-  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54
-'
+  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54'
+
 # Molokai for fzf
 # --color fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81
 # --color info:144,prompt:161,spinner:135,pointer:135,marker:118
+
+export FZF_CTRL_R_OPTS="
+  --preview 'echo {}' --preview-window down:3:wrap
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
 
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_CTRL_T_OPTS='--preview "bat --color=always --line-range :300 {}"'
