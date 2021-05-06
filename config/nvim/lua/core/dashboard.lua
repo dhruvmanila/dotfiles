@@ -304,7 +304,6 @@ end
 function M.set_cursor()
   local oldline  = dashboard.newline
   local newline = api.nvim_win_get_cursor(0)[1]
-  local fixed_column = dashboard.fixed_column
 
   -- Direction: up (-1) or down (+1) (no horizontal movements are registered)
   local movement = 2 * (newline > oldline and 1 or 0) - 1
@@ -320,7 +319,7 @@ function M.set_cursor()
   -- Update the numbers and the cursor position
   dashboard.oldline = oldline
   dashboard.newline = newline
-  api.nvim_win_set_cursor(0, {newline, fixed_column})
+  api.nvim_win_set_cursor(0, {newline, dashboard.fixed_column})
 end
 
 --- Open the dashboard buffer in the current buffer if it is empty or create

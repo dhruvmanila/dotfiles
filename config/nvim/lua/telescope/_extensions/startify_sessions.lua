@@ -49,7 +49,9 @@ end
 ---   - `startify#session_load`
 ---   - `startify#session_delete`
 ---
---- Default action (<CR>) will load the selected session.
+--- There are two actions available:
+---   - Default action (<CR>) will load the selected session.
+---   - <C-x> will delete the selected session.
 ---@param opts table
 local function startify_sessions(opts)
   opts = opts or {}

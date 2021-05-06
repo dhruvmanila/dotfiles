@@ -69,6 +69,15 @@ local function wrap_hl(hl)
   return hl and '%#' .. hl .. '#' or ''
 end
 
+-- local function mapping_line(maps, hl)
+--   local line = ''
+--   for _, info in ipairs(maps) do
+--     local key, msg = unpack(info)
+--     line = line .. wrap_hl(hl) .. key .. ' ' .. wrap_hl('StGrey') .. msg .. ' '
+--   end
+--   return line
+-- end
+
 ---Special buffer information table.
 ---
 ---This includes the following components:
@@ -110,7 +119,9 @@ local special_buffer_info = {
     end,
 
     help = function(ctx)
-      return 'help [' .. fn.fnamemodify(ctx.bufname, ':t:r') .. ']  %l/%L'
+      local quit = ctx.inactive and '' or '<q>' .. wrap_hl('StGrey') .. " quit "
+      local name = fn.fnamemodify(ctx.bufname, ':t:r')
+      return 'help [' .. name .. ']  %l/%L %=' .. quit
     end,
 
     dirvish = function(ctx)
@@ -127,7 +138,7 @@ local special_buffer_info = {
     end,
 
     dashboard = function(ctx)
-      local quit = wrap_hl('StGreyItalic') .. "Press 'q' to quit "
+      local quit = ctx.inactive and '' or '<q>' .. wrap_hl('StGrey') .. " quit "
       local dir = fn.fnamemodify(ctx.bufname, ':~:s?Dashboard??')
       return dir .. '%=' .. quit
     end,
@@ -376,6 +387,7 @@ function _G.nvim_statusline()
     bufname = fn.bufname(curbuf),
     filetype = curbo.filetype,
     buftype = curbo.buftype,
+    inactive = inactive,
   }
 
   if special_buffer(ctx) then

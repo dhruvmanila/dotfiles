@@ -178,6 +178,8 @@ packer.startup {
 
     -- Comment
     use 'tpope/vim-commentary'
+    use 'tpope/vim-scriptease'
+    use 'tpope/vim-eunuch'
 
     -- Pretification
     use {
@@ -218,8 +220,6 @@ packer.startup {
 
     -- Profiling
     use {'tweekmonster/startuptime.vim', cmd = 'StartupTime'}
-
-    use 'tpope/vim-scriptease'
 
     -- Open external browsers, editor, finder from Neovim
     use {'itchyny/vim-external', config = "require('plugin.vim_external')"}

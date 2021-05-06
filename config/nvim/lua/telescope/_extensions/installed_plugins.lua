@@ -18,7 +18,7 @@ local function open_in_browser(prompt_bufnr)
   local selection = action_state.get_selected_entry()
 
   if not selection.url then
-    error(selection.name .. " is a local plugin.")
+    error('"' .. selection.value .. '" is a local plugin.')
     return nil
   end
 
@@ -73,7 +73,7 @@ local function installed_plugins(opts)
 
   local function make_display(entry)
     return displayer {
-      entry.name,
+      entry.value,
     }
   end
 
@@ -84,7 +84,7 @@ local function installed_plugins(opts)
       entry_maker = function(entry)
         return {
           display = make_display,
-          name = entry.name,
+          value = entry.name,
           path = entry.path,
           url = entry.url,
           ordinal = entry.name,
@@ -105,4 +105,3 @@ end
 return telescope.register_extension {
   exports = {installed_plugins = installed_plugins},
 }
-

@@ -25,9 +25,6 @@ g.gruvbox_material_diagnostic_virtual_text = 'colored'
 -- Generates after/ftplugin/*.vim files for lazy loading
 g.gruvbox_material_better_performance = 1
 
--- Don't do highlight clear
-g.colors_name = 'gruvbox-material'
-
 vim.cmd('colorscheme gruvbox-material')
 
 local palette = vim.fn['gruvbox_material#get_palette'](
@@ -54,14 +51,17 @@ highlight('TSProperty', {force = true, link = 'Blue'})
 highlight('TSField', {force = true, link = 'Blue'})
 
 -- Lsp
+-- With border, floating window background color will be same as that of Normal
+highlight('NormalFloat', {force = true, link = 'Normal'})
 highlight('FloatBorder', {force = true, link = 'Grey'})
 highlight('VirtualTextHint', {force = true, link = 'Aqua'})
--- With border, background color same as that of Normal
-highlight('NormalFloat', {force = true, link = 'Normal'})
 highlight('LspDiagnosticsFloatingError', {force = true, link = 'VirtualTextError'})
 highlight('LspDiagnosticsFloatingWarning', {force = true, link = 'VirtualTextWarning'})
 highlight('LspDiagnosticsFloatingInformation', {force = true, link = 'VirtualTextInformation'})
 highlight('LspDiagnosticsFloatingHint', {force = true, link = 'VirtualTextHint'})
+
+-- Compe doc window should be same as that of NormalFloat
+highlight('CompeDocumentation', {guifg = palette.fg0[1], guibg = palette.bg4[1]})
 
 -- Symbols outline
 highlight('FocusedSymbol', {force = true, link = 'CurrentWord'})

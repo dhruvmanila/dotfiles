@@ -110,7 +110,7 @@ local function github_stars(opts)
 
   local function make_display(entry)
     return displayer {
-      entry.name,
+      entry.value,
       {entry.description, "Comment"},
     }
   end
@@ -122,7 +122,7 @@ local function github_stars(opts)
       entry_maker = function(entry)
         return {
           display = make_display,
-          name = entry.name,
+          value = entry.name,
           description = entry.description,
           url = entry.url,
           ordinal = entry.name .. ' ' .. entry.description,

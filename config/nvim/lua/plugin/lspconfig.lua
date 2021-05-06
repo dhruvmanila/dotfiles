@@ -103,14 +103,18 @@ lspstatus.config {
       return require("lsp-status.util").in_range(cursor_pos, value_range)
     end
   end,
-  kind_labels = kind_icons,
+  kind_labels = (function()
+    local items = {}
+    for _, info in ipairs(kind_icons) do
+      local icon, name = unpack(info)
+      items[name] = icon
+    end
+    return items
+  end)(),
   indicator_errors = icons.error,
   indicator_warnings = icons.warning,
   indicator_info = icons.info,
   indicator_hint = icons.hint,
-  -- TODO
-  -- indicator_ok = '',
-  -- status_symbol = ''
 }
 -- Register the progress handler with Neovim's LSP client.
 lspstatus.register_progress()
@@ -148,8 +152,8 @@ local function custom_on_attach(client)
   -- For warning and error diagnostics: [e | ]e
   buf_map('[d', 'diagnostic.goto_prev({enable_popup = false})')
   buf_map(']d', 'diagnostic.goto_next({enable_popup = false})')
-  buf_map('[e', 'diagnostics.goto_prev({enable_popup = false, severity_limit = "Warning"})')
-  buf_map('[e', 'diagnostics.goto_next({enable_popup = false, severity_limit = "Warning"})')
+  buf_map('[e', 'diagnostic.goto_prev({enable_popup = false, severity_limit = "Warning"})')
+  buf_map(']e', 'diagnostic.goto_next({enable_popup = false, severity_limit = "Warning"})')
   buf_map(';l', 'diagnostic.show_line_diagnostics({show_header = false, border = "single"})')
   -- Calling the function twice will jump into the floating window.
   buf_map('K', 'buf.hover()')
@@ -205,7 +209,7 @@ local servers = {
     init_options = { documentFormatting = true },
     filetypes = {'python'},
     settings = {
-      rootMarkers = {'.git/'},
+      rootMarkers = {'.git/', 'requirements.txt'},
       languages = {
         python = {
           {

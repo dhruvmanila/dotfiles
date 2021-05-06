@@ -43,6 +43,27 @@ custom_actions.delete_buffer = function (prompt_bufnr)
   end
 end
 
+-- Reset the prompt keeping the cursor at the current entry in the results window.
+custom_actions.reset_prompt = function(prompt_bufnr)
+  action_state.get_current_picker(prompt_bufnr):reset_prompt()
+end
+
+-- Simple previewer to set the current content value in the preview window
+-- with 'wrap' turned on. This is used in command_history where the commands
+-- could get pretty long and the entire command will be previewed similar
+-- to fzf.
+local function wrap_previewer()
+  return require('telescope.previewers').new_buffer_previewer {
+    get_buffer_by_name = function(_, entry)
+      return entry.value
+    end,
+    define_preview = function(self, entry, status)
+      vim.api.nvim_win_set_option(status.preview_win, 'wrap', true)
+      vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, {'  ' .. entry.value})
+    end
+  }
+end
+
 require('telescope').setup {
   defaults = {
     prompt_prefix = require('core.icons').icons.telescope .. ' ',
@@ -61,9 +82,10 @@ require('telescope').setup {
       },
       vertical = {
         preview_height = 0.5,
-        width_padding = 0.05,
-        height_padding = 0.05,
-      }
+        width_padding = 0.1,
+        height_padding = 0.06,
+        mirror = true,
+      },
     },
     mappings = {
       i = {
@@ -74,6 +96,7 @@ require('telescope').setup {
         ["<C-s>"] = actions.select_horizontal,
         ["<C-x>"] = false,
         ["<C-y>"] = custom_actions.yank_entry,
+        ["<C-l>"] = custom_actions.reset_prompt,
       },
     },
   },
@@ -175,31 +198,32 @@ function M.find_files_in_dir(dir, opts)
   local dir_opts = {
     prompt_title = "Find Files (" .. vim.fn.fnamemodify(dir, ":t") .. ")",
     cwd = dir,
+    layout_strategy = 'flex',
+    layout_config = {
+      flip_columns = 120,
+    }
   }
   dir_opts = vim.tbl_deep_extend("force", dir_opts, opts)
   require('telescope.builtin').find_files(dir_opts)
 end
 
 function M.find_files()
-  local cwd = utils.get_project_root()
-  M.find_files_in_dir(cwd, {
+  M.find_files_in_dir(utils.get_project_root(), {
     shorten_path = false,
   })
 end
 
 function M.grep_prompt()
-  local cwd = utils.get_project_root()
   require('telescope.builtin').grep_string {
-    cwd = cwd,
+    cwd = utils.get_project_root(),
     shorten_path = true,
     search = vim.fn.input('Grep String > '),
   }
 end
 
 function M.live_grep()
-  local cwd = utils.get_project_root()
   require('telescope.builtin').live_grep {
-    cwd = cwd,
+    cwd = utils.get_project_root(),
     shorten_path = true,
   }
 end
@@ -278,20 +302,27 @@ function M.commands()
 end
 
 function M.command_history()
-  require('telescope.builtin').command_history(
-    themes.get_dropdown {
-      width = math.min(100, vim.o.columns - 20),
-      results_height = 0.8,
-      previewer = false,
+  require('telescope.builtin').command_history {
+    previewer = wrap_previewer(),
+    results_title = false,
+    preview_title = "Command",
+
+    -- 'center' does not have a layout config :(
+    layout_strategy = 'vertical',
+    layout_config = {
+      preview_height = 3,
+      mirror = true,
+      width_padding = math.max(10, (vim.o.columns - 100) / 2),
+      height_padding = math.max(3, (vim.o.lines - 30) / 2),
     }
-  )
+  }
 end
 
 function M.search_history()
   require('telescope.builtin').search_history(
     themes.get_dropdown {
       width = math.min(100, vim.o.columns - 20),
-      results_height = 0.8,
+      results_height = math.min(30, vim.o.lines - 10),
       previewer = false,
     }
   )
