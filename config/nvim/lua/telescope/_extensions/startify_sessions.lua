@@ -22,12 +22,12 @@ end
 --- Load the selected startify session.
 local function load_session(prompt_bufnr)
   local selection = action_state.get_selected_entry()
-  if selection.name:find("*") then
-    print("Selected session is currectly active")
+  if selection.current then
+    print("[telescope] Selected session is currectly active")
     return
   end
   actions.close(prompt_bufnr)
-  vim.fn["startify#session_load"](false, selection.name)
+  vim.fn["startify#session_load"](false, selection.value)
 end
 
 --- Delete the selected startify session.
@@ -36,7 +36,7 @@ local function delete_session(prompt_bufnr)
   actions.close(prompt_bufnr)
 
   vim.schedule(function()
-    vim.fn["startify#session_delete"](false, selection.name)
+    vim.fn["startify#session_delete"](false, selection.value)
   end)
 end
 
@@ -59,8 +59,11 @@ local function startify_sessions(opts)
   local results = {}
   local current_session = get_current_session_name()
   for _, name in ipairs(vim.fn["startify#session_list"]("")) do
-    if name == current_session then name = name .. " (*)" end
-    table.insert(results, {name = name})
+    table.insert(results, {
+      value = name,
+      name = name == current_session and name .. " (*)" or name,
+      current = name == current_session,
+    })
   end
 
   local displayer = entry_display.create {
@@ -83,7 +86,9 @@ local function startify_sessions(opts)
       entry_maker = function(entry)
         return {
           display = make_display,
+          value = entry.value,
           name = entry.name,
+          current = entry.current,
           ordinal = entry.name,
         }
       end,
