@@ -195,6 +195,7 @@ end
 ---Generic function to find files in given directory.
 ---Also used in installed_plugins extension
 function M.find_files_in_dir(dir, opts)
+  opts = opts or {}
   local dir_opts = {
     prompt_title = "Find Files (" .. vim.fn.fnamemodify(dir, ":t") .. ")",
     cwd = dir,
@@ -208,8 +209,15 @@ function M.find_files_in_dir(dir, opts)
 end
 
 function M.find_files()
-  M.find_files_in_dir(utils.get_project_root(), {
-    shorten_path = false,
+  M.find_files_in_dir(utils.get_project_root())
+end
+
+function M.search_all_files()
+  require('plugin.telescope').find_files_in_dir(utils.get_project_root(), {
+    prompt_title = "Search All Files",
+    find_command = {
+      'fd', '--type', 'f', '--hidden', '--follow', '--exclude', '.git', '--no-ignore'
+    },
   })
 end
 
@@ -230,7 +238,6 @@ end
 
 function M.search_dotfiles()
   M.find_files_in_dir("~/dotfiles", {
-    shorten_path = false,
     hidden = true,
     follow = true,
     file_ignore_patterns = {".git/"},
@@ -255,16 +262,6 @@ function M.startify_sessions()
       previewer = false,
     }
   )
-end
-
-function M.search_all_files()
-  require('telescope.builtin').find_files {
-    prompt_title = "Search All Files",
-    shorten_path = false,
-    find_command = {
-      'fd', '--type', 'f', '--hidden', '--follow', '--exclude', '.git', '--no-ignore'
-    },
-  }
 end
 
 function M.help_tags()

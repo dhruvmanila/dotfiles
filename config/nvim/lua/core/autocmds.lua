@@ -11,8 +11,8 @@ require('core.utils').create_augroups {
     [[TextYankPost * silent! lua vim.highlight.on_yank({higroup="Substitute", timeout=200})]],
 
     -- Keep the plugins in sync (clean, update, install, compile)
-    [[BufWritePost plugins.lua luafile %]],
-    [[BufWritePost plugins.lua PackerSync]],
+    -- [[BufWritePost plugins.lua luafile %]],
+    -- [[BufWritePost plugins.lua PackerSync]],
 
     -- Check if file changed (more eager than 'autoread')
     -- https://unix.stackexchange.com/a/383044

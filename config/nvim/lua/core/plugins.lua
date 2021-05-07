@@ -87,7 +87,7 @@ packer.startup {
       {
         'neovim/nvim-lspconfig',
         event = 'BufReadPre',
-        config = "require('plugin.lspconfig')",
+        config = "require('plugin.lsp')",
       },
       {
         'hrsh7th/nvim-compe',
