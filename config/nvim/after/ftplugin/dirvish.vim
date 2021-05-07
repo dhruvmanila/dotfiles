@@ -32,6 +32,10 @@ nnoremap <silent><buffer> .
       \ :silent keeppatterns g@\v/\.[^\/]+/?$@d _<CR>
       \ :setlocal conceallevel=3<CR>
 
+" Switch the directory using telescope
+nnoremap <silent><buffer> C
+      \ :lua require('telescope').extensions.dirvish_cd.dirvish_cd()<CR>
+
 if exists('b:dovish_ftplugin')
   nmap <silent><buffer> nf <Plug>(dovish_create_file)
   nmap <silent><buffer> nd <Plug>(dovish_create_directory)

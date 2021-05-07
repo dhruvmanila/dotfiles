@@ -141,6 +141,7 @@ load_telescope_extensions({
   'github_stars',
   'installed_plugins',
   'startify_sessions',
+  'dirvish_cd',
 })
 
 -- Helper function to set the keymaps for telescope functions
