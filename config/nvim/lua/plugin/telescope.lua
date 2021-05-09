@@ -28,19 +28,31 @@ custom_actions.yank_entry = function(prompt_bufnr)
 end
 
 -- Delete the selected buffer or all the buffers selected using multi selection.
-custom_actions.delete_buffer = function (prompt_bufnr)
-  local current_picker = action_state.get_current_picker(prompt_bufnr)
-  local multi_selection = current_picker:get_multi_selection()
-  actions.close(prompt_bufnr)
+-- custom_actions.delete_buffer = function(prompt_bufnr)
+--   local current_picker = action_state.get_current_picker(prompt_bufnr)
+--   local multi_selection = current_picker:get_multi_selection()
+--   actions.close(prompt_bufnr)
 
-  if vim.tbl_isempty(multi_selection) then
-    local selection = action_state.get_selected_entry()
+--   if vim.tbl_isempty(multi_selection) then
+--     local selection = action_state.get_selected_entry()
+--     vim.api.nvim_buf_delete(selection.bufnr, {force = true})
+--   else
+--     for _, selection in ipairs(multi_selection) do
+--       vim.api.nvim_buf_delete(selection.bufnr, {force = true})
+--     end
+--   end
+-- end
+
+custom_actions.delete_buffer = function(prompt_bufnr)
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  current_picker:delete_selection(function(selection)
     vim.api.nvim_buf_delete(selection.bufnr, {force = true})
-  else
-    for _, selection in ipairs(multi_selection) do
-      vim.api.nvim_buf_delete(selection.bufnr, {force = true})
-    end
-  end
+  end)
+end
+
+custom_actions.remove_current_selection = function(prompt_bufnr)
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  current_picker:delete_selection()
 end
 
 -- Reset the prompt keeping the cursor at the current entry in the results window.
@@ -94,7 +106,7 @@ require('telescope').setup {
         ["<C-k>"] = actions.move_selection_previous,
         ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
         ["<C-s>"] = actions.select_horizontal,
-        ["<C-x>"] = false,
+        ["<C-x>"] = custom_actions.remove_current_selection,
         ["<C-y>"] = custom_actions.yank_entry,
         ["<C-l>"] = custom_actions.reset_prompt,
       },
@@ -126,9 +138,7 @@ local function load_telescope_extensions(extensions)
   for _, name in ipairs(extensions) do
     local ok, _ = pcall(require('telescope').load_extension, name)
     if not ok then
-      vim.api.nvim_echo(
-        {{'[Telescope] Failed to load the extension: ' .. name, 'WarningMsg'}}, true, {}
-      )
+      utils.warn('[Telescope] Failed to load the extension: ' .. name)
     end
   end
 end
@@ -342,6 +352,7 @@ end
 -- Added the ability to delete multiple buffers in one go using multi-selection.
 function M.buffers()
   require('telescope.builtin').buffers(themes.get_dropdown {
+    -- sorting_strategy = 'descending',
     previewer = false,
     sort_lastused = true,
     show_all_buffers = true,

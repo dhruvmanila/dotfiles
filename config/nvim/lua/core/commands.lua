@@ -39,9 +39,17 @@ function M.trim_trailing_lines()
   api.nvim_win_set_cursor(0, pos)
 end
 
+-- Equalize the windows across all tabs and return back to the current tabpage.
+function M.equalize_windows()
+  local last_tab = api.nvim_get_current_tabpage()
+  cmd('tabdo wincmd =')
+  api.nvim_set_current_tabpage(last_tab)
+end
+
 local mod = ':lua require("core.commands").'
 cmd('command! Hi ' .. mod .. 'highlight_groups()')
 cmd('command! -bar TrimTrailingWhitespace ' .. mod .. 'trim_trailing_whitespace()')
 cmd('command! -bar TrimTrailingLines ' .. mod .. 'trim_trailing_lines()')
+cmd('command! -bar Equalize ' .. mod .. 'equalize_windows()')
 
 return M

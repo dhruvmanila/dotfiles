@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # vim: set ft=sh:
 
+# Defaults
+export XDG_CONFIG_HOME="${HOME}/.config"
+
 # For docker-compose (internetarchive/openlibrary)
 export COMPOSE_FILE="docker-compose.yml:docker-compose.override.yml:docker-compose.infogami-local.yml"
 

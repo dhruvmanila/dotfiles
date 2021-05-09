@@ -11,11 +11,11 @@ break_after_functiondef_lp: true
 break_before_functiondef_rp: true
 break_after_table_lb: true
 break_before_table_rb: true
-align_args: true
+align_args: false
 align_parameter: false
 chop_down_parameter: false
 chop_down_kv_table: true
 extra_sep_at_table_end: true
 break_after_operator: false
-single_quote_to_double_quote: false
-double_quote_to_single_quote: true
+single_quote_to_double_quote: true
+double_quote_to_single_quote: false

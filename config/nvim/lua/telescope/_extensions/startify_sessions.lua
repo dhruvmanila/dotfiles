@@ -97,7 +97,7 @@ local function startify_sessions(opts)
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(load_session)
-      map('i', '<C-x>', delete_session)
+      -- map('i', '<C-x>', delete_session)
       return true
     end,
   }):find()

@@ -4,6 +4,8 @@ function! s:adjust_height(minheight, maxheight)
   exe max([min([line("$"), a:maxheight]), a:minheight]) . "wincmd _"
 endfunction
 
+nnoremap <silent><buffer><nowait> q :<C-u>quit<CR>
+
 " Force quickfix to open beneath all other splits
 wincmd J
 
@@ -11,6 +13,6 @@ setlocal nonumber
 setlocal norelativenumber
 setlocal nowrap
 setlocal colorcolumn=
-set nobuflisted  " quickfix buffers should not pop up when doing :bn or :bp
+setlocal nobuflisted  " quickfix buffers should not pop up when doing :bn or :bp
 call s:adjust_height(1, 10)
 setlocal winfixheight

@@ -5,25 +5,24 @@ require('core.utils').create_augroups {
     [[WinLeave,BufLeave * if &cul && &ft !~# '^\(dashboard\)' | setl nocul | endif]],
 
     -- Equalize window dimensions when resizing vim
-    [[VimResized * wincmd =]],
+    [[VimResized * Equalize]],
 
     -- Highlighted yank
     [[TextYankPost * silent! lua vim.highlight.on_yank({higroup="Substitute", timeout=200})]],
+
+    -- Start syncing syntax highlighting 200 lines before the current line
+    [[Syntax * syntax sync minlines=200]],
 
     -- Keep the plugins in sync (clean, update, install, compile)
     -- [[BufWritePost plugins.lua luafile %]],
     -- [[BufWritePost plugins.lua PackerSync]],
 
     -- Check if file changed (more eager than 'autoread')
-    -- https://unix.stackexchange.com/a/383044
-    [[FocusGained,BufEnter * if mode() !~ '\v(c|r.?|!|t)' && getcmdwintype() == '' | checktime | endif]],
-    [[FileChangedShellPost *
-      echohl WarningMsg
-      | echo "File changed on disk. Buffer reloaded."
-      | echohl None]],
+    [[FocusGained,BufEnter * checktime]],
 
     -- Automatically go to insert mode on terminal buffer
     [[TermOpen * startinsert]],
+    [[BufEnter term://* startinsert]],
 
     -- Remove trailing whitespace and lines on save
     [[BufWritePre * TrimTrailingWhitespace | TrimTrailingLines]],

@@ -51,8 +51,6 @@ packer.startup {
     use 'wbthomason/packer.nvim'
 
     -- Color scheme
-    -- TODO: suggest to load colors only for installed plugins
-    -- TODO: or port it to lua and have only the ones which I use
     use {'sainnhe/gruvbox-material', config = "require('plugin.colorscheme')"}
 
     -- Helpful in visualizing colors live in the editor
@@ -122,7 +120,7 @@ packer.startup {
     -- Telescope and family
     use {
       {
-        'nvim-telescope/telescope.nvim',
+        '~/git/telescope.nvim',
         event = 'VimEnter',
         config = "require('plugin.telescope')",
         requires = {
@@ -160,8 +158,8 @@ packer.startup {
 
     -- Language specific
     use {
-      'cespare/vim-toml',
-      'raimon49/requirements.txt.vim',
+      {'cespare/vim-toml', ft = 'toml'},
+      {'raimon49/requirements.txt.vim', ft = 'requirements'},
       {'tjdevries/tree-sitter-lua', opt = true},
     }
 
@@ -188,7 +186,7 @@ packer.startup {
       config = "require('plugin.easy_align')"
     }
 
-    -- Using only the plugin management functionalities
+    -- Using only the session management functionalities
     use 'mhinz/vim-startify'
 
     -- File explorer (Mainly used for going through new projects)
@@ -211,7 +209,8 @@ packer.startup {
       'lukas-reineke/indent-blankline.nvim',
       branch = 'lua',
       event = {'BufRead', 'BufNewFile'},
-      config = "require('plugin.indentline')"
+      config = "require('plugin.indentline')",
+      disable = true,
     }
 
     -- Search

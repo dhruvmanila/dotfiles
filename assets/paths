@@ -22,6 +22,11 @@ PATH="/usr/local/opt/tcl-tk/bin:${PATH}"
 export GOPATH="${HOME}/go"
 PATH="${PATH}:${GOPATH}/bin"
 
+# Setting PATH for rust
+# export RUSTUP_HOME="${HOME}/.rustup"
+export CARGO_HOME="${HOME}/.cargo"
+PATH="${PATH}:${CARGO_HOME}/bin"
+
 # Setting PATH for BasicTex
 PATH="/Library/TeX/texbin:${PATH}"
 

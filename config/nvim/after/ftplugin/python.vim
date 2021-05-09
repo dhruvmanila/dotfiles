@@ -4,7 +4,7 @@ setlocal shiftwidth=4
 " Default is 80
 setlocal colorcolumn=88
 
-" Just trying this out
+" Format with 'gq'
 setlocal formatprg=black\ -q\ -
 
 function! s:search_python_docs(word) abort

@@ -54,7 +54,7 @@ local function last_session_description()
   end
 
   vim.g.startify_last_session_name = last_session
-  return {icons.pin .. '  Last session (' .. last_session ..')'}
+  return {icons.pin .. '  Last session (' .. last_session .. ')'}
 end
 
 --- Generate and return the header of the start page.
@@ -90,50 +90,35 @@ local entries = {
     key = 'l',
     description = last_session_description,
     command = 'call startify#session_load(0, g:startify_last_session_name)',
-  },
-  {
+  }, {
     key = 's',
     description = {icons.globe .. '  Find sessions'},
-    command = "lua require('plugin.telescope').startify_sessions()",
-  },
-  {
-    key = 'e',
-    description = {icons.file .. '  New file'},
-    command = 'enew',
-  },
-  {
+    command = 'lua require(\'plugin.telescope\').startify_sessions()',
+  }, {key = 'e', description = {icons.file .. '  New file'}, command = 'enew'}, {
     key = 'h',
     description = {icons.history .. '  Recently opened files'},
     command = 'Telescope oldfiles',
-  },
-  {
+  }, {
     key = 'f',
     description = {icons.files .. '  Find files'},
-    command = "lua require('plugin.telescope').find_files()",
-  },
-  {
+    command = 'lua require(\'plugin.telescope\').find_files()',
+  }, {
     key = 'd',
     description = {icons.tools .. '  Find in dotfiles'},
-    command = "lua require('plugin.telescope').search_dotfiles()",
-  },
-  {
+    command = 'lua require(\'plugin.telescope\').search_dotfiles()',
+  }, {
     key = 'b',
     description = {icons.directory .. '  File browser'},
     command = 'Telescope file_browser',
-  },
-  {
-    key = 'p',
-    description = {icons.stopwatch .. '  Startup time'},
-    command = 'StartupTime',
-  },
+  }, {key = 'p', description = {icons.stopwatch .. '  Startup time'}, command = 'StartupTime'},
 }
 
 --- Generate and return the footer of the start page.
 ---@return table
 local function generate_footer()
-  local loaded_plugins = #vim.tbl_filter(function(plugin)
-    return plugin.loaded
-  end, _G.packer_plugins)
+  local loaded_plugins = #vim.tbl_filter(
+    function(plugin) return plugin.loaded end, _G.packer_plugins
+  )
 
   return {'', '', 'Neovim loaded ' .. loaded_plugins .. ' plugins', ''}
 end
@@ -145,7 +130,7 @@ end
 ---@param length number
 ---@return table
 local function add_key(line, key, length)
-  return {line[1] .. string.rep(" ", length - #line[1]) .. key}
+  return {line[1] .. string.rep(' ', length - #line[1]) .. key}
 end
 
 --- Append the given lines in the current buffer. If `hl` is provided then add
@@ -156,9 +141,7 @@ local function append(lines, hl)
   local linenr = api.nvim_buf_line_count(0)
   api.nvim_buf_set_lines(0, linenr, linenr, false, lines)
   if hl then
-    for idx = linenr, linenr + #lines do
-      api.nvim_buf_add_highlight(0, -1, hl, idx, 1, -1)
-    end
+    for idx = linenr, linenr + #lines do api.nvim_buf_add_highlight(0, -1, hl, idx, 1, -1) end
   end
 end
 
@@ -167,15 +150,13 @@ end
 ---@param lines table
 ---@return table
 local function center(lines)
-  local longest_line = math.max(unpack(vim.tbl_map(function(line)
-    return api.nvim_strwidth(line)
-  end, lines)))
+  local longest_line = math.max(
+    unpack(vim.tbl_map(function(line) return api.nvim_strwidth(line) end, lines))
+  )
 
   local shift = math.floor(api.nvim_win_get_width(0) / 2 - longest_line / 2)
 
-  return vim.tbl_map(function(line)
-    return string.rep(" ", shift) .. line
-  end, lines)
+  return vim.tbl_map(function(line) return string.rep(' ', shift) .. line end, lines)
 end
 
 --- Perform either of the three process for the given/saved options:
@@ -186,13 +167,13 @@ end
 local function option_process(opts, process)
   for name, value in pairs(opts) do
     local scope = api.nvim_get_option_info(name).scope
-    scope = (scope == "buf" or scope == "win") and scope .. "_" or ""
-    if process == "set" then
-      api["nvim_" .. scope .. "set_option"](0, name, value)
-    elseif process == "save" then
-      dashboard.saved_opts[name] = api["nvim_" .. scope .. "get_option"](0, name)
+    scope = (scope == 'buf' or scope == 'win') and scope .. '_' or ''
+    if process == 'set' then
+      api['nvim_' .. scope .. 'set_option'](0, name, value)
+    elseif process == 'save' then
+      dashboard.saved_opts[name] = api['nvim_' .. scope .. 'get_option'](0, name)
     else
-      error("Unknown 'process' value: " .. process)
+      error('Unknown \'process\' value: ' .. process)
     end
   end
 end
@@ -201,11 +182,7 @@ end
 ---@param entry table
 local function register_entry(entry)
   local line = api.nvim_buf_line_count(0)
-  dashboard.entries[line] = {
-    line = line,
-    key = entry.key,
-    command = entry.command,
-  }
+  dashboard.entries[line] = {line = line, key = entry.key, command = entry.command}
 end
 
 --- Set the entries in the UI and register it in the dashboard table.
@@ -229,12 +206,14 @@ local function set_mappings()
   local opts = {noremap = true, silent = true, nowait = true}
 
   -- Basic keymap
-  buf_map(0, 'n', '<CR>', "<Cmd>lua require('core.dashboard').open_entry()<CR>", opts)
-  buf_map(0, 'n', 'q', "<Cmd>lua require('core.dashboard').close()<CR>", opts)
+  buf_map(0, 'n', '<CR>', '<Cmd>lua require(\'core.dashboard\').open_entry()<CR>', opts)
+  buf_map(0, 'n', 'q', '<Cmd>lua require(\'core.dashboard\').close()<CR>', opts)
 
   -- Registered entries
   for line, entry in pairs(dashboard.entries) do
-    buf_map(0, 'n', entry.key, "<Cmd>lua require('core.dashboard').open_entry(" .. line .. ")<CR>", opts)
+    buf_map(
+      0, 'n', entry.key, '<Cmd>lua require(\'core.dashboard\').open_entry(' .. line .. ')<CR>', opts
+    )
   end
 end
 
@@ -250,9 +229,7 @@ end
 function M.session_cleanup()
   if api.nvim_buf_get_option(0, 'filetype') == 'dashboard' then
     local calling_buffer = fn.bufnr('#')
-    if calling_buffer > 0 then
-      api.nvim_set_current_buf(calling_buffer)
-    end
+    if calling_buffer > 0 then api.nvim_set_current_buf(calling_buffer) end
   end
 
   if _G.packer_plugins['nvim-tree.lua'].loaded then
@@ -266,9 +243,9 @@ end
 --- original buffer.
 function M.close()
   local curbuflisted = fn.buflisted(api.nvim_get_current_buf())
-  local buflisted = vim.tbl_filter(function(bufnr)
-    return fn.buflisted(bufnr) == 1
-  end, api.nvim_list_bufs())
+  local buflisted = vim.tbl_filter(
+    function(bufnr) return fn.buflisted(bufnr) == 1 end, api.nvim_list_bufs()
+  )
 
   if #buflisted - curbuflisted ~= 0 then
     if api.nvim_buf_is_loaded(fn.bufnr('#')) and fn.bufnr('#') ~= fn.bufnr('%') then
@@ -290,26 +267,26 @@ function M.open_entry(line)
   local entry = dashboard.entries[line]
   local command_type = type(entry.command)
 
-  if command_type == "function" then
+  if command_type == 'function' then
     entry.command()
-  elseif command_type == "string" then
+  elseif command_type == 'string' then
     cmd(entry.command)
   else
-    utils.warn("[dashboard] Unsupported 'command' type: " .. command_type)
+    utils.warn('[dashboard] Unsupported \'command\' type: ' .. command_type)
   end
 end
 
 --- Set the cursor position according to the current dashboard information
 --- mainly the `oldline` and `newline` position.
 function M.set_cursor()
-  local oldline  = dashboard.newline
+  local oldline = dashboard.newline
   local newline = api.nvim_win_get_cursor(0)[1]
 
   -- Direction: up (-1) or down (+1) (no horizontal movements are registered)
   local movement = 2 * (newline > oldline and 1 or 0) - 1
 
   -- Skip blank lines between entries
-  if api.nvim_buf_get_lines(0, newline - 1, newline, false)[1] == "" then
+  if api.nvim_buf_get_lines(0, newline - 1, newline, false)[1] == '' then
     newline = newline + movement
   end
 
@@ -325,12 +302,10 @@ end
 --- Open the dashboard buffer in the current buffer if it is empty or create
 --- a new buffer for the current window.
 function M.open(on_vimenter)
-  if on_vimenter and (vim.o.insertmode or not vim.o.modifiable) then
-    return
-  end
+  if on_vimenter and (vim.o.insertmode or not vim.o.modifiable) then return end
 
   if not vim.o.hidden and vim.o.modified then
-    utils.warn("[dashboard] Please save your changes first.")
+    utils.warn('[dashboard] Please save your changes first.')
     return
   end
 
@@ -371,11 +346,7 @@ function M.open(on_vimenter)
   append(center(generate_footer()), 'Blue')
 
   -- Lock the buffer
-  option_process({
-    modifiable = false,
-    modified = false,
-    filetype = 'dashboard'
-  }, 'set')
+  option_process({modifiable = false, modified = false, filetype = 'dashboard'}, 'set')
 
   api.nvim_buf_set_name(0, 'Dashboard')
   set_mappings()
@@ -388,8 +359,8 @@ function M.open(on_vimenter)
   cmd('normal! ^ w')
   dashboard.fixed_column = api.nvim_win_get_cursor(0)[2]
 
-  cmd("autocmd dashboard CursorMoved <buffer> lua require('core.dashboard').set_cursor()")
-  cmd("autocmd dashboard BufWipeout dashboard ++once lua require('core.dashboard').reset_opts()")
+  cmd('autocmd dashboard CursorMoved <buffer> lua require(\'core.dashboard\').set_cursor()')
+  cmd('autocmd dashboard BufWipeout dashboard ++once lua require(\'core.dashboard\').reset_opts()')
   cmd('silent! %foldopen!')
   cmd('normal! zb')
 end

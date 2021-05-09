@@ -17,8 +17,8 @@ local themes = require("telescope.themes")
 
 local warn = require("core.utils").warn
 
--- Previewer is turned off by default. If it is enabled, then use horizontal
--- layout.
+-- Previewer is turned off by default. If it is enabled, then use the
+-- horizontal layout.
 local default_opts = themes.get_dropdown {
   width = math.min(100, vim.o.columns - 10),
   results_height = 0.8,

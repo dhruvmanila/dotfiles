@@ -113,9 +113,10 @@ local special_buffer_info = {
     gitcommit = 'Commit message',
 
     qf = function(ctx)
+      local quit = ctx.inactive and '' or '<q>' .. wrap_hl('StGrey') .. " quit "
       local title = utils.get_var('w', ctx.curwin, 'quickfix_title')
       title = title and '[' .. title .. ']' or ''
-      return 'Quickfix List ' .. title .. '  %l/%L'
+      return 'Quickfix List ' .. title .. '  %l/%L %=' .. quit
     end,
 
     help = function(ctx)
