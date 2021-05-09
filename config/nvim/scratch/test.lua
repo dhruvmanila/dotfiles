@@ -30,12 +30,9 @@
 
 -- source = string.sub(source, 13)
 
-
-
 -- print(decompressed_data)
 
 -- print(type(data))
-
 
 -- -- print(vim.inspect(lz4))
 -- local tmp = io.open("/tmp/decompressed_firefox_bookmarks", "w")

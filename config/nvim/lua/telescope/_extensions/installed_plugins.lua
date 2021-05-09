@@ -23,7 +23,7 @@ local function open_in_browser(prompt_bufnr)
   end
 
   actions.close(prompt_bufnr)
-  os.execute('open' .. ' "' .. selection.url .. '" &> /dev/null')
+  os.execute("open" .. ' "' .. selection.url .. '" &> /dev/null')
 end
 
 ---Defines the action to open the selection in a new Telescope finder with the
@@ -33,7 +33,7 @@ local function find_files_in_plugin(prompt_bufnr)
   actions.close(prompt_bufnr)
 
   vim.schedule(function()
-    require('plugin.telescope').find_files_in_dir(selection.path, {})
+    require("plugin.telescope").find_files_in_dir(selection.path, {})
   end)
 end
 
@@ -60,26 +60,26 @@ local function installed_plugins(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedPluginInfo.plugins) then
-    warn('[Telescope] Plugin information was not cached')
+    warn("[Telescope] Plugin information was not cached")
     return nil
   end
 
-  local displayer = entry_display.create {
+  local displayer = entry_display.create({
     separator = " ",
     items = {
-      {remaining = true}
+      { remaining = true },
     },
-  }
+  })
 
   local function make_display(entry)
-    return displayer {
+    return displayer({
       entry.value,
-    }
+    })
   end
 
   pickers.new(opts, {
     prompt_title = "Installed Plugins",
-    finder = finders.new_table {
+    finder = finders.new_table({
       results = _CachedPluginInfo.plugins,
       entry_maker = function(entry)
         return {
@@ -90,18 +90,18 @@ local function installed_plugins(opts)
           ordinal = entry.name,
         }
       end,
-    },
+    }),
     previewer = false,
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(open_in_browser)
-      map('i', '<C-f>', find_files_in_plugin)
-      map('n', '<C-f>', find_files_in_plugin)
+      map("i", "<C-f>", find_files_in_plugin)
+      map("n", "<C-f>", find_files_in_plugin)
       return true
     end,
   }):find()
 end
 
-return telescope.register_extension {
-  exports = {installed_plugins = installed_plugins},
-}
+return telescope.register_extension({
+  exports = { installed_plugins = installed_plugins },
+})

@@ -90,18 +90,20 @@
 --g.startify_change_to_dir = 0
 --g.startify_change_to_vcs_root = 0
 
-
 local function get_last_session_name()
   local session_dir = vim.fn["startify#get_session_path"]()
   local last_session_path = vim.fn.resolve(session_dir .. "/__LAST__")
   return vim.fn.fnamemodify(last_session_path, ":t")
 end
 
-vim.api.nvim_exec([[
+vim.api.nvim_exec(
+  [[
 function! StartifyEntryFormat()
   return 'entry_path'
 endfunction
-]], false)
+]],
+  false
+)
 
 function StartifyCenter(lines)
   local longest_line = 0

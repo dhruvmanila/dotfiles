@@ -24,12 +24,12 @@ M.opt = setmetatable({}, {
 -- @param definitions table<string, string[]>
 function M.create_augroups(definitions)
   for group_name, group_cmds in pairs(definitions) do
-    cmd('augroup ' .. group_name)
-    cmd('autocmd!')
+    cmd("augroup " .. group_name)
+    cmd("autocmd!")
     for _, command in ipairs(group_cmds) do
-      cmd('autocmd ' .. command)
+      cmd("autocmd " .. command)
     end
-    cmd('augroup END')
+    cmd("augroup END")
   end
 end
 
@@ -45,8 +45,8 @@ end
 function M.map(modes, lhs, rhs, opts)
   opts = opts or {}
   opts.noremap = opts.noremap == nil and true or opts.noremap
-  if type(modes) == 'string' then
-    modes = {modes}
+  if type(modes) == "string" then
+    modes = { modes }
   end
   for _, mode in ipairs(modes) do
     nvim_set_keymap(mode, lhs, rhs, opts)
@@ -61,9 +61,16 @@ function M.highlight(name, opts)
   local force = opts.force or false
   if name and vim.tbl_count(opts) > 0 then
     if opts.link and opts.link ~= "" then
-      vim.cmd("highlight" .. (force and "!" or "") .. " link " .. name .. " " .. opts.link)
+      vim.cmd(
+        "highlight"
+          .. (force and "!" or "")
+          .. " link "
+          .. name
+          .. " "
+          .. opts.link
+      )
     else
-      local hi_cmd = {"highlight", name}
+      local hi_cmd = { "highlight", name }
       if opts.guifg and opts.guifg ~= "" then
         table.insert(hi_cmd, "guifg=" .. opts.guifg)
       end
@@ -92,15 +99,15 @@ end
 ---@return nil|string
 function M.get_var(scope, handle, name)
   local func, args
-  scope = scope or 'g'
-  if scope == 'g' then
-    func, args = vim.api.nvim_get_var, {name}
-  elseif scope == 'w' then
-    func, args = vim.api.nvim_win_get_var, {handle, name}
-  elseif scope == 'b' then
-    func, args = vim.api.nvim_buf_get_var, {handle, name}
-  elseif scope == 't' then
-    func, args = vim.api.nvim_tabpage_get_var, {handle, name}
+  scope = scope or "g"
+  if scope == "g" then
+    func, args = vim.api.nvim_get_var, { name }
+  elseif scope == "w" then
+    func, args = vim.api.nvim_win_get_var, { handle, name }
+  elseif scope == "b" then
+    func, args = vim.api.nvim_buf_get_var, { handle, name }
+  elseif scope == "t" then
+    func, args = vim.api.nvim_tabpage_get_var, { handle, name }
   end
 
   local ok, result = pcall(func, unpack(args))
@@ -114,11 +121,11 @@ end
 ---@param pattern table (Default: {'.git', 'requirements.txt'})
 ---@return string
 function M.get_project_root(pattern)
-  local ok, util = pcall(require, 'lspconfig.util')
+  local ok, util = pcall(require, "lspconfig.util")
 
   if ok then
-    pattern = pattern or {'.git', 'requirements.txt'}
-    return util.root_pattern(pattern)(vim.fn.expand('%')) or vim.loop.cwd()
+    pattern = pattern or { ".git", "requirements.txt" }
+    return util.root_pattern(pattern)(vim.fn.expand("%")) or vim.loop.cwd()
   else
     return vim.loop.cwd()
   end
@@ -127,7 +134,7 @@ end
 ---Emit a warning message.
 ---@param msg string
 function M.warn(msg)
-  vim.api.nvim_echo({{msg, "WarningMsg"}}, true, {})
+  vim.api.nvim_echo({ { msg, "WarningMsg" } }, true, {})
 end
 
 return M

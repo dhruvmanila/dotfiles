@@ -12,18 +12,18 @@ local config = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
-local path = require('telescope.path')
+local path = require("telescope.path")
 local themes = require("telescope.themes")
 
 local warn = require("core.utils").warn
 
 -- Previewer is turned off by default. If it is enabled, then use the
 -- horizontal layout.
-local default_opts = themes.get_dropdown {
+local default_opts = themes.get_dropdown({
   width = math.min(100, vim.o.columns - 10),
   results_height = 0.8,
   previewer = false,
-}
+})
 
 -- Action to open a dirvish buffer in the currently selected directory, thus
 -- replacing the opened dirvish buffer.
@@ -33,21 +33,21 @@ local function open_dir_in_dirvish(prompt_bufnr)
   actions.close(prompt_bufnr)
 
   local dir = selection.cwd .. path.separator .. selection.value
-  vim.api.nvim_command('Dirvish ' .. dir)
+  vim.api.nvim_command("Dirvish " .. dir)
 end
 
 -- Telescope previewer to preview the tree for the given directory.
 -- This uses the suggested `previewers.utils.job_maker` function to display
 -- the output of `tree` command in the preview buffer.
 local function tree_previewer()
-  return previewers.new_buffer_previewer {
+  return previewers.new_buffer_previewer({
     get_buffer_by_name = function(_, entry)
       return entry.value
     end,
     define_preview = function(self, entry, status)
-      vim.api.nvim_win_set_option(status.preview_win, 'signcolumn', 'yes:1')
+      vim.api.nvim_win_set_option(status.preview_win, "signcolumn", "yes:1")
       return putils.job_maker(
-        {'tree', '--dirsfirst', '--noreport', entry.value},
+        { "tree", "--dirsfirst", "--noreport", entry.value },
         self.state.bufnr,
         {
           value = entry.value,
@@ -55,8 +55,8 @@ local function tree_previewer()
           cwd = entry.cwd,
         }
       )
-    end
-  }
+    end,
+  })
 end
 
 -- This extension is for Dirvish plugin and will work only when invoked from
@@ -73,24 +73,24 @@ end
 local function dirvish_cd(opts)
   opts = opts or default_opts
 
-  if vim.api.nvim_buf_get_option(0, 'filetype') ~= 'dirvish' then
-    warn('[Telescope] Not in a dirvish buffer.')
+  if vim.api.nvim_buf_get_option(0, "filetype") ~= "dirvish" then
+    warn("[Telescope] Not in a dirvish buffer.")
     return nil
   end
 
   local cwd = vim.api.nvim_buf_get_name(0)
-  if cwd == '/' or cwd == vim.loop.os_homedir() then
-    warn('[Telescope] Searching from root or home is expensive.')
+  if cwd == "/" or cwd == vim.loop.os_homedir() then
+    warn("[Telescope] Searching from root or home is expensive.")
     return nil
   end
 
-  local displayer = entry_display.create {
+  local displayer = entry_display.create({
     separator = " ",
-    items = {{remaining = true}},
-  }
+    items = { { remaining = true } },
+  })
 
   local function make_display(entry)
-    return displayer {entry.value}
+    return displayer({ entry.value })
   end
 
   local function entry_maker(line)
@@ -103,11 +103,11 @@ local function dirvish_cd(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Dirvish cd (" .. vim.fn.fnamemodify(cwd, ':t') .. ")",
-    finder = finders.new_oneshot_job(
-      {'fd', '--type', 'd'},
-      {cwd = cwd, entry_maker = entry_maker}
-    ),
+    prompt_title = "Dirvish cd (" .. vim.fn.fnamemodify(cwd, ":t") .. ")",
+    finder = finders.new_oneshot_job({ "fd", "--type", "d" }, {
+      cwd = cwd,
+      entry_maker = entry_maker,
+    }),
     previewer = tree_previewer(),
     sorter = config.generic_sorter(opts),
     attach_mappings = function()
@@ -117,6 +117,6 @@ local function dirvish_cd(opts)
   }):find()
 end
 
-return telescope.register_extension {
-  exports = {dirvish_cd = dirvish_cd},
-}
+return telescope.register_extension({
+  exports = { dirvish_cd = dirvish_cd },
+})

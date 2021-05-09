@@ -10,32 +10,32 @@ return {
   efm = {
     -- cmd = {'efm-langserver', '-logfile', '/tmp/efm.log', '-loglevel', '5'},
     init_options = { documentFormatting = true },
-    filetypes = {'python'},
+    filetypes = { "python" },
     settings = {
-      rootMarkers = {'.git/', 'requirements.txt'},
+      rootMarkers = { ".git/", "requirements.txt" },
       languages = {
         python = {
           {
-            lintCommand = 'mypy --show-column-numbers --follow-imports silent --ignore-missing-imports',
+            lintCommand = "mypy --show-column-numbers --follow-imports silent --ignore-missing-imports",
             lintFormats = {
-              '%f:%l:%c: %trror: %m',
-              '%f:%l:%c: %tarning: %m',
-              '%f:%l:%c: %tote: %m',
+              "%f:%l:%c: %trror: %m",
+              "%f:%l:%c: %tarning: %m",
+              "%f:%l:%c: %tote: %m",
             },
             lintIgnoreExitCode = true,
           },
           {
-            lintCommand = 'flake8 --stdin-display-name ${INPUT} -',
+            lintCommand = "flake8 --stdin-display-name ${INPUT} -",
             lintStdin = true,
-            lintFormats = {'%f:%l:%c: %m'},
+            lintFormats = { "%f:%l:%c: %m" },
             lintIgnoreExitCode = true,
           },
           {
-            formatCommand = 'black -',
+            formatCommand = "black -",
             formatStdin = true,
           },
           {
-            formatCommand = 'isort --profile black -',
+            formatCommand = "isort --profile black -",
             formatStdin = true,
           },
         },
@@ -53,12 +53,12 @@ return {
       python = {
         analysis = {
           completeFunctionParens = true,
-          typeCheckingMode = 'off',  -- Using mypy
+          typeCheckingMode = "off", -- Using mypy
           -- https://github.com/microsoft/pylance-release/issues/1055
           indexing = false,
-        }
-      }
-    }
+        },
+      },
+    },
   },
 
   -- https://github.com/microsoft/pyright
@@ -83,27 +83,27 @@ return {
     cmd = {
       os.getenv("HOME") .. "/git/lua-language-server/bin/macOS/lua-language-server",
       "-E",
-      os.getenv("HOME") .. "/git/lua-language-server/main.lua"
+      os.getenv("HOME") .. "/git/lua-language-server/main.lua",
     },
     settings = {
       Lua = {
         runtime = {
-          version = 'LuaJIT',
-          path = vim.split(package.path, ';'),
+          version = "LuaJIT",
+          path = vim.split(package.path, ";"),
         },
         diagnostics = {
           enable = true,
-          globals = {'vim'},
+          globals = { "vim" },
         },
         workspace = {
           library = {
-            [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-            [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+            [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+            [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
           },
-          preloadFileSize = 1000,  -- Default: 100
+          preloadFileSize = 1000, -- Default: 100
         },
       },
-    }
+    },
   },
 
   -- https://github.com/iamcco/vim-language-server

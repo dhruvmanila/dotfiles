@@ -8,13 +8,13 @@ local M = {}
 -- Ref: https://vim.fandom.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor
 function M.highlight_groups()
   local line, col = unpack(api.nvim_win_get_cursor(0))
-  col = col + 1  -- zero indexed :(
+  col = col + 1 -- zero indexed :(
 
-  local hi = fn.synIDattr(fn.synID(line, col, true), 'name')
-  local trans = fn.synIDattr(fn.synID(line, col, false), 'name')
-  local lo = fn.synIDattr(fn.synIDtrans(fn.synID(line, col, true)), 'name')
+  local hi = fn.synIDattr(fn.synID(line, col, true), "name")
+  local trans = fn.synIDattr(fn.synID(line, col, false), "name")
+  local lo = fn.synIDattr(fn.synIDtrans(fn.synID(line, col, true)), "name")
 
-  print(string.format('hi: %s  trans: %s  lo: %s', hi, trans, lo))
+  print(string.format("hi: %s  trans: %s  lo: %s", hi, trans, lo))
 end
 
 -- Trim trailing whitespace in the current file.
@@ -42,14 +42,16 @@ end
 -- Equalize the windows across all tabs and return back to the current tabpage.
 function M.equalize_windows()
   local last_tab = api.nvim_get_current_tabpage()
-  cmd('tabdo wincmd =')
+  cmd("tabdo wincmd =")
   api.nvim_set_current_tabpage(last_tab)
 end
 
 local mod = ':lua require("core.commands").'
-cmd('command! Hi ' .. mod .. 'highlight_groups()')
-cmd('command! -bar TrimTrailingWhitespace ' .. mod .. 'trim_trailing_whitespace()')
-cmd('command! -bar TrimTrailingLines ' .. mod .. 'trim_trailing_lines()')
-cmd('command! -bar Equalize ' .. mod .. 'equalize_windows()')
+cmd("command! Hi " .. mod .. "highlight_groups()")
+cmd(
+  "command! -bar TrimTrailingWhitespace " .. mod .. "trim_trailing_whitespace()"
+)
+cmd("command! -bar TrimTrailingLines " .. mod .. "trim_trailing_lines()")
+cmd("command! -bar Equalize " .. mod .. "equalize_windows()")
 
 return M

@@ -15,7 +15,7 @@ local entry_display = require("telescope.pickers.entry_display")
 local warn = require("core.utils").warn
 
 -- Keep the values around between reloads
-_CachedGithubStars = _CachedGithubStars or {stars = {}, max_length = 0}
+_CachedGithubStars = _CachedGithubStars or { stars = {}, max_length = 0 }
 
 --- Parse the data received from running the GitHub stars job.
 ---@data string
@@ -31,14 +31,11 @@ local function parse_data(data)
     if length > _CachedGithubStars.max_length then
       _CachedGithubStars.max_length = length
     end
-    table.insert(
-      _CachedGithubStars.stars,
-      {
-        name = repo.full_name,
-        description = repo.description ~= vim.NIL and repo.description or "",
-        url = repo.html_url,
-      }
-    )
+    table.insert(_CachedGithubStars.stars, {
+      name = repo.full_name,
+      description = repo.description ~= vim.NIL and repo.description or "",
+      url = repo.html_url,
+    })
   end
 end
 
@@ -52,20 +49,22 @@ local function collect_github_stars()
       error(table.concat(stderr, "\n"))
     end
     local result = job:result()
-    if result and result[1] ~= '' then
+    if result and result[1] ~= "" then
       parse_data(result[1])
     end
   end
 
-  Job:new({
-    command = "gh",
-    args = {"api", "user/starred", "--paginate"},
-    enable_recording = true,
-    on_stderr = function(_, data)
-      table.insert(stderr, data)
-    end,
-    on_exit = vim.schedule_wrap(process_complete),
-  }):start()
+  Job
+    :new({
+      command = "gh",
+      args = { "api", "user/starred", "--paginate" },
+      enable_recording = true,
+      on_stderr = function(_, data)
+        table.insert(stderr, data)
+      end,
+      on_exit = vim.schedule_wrap(process_complete),
+    })
+    :start()
 end
 
 --- Defines the action to open the selection in the browser.
@@ -73,7 +72,7 @@ local function open_in_browser(prompt_bufnr)
   local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
 
-  os.execute('open' .. ' "' .. selection.url .. '" &> /dev/null')
+  os.execute("open" .. ' "' .. selection.url .. '" &> /dev/null')
 end
 
 --- This extension will show the users GitHub stars with the repository
@@ -96,28 +95,28 @@ local function github_stars(opts)
 
   -- TODO: start the job again? run the job synchronously?
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    warn('[Telescope] No GitHub stars are cached yet.')
+    warn("[Telescope] No GitHub stars are cached yet.")
     return nil
   end
 
-  local displayer = entry_display.create {
+  local displayer = entry_display.create({
     separator = " ",
     items = {
-      {width = _CachedGithubStars.max_length + 2},
-      {remaining = true},
+      { width = _CachedGithubStars.max_length + 2 },
+      { remaining = true },
     },
-  }
+  })
 
   local function make_display(entry)
-    return displayer {
+    return displayer({
       entry.value,
-      {entry.description, "Comment"},
-    }
+      { entry.description, "Comment" },
+    })
   end
 
   pickers.new(opts, {
     prompt_title = "Search GitHub Stars",
-    finder = finders.new_table {
+    finder = finders.new_table({
       results = _CachedGithubStars.stars,
       entry_maker = function(entry)
         return {
@@ -125,10 +124,10 @@ local function github_stars(opts)
           value = entry.name,
           description = entry.description,
           url = entry.url,
-          ordinal = entry.name .. ' ' .. entry.description,
+          ordinal = entry.name .. " " .. entry.description,
         }
       end,
-    },
+    }),
     previewer = false,
     sorter = config.generic_sorter(opts),
     attach_mappings = function()
@@ -140,11 +139,11 @@ local function github_stars(opts)
   }):find()
 end
 
-return telescope.register_extension {
+return telescope.register_extension({
   setup = function(_)
     if vim.tbl_isempty(_CachedGithubStars.stars) then
       collect_github_stars()
     end
   end,
-  exports = {github_stars = github_stars},
-}
+  exports = { github_stars = github_stars },
+})

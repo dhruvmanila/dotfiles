@@ -1,21 +1,23 @@
-local packer = require('packer')
+local packer = require("packer")
 local execute = vim.api.nvim_command
 local fn = vim.fn
 
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
 
 if fn.empty(fn.glob(install_path)) > 0 then
-  execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
-  execute 'packadd packer.nvim'
+  execute(
+    "!git clone https://github.com/wbthomason/packer.nvim " .. install_path
+  )
+  execute("packadd packer.nvim")
 end
 
 -- By always resetting, the plugins which were removed will be removed from
 -- this table as well.
-_CachedPluginInfo = {plugins = {}, max_length = 0}
+_CachedPluginInfo = { plugins = {}, max_length = 0 }
 
 -- Extending packer.nvim to store plugin info to be used by
 -- :Telescope packer_plugins
-packer.set_handler('type', function(_, plugin, type)
+packer.set_handler("type", function(_, plugin, type)
   local name = type == "local" and "local/" .. plugin.short_name or plugin.name
   local length = #name
 
@@ -45,189 +47,202 @@ startup. Add the plugin configuration to be lazy loaded on the commands to
 which the keys were bound to.
 
 --]]
-packer.startup {
+packer.startup({
   function(use)
     -- Packer
-    use 'wbthomason/packer.nvim'
+    use("wbthomason/packer.nvim")
 
     -- Color scheme
-    use {'sainnhe/gruvbox-material', config = "require('plugin.colorscheme')"}
+    use({ "sainnhe/gruvbox-material", config = "require('plugin.colorscheme')" })
 
     -- Helpful in visualizing colors live in the editor
-    use {
-      'norcalli/nvim-colorizer.lua',
-      keys = {{'n', '<Leader>cc'}},
-      config = function ()
+    use({
+      "norcalli/nvim-colorizer.lua",
+      keys = { { "n", "<Leader>cc" } },
+      config = function()
         vim.api.nvim_set_keymap(
-          'n', '<Leader>cc', '<Cmd>ColorizerToggle<CR>', {noremap = true}
+          "n",
+          "<Leader>cc",
+          "<Cmd>ColorizerToggle<CR>",
+          { noremap = true }
         )
-        require('colorizer').setup()
-      end
-    }
+        require("colorizer").setup()
+      end,
+    })
 
     -- Icons
-    use {
+    use({
       {
-        'kyazdani42/nvim-web-devicons',
-        config = "require('plugin.nvim_web_devicons')"
+        "kyazdani42/nvim-web-devicons",
+        config = "require('plugin.nvim_web_devicons')",
       },
-      'yamatsum/nvim-nonicons',
-    }
+      "yamatsum/nvim-nonicons",
+    })
 
     -- TODO: remove after #12587 is fixed (upstream bug)
-    use 'antoinemadec/FixCursorHold.nvim'
-    use '~/git/pylance.nvim'
+    use("antoinemadec/FixCursorHold.nvim")
+    use("~/git/pylance.nvim")
 
     -- LSP, auto completion and related
-    use {
-      'nvim-lua/lsp-status.nvim',
-      {'kosayoda/nvim-lightbulb', opt = true},
+    use({
+      "nvim-lua/lsp-status.nvim",
+      { "kosayoda/nvim-lightbulb", opt = true },
       {
-        'neovim/nvim-lspconfig',
-        event = 'BufReadPre',
+        "neovim/nvim-lspconfig",
+        event = "BufReadPre",
         config = "require('plugin.lsp')",
       },
       {
-        'hrsh7th/nvim-compe',
-        event = 'InsertEnter',
+        "hrsh7th/nvim-compe",
+        event = "InsertEnter",
         config = "require('plugin.completion')",
       },
-      {'glepnir/lspsaga.nvim', opt = true},
+      { "glepnir/lspsaga.nvim", opt = true },
       -- TODO: keep either of them
       {
-        'liuchengxu/vista.vim',
-        keys = {{'n', '<Leader>vv'}},
+        "liuchengxu/vista.vim",
+        keys = { { "n", "<Leader>vv" } },
         config = "require('plugin.vista')",
       },
       {
-        'simrat39/symbols-outline.nvim',
-        keys = {{'n', '<Leader>so'}},
+        "simrat39/symbols-outline.nvim",
+        keys = { { "n", "<Leader>so" } },
         setup = "require('plugin.symbols_outline')",
         config = function()
           vim.api.nvim_set_keymap(
-            'n', '<Leader>so', '<Cmd>SymbolsOutline<CR>', {noremap = true}
+            "n",
+            "<Leader>so",
+            "<Cmd>SymbolsOutline<CR>",
+            { noremap = true }
           )
         end,
       },
-    }
+    })
 
     -- Linters and formatters (WIP plugins) (for now using efm langserver)
-    use {
-      {'mfussenegger/nvim-lint', config = "require('plugin.lint')", opt = true},
-      {'lukas-reineke/format.nvim', config = "require('plugin.format')", opt = true}
-    }
+    use({
+      { "mfussenegger/nvim-lint", config = "require('plugin.lint')", opt = true },
+      {
+        "lukas-reineke/format.nvim",
+        config = "require('plugin.format')",
+        opt = true,
+      },
+    })
 
     -- Telescope and family
-    use {
+    use({
       {
-        '~/git/telescope.nvim',
-        event = 'VimEnter',
+        "~/git/telescope.nvim",
+        event = "VimEnter",
         config = "require('plugin.telescope')",
         requires = {
-          {'nvim-lua/popup.nvim'},
-          {'nvim-lua/plenary.nvim'},
+          { "nvim-lua/popup.nvim" },
+          { "nvim-lua/plenary.nvim" },
         },
       },
-      {"~/projects/telescope-bookmarks.nvim"},
-      {'nvim-telescope/telescope-fzy-native.nvim', opt = true},
-      {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'},
+      { "~/projects/telescope-bookmarks.nvim" },
+      { "nvim-telescope/telescope-fzy-native.nvim", opt = true },
+      { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
       {
         "nvim-telescope/telescope-arecibo.nvim",
         rocks = {
           "lua-http-parser",
-          {'openssl', env = {OPENSSL_DIR='/usr/local/Cellar/openssl@1.1/1.1.1k'}}
+          {
+            "openssl",
+            env = { OPENSSL_DIR = "/usr/local/Cellar/openssl@1.1/1.1.1k" },
+          },
         },
         opt = true,
       },
-    }
+    })
 
     -- Treesitter
-    use {
+    use({
       {
-        'nvim-treesitter/nvim-treesitter',
-        event = {'BufRead', 'BufNewFile'},
-        run = ':TSUpdate',
+        "nvim-treesitter/nvim-treesitter",
+        event = { "BufRead", "BufNewFile" },
+        run = ":TSUpdate",
         config = "require('plugin.treesitter')",
       },
       {
-        'nvim-treesitter/playground',
-        cmd = 'TSPlaygroundToggle',
-        requires = 'nvim-treesitter/nvim-treesitter',
-      }
-    }
+        "nvim-treesitter/playground",
+        cmd = "TSPlaygroundToggle",
+        requires = "nvim-treesitter/nvim-treesitter",
+      },
+    })
 
     -- Language specific
-    use {
-      {'cespare/vim-toml', ft = 'toml'},
-      {'raimon49/requirements.txt.vim', ft = 'requirements'},
-      {'tjdevries/tree-sitter-lua', opt = true},
-    }
+    use({
+      { "cespare/vim-toml", ft = "toml" },
+      { "raimon49/requirements.txt.vim", ft = "requirements" },
+      { "tjdevries/tree-sitter-lua", opt = true },
+    })
 
     -- Git
-    use {
-      {'tpope/vim-fugitive', config = "require('plugin.fugitive')"},
+    use({
+      { "tpope/vim-fugitive", config = "require('plugin.fugitive')" },
       {
-        'lewis6991/gitsigns.nvim',
-        event = {'BufReadPre', 'BufNewFile'},
-        requires = 'nvim-lua/plenary.nvim',
+        "lewis6991/gitsigns.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        requires = "nvim-lua/plenary.nvim",
         config = "require('plugin.gitsigns')",
       },
-    }
+    })
 
     -- Comment
-    use 'tpope/vim-commentary'
-    use 'tpope/vim-scriptease'
-    use 'tpope/vim-eunuch'
+    use("tpope/vim-commentary")
+    use("tpope/vim-scriptease")
+    use("tpope/vim-eunuch")
 
     -- Pretification
-    use {
-      'junegunn/vim-easy-align',
-      keys = {{'n', 'ge'}, {'x', 'ge'}},
-      config = "require('plugin.easy_align')"
-    }
+    use({
+      "junegunn/vim-easy-align",
+      keys = { { "n", "ge" }, { "x", "ge" } },
+      config = "require('plugin.easy_align')",
+    })
 
     -- Using only the session management functionalities
-    use 'mhinz/vim-startify'
+    use("mhinz/vim-startify")
 
     -- File explorer (Mainly used for going through new projects)
-    use {
-      'kyazdani42/nvim-tree.lua',
-      requires = {'kyazdani42/nvim-web-devicons'},
-      keys = {{'n', '<C-n>'}},
-      config = "require('plugin.nvim_tree')"
-    }
+    use({
+      "kyazdani42/nvim-tree.lua",
+      requires = { "kyazdani42/nvim-web-devicons" },
+      keys = { { "n", "<C-n>" } },
+      config = "require('plugin.nvim_tree')",
+    })
 
     -- Path navigator
-    use {
-      {'justinmk/vim-dirvish', config = "require('plugin.dirvish')"},
+    use({
+      { "justinmk/vim-dirvish", config = "require('plugin.dirvish')" },
       -- TODO: use vim-eunuch instead
-      {'roginfarrer/vim-dirvish-dovish', branch = 'main'}
-    }
+      { "roginfarrer/vim-dirvish-dovish", branch = "main" },
+    })
 
     -- Indentation tracking
-    use {
-      'lukas-reineke/indent-blankline.nvim',
-      branch = 'lua',
-      event = {'BufRead', 'BufNewFile'},
+    use({
+      "lukas-reineke/indent-blankline.nvim",
+      branch = "lua",
+      event = { "BufRead", "BufNewFile" },
       config = "require('plugin.indentline')",
       disable = true,
-    }
+    })
 
     -- Search
     -- TODO: Convert this to lua :)
-    use {'romainl/vim-cool', config = [[vim.g.CoolTotalMatches = 1]]}
+    use({ "romainl/vim-cool", config = [[vim.g.CoolTotalMatches = 1]] })
 
     -- Profiling
-    use {'tweekmonster/startuptime.vim', cmd = 'StartupTime'}
+    use({ "tweekmonster/startuptime.vim", cmd = "StartupTime" })
 
     -- Open external browsers, editor, finder from Neovim
-    use {'itchyny/vim-external', config = "require('plugin.vim_external')"}
+    use({ "itchyny/vim-external", config = "require('plugin.vim_external')" })
   end,
 
   config = {
     profile = {
       enable = true,
-      threshold = 0,  -- ms
-    }
+      threshold = 0, -- ms
+    },
   },
-}
+})

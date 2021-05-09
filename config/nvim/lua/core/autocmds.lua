@@ -1,4 +1,4 @@
-require('core.utils').create_augroups {
+require("core.utils").create_augroups({
   custom_autocmds = {
     -- Highlight current cursorline (cul), but only in active window
     [[WinEnter,BufEnter * if !&cul && &ft !~# '^\(dashboard\)' | setl cul | endif]],
@@ -26,5 +26,5 @@ require('core.utils').create_augroups {
 
     -- Remove trailing whitespace and lines on save
     [[BufWritePre * TrimTrailingWhitespace | TrimTrailingLines]],
-  }
-}
+  },
+})

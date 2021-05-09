@@ -66,22 +66,22 @@ local function startify_sessions(opts)
     })
   end
 
-  local displayer = entry_display.create {
+  local displayer = entry_display.create({
     separator = " ",
     items = {
-      {remaining = true},
+      { remaining = true },
     },
-  }
+  })
 
   local function make_display(entry)
-    return displayer {
+    return displayer({
       entry.name,
-    }
+    })
   end
 
   pickers.new(opts, {
     prompt_title = "Startify Sessions",
-    finder = finders.new_table {
+    finder = finders.new_table({
       results = results,
       entry_maker = function(entry)
         return {
@@ -92,7 +92,7 @@ local function startify_sessions(opts)
           ordinal = entry.name,
         }
       end,
-    },
+    }),
     previewer = false,
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
@@ -103,6 +103,6 @@ local function startify_sessions(opts)
   }):find()
 end
 
-return telescope.register_extension {
-  exports = {startify_sessions = startify_sessions},
-}
+return telescope.register_extension({
+  exports = { startify_sessions = startify_sessions },
+})

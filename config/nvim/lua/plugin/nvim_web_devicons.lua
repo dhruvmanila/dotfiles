@@ -1,22 +1,22 @@
 -- Ref: https://github.com/kyazdani42/nvim-web-devicons
-local icons = require('core.icons').icons
+local icons = require("core.icons").icons
 
-require('nvim-web-devicons').setup {
+require("nvim-web-devicons").setup({
   -- your personnal icons can go here (to override)
   -- DevIcon will be appended to `name`
   override = {
-    ['TelescopePrompt'] = {
+    ["TelescopePrompt"] = {
       icon = icons.telescope,
-      color = '#f38019',
-      name = 'TelescopePrompt',
+      color = "#f38019",
+      name = "TelescopePrompt",
     },
-    ['Dashboard'] = {
+    ["Dashboard"] = {
       icon = icons.gear,
-      color = '#787878',
-      name = 'Dashboard',
+      color = "#787878",
+      name = "Dashboard",
     },
   },
   -- globally enable default icons (default to false)
   -- will get overriden by `get_icons` option
   default = true,
-}
+})
