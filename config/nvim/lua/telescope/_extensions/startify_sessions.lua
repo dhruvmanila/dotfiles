@@ -68,15 +68,11 @@ local function startify_sessions(opts)
 
   local displayer = entry_display.create({
     separator = " ",
-    items = {
-      { remaining = true },
-    },
+    items = { { remaining = true } },
   })
 
   local function make_display(entry)
-    return displayer({
-      entry.name,
-    })
+    return displayer({ entry.name })
   end
 
   pickers.new(opts, {

@@ -119,14 +119,11 @@ packer.startup({
       },
     })
 
-    -- Linters and formatters (WIP plugins) (for now using efm langserver)
+    -- Linters and formatters (WIP plugins)
     use({
-      { "mfussenegger/nvim-lint", config = "require('plugin.lint')", opt = true },
-      {
-        "lukas-reineke/format.nvim",
-        config = "require('plugin.format')",
-        opt = true,
-      },
+      "mfussenegger/nvim-lint",
+      config = "require('plugin.lint')",
+      opt = true,
     })
 
     -- Telescope and family

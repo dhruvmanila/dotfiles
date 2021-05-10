@@ -1,5 +1,5 @@
 local api = vim.api
-local icons = require("core.icons").icons
+local icons = require("core.icons")
 
 local M = {}
 local actions = {}
@@ -63,7 +63,7 @@ function M.code_action(_, _, response)
   actions = response
   local row = 0
   local bufnr = api.nvim_create_buf(false, true)
-  local title = " " .. icons.lightbulb .. " Code Actions:"
+  local title = " " .. icons.icons.lightbulb .. " Code Actions:"
   api.nvim_buf_set_lines(bufnr, row, -1, false, { title })
   api.nvim_buf_add_highlight(bufnr, -1, "YellowBold", row, 0, -1)
   row = row + 1
@@ -95,7 +95,7 @@ function M.code_action(_, _, response)
 
   local win_opts = vim.lsp.util.make_floating_popup_options(longest_line, row)
   win_opts.row, win_opts.col = unpack(offset[win_opts.anchor])
-  win_opts.border = "single"
+  win_opts.border = icons.border
 
   api.nvim_buf_set_option(bufnr, "modifiable", false)
   api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")

@@ -3,6 +3,7 @@ local create_augroups = require("core.utils").create_augroups
 local lspconfig = require("lspconfig")
 local lspstatus = require("lsp-status")
 
+require("core.format")
 require("pylance")
 require("plugin.lsp.setup")
 require("plugin.lsp.handlers")
@@ -52,7 +53,7 @@ local function custom_on_attach(client)
     'vim.lsp.diagnostic.goto_next({enable_popup = false, severity_limit = "Warning"})'
   )
   buf_map(
-    ";l",
+    "gl",
     'vim.lsp.diagnostic.show_line_diagnostics({show_header = false, border = "single"})'
   )
   -- Calling the function twice will jump into the floating window.

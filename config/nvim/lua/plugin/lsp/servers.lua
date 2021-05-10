@@ -1,4 +1,32 @@
----Server configurations
+-- Server configurations
+
+-- efm language server tool configuration
+local mypy = {
+  lintCommand = "mypy --show-column-numbers --follow-imports silent",
+  lintFormats = {
+    "%f:%l:%c: %trror: %m",
+    "%f:%l:%c: %tarning: %m",
+    "%f:%l:%c: %tote: %m",
+  },
+  lintIgnoreExitCode = true,
+}
+
+local flake8 = {
+  lintCommand = "flake8 --stdin-display-name ${INPUT} -",
+  lintStdin = true,
+  lintFormats = { "%f:%l:%c: %m" },
+  lintIgnoreExitCode = true,
+}
+
+local black = {
+  formatCommand = "black -",
+  formatStdin = true,
+}
+
+local isort = {
+  formatCommand = "isort --profile black -",
+  formatStdin = true,
+}
 
 return {
   -- https://github.com/bash-lsp/bash-language-server
@@ -8,37 +36,12 @@ return {
   -- https://github.com/mattn/efm-langserver
   -- Settings: https://github.com/mattn/efm-langserver/blob/master/schema.json
   efm = {
-    -- cmd = {'efm-langserver', '-logfile', '/tmp/efm.log', '-loglevel', '5'},
     init_options = { documentFormatting = true },
     filetypes = { "python" },
     settings = {
       rootMarkers = { ".git/", "requirements.txt" },
       languages = {
-        python = {
-          {
-            lintCommand = "mypy --show-column-numbers --follow-imports silent --ignore-missing-imports",
-            lintFormats = {
-              "%f:%l:%c: %trror: %m",
-              "%f:%l:%c: %tarning: %m",
-              "%f:%l:%c: %tote: %m",
-            },
-            lintIgnoreExitCode = true,
-          },
-          {
-            lintCommand = "flake8 --stdin-display-name ${INPUT} -",
-            lintStdin = true,
-            lintFormats = { "%f:%l:%c: %m" },
-            lintIgnoreExitCode = true,
-          },
-          {
-            formatCommand = "black -",
-            formatStdin = true,
-          },
-          {
-            formatCommand = "isort --profile black -",
-            formatStdin = true,
-          },
-        },
+        python = { black, isort, flake8, mypy },
       },
     },
   },
@@ -93,7 +96,8 @@ return {
         },
         diagnostics = {
           enable = true,
-          globals = { "vim" },
+          -- use: packer.nvim related
+          globals = { "vim", "use" },
         },
         workspace = {
           library = {

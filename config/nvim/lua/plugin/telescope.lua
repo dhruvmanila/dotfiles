@@ -19,7 +19,7 @@ local custom_actions = {}
 -- Yank the selected entry into the selection register '*'
 custom_actions.yank_entry = function(prompt_bufnr)
   local entry = action_state.get_selected_entry()
-  actions.close(prompt_bufnr)
+  -- actions.close(prompt_bufnr)
   vim.fn.setreg(vim.api.nvim_get_vvar("register"), entry.value)
 
   vim.schedule(function()

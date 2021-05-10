@@ -56,9 +56,10 @@ highlight("TSProperty", { force = true, link = "Blue" })
 highlight("TSField", { force = true, link = "Blue" })
 
 -- Lsp
--- With border, floating window background color will be same as that of Normal
-highlight("NormalFloat", { force = true, link = "Normal" })
-highlight("FloatBorder", { force = true, link = "Grey" })
+-- highlight("NormalFloat", { force = true, link = "Normal" })
+-- highlight("FloatBorder", { force = true, link = "Grey" })
+highlight("NormalFloat", { guifg = "NONE", guibg = palette.bg2[1] })
+highlight("FloatBorder", { guifg = palette.grey1[1], guibg = palette.bg2[1] })
 highlight("VirtualTextHint", { force = true, link = "Aqua" })
 highlight(
   "LspDiagnosticsFloatingError",
