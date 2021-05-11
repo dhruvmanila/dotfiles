@@ -79,7 +79,7 @@ local function tabline_label(tabnr, is_active)
 
   local ctx = {
     bufnr = curbuf,
-    bufname = fn.bufname(curbuf),
+    bufname = fn.resolve(fn.bufname(curbuf)),
     readonly = curbo.readonly,
     modifiable = curbo.modifiable,
     modified = curbo.modified,

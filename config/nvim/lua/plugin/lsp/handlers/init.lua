@@ -1,6 +1,6 @@
 local lsp = vim.lsp
 local code_action = require("plugin.lsp.handlers.code_action")
-local icons = require("core.icons")
+local border = require("core.icons").border
 
 -- Can use `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`
 lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(
@@ -17,7 +17,7 @@ lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(
 -- Press 'q' to quit.
 lsp.handlers["textDocument/hover"] = function(...)
   local bufnr, _ = vim.lsp.with(vim.lsp.handlers.hover, {
-    border = icons.border,
+    border = border.edge,
   })(...)
 
   local opts = { noremap = true, nowait = true, silent = true }
@@ -27,7 +27,7 @@ end
 lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
   vim.lsp.handlers.signature_help,
   {
-    border = icons.border,
+    border = border.edge,
   }
 )
 

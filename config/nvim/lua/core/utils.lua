@@ -1,6 +1,12 @@
 local M = {}
-local cmd = vim.api.nvim_command
-local nvim_set_keymap = vim.api.nvim_set_keymap
+local api = vim.api
+local cmd = api.nvim_command
+
+-- Emit a warning message.
+---@param msg string
+function M.warn(msg)
+  api.nvim_echo({ { msg, "WarningMsg" } }, true, {})
+end
 
 -- Helper function to set the neovim options until #13479 merges.
 --
@@ -10,7 +16,7 @@ M.opt = setmetatable({}, {
   __index = vim.o,
   __newindex = function(_, key, value)
     vim.o[key] = value
-    local scope = vim.api.nvim_get_option_info(key).scope
+    local scope = api.nvim_get_option_info(key).scope
     if scope == "win" then
       vim.wo[key] = value
     elseif scope == "buf" then
@@ -20,8 +26,7 @@ M.opt = setmetatable({}, {
 })
 
 -- Create autocommand groups based on the given definitions.
---
--- @param definitions table<string, string[]>
+---@param definitions table<string, string[]>
 function M.create_augroups(definitions)
   for group_name, group_cmds in pairs(definitions) do
     cmd("augroup " .. group_name)
@@ -35,13 +40,12 @@ end
 
 -- Create key bindings for multiple modes with an optional parameters map.
 -- Defaults:
---   opts = {}, if not given
 --   opts.noremap = true, if not defined in opts
 --
--- @param modes (string or list of strings)
--- @param lhs (string)
--- @param rhs (string)
--- @param opts (optional table)
+---@param modes string|string[]
+---@param lhs string
+---@param rhs string
+---@param opts table (optional)
 function M.map(modes, lhs, rhs, opts)
   opts = opts or {}
   opts.noremap = opts.noremap == nil and true or opts.noremap
@@ -49,19 +53,19 @@ function M.map(modes, lhs, rhs, opts)
     modes = { modes }
   end
   for _, mode in ipairs(modes) do
-    nvim_set_keymap(mode, lhs, rhs, opts)
+    api.nvim_set_keymap(mode, lhs, rhs, opts)
   end
 end
 
----TODO: eventually move to using `nvim_set_hl` however for the time being
----that expects colors to be specified as rgb not hex.
+-- TODO: eventually move to using `nvim_set_hl` however for the time being
+-- that expects colors to be specified as rgb not hex.
 ---@param name string
 ---@param opts table
 function M.highlight(name, opts)
   local force = opts.force or false
   if name and vim.tbl_count(opts) > 0 then
     if opts.link and opts.link ~= "" then
-      vim.cmd(
+      cmd(
         "highlight"
           .. (force and "!" or "")
           .. " link "
@@ -86,13 +90,13 @@ function M.highlight(name, opts)
       if opts.cterm and opts.cterm ~= "" then
         table.insert(hi_cmd, "cterm=" .. opts.cterm)
       end
-      vim.cmd(table.concat(hi_cmd, " "))
+      cmd(table.concat(hi_cmd, " "))
     end
   end
 end
 
----"Safe" version of `nvim_<|win|buf|tabpage>_get_var()` that returns `nil` if
----the variable is not set.
+-- "Safe" version of `nvim_<|win|buf|tabpage>_get_var()` that returns `nil` if
+-- the variable is not set.
 ---@param scope string (g|w|b|t) (Default: g)
 ---@param handle integer
 ---@param name string
@@ -101,13 +105,13 @@ function M.get_var(scope, handle, name)
   local func, args
   scope = scope or "g"
   if scope == "g" then
-    func, args = vim.api.nvim_get_var, { name }
+    func, args = api.nvim_get_var, { name }
   elseif scope == "w" then
-    func, args = vim.api.nvim_win_get_var, { handle, name }
+    func, args = api.nvim_win_get_var, { handle, name }
   elseif scope == "b" then
-    func, args = vim.api.nvim_buf_get_var, { handle, name }
+    func, args = api.nvim_buf_get_var, { handle, name }
   elseif scope == "t" then
-    func, args = vim.api.nvim_tabpage_get_var, { handle, name }
+    func, args = api.nvim_tabpage_get_var, { handle, name }
   end
 
   local ok, result = pcall(func, unpack(args))
@@ -116,25 +120,107 @@ function M.get_var(scope, handle, name)
   end
 end
 
----Return the current working directory using the following given root pattern.
----Default: Current working directory
----@param pattern table (Default: {'.git', 'requirements.txt'})
+-- Return the current working directory using the following given root pattern.
+-- Default: Current working directory
+---@param pattern string[] (Default: {'.git', 'requirements.txt'})
 ---@return string
 function M.get_project_root(pattern)
   local ok, util = pcall(require, "lspconfig.util")
+  local default_pattern = { ".git", "requirements.txt" }
 
   if ok then
-    pattern = pattern or { ".git", "requirements.txt" }
+    pattern = vim.list_extend(pattern or {}, default_pattern)
     return util.root_pattern(pattern)(vim.fn.expand("%")) or vim.loop.cwd()
   else
     return vim.loop.cwd()
   end
 end
 
----Emit a warning message.
----@param msg string
-function M.warn(msg)
-  vim.api.nvim_echo({ { msg, "WarningMsg" } }, true, {})
+-- Append the given lines in the provided bufnr, defaults to the current buffer.
+-- If `hl` is provided then add the given highlight group to the respective lines.
+---@param bufnr number
+---@param lines string[]
+---@param hl string
+function M.append(bufnr, lines, hl)
+  bufnr = bufnr or api.nvim_get_current_buf()
+  local linenr = api.nvim_buf_line_count(bufnr) - 1
+  api.nvim_buf_set_lines(bufnr, linenr, linenr, false, lines)
+  if hl then
+    for idx = linenr, linenr + #lines do
+      api.nvim_buf_add_highlight(bufnr, -1, hl, idx, 0, -1)
+    end
+  end
+end
+
+-- Fixed column cursor movements with line limits. This will skip any blank
+-- lines in between. This should only be used in autocmds with CursorHold event.
+-- `opts` table expects the followings keys to be present:
+--   - firstline (number) Upper row limit
+--   - lastline (number) Lower row limit
+--   - fixed_column (number) Column to fix the cursor at
+--   - newline (number) Current cursor line
+-- Internal:
+--   - oldline (number) Previous cursor line
+---@param opts table
+function M.fixed_column_movement(opts)
+  local oldline = opts.newline
+  local newline = api.nvim_win_get_cursor(0)[1]
+
+  -- Direction: up (-1) or down (+1) (no horizontal movements are registered)
+  local movement = 2 * (newline > oldline and 1 or 0) - 1
+
+  -- Skip blank lines between entries
+  if api.nvim_buf_get_lines(0, newline - 1, newline, false)[1] == "" then
+    newline = newline + movement
+  end
+
+  -- Don't go beyond first or last entry
+  newline = math.max(opts.firstline, math.min(opts.lastline, newline))
+
+  -- Update the numbers and the cursor position
+  opts.oldline = oldline
+  opts.newline = newline
+  api.nvim_win_set_cursor(0, { newline, opts.fixed_column })
+end
+
+function M.make_floating_popup_options(width, height)
+  local anchor = ""
+  local row, col
+
+  local lines_above = vim.fn.winline() - 1
+  local lines_below = vim.fn.winheight(0) - lines_above
+
+  if lines_above < lines_below then
+    anchor = anchor .. "N"
+    height = math.min(lines_below, height)
+    row = 1
+  else
+    anchor = anchor .. "S"
+    height = math.min(lines_above, height)
+    row = 0
+  end
+
+  local offset_y = vim.fn.wincol() + width
+  if
+    offset_y <= api.nvim_get_option("columns")
+    and offset_y <= api.nvim_win_get_width(0)
+  then
+    anchor = anchor .. "W"
+    col = 0
+  else
+    anchor = anchor .. "E"
+    col = 1
+  end
+
+  return {
+    anchor = anchor,
+    col = col,
+    height = height,
+    relative = "cursor",
+    row = row,
+    style = "minimal",
+    width = width,
+  }
 end
 
 return M

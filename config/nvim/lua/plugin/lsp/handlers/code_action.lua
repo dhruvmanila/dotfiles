@@ -1,8 +1,11 @@
 local api = vim.api
+local lsp = vim.lsp
+local cmd = api.nvim_command
 local icons = require("core.icons")
+local utils = require("core.utils")
 
 local M = {}
-local actions = {}
+local code_action = {}
 
 local offset = {
   NW = { 1, 0 },
@@ -11,31 +14,31 @@ local offset = {
   SE = { -2, 1 },
 }
 
-local function set_mappings(bufnr, winnr, total)
-  local opts = { noremap = true, silent = true, nowait = true }
-  for index = 1, total do
-    api.nvim_buf_set_keymap(
-      bufnr,
-      "n",
-      tostring(index),
-      '<Cmd>lua require("plugin.lsp.handlers.code_action").do_code_action('
-        .. index
-        .. ")<CR>",
-      opts
+local function set_mappings(bufnr, winnr)
+  local opts = { noremap = true, silent = true }
+  local nowait_opts = { noremap = true, silent = true, nowait = true }
+  for index = 1, #code_action.actions do
+    local action_fn = string.format(
+      "<Cmd>lua require('plugin.lsp.handlers.code_action').do_code_action(%d)<CR>",
+      index
     )
+    api.nvim_buf_set_keymap(bufnr, "n", tostring(index), action_fn, opts)
   end
 
-  api.nvim_buf_set_keymap(
-    bufnr,
-    "n",
-    "q",
-    "<Cmd>lua vim.api.nvim_win_close(" .. winnr .. ", true)<CR>",
-    opts
+  local action_fn =
+    "<Cmd>lua require('plugin.lsp.handlers.code_action').do_code_action()<CR>"
+  api.nvim_buf_set_keymap(bufnr, "n", "<CR>", action_fn, nowait_opts)
+
+  local close_fn = string.format(
+    "<Cmd>lua vim.api.nvim_win_close(%d, true)<CR>",
+    winnr
   )
+  api.nvim_buf_set_keymap(bufnr, "n", "q", close_fn, nowait_opts)
 end
 
 function M.do_code_action(choice)
-  local action_chosen = actions[choice]
+  choice = choice or tonumber(vim.fn.expand("<cword>"))
+  local action_chosen = code_action.actions[choice]
   api.nvim_win_close(0, true)
 
   -- textDocument/codeAction can return either Command[] or CodeAction[].
@@ -43,15 +46,15 @@ function M.do_code_action(choice)
   -- Edits should be executed first
   if action_chosen.edit or type(action_chosen.command) == "table" then
     if action_chosen.edit then
-      vim.lsp.util.apply_workspace_edit(action_chosen.edit)
+      lsp.util.apply_workspace_edit(action_chosen.edit)
     end
     if type(action_chosen.command) == "table" then
-      vim.lsp.buf.execute_command(action_chosen.command)
+      lsp.buf.execute_command(action_chosen.command)
     end
   else
-    vim.lsp.buf.execute_command(action_chosen)
+    lsp.buf.execute_command(action_chosen)
   end
-  actions = {}
+  code_action.actions = {}
 end
 
 function M.code_action(_, _, response)
@@ -60,49 +63,65 @@ function M.code_action(_, _, response)
     return
   end
 
-  actions = response
-  local row = 0
+  code_action.actions = response
   local bufnr = api.nvim_create_buf(false, true)
-  local title = " " .. icons.icons.lightbulb .. " Code Actions:"
-  api.nvim_buf_set_lines(bufnr, row, -1, false, { title })
-  api.nvim_buf_add_highlight(bufnr, -1, "YellowBold", row, 0, -1)
-  row = row + 1
+  local title = string.format(" %s Code Actions:", icons.icons.lightbulb)
+  utils.append(bufnr, { title }, "YellowBold")
 
-  local contents = {}
+  local action_lines = {}
   local longest_line = 0
   for index, action in ipairs(response) do
-    table.insert(contents, string.format("[%d] %s", index, action.title))
-    longest_line = math.max(longest_line, api.nvim_strwidth(action.title) + 4)
+    local pad = index < 10 and "  " or " "
+    local line = string.format("[%d]%s%s", index, pad, action.title)
+    table.insert(action_lines, line)
+    longest_line = math.max(longest_line, api.nvim_strwidth(line))
   end
 
-  api.nvim_buf_set_lines(
-    bufnr,
-    row,
-    -1,
-    false,
-    { string.rep("─", longest_line) }
-  )
-  api.nvim_buf_add_highlight(bufnr, -1, "Grey", row, 0, -1)
-  row = row + 1
+  utils.append(bufnr, { string.rep("─", longest_line) }, "Grey")
+  -- Number of rows before the code action content
+  local current_row = 2
 
-  for _, line in ipairs(contents) do
-    api.nvim_buf_set_lines(bufnr, row, -1, false, { line })
-    api.nvim_buf_add_highlight(bufnr, -1, "Grey", row, 0, 1) -- [
-    api.nvim_buf_add_highlight(bufnr, -1, "Red", row, 1, 2) -- 1
-    api.nvim_buf_add_highlight(bufnr, -1, "Grey", row, 2, 3) -- ]
-    row = row + 1
+  for _, line in ipairs(action_lines) do
+    utils.append(bufnr, { line })
+    local _, last = string.find(line, "%d+")
+    api.nvim_buf_add_highlight(bufnr, -1, "Grey", current_row, 0, 1) -- [
+    api.nvim_buf_add_highlight(bufnr, -1, "Red", current_row, 1, last) -- 1
+    api.nvim_buf_add_highlight(bufnr, -1, "Grey", current_row, last, last + 1) -- ]
+    current_row = current_row + 1
   end
+  -- Remove the last blank line
+  api.nvim_buf_set_lines(bufnr, -2, -1, false, {})
 
-  local win_opts = vim.lsp.util.make_floating_popup_options(longest_line, row)
+  -- row and col are (1, 0)-indexed
+  code_action.firstline = 3
+  code_action.lastline = current_row
+  code_action.fixed_column = 1
+  code_action.newline = code_action.firstline
+
+  local win_opts = utils.make_floating_popup_options(longest_line, current_row)
   win_opts.row, win_opts.col = unpack(offset[win_opts.anchor])
-  win_opts.border = icons.border
+  win_opts.border = icons.border.edge
 
   api.nvim_buf_set_option(bufnr, "modifiable", false)
   api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
   api.nvim_buf_set_option(bufnr, "buftype", "nofile")
+  api.nvim_buf_set_option(bufnr, "matchpairs", "")
 
   local winnr = api.nvim_open_win(bufnr, true, win_opts)
-  set_mappings(bufnr, winnr, row - 2)
+  api.nvim_win_set_cursor(
+    winnr,
+    { code_action.firstline, code_action.fixed_column }
+  )
+  set_mappings(bufnr, winnr)
+
+  local cursor_fn = string.format(
+    "lua %s(%s)",
+    "require('core.utils').fixed_column_movement",
+    "require('plugin.lsp.handlers.code_action')._code_action"
+  )
+  cmd(string.format("autocmd CursorMoved <buffer=%s> %s", bufnr, cursor_fn))
 end
+
+M._code_action = code_action
 
 return M

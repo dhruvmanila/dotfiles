@@ -9,6 +9,7 @@ local mypy = {
     "%f:%l:%c: %tote: %m",
   },
   lintIgnoreExitCode = true,
+  lintSource = "mypy",
 }
 
 local flake8 = {
@@ -16,6 +17,7 @@ local flake8 = {
   lintStdin = true,
   lintFormats = { "%f:%l:%c: %m" },
   lintIgnoreExitCode = true,
+  lintSource = "flake8",
 }
 
 local black = {

@@ -2,6 +2,8 @@ local icons = require("core.icons").icons
 local kind_icons = require("core.icons").lsp_kind
 local lspstatus = require("lsp-status")
 
+local plugins = {}
+
 lspstatus.config({
   -- The sumneko lua server sends valueRange (which is not specified in the
   -- protocol) to give the range for a function's start and end.
@@ -37,9 +39,9 @@ lspstatus.config({
 lspstatus.register_progress()
 
 -- Include all the plugins `on_attach` calls in this function which should be
--- called in the main `on_attach` function in `lsp.init.lua`
-local function on_attach(client)
+-- called in the main `on_attach` function in `lsp/init.lua`
+function plugins.on_attach(client)
   lspstatus.on_attach(client)
 end
 
-return { on_attach = on_attach }
+return plugins

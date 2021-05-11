@@ -62,6 +62,7 @@ end
 local function generate_header()
   return {
     "",
+    "",
     "███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗",
     "████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║",
     "██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║",
@@ -144,20 +145,6 @@ local function add_key(line, key, length)
   return { line[1] .. string.rep(" ", length - #line[1]) .. key }
 end
 
---- Append the given lines in the current buffer. If `hl` is provided then add
---- the given highlight group to the respective lines.
----@param lines table
----@param hl string
-local function append(lines, hl)
-  local linenr = api.nvim_buf_line_count(0)
-  api.nvim_buf_set_lines(0, linenr, linenr, false, lines)
-  if hl then
-    for idx = linenr, linenr + #lines do
-      api.nvim_buf_add_highlight(0, -1, hl, idx, 1, -1)
-    end
-  end
-end
-
 --- Add paddings on the left side of every line to make it look like its in the
 --- center of the current window.
 ---@param lines table
@@ -212,9 +199,9 @@ local function set_entries()
     description = type(description) == "function" and description()
       or description
     description = add_key(description, entry.key, 50)
-    append(center(description), "Red")
+    utils.append(0, center(description), "Red")
     register_entry(entry)
-    append(empty_line)
+    utils.append(0, empty_line)
   end
 end
 
@@ -227,24 +214,18 @@ local function set_mappings()
   local opts = { noremap = true, silent = true, nowait = true }
 
   -- Basic keymap
-  buf_map(
-    0,
-    "n",
-    "<CR>",
-    "<Cmd>lua require('core.dashboard').open_entry()<CR>",
-    opts
-  )
-  buf_map(0, "n", "q", "<Cmd>lua require('core.dashboard').close()<CR>", opts)
+  local entry_fn = "<Cmd>lua require('core.dashboard').open_entry()<CR>"
+  local close_fn = "<Cmd>lua require('core.dashboard').close()<CR>"
+  buf_map(0, "n", "<CR>", entry_fn, opts)
+  buf_map(0, "n", "q", close_fn, opts)
 
   -- Registered entries
   for line, entry in pairs(dashboard.entries) do
-    buf_map(
-      0,
-      "n",
-      entry.key,
-      "<Cmd>lua require('core.dashboard').open_entry(" .. line .. ")<CR>",
-      opts
+    local entry_fn = string.format(
+      "<Cmd>lua require('core.dashboard').open_entry(%d)<CR>",
+      line
     )
+    buf_map(0, "n", entry.key, entry_fn, opts)
   end
 end
 
@@ -312,29 +293,6 @@ function M.open_entry(line)
   end
 end
 
---- Set the cursor position according to the current dashboard information
---- mainly the `oldline` and `newline` position.
-function M.set_cursor()
-  local oldline = dashboard.newline
-  local newline = api.nvim_win_get_cursor(0)[1]
-
-  -- Direction: up (-1) or down (+1) (no horizontal movements are registered)
-  local movement = 2 * (newline > oldline and 1 or 0) - 1
-
-  -- Skip blank lines between entries
-  if api.nvim_buf_get_lines(0, newline - 1, newline, false)[1] == "" then
-    newline = newline + movement
-  end
-
-  -- Don't go beyond first or last entry
-  newline = math.max(dashboard.firstline, math.min(dashboard.lastline, newline))
-
-  -- Update the numbers and the cursor position
-  dashboard.oldline = oldline
-  dashboard.newline = newline
-  api.nvim_win_set_cursor(0, { newline, dashboard.fixed_column })
-end
-
 --- Open the dashboard buffer in the current buffer if it is empty or create
 --- a new buffer for the current window.
 function M.open(on_vimenter)
@@ -363,11 +321,11 @@ function M.open(on_vimenter)
   -- Set the header
   local header = generate_header()
   local sub_header = generate_sub_header()
-  append(empty_line)
-  append(center(header), "Yellow")
-  append(empty_line)
-  append(center(sub_header), "Yellow")
-  append(empty_line)
+  utils.append(0, empty_line)
+  utils.append(0, center(header), "Yellow")
+  utils.append(0, empty_line)
+  utils.append(0, center(sub_header), "Yellow")
+  utils.append(0, empty_line)
 
   -- Set the sections
   dashboard.entries = {}
@@ -375,13 +333,14 @@ function M.open(on_vimenter)
   api.nvim_buf_set_lines(0, -2, -1, false, {})
 
   -- Compute first and last line offset
-  -- `nvim_buf_set_lines` uses zero-based index, thus the first 1
-  dashboard.firstline = 1 + 2 + #header + 1 + #sub_header + 1
-  dashboard.lastline = api.nvim_buf_line_count(0)
+  -- Actual entry line is 1 greater and 1 less than the current line for setting
+  -- the firstline and lastline offset.
+  dashboard.firstline = 1 + #header + 1 + #sub_header + 1 + 1
+  dashboard.lastline = api.nvim_buf_line_count(0) - 1
 
   -- Set the footer
-  append(empty_line)
-  append(center(generate_footer()), "Blue")
+  utils.append(0, empty_line)
+  utils.append(0, center(generate_footer()), "Blue")
 
   -- Lock the buffer
   option_process(
@@ -400,7 +359,12 @@ function M.open(on_vimenter)
   cmd("normal! ^ w")
   dashboard.fixed_column = api.nvim_win_get_cursor(0)[2]
 
-  cmd("autocmd dashboard CursorMoved <buffer> lua require('core.dashboard').set_cursor()")
+  local cursor_fn = string.format(
+    "lua %s(%s)",
+    "require('core.utils').fixed_column_movement",
+    "require('core.dashboard')._dashboard"
+  )
+  cmd("autocmd dashboard CursorMoved <buffer> " .. cursor_fn)
   cmd("autocmd dashboard BufWipeout dashboard ++once lua require('core.dashboard').reset_opts()")
   cmd("silent! %foldopen!")
   cmd("normal! zb")

@@ -18,13 +18,21 @@ function M.stylua(bufnr)
     return
   end
 
-  local output = Job
+  local err = {}
+  local output, code = Job
       :new({
       command = "stylua",
       args = { "-" },
       writer = api.nvim_buf_get_lines(bufnr, 0, -1, false),
+      on_stderr = function(_, data)
+        table.insert(err, data)
+      end,
     })
       :sync()
+
+  if code > 0 then
+    error(table.concat(err, "\n"))
+  end
 
   api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
 end
