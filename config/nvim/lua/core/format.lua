@@ -20,7 +20,7 @@ function M.stylua(bufnr)
 
   local err = {}
   local output, code = Job
-      :new({
+    :new({
       command = "stylua",
       args = { "-" },
       writer = api.nvim_buf_get_lines(bufnr, 0, -1, false),
@@ -28,7 +28,7 @@ function M.stylua(bufnr)
         table.insert(err, data)
       end,
     })
-      :sync()
+    :sync()
 
   if code > 0 then
     error(table.concat(err, "\n"))
@@ -41,12 +41,12 @@ end
 --   bufnr = bufnr or api.nvim_get_current_buf()
 
 --   local output = Job
---       :new({
+--     :new({
 --       command = "black",
 --       args = { "--quiet", "-" },
 --       writer = api.nvim_buf_get_lines(bufnr, 0, -1, false),
 --     })
---       :sync()
+--     :sync()
 
 --   api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
 -- end
@@ -55,12 +55,12 @@ end
 --   bufnr = bufnr or api.nvim_get_current_buf()
 
 --   local output = Job
---       :new({
+--     :new({
 --       command = "isort",
 --       args = { "--profile", "black", "-" },
 --       writer = api.nvim_buf_get_lines(bufnr, 0, -1, false),
 --     })
---       :sync()
+--     :sync()
 
 --   api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
 -- end

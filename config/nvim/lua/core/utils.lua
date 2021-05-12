@@ -1,6 +1,7 @@
 local M = {}
 local api = vim.api
 local cmd = api.nvim_command
+local icons = require("core.icons")
 
 -- Emit a warning message.
 ---@param msg string
@@ -60,7 +61,7 @@ end
 -- TODO: eventually move to using `nvim_set_hl` however for the time being
 -- that expects colors to be specified as rgb not hex.
 ---@param name string
----@param opts table
+---@param opts table<string, boolean|string>
 function M.highlight(name, opts)
   local force = opts.force or false
   if name and vim.tbl_count(opts) > 0 then
@@ -97,10 +98,10 @@ end
 
 -- "Safe" version of `nvim_<|win|buf|tabpage>_get_var()` that returns `nil` if
 -- the variable is not set.
----@param scope string (g|w|b|t) (Default: g)
+---@param scope string Available: g|w|b|t (Default: g)
 ---@param handle integer
 ---@param name string
----@return nil|string
+---@return nil|any
 function M.get_var(scope, handle, name)
   local func, args
   scope = scope or "g"
@@ -120,9 +121,9 @@ function M.get_var(scope, handle, name)
   end
 end
 
--- Return the current working directory using the following given root pattern.
--- Default: Current working directory
----@param pattern string[] (Default: {'.git', 'requirements.txt'})
+-- Return the current working directory using the given root pattern. Defaults
+-- to the current working directory if the root pattern is not found.
+---@param pattern string[] Default: {'.git', 'requirements.txt'}
 ---@return string
 function M.get_project_root(pattern)
   local ok, util = pcall(require, "lspconfig.util")
@@ -141,6 +142,7 @@ end
 ---@param bufnr number
 ---@param lines string[]
 ---@param hl string
+---@return nil
 function M.append(bufnr, lines, hl)
   bufnr = bufnr or api.nvim_get_current_buf()
   local linenr = api.nvim_buf_line_count(bufnr) - 1
@@ -161,7 +163,8 @@ end
 --   - newline (number) Current cursor line
 -- Internal:
 --   - oldline (number) Previous cursor line
----@param opts table
+---@param opts table<string, number>
+---@return nil
 function M.fixed_column_movement(opts)
   local oldline = opts.newline
   local newline = api.nvim_win_get_cursor(0)[1]
@@ -183,6 +186,12 @@ function M.fixed_column_movement(opts)
   api.nvim_win_set_cursor(0, { newline, opts.fixed_column })
 end
 
+-- Simplified version of `vim.lsp.util.make_floating_popup_options`
+-- This will consider the number of columns from the left end of neovim instead
+-- of the current window.
+---@param width number width of the popup window
+---@param height number height of the popup window
+---@return table @opts table to be passed to `vim.api.nvim_open_win`
 function M.make_floating_popup_options(width, height)
   local anchor = ""
   local row, col
@@ -200,11 +209,8 @@ function M.make_floating_popup_options(width, height)
     row = 0
   end
 
-  local offset_y = vim.fn.wincol() + width
-  if
-    offset_y <= api.nvim_get_option("columns")
-    and offset_y <= api.nvim_win_get_width(0)
-  then
+  local col_left = api.nvim_win_get_position(0)[2] + vim.fn.wincol() + width
+  if col_left <= api.nvim_get_option("columns") then
     anchor = anchor .. "W"
     col = 0
   else
@@ -213,14 +219,124 @@ function M.make_floating_popup_options(width, height)
   end
 
   return {
-    anchor = anchor,
-    col = col,
-    height = height,
     relative = "cursor",
-    row = row,
-    style = "minimal",
+    anchor = anchor,
+    height = height,
     width = width,
+    row = row,
+    col = col,
+    style = "minimal",
   }
+end
+
+-- Child window offset for the respective anchor position. This is used to
+-- add an appropriate offset to `row` and `col` field for the child window
+-- with respect to the parent border window.
+local child_win_offset = {
+  NW = { 1, 1 },
+  NE = { 1, -1 },
+  SW = { -1, 1 },
+  SE = { -1, -1 },
+}
+
+---@class BorderedWindowOpts
+---@field width number
+---@field height number
+---@field title string
+---@field highlight string
+---@field border string[]
+
+local function cleanup_autocmds(border_bufnr, child_bufnr)
+  M.create_augroups({
+    bordered_window_cleanup = {
+      string.format(
+        "BufWipeout,BufDelete <buffer=%d> execute 'bw %d | stopinsert'",
+        child_bufnr,
+        border_bufnr
+      ),
+      -- string.format(
+      --   "WinLeave <buffer=%d> "
+      -- )
+    },
+  })
+end
+
+-- Helper function to create the appropriate border lines for a floating
+-- popup window.
+---@param opts BorderedWindowOpts
+---@return string[]
+local function create_border(opts)
+  local border = opts.border or icons.border.default
+  local title = opts.title and " " .. opts.title .. " " or ""
+
+  local top = string.format(
+    "%s%s%s%s",
+    border[1],
+    title,
+    string.rep(border[2], opts.width - #title),
+    border[3]
+  )
+
+  local mid = string.format(
+    "%s%s%s",
+    border[8],
+    string.rep(" ", opts.width),
+    border[4]
+  )
+
+  local bot = string.format(
+    "%s%s%s",
+    border[7],
+    string.rep(border[6], opts.width),
+    border[5]
+  )
+
+  local lines = {}
+  table.insert(lines, top)
+  for _ = 1, opts.height do
+    table.insert(lines, mid)
+  end
+  table.insert(lines, bot)
+
+  return lines
+end
+
+---@param opts BorderedWindowOpts
+-- Following keys are valid:
+--   - `width` (number) window width, excluding the border
+--   - `height` (number) window height, excluding the border
+--   - `title` (string) (optional) window title, displayed in the border
+--   - `highlight` (string) (optional) border highlights
+--   - `border` (string[]) (optional) border characters in clockwise order
+--      starting from top left corner.
+---@return number @main window handle
+---@return number @main window's buffer number
+---@return table @border table containing one key: `winnr`
+function M.bordered_window(opts)
+  local border_lines = create_border(opts)
+  local border_bufnr = api.nvim_create_buf(false, true)
+  api.nvim_buf_set_option(border_bufnr, "bufhidden", "wipe")
+  api.nvim_buf_set_lines(border_bufnr, 0, -1, false, border_lines)
+
+  -- border window, content width + 2 border
+  local win_opts = M.make_floating_popup_options(opts.width + 2, #border_lines)
+  win_opts.focusable = false
+  local border_winnr = api.nvim_open_win(border_bufnr, false, win_opts)
+  local hl = opts.highlight or "FloatBorder"
+  api.nvim_win_set_option(border_winnr, "winhl", "NormalFloat:" .. hl)
+
+  -- child window
+  local row_offset, col_offset = unpack(child_win_offset[win_opts.anchor])
+  win_opts.width = opts.width
+  win_opts.height = opts.height
+  win_opts.row = win_opts.row + row_offset
+  win_opts.col = win_opts.col + col_offset
+  win_opts.focusable = true
+
+  local bufnr = api.nvim_create_buf(false, true)
+  local winnr = api.nvim_open_win(bufnr, true, win_opts)
+  cleanup_autocmds(border_bufnr, bufnr)
+  return winnr, bufnr, { winnr = border_winnr }
 end
 
 return M

@@ -149,7 +149,7 @@ packer.startup({
             env = { OPENSSL_DIR = "/usr/local/Cellar/openssl@1.1/1.1.1k" },
           },
         },
-        opt = true,
+        opt = false,
       },
     })
 

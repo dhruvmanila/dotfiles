@@ -124,12 +124,12 @@ require("telescope").setup({
       override_file_sorter = true,
       case_mode = "smart_case",
     },
-    -- arecibo = {
-    --   selected_engine = 'duckduckgo',
-    --   url_open_command = 'open',
-    --   show_http_headers = false,
-    --   show_domain_icons = false,
-    -- },
+    arecibo = {
+      selected_engine = "google",
+      url_open_command = "open",
+      show_http_headers = false,
+      show_domain_icons = false,
+    },
     bookmarks = {
       selected_browser = "brave",
       url_open_command = "open",
@@ -152,7 +152,7 @@ end
 -- Load the extensions
 load_telescope_extensions({
   "fzf",
-  -- 'arecibo',
+  "arecibo",
   "bookmarks",
   "github_stars",
   "installed_plugins",
@@ -194,7 +194,7 @@ tele_map("q/", "search_history")
 
 -- Extensions
 tele_map("<Leader>fb", "bookmarks")
--- tele_map('<Leader>fw', 'arecibo')
+tele_map("<Leader>fw", "arecibo")
 tele_map("<Leader>fs", "startify_sessions")
 
 -- Entrypoints which will allow me to configure each command individually.

@@ -7,13 +7,6 @@ local utils = require("core.utils")
 local M = {}
 local code_action = {}
 
-local offset = {
-  NW = { 1, 0 },
-  NE = { 1, 1 },
-  SW = { -2, 0 },
-  SE = { -2, 1 },
-}
-
 local function set_mappings(bufnr, winnr)
   local opts = { noremap = true, silent = true }
   local nowait_opts = { noremap = true, silent = true, nowait = true }
@@ -64,10 +57,6 @@ function M.code_action(_, _, response)
   end
 
   code_action.actions = response
-  local bufnr = api.nvim_create_buf(false, true)
-  local title = string.format(" %s Code Actions:", icons.icons.lightbulb)
-  utils.append(bufnr, { title }, "YellowBold")
-
   local action_lines = {}
   local longest_line = 0
   for index, action in ipairs(response) do
@@ -77,6 +66,14 @@ function M.code_action(_, _, response)
     longest_line = math.max(longest_line, api.nvim_strwidth(line))
   end
 
+  local winnr, bufnr = utils.bordered_window({
+    width = longest_line,
+    height = 2 + #action_lines, -- header + separator + content
+    border = icons.border.edge,
+  })
+
+  local title = string.format(" %s Code Actions:", icons.icons.lightbulb)
+  utils.append(bufnr, { title }, "YellowBold")
   utils.append(bufnr, { string.rep("─", longest_line) }, "Grey")
   -- Number of rows before the code action content
   local current_row = 2
@@ -98,16 +95,11 @@ function M.code_action(_, _, response)
   code_action.fixed_column = 1
   code_action.newline = code_action.firstline
 
-  local win_opts = utils.make_floating_popup_options(longest_line, current_row)
-  win_opts.row, win_opts.col = unpack(offset[win_opts.anchor])
-  win_opts.border = icons.border.edge
-
   api.nvim_buf_set_option(bufnr, "modifiable", false)
   api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
   api.nvim_buf_set_option(bufnr, "buftype", "nofile")
   api.nvim_buf_set_option(bufnr, "matchpairs", "")
 
-  local winnr = api.nvim_open_win(bufnr, true, win_opts)
   api.nvim_win_set_cursor(
     winnr,
     { code_action.firstline, code_action.fixed_column }

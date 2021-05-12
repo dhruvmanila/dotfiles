@@ -86,7 +86,8 @@ return {
   -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#sumneko_lua
   sumneko_lua = {
     cmd = {
-      os.getenv("HOME") .. "/git/lua-language-server/bin/macOS/lua-language-server",
+      os.getenv("HOME")
+        .. "/git/lua-language-server/bin/macOS/lua-language-server",
       "-E",
       os.getenv("HOME") .. "/git/lua-language-server/main.lua",
     },

@@ -70,16 +70,7 @@ M.icons = {
 
 M.border = {
   default = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
-  edge = {
-    { "🭽", "FloatBorder" },
-    { "▔", "FloatBorder" },
-    { "🭾", "FloatBorder" },
-    { "▕", "FloatBorder" },
-    { "🭿", "FloatBorder" },
-    { "▁", "FloatBorder" },
-    { "🭼", "FloatBorder" },
-    { "▏", "FloatBorder" },
-  },
+  edge = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" },
 }
 
 M.spinner_frames = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" }
