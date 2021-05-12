@@ -101,7 +101,7 @@ local function custom_on_attach(client)
   buf_map("gi", "vim.lsp.buf.implementation()")
   buf_map("gr", "vim.lsp.buf.references()")
   buf_map("<C-s>", "vim.lsp.buf.signature_help()")
-  buf_map("<Leader>rn", "vim.lsp.buf.rename()")
+  buf_map("<Leader>rn", "require('plugin.lsp.rename').rename()")
 
   -- Setup auto-formatting on save if the language server supports it.
   if client.resolved_capabilities.document_formatting then

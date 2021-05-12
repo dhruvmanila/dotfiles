@@ -1,5 +1,5 @@
 local lsp = vim.lsp
-local code_action = require("plugin.lsp.handlers.code_action")
+local code_action = require("plugin.lsp.code_action")
 local border = require("core.icons").border
 
 -- Can use `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`

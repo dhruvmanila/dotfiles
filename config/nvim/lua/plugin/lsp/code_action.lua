@@ -19,14 +19,14 @@ local function set_mappings(bufnr, winnr)
   local nowait_opts = { noremap = true, silent = true, nowait = true }
   for index = 1, #code_action.actions do
     local action_fn = string.format(
-      "<Cmd>lua require('plugin.lsp.handlers.code_action').do_code_action(%d)<CR>",
+      "<Cmd>lua require('plugin.lsp.code_action').do_code_action(%d)<CR>",
       index
     )
     api.nvim_buf_set_keymap(bufnr, "n", tostring(index), action_fn, opts)
   end
 
   local action_fn =
-    "<Cmd>lua require('plugin.lsp.handlers.code_action').do_code_action()<CR>"
+    "<Cmd>lua require('plugin.lsp.code_action').do_code_action()<CR>"
   api.nvim_buf_set_keymap(bufnr, "n", "<CR>", action_fn, nowait_opts)
 
   local close_fn = string.format(
@@ -117,7 +117,7 @@ function M.code_action(_, _, response)
   local cursor_fn = string.format(
     "lua %s(%s)",
     "require('core.utils').fixed_column_movement",
-    "require('plugin.lsp.handlers.code_action')._code_action"
+    "require('plugin.lsp.code_action')._code_action"
   )
   cmd(string.format("autocmd CursorMoved <buffer=%s> %s", bufnr, cursor_fn))
 end

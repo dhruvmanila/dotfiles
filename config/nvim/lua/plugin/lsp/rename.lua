@@ -6,7 +6,7 @@ local icons = require("core.icons")
 
 local M = {}
 
-local state = { windows = {} }
+local state = {}
 
 local prompt_title = "New name:"
 
@@ -79,11 +79,9 @@ end
 
 local function set_mappings(bufnr)
   local bufmap = api.nvim_buf_set_keymap
-  local opts = { noremap = true, silent = true }
-  local callback_fn =
-    "<Cmd>lua require('plugin.lsp.handlers.rename').callback()<CR>"
-  local cleanup_fn =
-    "<Cmd>lua require('plugin.lsp.handlers.rename').cleanup()<CR>"
+  local opts = { noremap = true, silent = true, nowait = true }
+  local callback_fn = "<Cmd>lua require('plugin.lsp.rename').callback()<CR>"
+  local cleanup_fn = "<Cmd>lua require('plugin.lsp.rename').cleanup()<CR>"
   local clear_fn = string.format(
     "<Cmd>lua vim.api.nvim_buf_set_lines(%d, 0, -1, false, {})<CR>",
     bufnr
@@ -97,50 +95,50 @@ local function set_mappings(bufnr)
 end
 
 function M.callback()
-  local bufnr = state.bufnr or api.nvim_get_current_buf()
-  local new_name = api.nvim_buf_get_lines(bufnr, 0, -1, false)[1]
-  if #new_name == 0 and new_name == state.current_name then
-    M.cleanup()
+  local orig_name, orig_bufnr = state.orig_name, state.orig_bufnr
+  local new_name = api.nvim_buf_get_lines(state.prompt_bufnr, 0, -1, false)[1]
+  M.cleanup()
+  if #new_name == 0 or new_name == orig_name then
     return
   end
-  state.rename_params.newName = new_name
-  lsp.buf_request(state.bufnr, "textDocument/rename", state.rename_params)
-  M.cleanup()
+  local params = lsp.util.make_position_params()
+  params.newName = new_name
+  lsp.buf_request(orig_bufnr, "textDocument/rename", params)
 end
 
 function M.cleanup()
+  cmd("stopinsert")
   for _, winnr in ipairs(state.windows) do
     if api.nvim_win_is_valid(winnr) then
       api.nvim_win_close(winnr, true)
     end
   end
-  state = { windows = {} }
-  cmd("stopinsert")
+  state = {}
 end
 
 function M.rename()
-  state.current_name = vim.fn.expand("<cword>")
-  state.rename_params = lsp.util.make_position_params()
-  local winnr, bufnr, border = bordered_window({
+  state.orig_name = vim.fn.expand("<cword>")
+  state.orig_bufnr = api.nvim_get_current_buf()
+  local prompt_winnr, prompt_bufnr, border = bordered_window({
     title = prompt_title,
     width = 40,
     height = 1,
   })
 
-  api.nvim_buf_set_option(bufnr, "buftype", "nofile")
-  api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
-  api.nvim_win_set_option(winnr, "wrap", false)
-  api.nvim_win_set_option(winnr, "winhl", "NormalFloat:Normal")
+  api.nvim_buf_set_option(prompt_bufnr, "buftype", "nofile")
+  api.nvim_buf_set_option(prompt_bufnr, "bufhidden", "wipe")
+  api.nvim_win_set_option(prompt_winnr, "wrap", false)
+  api.nvim_win_set_option(prompt_winnr, "winhl", "NormalFloat:Normal")
 
-  vim.list_extend(state.windows, { winnr, border.winnr })
-  state.bufnr = bufnr
+  state.windows = { prompt_winnr, border.winnr }
+  state.prompt_bufnr = prompt_bufnr
 
   cmd(string.format(
-    "autocmd BufWipeout <buffer=%d> lua require('plugin.lsp.handlers.rename').cleanup()",
-    bufnr
+    "autocmd BufWipeout <buffer=%d> lua require('plugin.lsp.rename').cleanup()",
+    prompt_bufnr
   ))
-  set_mappings(bufnr)
-  api.nvim_buf_set_lines(bufnr, 0, 1, false, { state.current_name })
+  set_mappings(prompt_bufnr)
+  api.nvim_buf_set_lines(prompt_bufnr, 0, 1, false, { state.orig_name })
   cmd("startinsert!")
 end
 
