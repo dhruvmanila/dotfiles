@@ -12,7 +12,7 @@ local highlights = {
 }
 
 ---Setting up the highlights
-function M.tabline_highlights()
+local function tabline_highlights()
   for hl_name, opts in pairs(highlights) do
     utils.highlight(hl_name, opts)
   end
@@ -135,13 +135,15 @@ function _G.nvim_tabline()
   return line
 end
 
--- Set the tabline
-vim.o.tabline = "%!v:lua.nvim_tabline()"
-
-utils.create_augroups({
-  custom_tabline = {
-    [[VimEnter,ColorScheme * lua require('core.tabline').tabline_highlights()]],
+dm.augroup("custom_tabline", {
+  {
+    events = { "VimEnter", "ColorScheme" },
+    targets = { "*" },
+    command = tabline_highlights,
   },
 })
+
+-- Set the tabline
+vim.o.tabline = "%!v:lua.nvim_tabline()"
 
 return M

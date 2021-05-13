@@ -82,7 +82,7 @@ local function generate_sub_header()
   return { v, "", "" }
 end
 
---- Dashboard sections. Every element is a dictionary with the following keys:
+--- Dashboard entries. Every element is a dictionary with the following keys:
 ---   - `key`: (string) used to create a keymap to trigger `command`
 ---   - `description`: (string|function) display this on the start page
 ---   - `command`: (string|function) execute the command on pressing `key`
@@ -128,10 +128,10 @@ local entries = {
 --- Generate and return the footer of the start page.
 ---@return table
 local function generate_footer()
-  local loaded_plugins = #vim.tbl_filter(function(plugin)
-    return plugin.loaded
-  end, _G.packer_plugins)
-
+  local loaded_plugins = #vim.tbl_filter(
+    plugin_loaded,
+    vim.tbl_keys(_G.packer_plugins)
+  )
   return { "", "", "Neovim loaded " .. loaded_plugins .. " plugins", "" }
 end
 
@@ -213,12 +213,6 @@ local function set_mappings()
   local buf_map = api.nvim_buf_set_keymap
   local opts = { noremap = true, silent = true, nowait = true }
 
-  -- Basic keymap
-  local entry_fn = "<Cmd>lua require('core.dashboard').open_entry()<CR>"
-  local close_fn = "<Cmd>lua require('core.dashboard').close()<CR>"
-  buf_map(0, "n", "<CR>", entry_fn, opts)
-  buf_map(0, "n", "q", close_fn, opts)
-
   -- Registered entries
   for line, entry in pairs(dashboard.entries) do
     local entry_fn = string.format(
@@ -227,10 +221,16 @@ local function set_mappings()
     )
     buf_map(0, "n", entry.key, entry_fn, opts)
   end
+
+  -- Basic keymap
+  local entry_fn = "<Cmd>lua require('core.dashboard').open_entry()<CR>"
+  local close_fn = "<Cmd>lua require('core.dashboard').close()<CR>"
+  buf_map(0, "n", "<CR>", entry_fn, opts)
+  buf_map(0, "n", "q", close_fn, opts)
 end
 
 --- Reset the saved options
-function M.reset_opts()
+local function reset_opts()
   option_process(dashboard.saved_opts, "set")
   dashboard.saved_opts = {}
 end
@@ -246,7 +246,7 @@ function M.session_cleanup()
     end
   end
 
-  if _G.packer_plugins["nvim-tree.lua"].loaded then
+  if plugin_loaded("nvim-tree.lua") then
     local curtab = api.nvim_get_current_tabpage()
     cmd("silent tabdo NvimTreeClose")
     api.nvim_set_current_tabpage(curtab)
@@ -359,19 +359,27 @@ function M.open(on_vimenter)
   cmd("normal! ^ w")
   dashboard.fixed_column = api.nvim_win_get_cursor(0)[2]
 
-  local cursor_fn = string.format(
-    "lua %s(%s)",
-    "require('core.utils').fixed_column_movement",
-    "require('core.dashboard')._dashboard"
-  )
-  cmd("autocmd dashboard CursorMoved <buffer> " .. cursor_fn)
-  cmd("autocmd dashboard BufWipeout dashboard ++once lua require('core.dashboard').reset_opts()")
+  dm.autocmd({
+    group = "dashboard",
+    events = { "CursorMoved" },
+    targets = { "<buffer>" },
+    command = function()
+      require("core.utils").fixed_column_movement(dashboard)
+    end,
+  })
+  dm.autocmd({
+    group = "dashboard",
+    events = { "BufWipeout" },
+    targets = { "dashboard" },
+    modifiers = { "++once" },
+    command = reset_opts,
+  })
   cmd("silent! %foldopen!")
   cmd("normal! zb")
 end
 
 -- For debugging purposes:
--- lua print(vim.inspect(_G.package.loaded['core.dashboard']._dashboard))
+-- lua print(vim.inspect(require('core.dashboard')._dashboard))
 M._dashboard = dashboard
 
 return M

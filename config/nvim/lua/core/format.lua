@@ -9,7 +9,9 @@ local finder = {
   stylua = root_pattern("stylua.toml"),
 }
 
-function M.stylua(bufnr)
+-- TODO: this sort of resets the buffer thus removing all the signs and virtual
+-- texts, etc.
+local function stylua(bufnr)
   bufnr = bufnr or api.nvim_get_current_buf()
   local filename = api.nvim_buf_get_name(bufnr)
   local config_dir = finder.stylua(filename)
@@ -37,7 +39,7 @@ function M.stylua(bufnr)
   api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
 end
 
--- function M.black(bufnr)
+-- local function black(bufnr)
 --   bufnr = bufnr or api.nvim_get_current_buf()
 
 --   local output = Job
@@ -51,7 +53,7 @@ end
 --   api.nvim_buf_set_lines(bufnr, 0, -1, false, output)
 -- end
 
--- function M.isort(bufnr)
+-- local function isort(bufnr)
 --   bufnr = bufnr or api.nvim_get_current_buf()
 
 --   local output = Job
@@ -66,8 +68,8 @@ end
 -- end
 
 -- Auto formatting for specific filetypes
-utils.create_augroups({
-  auto_formatting = { "BufWritePre *.lua lua require('core.format').stylua()" },
+dm.augroup("auto_formatting", {
+  { events = { "BufWritePre" }, targets = { "*.lua" }, command = stylua },
 })
 
 return M

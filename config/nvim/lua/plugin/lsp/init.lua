@@ -4,7 +4,6 @@ local sign_define = vim.fn.sign_define
 local icons = require("core.icons").icons
 local kind_icons = require("core.icons").lsp_kind
 local map = require("core.utils").map
-local create_augroups = require("core.utils").create_augroups
 local lspconfig = require("lspconfig")
 local lspstatus = require("lsp-status")
 
@@ -66,10 +65,6 @@ end
 local function custom_on_attach(client)
   local lsp_autocmds = {}
 
-  local function add_autocmds(event, func)
-    table.insert(lsp_autocmds, event .. " <buffer> lua " .. func)
-  end
-
   -- For plugins with an `on_attach` callback, call them here.
   plugins.on_attach(client)
 
@@ -79,21 +74,38 @@ local function custom_on_attach(client)
   -- Keybindings:
   -- For all types of diagnostics: [d | ]d
   -- For warning and error diagnostics: [e | ]e
-  buf_map("[d", "vim.lsp.diagnostic.goto_prev({enable_popup = false})")
-  buf_map("]d", "vim.lsp.diagnostic.goto_next({enable_popup = false})")
+  -- { disable_popup = true }
+  local edge_border = "require('core.icons').border.edge"
+  local popup_opts = string.format(
+    "{show_header = false, border = %s}",
+    edge_border
+  )
+  buf_map(
+    "[d",
+    string.format("vim.lsp.diagnostic.goto_prev({popup_opts = %s})", popup_opts)
+  )
+  buf_map(
+    "]d",
+    string.format("vim.lsp.diagnostic.goto_next({popup_opts = %s})", popup_opts)
+  )
   buf_map(
     "[e",
-    'vim.lsp.diagnostic.goto_prev({enable_popup = false, severity_limit = "Warning"})'
+    string.format(
+      "vim.lsp.diagnostic.goto_prev({severity_limit = 'Warning', popup_opts = %s})",
+      popup_opts
+    )
   )
   buf_map(
     "]e",
-    'vim.lsp.diagnostic.goto_next({enable_popup = false, severity_limit = "Warning"})'
+    string.format(
+      "vim.lsp.diagnostic.goto_next({severity_limit = 'Warning', popup_opts = %s})",
+      popup_opts
+    )
   )
   buf_map(
     "gl",
-    'vim.lsp.diagnostic.show_line_diagnostics({show_header = false, border = "single"})'
+    string.format("vim.lsp.diagnostic.show_line_diagnostics(%s)", popup_opts)
   )
-  -- Calling the function twice will jump into the floating window.
   buf_map("K", "vim.lsp.buf.hover()")
   buf_map("gd", "vim.lsp.buf.definition()")
   buf_map("gD", "vim.lsp.buf.declaration()")
@@ -107,28 +119,49 @@ local function custom_on_attach(client)
   if client.resolved_capabilities.document_formatting then
     buf_map("<Leader>lf", "vim.lsp.buf.formatting()")
     -- TODO: auto format setup as per the configuration option b.auto_format_<ft> ?
-    -- add_autocmds('BufWritePre', 'vim.lsp.buf.formatting_sync(nil, 1000)')
+    -- table.insert(lsp_autocmds, {
+    --   events = { "BufWritePre" },
+    --   targets = { "<buffer>" },
+    --   command = function()
+    --     vim.lsp.buf.formatting_sync(nil, 1000)
+    --   end,
+    -- })
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
   if client.resolved_capabilities.document_highlight then
-    add_autocmds("CursorHold", "vim.lsp.buf.document_highlight()")
-    add_autocmds("CursorMoved", "vim.lsp.buf.clear_references()")
-    -- add_autocmds('CursorHold', 'vim.lsp.diagnostics.show_line_diagnostics({show_header = false})')
+    table.insert(lsp_autocmds, {
+      events = { "CursorHold" },
+      targets = { "<buffer>" },
+      command = vim.lsp.buf.document_highlight,
+    })
+    table.insert(lsp_autocmds, {
+      events = { "CursorMoved" },
+      targets = { "<buffer>" },
+      command = vim.lsp.buf.clear_references,
+    })
+    -- table.insert(lsp_autocmds, {
+    --   events = { "CursorHold" },
+    --   targets = { "<buffer>" },
+    --   command = function()
+    --     vim.lsp.diagnostic.show_line_diagnostics({ show_header = false })
+    --   end,
+    -- })
   end
 
-  -- TODO: use telescope to display code action or lspsaga?
   if client.resolved_capabilities.code_action then
     cmd("packadd nvim-lightbulb")
-    table.insert(
-      lsp_autocmds,
-      "CursorHold,CursorHoldI * lua require('nvim-lightbulb').update_lightbulb()"
-    )
+
+    table.insert(lsp_autocmds, {
+      events = { "CursorHold", "CursorHoldI" },
+      targets = { "<buffer>" },
+      command = require("nvim-lightbulb").update_lightbulb,
+    })
     buf_map("ga", "vim.lsp.buf.code_action()")
   end
 
   if not vim.tbl_isempty(lsp_autocmds) then
-    create_augroups({ custom_lsp_autocmds = lsp_autocmds })
+    dm.augroup("custom_lsp_autocmds", lsp_autocmds)
   end
 
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"

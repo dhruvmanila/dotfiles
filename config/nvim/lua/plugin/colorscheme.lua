@@ -39,6 +39,7 @@ highlight("PmenuSel", {
 })
 highlight("HintFloat", { guifg = palette.aqua[1], guibg = palette.bg3[1] })
 highlight("GreyItalic", { guifg = palette.grey1[1], gui = "italic" })
+highlight("GreyBold", { guifg = palette.grey1[1], gui = "bold" })
 
 -- Current line number
 highlight("CursorLineNr", { force = true, link = "MoreMsg" })
@@ -65,6 +66,7 @@ highlight("TSField", { force = true, link = "Blue" })
 -- highlight("FloatBorder", { force = true, link = "Grey" })
 highlight("NormalFloat", { guifg = "NONE", guibg = palette.bg2[1] })
 highlight("FloatBorder", { guifg = palette.grey1[1], guibg = palette.bg2[1] })
+highlight("VirtualTextInformation", { force = true, link = "Blue" })
 highlight("VirtualTextHint", { force = true, link = "Aqua" })
 highlight(
   "LspDiagnosticsFloatingError",
@@ -84,10 +86,10 @@ highlight(
 )
 
 -- Compe doc window should be same as that of NormalFloat
-highlight(
-  "CompeDocumentation",
-  { guifg = palette.fg0[1], guibg = palette.bg4[1] }
-)
+highlight("CompeDocumentation", {
+  guifg = palette.fg0[1],
+  guibg = palette.bg4[1],
+})
 
 -- Symbols outline
 highlight("FocusedSymbol", { force = true, link = "CurrentWord" })

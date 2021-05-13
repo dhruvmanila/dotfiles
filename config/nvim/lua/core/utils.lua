@@ -1,42 +1,13 @@
 local M = {}
 local api = vim.api
 local cmd = api.nvim_command
+local format = string.format
 local icons = require("core.icons")
 
 -- Emit a warning message.
 ---@param msg string
 function M.warn(msg)
   api.nvim_echo({ { msg, "WarningMsg" } }, true, {})
-end
-
--- Helper function to set the neovim options until #13479 merges.
---
--- This will make sure each option is set to the respective scope.
--- Ref: https://github.com/ellisonleao/dotfiles/blob/main/configs/.config/nvim/lua/editor.lua#L40
-M.opt = setmetatable({}, {
-  __index = vim.o,
-  __newindex = function(_, key, value)
-    vim.o[key] = value
-    local scope = api.nvim_get_option_info(key).scope
-    if scope == "win" then
-      vim.wo[key] = value
-    elseif scope == "buf" then
-      vim.bo[key] = value
-    end
-  end,
-})
-
--- Create autocommand groups based on the given definitions.
----@param definitions table<string, string[]>
-function M.create_augroups(definitions)
-  for group_name, group_cmds in pairs(definitions) do
-    cmd("augroup " .. group_name)
-    cmd("autocmd!")
-    for _, command in ipairs(group_cmds) do
-      cmd("autocmd " .. command)
-    end
-    cmd("augroup END")
-  end
 end
 
 -- Create key bindings for multiple modes with an optional parameters map.
@@ -90,6 +61,9 @@ function M.highlight(name, opts)
       end
       if opts.cterm and opts.cterm ~= "" then
         table.insert(hi_cmd, "cterm=" .. opts.cterm)
+      end
+      if opts.blend then
+        table.insert(hi_cmd, "blend=" .. opts.blend)
       end
       cmd(table.concat(hi_cmd, " "))
     end
@@ -246,30 +220,51 @@ local child_win_offset = {
 ---@field highlight string
 ---@field border string[]
 
+-- Cleanup tasks performed for `open_bordered_window`
+--   - When the child (main) buffer is deleted, wipeout the border buffer
+--     and get out of insert mode.
+--   - When we leave the child (main) buffer window, wipeout the child buffer.
+---@param border_bufnr number border window's buffer number
+---@param child_bufnr number child (main) window's buffer number
 local function cleanup_autocmds(border_bufnr, child_bufnr)
-  M.create_augroups({
-    bordered_window_cleanup = {
-      string.format(
-        "BufWipeout,BufDelete <buffer=%d> execute 'bw %d | stopinsert'",
+  dm.augroup("bordered_window_cleanup", {
+    {
+      events = { "BufWipeout", "BufDelete" },
+      targets = { format("<buffer=%d>", child_bufnr) },
+      command = format("silent exe 'bw %d | stopinsert'", border_bufnr),
+    },
+    {
+      events = { "WinLeave" },
+      targets = { format("<buffer=%d>", child_bufnr) },
+      modifiers = { "++once" },
+      command = format(
+        "silent exe 'bw! %d %d | stopinsert'",
         child_bufnr,
         border_bufnr
       ),
-      -- string.format(
-      --   "WinLeave <buffer=%d> "
-      -- )
     },
   })
+end
+
+-- Border can be an array of strings or table. If string, then it's the
+-- character itself, otherwise [1] is character and [2] is highlight.
+---@param border string[]|table[]
+---@return string[]
+local function normalize_border(border)
+  return vim.tbl_map(function(char)
+    return type(char) == "table" and char[1] or char
+  end, border)
 end
 
 -- Helper function to create the appropriate border lines for a floating
 -- popup window.
 ---@param opts BorderedWindowOpts
 ---@return string[]
-local function create_border(opts)
-  local border = opts.border or icons.border.default
+local function get_border_lines(opts)
+  local border = normalize_border(opts.border or icons.border.default)
   local title = opts.title and " " .. opts.title .. " " or ""
 
-  local top = string.format(
+  local top = format(
     "%s%s%s%s",
     border[1],
     title,
@@ -277,14 +272,10 @@ local function create_border(opts)
     border[3]
   )
 
-  local mid = string.format(
-    "%s%s%s",
-    border[8],
-    string.rep(" ", opts.width),
-    border[4]
-  )
+  local mid =
+    format("%s%s%s", border[8], string.rep(" ", opts.width), border[4])
 
-  local bot = string.format(
+  local bot = format(
     "%s%s%s",
     border[7],
     string.rep(border[6], opts.width),
@@ -312,8 +303,8 @@ end
 ---@return number @main window handle
 ---@return number @main window's buffer number
 ---@return table @border table containing one key: `winnr`
-function M.bordered_window(opts)
-  local border_lines = create_border(opts)
+function M.open_bordered_window(opts)
+  local border_lines = get_border_lines(opts)
   local border_bufnr = api.nvim_create_buf(false, true)
   api.nvim_buf_set_option(border_bufnr, "bufhidden", "wipe")
   api.nvim_buf_set_lines(border_bufnr, 0, -1, false, border_lines)

@@ -45,7 +45,7 @@ local highlights = {
 ---This will create groups with names as 'St<colorname><attribute>' where
 ---colorname is Capitalized and attribute can be '', 'Bold' or 'Italic'
 ---@param prefix string (Default: 'St')
-function M.statusline_highlights(prefix)
+local function statusline_highlights(prefix)
   prefix = prefix or "St"
   for name, hex in pairs(palette) do
     name = name:gsub("^%l", string.upper)
@@ -135,7 +135,7 @@ local special_buffer_info = {
       return "%<" .. fn.fnamemodify(ctx.bufname, ":~") .. " "
     end,
 
-    vista_kind = function(_)
+    vista_kind = function()
       return "Vista" .. " [" .. vim.g.vista.provider .. "]"
     end,
 
@@ -469,23 +469,34 @@ local function fetch_github_notifications()
   })
 end
 
-function M.python_version_job()
+local function python_version_job()
   if fn.executable("python") > 0 then
     job(5 * 1000, set_python_version)
   end
 end
 
-function M.github_notifications_job()
+local function github_notifications_job()
   if fn.executable("gh") > 0 then
     job(5 * 60 * 1000, fetch_github_notifications)
   end
 end
 
-utils.create_augroups({
-  custom_statusline = {
-    [[VimEnter,ColorScheme * lua require('core.statusline').statusline_highlights()]],
-    [[FileType python lua require('core.statusline').python_version_job()]],
-    [[VimEnter * lua require('core.statusline').github_notifications_job()]],
+-- Define the necessary autocmds
+dm.augroup("custom_statusline", {
+  {
+    events = { "VimEnter", "ColorScheme" },
+    targets = { "*" },
+    command = statusline_highlights,
+  },
+  {
+    events = { "FileType" },
+    targets = { "python" },
+    command = python_version_job,
+  },
+  {
+    events = { "VimEnter" },
+    targets = { "*" },
+    command = github_notifications_job,
   },
 })
 

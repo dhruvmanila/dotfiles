@@ -16,13 +16,12 @@ require("compe").setup({
   autocomplete = true,
   debug = false,
   min_length = 1,
-  preselect = "enable",
+  preselect = "disable",
   documentation = true,
 
   source = {
     path = true,
-    buffer = true,
-    calc = true,
+    buffer = { menu = "[Buf]" },
     nvim_lsp = true,
     nvim_lua = true,
     -- vsnip = true;  -- TODO: uncomment when snippets are setup

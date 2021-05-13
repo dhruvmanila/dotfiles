@@ -1,12 +1,17 @@
 local api = vim.api
 local lsp = vim.lsp
-local cmd = api.nvim_command
 local icons = require("core.icons")
 local utils = require("core.utils")
 
 local M = {}
 local code_action = {}
 
+-- Define the required set of mappings:
+--   - `number`: execute the respective code action "number"
+--   - `<CR>`: execute the code action under the cursor
+--   - `q`: quit the code action window
+---@param bufnr number
+---@param winnr number
 local function set_mappings(bufnr, winnr)
   local opts = { noremap = true, silent = true }
   local nowait_opts = { noremap = true, silent = true, nowait = true }
@@ -29,6 +34,9 @@ local function set_mappings(bufnr, winnr)
   api.nvim_buf_set_keymap(bufnr, "n", "q", close_fn, nowait_opts)
 end
 
+-- Execute the given "choice" code action. If choice is `nil`, then execute
+-- the code action under the cursor.
+---@param choice number|nil
 function M.do_code_action(choice)
   choice = choice or tonumber(vim.fn.expand("<cword>"))
   local action_chosen = code_action.actions[choice]
@@ -50,7 +58,8 @@ function M.do_code_action(choice)
   code_action.actions = {}
 end
 
-function M.code_action(_, _, response)
+-- Main handler for the code action response from the language server.
+function M.handler(_, _, response)
   if response == nil or vim.tbl_isempty(response) then
     print("[LSP] No code actions available")
     return
@@ -66,7 +75,7 @@ function M.code_action(_, _, response)
     longest_line = math.max(longest_line, api.nvim_strwidth(line))
   end
 
-  local winnr, bufnr = utils.bordered_window({
+  local winnr, bufnr = utils.open_bordered_window({
     width = longest_line,
     height = 2 + #action_lines, -- header + separator + content
     border = icons.border.edge,
@@ -106,14 +115,16 @@ function M.code_action(_, _, response)
   )
   set_mappings(bufnr, winnr)
 
-  local cursor_fn = string.format(
-    "lua %s(%s)",
-    "require('core.utils').fixed_column_movement",
-    "require('plugin.lsp.code_action')._code_action"
-  )
-  cmd(string.format("autocmd CursorMoved <buffer=%s> %s", bufnr, cursor_fn))
+  dm.autocmd({
+    events = { "CursorMoved" },
+    targets = { string.format("<buffer=%s>", bufnr) },
+    command = function()
+      require("core.utils").fixed_column_movement(code_action)
+    end,
+  })
 end
 
+-- For debugging purposes.
 M._code_action = code_action
 
 return M

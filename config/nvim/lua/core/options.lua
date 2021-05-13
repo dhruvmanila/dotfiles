@@ -1,4 +1,4 @@
-local opt = require("core.utils").opt
+local opt = dm.opt
 
 opt.mouse = "nv" -- Enable mouse in Normal and Visual mode
 opt.hidden = true -- Allow buffers to be hidden
@@ -38,9 +38,9 @@ opt.pumheight = 20
 opt.pumblend = 15
 
 -- Set the default grep program to ripgrep if available
-opt.grepformat = "%f:%l:%c:%m," .. opt.grepformat
 if vim.fn.executable("rg") then
   opt.grepprg = "rg --vimgrep"
+  opt.grepformat = "%f:%l:%c:%m," .. opt.grepformat
 end
 
 -- vertical: start diff mode with vertical splits
@@ -48,7 +48,12 @@ opt.diffopt = opt.diffopt .. ",vertical"
 
 -- Show invisible characters
 opt.list = true
-opt.listchars = [[tab:▸ ,nbsp:_,trail:·]] -- ,eol:↴]]
+opt.listchars = table.concat({
+  "tab:▸ ",
+  "nbsp:_",
+  "trail:·",
+  -- "eol:↴",
+}, ",")
 
 opt.colorcolumn = "80"
 opt.cursorline = true
@@ -71,13 +76,13 @@ opt.shiftwidth = 2 -- number of spaces of an indent
 opt.tabstop = 2 -- number of spaces that a TAB counts for
 opt.textwidth = 0 -- Do not automatically wrap text
 
--- Format options:
--- 'c': Comments should respect textwidth
--- 'q': Allow formatting of comments with 'gq'
--- 'r': Continue comments when pressing Enter in Insert mode
--- 'j': When it makes sense, remove a comment Leader when joining lines.
--- 'n': Use hanging indent on numbered list (formatlistpat)
-opt.formatoptions = "cqrjn"
+opt.formatoptions = table.concat({
+  "c", -- Comments should respect textwidth
+  "q", -- Allow formatting of comments with 'gq'
+  "r", -- Continue comments when pressing Enter in Insert mode
+  "j", -- When it makes sense, remove a comment Leader when joining lines.
+  "n", -- Use hanging indent on numbered list (formatlistpat)
+})
 
 opt.swapfile = false
 opt.undofile = true

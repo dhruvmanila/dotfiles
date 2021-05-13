@@ -11,6 +11,18 @@ local M = {}
 ---@field prompt_bufnr number
 local state = {}
 
+-- Cleanup tasks performed:
+--   - Delete the prompt buffer
+--   - Clear the rename state
+function M.cleanup()
+  api.nvim_buf_delete(state.prompt_bufnr, { force = true })
+  state = {}
+end
+
+-- Define the required set of mappings:
+--   - `<ESC>`: exit the rename prompt
+--   - `<C-l>`: clear the rename prompt
+---@param bufnr number rename window buffer number
 local function set_mappings(bufnr)
   local opts = { noremap = true, silent = true, nowait = true }
   local cleanup_fn = "<Cmd>lua require('plugin.lsp.rename').cleanup()<CR>"
@@ -24,6 +36,9 @@ local function set_mappings(bufnr)
   api.nvim_buf_set_keymap(bufnr, "i", "<C-l>", clear_fn, opts)
 end
 
+-- Rename prompt callback function. It receives the entered value in the prompt
+-- buffer by Neovim.
+---@param new_name string
 local function callback(new_name)
   local orig_name, orig_bufnr = state.orig_name, state.orig_bufnr
   M.cleanup()
@@ -35,20 +50,17 @@ local function callback(new_name)
   lsp.buf_request(orig_bufnr, "textDocument/rename", params)
 end
 
-function M.cleanup()
-  api.nvim_buf_delete(state.prompt_bufnr, { force = true })
-  state = {}
-end
-
+-- Entrypoint to rename the current word at cursor. The current word will be set
+-- in the prompt buffer.
 function M.rename()
   state.orig_name = vim.fn.expand("<cword>")
   state.orig_bufnr = api.nvim_get_current_buf()
 
-  local winnr, bufnr = utils.bordered_window({
+  local winnr, bufnr = utils.open_bordered_window({
     title = "New name:",
     width = 40,
     height = 1,
-    highlight = "BlueItalic",
+    highlight = "GreyBold",
   })
 
   api.nvim_buf_set_option(bufnr, "buftype", "prompt")
@@ -56,13 +68,14 @@ function M.rename()
   api.nvim_win_set_option(winnr, "wrap", false)
   api.nvim_win_set_option(winnr, "winhl", "NormalFloat:Normal")
 
+  -- To line it up with the title
   vim.fn.prompt_setprompt(bufnr, " ")
   vim.fn.prompt_setcallback(bufnr, callback)
   state.prompt_bufnr = bufnr
 
   set_mappings(bufnr)
   cmd("startinsert!")
-  vim.api.nvim_feedkeys(state.orig_name, "i", true)
+  api.nvim_feedkeys(state.orig_name, "i", true)
 end
 
 return M

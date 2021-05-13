@@ -1,12 +1,9 @@
 local api = vim.api
-local cmd = api.nvim_command
 local fn = vim.fn
-
-local M = {}
 
 -- Report the highlight groups active at the current point.
 -- Ref: https://vim.fandom.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor
-function M.highlight_groups()
+local function highlight_groups()
   local line, col = unpack(api.nvim_win_get_cursor(0))
   col = col + 1 -- zero indexed :(
 
@@ -19,15 +16,15 @@ end
 
 -- Trim trailing whitespace in the current file.
 -- This will save the current view of the window and restore it back.
-function M.trim_trailing_whitespace()
+local function trim_trailing_whitespace()
   local pos = api.nvim_win_get_cursor(0)
-  cmd([[keeppatterns %s/\s\+$//e]])
+  vim.cmd([[keeppatterns %s/\s\+$//e]])
   api.nvim_win_set_cursor(0, pos)
 end
 
 -- Trim blank lines at the end of the file.
 -- This will save the current view of the window and restore it back.
-function M.trim_trailing_lines()
+local function trim_trailing_lines()
   local pos = api.nvim_win_get_cursor(0)
   local last_line = api.nvim_buf_line_count(0)
   local last_non_blank_line = fn.prevnonblank(last_line)
@@ -39,19 +36,13 @@ function M.trim_trailing_lines()
   api.nvim_win_set_cursor(0, pos)
 end
 
--- Equalize the windows across all tabs and return back to the current tabpage.
-function M.equalize_windows()
-  local last_tab = api.nvim_get_current_tabpage()
-  cmd("tabdo wincmd =")
-  api.nvim_set_current_tabpage(last_tab)
-end
+-- Define the commands for the respective functions
+dm.command({ "Hi", highlight_groups })
 
-local mod = ':lua require("core.commands").'
-cmd("command! Hi " .. mod .. "highlight_groups()")
-cmd(
-  "command! -bar TrimTrailingWhitespace " .. mod .. "trim_trailing_whitespace()"
-)
-cmd("command! -bar TrimTrailingLines " .. mod .. "trim_trailing_lines()")
-cmd("command! -bar Equalize " .. mod .. "equalize_windows()")
+dm.command({
+  "TrimTrailingWhitespace",
+  trim_trailing_whitespace,
+  attr = { "-bar" },
+})
 
-return M
+dm.command({ "TrimTrailingLines", trim_trailing_lines, attr = { "-bar" } })
