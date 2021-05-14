@@ -5,7 +5,7 @@ dm.augroup("custom_autocmds", {
     events = { "WinEnter", "BufEnter" },
     targets = { "*" },
     command = function()
-      if not (vim.wo.cursorline and vim.bo.filetype == "dashboard") then
+      if not vim.wo.cursorline and vim.bo.filetype ~= "dashboard" then
         vim.wo.cursorline = true
       end
     end,
