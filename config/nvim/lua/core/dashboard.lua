@@ -184,7 +184,7 @@ end
 --- Register the entry into the dashboard table for the current line
 ---@param entry table
 local function register_entry(entry)
-  local line = api.nvim_buf_line_count(0)
+  local line = api.nvim_buf_line_count(0) - 1
   dashboard.entries[line] = {
     line = line,
     key = entry.key,
