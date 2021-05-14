@@ -185,6 +185,7 @@ end
 ---Setting up the servers with the provided configuration and additional
 ---capabilities.
 for server, config in pairs(servers) do
+  config = type(config) == "function" and config() or config
   config.on_attach = custom_on_attach
   config.capabilities = vim.tbl_deep_extend(
     "keep",

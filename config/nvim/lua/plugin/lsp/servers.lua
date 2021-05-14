@@ -30,6 +30,26 @@ local isort = {
   formatStdin = true,
 }
 
+--- This function if called immediately on startup might not have all the correct
+--- paths added to the runtime if the the package manager e.g. packer loads things too late
+local function get_lua_runtime()
+  local result = {}
+  for _, path in pairs(vim.api.nvim_list_runtime_paths()) do
+    local lua_path = string.format("%s/lua", path)
+    if vim.fn.isdirectory(lua_path) > 0 then
+      -- Resolve the symlinks to avoid duplication
+      result[vim.loop.fs_realpath(lua_path)] = true
+    end
+  end
+
+  -- This loads the `lua` files from nvim into the runtime.
+  result[vim.fn.expand("$VIMRUNTIME/lua")] = true
+  return result
+end
+
+-- LSP server configs are setup dynamically as they need to be generated during
+-- startup so things like runtimepath for lua is correctly populated.
+---@return table<string, table|function>
 return {
   -- https://github.com/bash-lsp/bash-language-server
   -- Settings: https://github.com/bash-lsp/bash-language-server/blob/master/server/src/config.ts
@@ -83,35 +103,53 @@ return {
   -- },
 
   -- https://github.com/sumneko/lua-language-server
-  -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#sumneko_lua
-  sumneko_lua = {
-    cmd = {
-      os.getenv("HOME")
-        .. "/git/lua-language-server/bin/macOS/lua-language-server",
-      "-E",
-      os.getenv("HOME") .. "/git/lua-language-server/main.lua",
-    },
-    settings = {
-      Lua = {
-        runtime = {
-          version = "LuaJIT",
-          path = vim.split(package.path, ";"),
-        },
-        diagnostics = {
-          enable = true,
-          -- use: packer.nvim related
-          globals = { "vim", "use" },
-        },
-        workspace = {
-          library = {
-            [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-            [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+  -- Settings: https://github.com/sumneko/vscode-lua/blob/master/setting/schema.json
+  sumneko_lua = function()
+    -- NOTE: This is the secret sauce that allows reading requires and variables
+    -- between different modules in the nvim lua context
+    ---@see https://gist.github.com/folke/fe5d28423ea5380929c3f7ce674c41d8
+    local path = vim.split(package.path, ";")
+    table.insert(path, "lua/?.lua")
+    table.insert(path, "lua/?/init.lua")
+    local library = get_lua_runtime()
+    return {
+      cmd = {
+        os.getenv("HOME")
+          .. "/git/lua-language-server/bin/macOS/lua-language-server",
+        "-E",
+        os.getenv("HOME") .. "/git/lua-language-server/main.lua",
+      },
+      -- delete root from workspace to make sure we don't trigger duplicate
+      -- warnings
+      on_new_config = function(config, root)
+        local libs = vim.deepcopy(library)
+        libs[root] = nil
+        config.settings.Lua.workspace.library = libs
+        return config
+      end,
+      settings = {
+        Lua = {
+          runtime = {
+            version = "LuaJIT",
+            path = path,
           },
-          preloadFileSize = 1000, -- Default: 100
+          diagnostics = {
+            enable = true,
+            -- Get the language server to recognize the globals
+            globals = { "vim", "use" },
+          },
+          workspace = {
+            -- Make the server aware of Neovim runtime files
+            library = library,
+            maxPreload = 2000,
+            preloadFileSize = 50000,
+          },
+          -- Do not send telemetry data
+          telemetry = { enable = false },
         },
       },
-    },
-  },
+    }
+  end,
 
   -- https://github.com/iamcco/vim-language-server
   vimls = {},
