@@ -15,13 +15,13 @@ local plugins = require("plugin.lsp.plugins")
 local servers = require("plugin.lsp.servers")
 
 -- Utiliy functions, commands and keybindings
-function _G._open_lsp_log()
+local function open_lsp_log()
   cmd("botright split")
   cmd("resize 20")
   cmd("edit " .. vim.lsp.get_log_path())
 end
 
-cmd("command! -nargs=0 LspLog call v:lua._open_lsp_log()")
+dm.command({ "LspLog", open_lsp_log })
 
 map("n", "<Leader>ll", "<Cmd>LspLog<CR>")
 map("n", "<Leader>lr", "<Cmd>LspRestart<CR>")
