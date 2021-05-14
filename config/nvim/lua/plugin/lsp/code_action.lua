@@ -69,8 +69,9 @@ function M.handler(_, _, response)
   local action_lines = {}
   local longest_line = 0
   for index, action in ipairs(response) do
+    local title = action.title:gsub("\r\n", "\\r\\n"):gsub("\n", "\\n")
     local pad = index < 10 and "  " or " "
-    local line = string.format("[%d]%s%s", index, pad, action.title)
+    local line = string.format("[%d]%s%s", index, pad, title)
     table.insert(action_lines, line)
     longest_line = math.max(longest_line, api.nvim_strwidth(line))
   end
