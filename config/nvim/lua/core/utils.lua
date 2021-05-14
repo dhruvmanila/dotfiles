@@ -330,4 +330,32 @@ function M.open_bordered_window(opts)
   return winnr, bufnr, { winnr = border_winnr }
 end
 
+-- Helper function to create a floating window in which the output of
+-- `:StartupTime` will be displayed.
+function M.startuptime()
+  local width = math.min(100, vim.o.columns - 10)
+  local height = vim.o.lines - 9
+  local bufnr = api.nvim_create_buf(false, true)
+
+  local winnr = api.nvim_open_win(bufnr, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = math.floor((vim.o.lines - height) / 2) - 1,
+    col = math.floor((vim.o.columns - width) / 2),
+    style = "minimal",
+    border = icons.border.edge,
+  })
+
+  cmd("StartupTime")
+  vim.bo.bufhidden = "wipe"
+  vim.wo.cursorline = true
+  local quit_fn = string.format(
+    "<Cmd>lua vim.api.nvim_win_close(%d, true)<CR>",
+    winnr
+  )
+  local opts = { noremap = true, nowait = true, silent = true }
+  api.nvim_buf_set_keymap(0, "n", "q", quit_fn, opts)
+end
+
 return M

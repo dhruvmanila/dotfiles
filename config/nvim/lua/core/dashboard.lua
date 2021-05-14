@@ -121,7 +121,7 @@ local entries = {
   {
     key = "p",
     description = { icons.stopwatch .. "  Startup time" },
-    command = "StartupTime",
+    command = "lua require('core.utils').startuptime()",
   },
 }
 
