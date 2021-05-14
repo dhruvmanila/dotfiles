@@ -9,19 +9,44 @@ _NvimGlobalCallbacks = _NvimGlobalCallbacks or {}
 -- Create a global namespace to store callbacks, global functions, etc.
 -- TODO: can we use 'nvim', 'g', 'neovim' or something similar to neovim itself?
 _G.dm = {
-  _store = _NvimGlobalCallbacks or {},
+  _store = _NvimGlobalCallbacks,
 }
 
 local api = vim.api
 local format = string.format
 
--- Store the given function in the global callbacks table and return its
--- reference id
+-- Create a unique identification string readable by human for the given
+-- function. This create a string of the following format:
+--        "<source>_<name>_<linedefined>"
 ---@param f function
----@return number
+---@return string
+---@see https://www.lua.org/pil/23.1.html
+local function create_id(f)
+  local info = debug.getinfo(f, "Sn") -- Source and name related information
+  if not info then
+    return
+  end
+  local source = info.source
+    :gsub(".*/lua/(.*)", "%1") -- path from "../lua/" module
+    :gsub("/", ".") -- replace "/" with "."
+    :gsub("%.lua$", "") -- remove the ".lua" extension
+  local name = info.name and "_" .. info.name or ""
+  local linedefined = "_" .. info.linedefined
+  return format("%s%s%s", source, name, linedefined)
+end
+
+-- Store the given function in the global callbacks table and return its
+-- unique identification string.
+---@param f function
+---@return string
 function dm._create(f)
-  table.insert(dm._store, f)
-  return #dm._store
+  vim.validate({ f = { f, "f" } })
+  local id = create_id(f)
+  if not id or id == "" then
+    id = tostring(vim.tbl_count(dm._store) + 1)
+  end
+  dm._store[id] = f
+  return id
 end
 
 -- Execute the callback registered at the given id, passing the rest of the
@@ -43,7 +68,7 @@ function dm.autocmd(opts)
   local command = opts.command
   if type(command) == "function" then
     local fn_id = dm._create(command)
-    command = format("lua dm._execute(%d)", fn_id)
+    command = format("lua dm._execute('%s')", fn_id)
   end
   vim.cmd(format(
     "autocmd %s %s %s %s %s",
@@ -86,7 +111,7 @@ function dm.command(opts)
   if type(rhs) == "function" then
     local fn_id = dm._create(rhs)
     rhs = format(
-      "lua dm._execute(%d%s)",
+      "lua dm._execute('%s'%s)",
       fn_id,
       nargs > 0 and ", <f-args>" or ""
     )
