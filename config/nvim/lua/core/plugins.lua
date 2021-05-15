@@ -237,6 +237,13 @@ packer.startup({
   end,
 
   config = {
+    display = {
+      open_fn = function()
+        return require("packer.util").float({
+          border = require("core.icons").border.edge,
+        })
+      end,
+    },
     profile = {
       enable = true,
       threshold = 0, -- ms
