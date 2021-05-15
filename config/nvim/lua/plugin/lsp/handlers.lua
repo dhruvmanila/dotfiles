@@ -33,17 +33,20 @@ lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
 
 lsp.handlers["textDocument/codeAction"] = code_action.handler
 
--- Modified version of the original handler. This will not open up the quickfix
--- window.
+-- Modified version of the original handler. This will open the quickfix
+-- window only if the response is a list and the count is greater than 1.
 lsp.handlers["textDocument/definition"] = function(_, _, response)
   if not response or vim.tbl_isempty(response) then
     print("[LSP] No definition found")
     return
   end
 
+  -- Response: Location | Location[] | LocationLink[] | null
   if vim.tbl_islist(response) then
-    print("[LSP] Found multiple definitions, setting them up in qflist")
-    lsp.util.set_qflist(lsp.util.locations_to_items(response))
+    if vim.tbl_count(response) > 1 then
+      print("[LSP] Found multiple definitions, setting them up in qflist")
+      lsp.util.set_qflist(lsp.util.locations_to_items(response))
+    end
     lsp.util.jump_to_location(response[1])
   else
     lsp.util.jump_to_location(response)
