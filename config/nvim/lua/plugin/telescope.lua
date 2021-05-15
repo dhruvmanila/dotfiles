@@ -90,7 +90,7 @@ require("telescope").setup({
     sorting_strategy = "ascending",
     layout_strategy = "horizontal",
     color_devicons = true,
-    winblend = 15,
+    winblend = vim.g.window_blend,
     file_ignore_patterns = { "__pycache__", ".mypy_cache" },
     layout_defaults = {
       horizontal = {

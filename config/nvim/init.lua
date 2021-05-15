@@ -47,6 +47,9 @@ g.vimsyn_embed = "l"
 -- This is set here as it is accessed by Dashboard as well
 g.startify_session_dir = vim.fn.stdpath("data") .. "/session"
 
+-- TODO: kitty cuts or reduce size for double width symbol
+g.window_blend = 0
+
 -- Setup neovim providers
 g.loaded_python_provider = 0
 g.python3_host_prog = "~/.neovim/py3/bin/python3"

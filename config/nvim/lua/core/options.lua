@@ -35,7 +35,7 @@ opt.wildmode = "longest:full,full"
 -- noselect: do not select a match in the menu, force the user to select one
 opt.completeopt = "menuone,noinsert,noselect"
 opt.pumheight = 20
-opt.pumblend = 15
+opt.pumblend = vim.g.window_blend
 
 -- Set the default grep program to ripgrep if available
 if vim.fn.executable("rg") then
