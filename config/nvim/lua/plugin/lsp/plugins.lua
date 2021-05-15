@@ -1,5 +1,4 @@
-local icons = require("core.icons").icons
-local kind_icons = require("core.icons").lsp_kind
+local icons = require("core.icons")
 local lspstatus = require("lsp-status")
 
 local plugins = {}
@@ -24,7 +23,7 @@ lspstatus.config({
   end,
   kind_labels = (function()
     local items = {}
-    for _, info in ipairs(kind_icons) do
+    for _, info in ipairs(icons.lsp_kind) do
       local icon, name = unpack(info)
       items[name] = icon
     end

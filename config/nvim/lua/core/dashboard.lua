@@ -1,4 +1,4 @@
-local icons = require("core.icons").icons
+local icons = require("core.icons")
 local utils = require("core.utils")
 
 -- Extract out the required namespace/function

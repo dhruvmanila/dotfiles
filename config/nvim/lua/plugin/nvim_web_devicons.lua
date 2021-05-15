@@ -1,5 +1,5 @@
 -- Ref: https://github.com/kyazdani42/nvim-web-devicons
-local icons = require("core.icons").icons
+local icons = require("core.icons")
 
 require("nvim-web-devicons").setup({
   -- your personnal icons can go here (to override)

@@ -82,7 +82,7 @@ function M.handler(_, _, response)
     border = icons.border.edge,
   })
 
-  local title = string.format(" %s Code Actions:", icons.icons.lightbulb)
+  local title = string.format(" %s Code Actions:", icons.lightbulb)
   utils.append(bufnr, { title }, "YellowBold")
   utils.append(bufnr, { string.rep("─", longest_line) }, "Grey")
   -- Number of rows before the code action content

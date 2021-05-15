@@ -1,8 +1,7 @@
 local cmd = vim.api.nvim_command
 local sign_define = vim.fn.sign_define
 
-local icons = require("core.icons").icons
-local kind_icons = require("core.icons").lsp_kind
+local icons = require("core.icons")
 local map = require("core.utils").map
 local lspconfig = require("lspconfig")
 local lspstatus = require("lsp-status")
@@ -30,7 +29,7 @@ map("n", "<Leader>lr", "<Cmd>LspRestart<CR>")
 -- vscode-codicons: https://github.com/microsoft/vscode-codicons
 require("vim.lsp.protocol").CompletionItemKind = (function()
   local items = {}
-  for i, info in ipairs(kind_icons) do
+  for i, info in ipairs(icons.lsp_kind) do
     local icon, name = unpack(info)
     items[i] = icon .. "  " .. name
   end

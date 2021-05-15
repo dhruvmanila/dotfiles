@@ -84,7 +84,7 @@ end
 
 require("telescope").setup({
   defaults = {
-    prompt_prefix = require("core.icons").icons.telescope .. " ",
+    prompt_prefix = require("core.icons").telescope .. " ",
     selection_caret = "❯ ",
     prompt_position = "top",
     sorting_strategy = "ascending",

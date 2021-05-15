@@ -1,5 +1,5 @@
 local fn = vim.fn
-local icons = require("core.icons").icons
+local icons = require("core.icons")
 local devicons = require("nvim-web-devicons")
 local utils = require("core.utils")
 

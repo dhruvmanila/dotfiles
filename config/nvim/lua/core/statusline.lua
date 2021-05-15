@@ -3,8 +3,7 @@
 local fn = vim.fn
 local contains = vim.tbl_contains
 local devicons = require("nvim-web-devicons")
-local icons = require("core.icons").icons
-local spinner_frames = require("core.icons").spinner_frames
+local icons = require("core.icons")
 local utils = require("core.utils")
 local lsp_status = require("lsp-status")
 
@@ -290,6 +289,7 @@ end
 local function lsp_messages()
   local messages = fn.uniq(lsp_status.messages())
   local msgs = {}
+  local spinner_frames = icons.spinner_frames
 
   for _, msg in ipairs(messages) do
     local client_name = "LSP[" .. msg.name .. "]:"
