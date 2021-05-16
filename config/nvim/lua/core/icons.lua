@@ -65,7 +65,7 @@ local aliases = {
   diff_removed = "diff-removed",
   directory = "file-directory",
   lines = "three-bars",
-  lists = "list=unordered",
+  lists = "list-unordered",
   github = "mark-github",
 }
 
