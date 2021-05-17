@@ -154,7 +154,7 @@ load_telescope_extensions({
   "fzf",
   -- "arecibo",
   -- "bookmarks",
-  -- "github_stars",
+  "github_stars",
   -- "installed_plugins",
   -- "startify_sessions",
   -- "dirvish_cd",
@@ -319,29 +319,47 @@ function M.commands()
 end
 
 function M.command_history()
-  require("telescope.builtin").command_history({
-    previewer = wrap_previewer(),
-    results_title = false,
-    preview_title = "Command",
-
-    -- 'center' does not have a layout config :(
-    layout_strategy = "vertical",
+  require("telescope.builtin").command_history(themes.get_ivy({
+    previewer = false,
     layout_config = {
-      preview_height = 3,
-      mirror = true,
-      width_padding = math.max(10, (vim.o.columns - 100) / 2),
-      height_padding = math.max(3, (vim.o.lines - 30) / 2),
+      height = math.floor(0.4 * vim.o.lines),
     },
-  })
+  }))
 end
 
 function M.search_history()
-  require("telescope.builtin").search_history(themes.get_dropdown({
-    width = math.min(100, vim.o.columns - 20),
-    results_height = math.min(30, vim.o.lines - 10),
+  require("telescope.builtin").search_history(themes.get_ivy({
     previewer = false,
+    layout_config = {
+      height = math.floor(0.4 * vim.o.lines),
+    },
   }))
 end
+
+-- function M.command_history()
+--   require("telescope.builtin").command_history({
+--     previewer = wrap_previewer(),
+--     results_title = false,
+--     preview_title = "Command",
+
+--     -- 'center' does not have a layout config :(
+--     layout_strategy = "vertical",
+--     layout_config = {
+--       preview_height = 3,
+--       mirror = true,
+--       width_padding = math.max(10, (vim.o.columns - 100) / 2),
+--       height_padding = math.max(3, (vim.o.lines - 30) / 2),
+--     },
+--   })
+-- end
+
+-- function M.search_history()
+--   require("telescope.builtin").search_history(themes.get_dropdown({
+--     width = math.min(100, vim.o.columns - 20),
+--     results_height = math.min(30, vim.o.lines - 10),
+--     previewer = false,
+--   }))
+-- end
 
 function M.arecibo()
   require("telescope").extensions.arecibo.websearch(no_previewer())
