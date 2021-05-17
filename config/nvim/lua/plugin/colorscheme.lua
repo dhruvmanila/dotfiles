@@ -60,6 +60,11 @@ highlight("TSFunction", { force = true, link = "Function" })
 highlight("TSParameter", { force = true, link = "Blue" })
 highlight("TSProperty", { force = true, link = "Blue" })
 highlight("TSField", { force = true, link = "Blue" })
+highlight("TSKeyword", { force = true, link = "RedItalic" })
+highlight("TSKeywordFunction", { force = true, link = "RedItalic" })
+highlight("TSConditional", { force = true, link = "RedItalic" })
+highlight("TSRepeat", { force = true, link = "RedItalic" })
+highlight("TSException", { force = true, link = "RedItalic" })
 
 -- Lsp
 -- highlight("NormalFloat", { force = true, link = "Normal" })
