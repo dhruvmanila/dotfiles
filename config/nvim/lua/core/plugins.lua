@@ -95,6 +95,25 @@ packer.startup({
       {
         "hrsh7th/nvim-compe",
         event = "InsertEnter",
+        setup = function()
+          -- Avoid loading unnecessary compe sources
+          -- vim.g.loaded_compe_buffer = 1
+          vim.g.loaded_compe_calc = 1
+          vim.g.loaded_compe_emoji = 1
+          vim.g.loaded_compe_luasnip = 1
+          -- vim.g.loaded_compe_nvim_lsp = 1
+          -- vim.g.loaded_compe_nvim_lua = 1
+          vim.g.loaded_compe_omni = 1
+          -- vim.g.loaded_compe_path = 1
+          vim.g.loaded_compe_snippets_nvim = 1
+          vim.g.loaded_compe_spell = 1
+          vim.g.loaded_compe_tags = 1
+          vim.g.loaded_compe_treesitter = 1
+          vim.g.loaded_compe_ultisnips = 1
+          vim.g.loaded_compe_vim_lsc = 1
+          vim.g.loaded_compe_vim_lsp = 1
+          vim.g.loaded_compe_vsnip = 1
+        end,
         config = "require('plugin.completion')",
       },
       { "glepnir/lspsaga.nvim", opt = true },
