@@ -165,8 +165,9 @@ end
 -- of the current window.
 ---@param width number width of the popup window
 ---@param height number height of the popup window
+---@param bordered boolean (optional) will border be inserted by neovim?
 ---@return table @opts table to be passed to `vim.api.nvim_open_win`
-function M.make_floating_popup_options(width, height)
+function M.make_floating_popup_options(width, height, bordered)
   local anchor = ""
   local row, col
 
@@ -180,7 +181,7 @@ function M.make_floating_popup_options(width, height)
   else
     anchor = anchor .. "S"
     height = math.min(lines_above, height)
-    row = 0
+    row = bordered and -2 or 0
   end
 
   local col_left = api.nvim_win_get_position(0)[2] + vim.fn.wincol() + width
