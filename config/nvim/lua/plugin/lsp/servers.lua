@@ -30,21 +30,27 @@ local isort = {
   formatStdin = true,
 }
 
---- This function if called immediately on startup might not have all the correct
---- paths added to the runtime if the the package manager e.g. packer loads things too late
+-- Neovim runtime libs to help the Lua Language Server.
+-- NOTE: If the Neovim config directory is a symlink to the dotfiles directory,
+-- then include the dotfiles directory instead.
+---@type string[]
+local neovim_runtime_lib = {
+  "$VIMRUNTIME/lua", -- runtime
+  "~/dotfiles", -- config
+  "~/.local/share/nvim/site/pack/packer/opt/*", -- opt plugins
+  "~/.local/share/nvim/site/pack/packer/start/*", -- start plugins
+}
+
+-- Return the Neovim runtime paths to help the language server.
+---@return table<string, boolean>
 local function get_lua_runtime()
-  local result = {}
-  for _, path in pairs(vim.api.nvim_list_runtime_paths()) do
-    local lua_path = string.format("%s/lua", path)
-    if vim.fn.isdirectory(lua_path) > 0 then
-      -- Resolve the symlinks to avoid duplication
-      result[vim.loop.fs_realpath(lua_path)] = true
+  local library = {}
+  for _, lib in ipairs(neovim_runtime_lib) do
+    for _, path in ipairs(vim.fn.expand(lib, false, true)) do
+      library[vim.loop.fs_realpath(path)] = true
     end
   end
-
-  -- This loads the `lua` files from nvim into the runtime.
-  result[vim.fn.expand("$VIMRUNTIME/lua")] = true
-  return result
+  return library
 end
 
 -- LSP server configs are setup dynamically as they need to be generated during
@@ -112,21 +118,24 @@ return {
     table.insert(path, "lua/?.lua")
     table.insert(path, "lua/?/init.lua")
     local library = get_lua_runtime()
+    local home = vim.loop.os_homedir()
+
     return {
       cmd = {
-        os.getenv("HOME")
-          .. "/git/lua-language-server/bin/macOS/lua-language-server",
+        home .. "/git/lua-language-server/bin/macOS/lua-language-server",
         "-E",
-        os.getenv("HOME") .. "/git/lua-language-server/main.lua",
+        home .. "/git/lua-language-server/main.lua",
       },
-      -- delete root from workspace to make sure we don't trigger duplicate
-      -- warnings
+
+      -- Delete the root directory from workspace to make sure we don't
+      -- trigger duplicate warnings.
       on_new_config = function(config, root)
         local libs = vim.deepcopy(library)
         libs[root] = nil
         config.settings.Lua.workspace.library = libs
         return config
       end,
+
       settings = {
         Lua = {
           runtime = {
