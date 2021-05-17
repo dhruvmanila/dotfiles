@@ -36,6 +36,33 @@ do
   })
 end
 
+-- Automatically clear commandline messages after a few seconds delay
+-- Source: https://unix.stackexchange.com/a/613645
+do
+  local id
+
+  -- Stop the old timer, if any, and create a new timer to clear out the
+  -- command line messages.
+  local function clear_messages()
+    if id then
+      vim.fn.timer_stop(id)
+    end
+    id = vim.fn.timer_start(2000, function()
+      if vim.fn.mode() == "n" then
+        vim.api.nvim_echo({}, false, {})
+      end
+    end)
+  end
+
+  dm.augroup("clear_command_messages", {
+    {
+      events = { "CmdlineLeave", "CmdlineChanged" },
+      targets = { ":" },
+      command = clear_messages,
+    },
+  })
+end
+
 dm.augroup("custom_autocmds", {
   -- Highlight current cursorline, but only in the active window and not in
   -- special buffers like dashboard.
