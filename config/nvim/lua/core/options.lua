@@ -55,7 +55,7 @@ opt.listchars = table.concat({
   -- "eol:↴",
 }, ",")
 
-opt.colorcolumn = "80"
+-- opt.colorcolumn = "80"
 opt.cursorline = true
 opt.number = true
 opt.relativenumber = true

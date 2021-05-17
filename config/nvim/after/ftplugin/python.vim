@@ -2,7 +2,7 @@ setlocal tabstop=4
 setlocal shiftwidth=4
 
 " Default is 80
-setlocal colorcolumn=88
+" setlocal colorcolumn=88
 
 " Format with 'gq'
 setlocal formatprg=black\ -q\ -

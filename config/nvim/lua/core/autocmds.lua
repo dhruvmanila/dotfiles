@@ -1,3 +1,41 @@
+do
+  -- 'colorcolumn' value for specific filetypes
+  ---@type table<string, string>
+  local ft_colorcolumn = { python = "88" }
+
+  -- Set the colorcolumn value of the window appropriately.
+  ---@param leaving boolean
+  local function set_colorcolumn(leaving)
+    if vim.bo.buftype == "prompt" then
+      return
+    end
+    -- Don't set it when there isn't enough space or we're leaving insert mode.
+    if vim.api.nvim_win_get_width(0) <= 90 or leaving then
+      vim.wo.colorcolumn = ""
+    elseif vim.wo.colorcolumn == "" then
+      vim.wo.colorcolumn = ft_colorcolumn[vim.bo.filetype] or "80"
+    end
+  end
+
+  -- Highlight colorcolumn only in insert mode
+  dm.augroup("auto_colorcolumn", {
+    {
+      events = { "InsertEnter" },
+      targets = { "*" },
+      command = function()
+        set_colorcolumn(false)
+      end,
+    },
+    {
+      events = { "InsertLeave" },
+      targets = { "*" },
+      command = function()
+        set_colorcolumn(true)
+      end,
+    },
+  })
+end
+
 dm.augroup("custom_autocmds", {
   -- Highlight current cursorline, but only in the active window and not in
   -- special buffers like dashboard.
