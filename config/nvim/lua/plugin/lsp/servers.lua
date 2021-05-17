@@ -141,8 +141,8 @@ return {
           workspace = {
             -- Make the server aware of Neovim runtime files
             library = library,
-            maxPreload = 2000,
-            preloadFileSize = 50000,
+            maxPreload = 1000,
+            preloadFileSize = 1000,
           },
           -- Do not send telemetry data
           telemetry = { enable = false },
