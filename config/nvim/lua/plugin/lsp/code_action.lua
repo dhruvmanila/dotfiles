@@ -3,11 +3,13 @@ local lsp = vim.lsp
 local icons = require("core.icons")
 local utils = require("core.utils")
 
-local M = {}
 local code_action = {}
+local config = { show_header = true }
+
+local M = {}
 
 -- Define the required set of mappings:
---   - `number`: execute the respective code action "number"
+--   - `number`: execute the respective code action at "number"
 --   - `<CR>`: execute the code action under the cursor
 --   - `q`: quit the code action window
 ---@param bufnr number
@@ -32,6 +34,32 @@ local function set_mappings(bufnr, winnr)
     winnr
   )
   api.nvim_buf_set_keymap(bufnr, "n", "q", close_fn, nowait_opts)
+end
+
+-- Define the required set of autocmds to make sure:
+--   - Cursor moves in the fixed column within row limits
+--   - Window is closed when we leave the window or buffer
+---@param bufnr number
+---@param winnr number
+local function set_autocmds(bufnr, winnr)
+  local target_buffer = string.format("<buffer=%s>", bufnr)
+  dm.augroup("code_action_autocmds", {
+    {
+      events = { "CursorMoved" },
+      targets = { target_buffer },
+      command = function()
+        require("core.utils").fixed_column_movement(code_action)
+      end,
+    },
+    {
+      events = { "BufLeave", "WinLeave" },
+      targets = { target_buffer },
+      modifiers = { "++once" },
+      command = function()
+        api.nvim_win_close(winnr, true)
+      end,
+    },
+  })
 end
 
 -- Execute the given "choice" code action. If choice is `nil`, then execute
@@ -76,17 +104,15 @@ function M.handler(_, _, response)
     longest_line = math.max(longest_line, api.nvim_strwidth(line))
   end
 
-  local winnr, bufnr = utils.open_bordered_window({
-    width = longest_line,
-    height = 2 + #action_lines, -- header + separator + content
-    border = icons.border.edge,
-  })
+  local current_row = 0
+  local bufnr = api.nvim_create_buf(false, true)
 
-  local title = string.format(" %s Code Actions:", icons.lightbulb)
-  utils.append(bufnr, { title }, "YellowBold")
-  utils.append(bufnr, { string.rep("─", longest_line) }, "Grey")
-  -- Number of rows before the code action content
-  local current_row = 2
+  if config.show_header then
+    local header = string.format(" %s Code Actions:", icons.lightbulb)
+    utils.append(bufnr, { header }, "YellowBold")
+    utils.append(bufnr, { string.rep("─", longest_line) }, "Grey")
+    current_row = current_row + 2
+  end
 
   for _, line in ipairs(action_lines) do
     utils.append(bufnr, { line })
@@ -110,19 +136,20 @@ function M.handler(_, _, response)
   api.nvim_buf_set_option(bufnr, "buftype", "nofile")
   api.nvim_buf_set_option(bufnr, "matchpairs", "")
 
-  api.nvim_win_set_cursor(
-    winnr,
-    { code_action.firstline, code_action.fixed_column }
+  local win_opts = lsp.util.make_floating_popup_options(
+    longest_line,
+    current_row,
+    true -- border will be inserted by neovim
   )
-  set_mappings(bufnr, winnr)
+  win_opts.border = icons.border.edge
+  local winnr = api.nvim_open_win(bufnr, true, win_opts)
 
-  dm.autocmd({
-    events = { "CursorMoved" },
-    targets = { string.format("<buffer=%s>", bufnr) },
-    command = function()
-      require("core.utils").fixed_column_movement(code_action)
-    end,
+  api.nvim_win_set_cursor(winnr, {
+    code_action.firstline,
+    code_action.fixed_column,
   })
+  set_mappings(bufnr, winnr)
+  set_autocmds(bufnr, winnr)
 end
 
 -- For debugging purposes.
