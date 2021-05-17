@@ -20,10 +20,10 @@ require("compe").setup({
   documentation = true,
 
   source = {
-    path = true,
-    buffer = { menu = "[Buf]" },
-    nvim_lsp = true,
-    nvim_lua = true,
+    path = { priority = 9 },
+    buffer = { menu = "[Buf]", priority = 8 },
+    nvim_lsp = { priority = 10 },
+    nvim_lua = { priority = 10 },
     -- vsnip = true;  -- TODO: uncomment when snippets are setup
   },
 })
