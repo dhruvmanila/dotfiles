@@ -13,6 +13,9 @@ require("plugin.lsp.handlers")
 local plugins = require("plugin.lsp.plugins")
 local servers = require("plugin.lsp.servers")
 
+-- For debugging purposes:
+-- vim.lsp.set_log_level("debug")
+
 -- Utiliy functions, commands and keybindings
 local function open_lsp_log()
   cmd("botright split")
@@ -63,6 +66,7 @@ end
 -- function using the `filetype` conditions.
 local function custom_on_attach(client)
   local lsp_autocmds = {}
+  local capabilities = client.resolved_capabilities
 
   -- For plugins with an `on_attach` callback, call them here.
   plugins.on_attach(client)
@@ -73,49 +77,40 @@ local function custom_on_attach(client)
   -- Keybindings:
   -- For all types of diagnostics: [d | ]d
   -- For warning and error diagnostics: [e | ]e
-  -- { disable_popup = true }
-  local edge_border = "require('core.icons').border.edge"
-  local popup_opts = string.format(
-    "{show_header = false, border = %s}",
-    edge_border
-  )
-  buf_map(
-    "[d",
-    string.format("vim.lsp.diagnostic.goto_prev({popup_opts = %s})", popup_opts)
-  )
-  buf_map(
-    "]d",
-    string.format("vim.lsp.diagnostic.goto_next({popup_opts = %s})", popup_opts)
-  )
+  -- { enable_popup = false }
+  -- local edge_border = "require('core.icons').border.edge"
+  -- local popup_opts = string.format(
+  --   "{show_header = false, border = %s}",
+  --   edge_border
+  -- )
+  buf_map("[d", "vim.lsp.diagnostic.goto_prev({enable_popup = false})")
+  buf_map("]d", "vim.lsp.diagnostic.goto_next({enable_popup = false})")
   buf_map(
     "[e",
-    string.format(
-      "vim.lsp.diagnostic.goto_prev({severity_limit = 'Warning', popup_opts = %s})",
-      popup_opts
-    )
+    "vim.lsp.diagnostic.goto_prev({severity_limit = 'Warning', enable_popup = false})"
   )
   buf_map(
     "]e",
-    string.format(
-      "vim.lsp.diagnostic.goto_next({severity_limit = 'Warning', popup_opts = %s})",
-      popup_opts
-    )
+    "vim.lsp.diagnostic.goto_next({severity_limit = 'Warning', enable_popup = false})"
   )
-  buf_map(
-    "gl",
-    string.format("vim.lsp.diagnostic.show_line_diagnostics(%s)", popup_opts)
-  )
+  buf_map("gl", "require('plugin.lsp.diagnostics').show_line_diagnostics()")
   buf_map("K", "vim.lsp.buf.hover()")
   buf_map("gd", "vim.lsp.buf.definition()")
   buf_map("gD", "vim.lsp.buf.declaration()")
   buf_map("gy", "vim.lsp.buf.type_definition()")
   buf_map("gi", "vim.lsp.buf.implementation()")
   buf_map("gr", "vim.lsp.buf.references()")
-  buf_map("<C-s>", "vim.lsp.buf.signature_help()")
-  buf_map("<Leader>rn", "require('plugin.lsp.rename').rename()")
+
+  if capabilities.signature_help then
+    buf_map("<C-s>", "vim.lsp.buf.signature_help()")
+  end
+
+  if capabilities.rename then
+    buf_map("<Leader>rn", "require('plugin.lsp.rename').rename()")
+  end
 
   -- Setup auto-formatting on save if the language server supports it.
-  if client.resolved_capabilities.document_formatting then
+  if capabilities.document_formatting then
     buf_map("<Leader>lf", "vim.lsp.buf.formatting()")
     -- TODO: auto format setup as per the configuration option b.auto_format_<ft> ?
     -- table.insert(lsp_autocmds, {
@@ -128,7 +123,7 @@ local function custom_on_attach(client)
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
-  if client.resolved_capabilities.document_highlight then
+  if capabilities.document_highlight then
     table.insert(lsp_autocmds, {
       events = { "CursorHold" },
       targets = { "<buffer>" },
@@ -148,7 +143,7 @@ local function custom_on_attach(client)
     -- })
   end
 
-  if client.resolved_capabilities.code_action then
+  if capabilities.code_action then
     cmd("packadd nvim-lightbulb")
 
     table.insert(lsp_autocmds, {
