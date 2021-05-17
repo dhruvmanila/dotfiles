@@ -2,21 +2,18 @@ local api = vim.api
 local lsp = vim.lsp
 local cmd = api.nvim_command
 local utils = require("core.utils")
+local icons = require("core.icons")
+
+local config = { width = 40, height = 1, border_hl = "TabLineSel" }
 
 local M = {}
 
----@class state
----@field orig_name string
----@field orig_bufnr number
----@field prompt_bufnr number
-local state = {}
-
 -- Cleanup tasks performed:
+--   - Exit from insert mode
 --   - Delete the prompt buffer
---   - Clear the rename state
 function M.cleanup()
-  api.nvim_buf_delete(state.prompt_bufnr, { force = true })
-  state = {}
+  cmd("stopinsert")
+  api.nvim_buf_delete(0, { force = true })
 end
 
 -- Define the required set of mappings:
@@ -40,42 +37,45 @@ end
 -- buffer by Neovim.
 ---@param new_name string
 local function callback(new_name)
-  local orig_name, orig_bufnr = state.orig_name, state.orig_bufnr
   M.cleanup()
+  local orig_name = vim.fn.expand("<cword>")
   if not new_name or #new_name == 0 or new_name == orig_name then
     return
   end
   local params = lsp.util.make_position_params()
   params.newName = new_name
-  lsp.buf_request(orig_bufnr, "textDocument/rename", params)
+  lsp.buf_request(0, "textDocument/rename", params)
 end
 
 -- Entrypoint to rename the current word at cursor. The current word will be set
 -- in the prompt buffer.
 function M.rename()
-  state.orig_name = vim.fn.expand("<cword>")
-  state.orig_bufnr = api.nvim_get_current_buf()
-
-  local winnr, bufnr = utils.open_bordered_window({
-    title = "New name:",
-    width = 40,
-    height = 1,
-    highlight = "GreyBold",
-  })
+  local orig_name = vim.fn.expand("<cword>")
+  local bufnr = api.nvim_create_buf(false, true)
+  local win_opts = utils.make_floating_popup_options(
+    config.width,
+    config.height,
+    true
+  )
+  win_opts.border = icons.border.default
+  local winnr = api.nvim_open_win(bufnr, true, win_opts)
 
   api.nvim_buf_set_option(bufnr, "buftype", "prompt")
   api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
   api.nvim_win_set_option(winnr, "wrap", false)
-  api.nvim_win_set_option(winnr, "winhl", "NormalFloat:Normal")
+  api.nvim_win_set_option(
+    winnr,
+    "winhl",
+    string.format("FloatBorder:%s,NormalFloat:Normal", config.border_hl)
+  )
 
   -- To line it up with the title
   vim.fn.prompt_setprompt(bufnr, " ")
   vim.fn.prompt_setcallback(bufnr, callback)
-  state.prompt_bufnr = bufnr
 
   set_mappings(bufnr)
   cmd("startinsert!")
-  api.nvim_feedkeys(state.orig_name, "i", true)
+  api.nvim_feedkeys(orig_name, "i", true)
 end
 
 return M
