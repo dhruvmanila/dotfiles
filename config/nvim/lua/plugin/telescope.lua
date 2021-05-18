@@ -134,6 +134,10 @@ require("telescope").setup({
       selected_browser = "brave",
       url_open_command = "open",
     },
+    websearch = {
+      search_engine = "duckduckgo",
+      max_results = 25,
+    },
   },
 })
 
@@ -158,6 +162,7 @@ load_telescope_extensions({
   -- "installed_plugins",
   -- "startify_sessions",
   -- "dirvish_cd",
+  -- "websearch",
 })
 
 -- Helper function to set the keymaps for telescope functions
@@ -194,7 +199,7 @@ tele_map("q/", "search_history")
 
 -- Extensions
 tele_map("<Leader>fb", "bookmarks")
-tele_map("<Leader>fw", "arecibo")
+tele_map("<Leader>fw", "websearch")
 tele_map("<Leader>fs", "startify_sessions")
 
 -- Entrypoints which will allow me to configure each command individually.
@@ -361,8 +366,8 @@ end
 --   }))
 -- end
 
-function M.arecibo()
-  require("telescope").extensions.arecibo.websearch(no_previewer())
+function M.websearch()
+  require("telescope").extensions.websearch.websearch(no_previewer())
 end
 
 function M.bookmarks()
