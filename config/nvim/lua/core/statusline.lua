@@ -300,7 +300,7 @@ local function lsp_messages()
         contents = contents .. " " .. msg.message
       end
       if msg.percentage then
-        contents = contents .. "(" .. msg.percentage .. ")"
+        contents = contents .. string.format(" (%.0f%%%%)", msg.percentage)
       end
       if msg.spinner then
         contents = spinner_frames[(msg.spinner % #spinner_frames) + 1]
@@ -409,6 +409,7 @@ function _G.nvim_statusline()
     return inactive_statusline(ctx, prefix)
   end
 
+  -- TODO: `lsp_status.status()` after #58 gets merged
   local messages = lsp_messages()
   if messages then
     return wrap_hl("StSpecialBuffer") .. prefix .. " " .. messages
