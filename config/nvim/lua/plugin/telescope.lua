@@ -136,7 +136,11 @@ require("telescope").setup({
     },
     websearch = {
       search_engine = "duckduckgo",
-      max_results = 25,
+      url_open_command = "open",
+      -- For DuckDuckGo max results can be either [1, 25] which is the actual
+      -- number of results to fetch or 0 which means to fetch all the results
+      -- from the first page.
+      max_results = 0,
     },
   },
 })

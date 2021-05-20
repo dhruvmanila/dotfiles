@@ -170,7 +170,7 @@ return telescope.register_extension({
     local search_engine = ext_config.search_engine
     local max_results = ext_config.max_results or 25
 
-    if max_results and search_engine == "duckduckgo" and max_results > 25 then
+    if search_engine == "duckduckgo" and max_results > 25 then
       warn("[telescope] duckduckgo (ddgr) supports a maximum of 25 results")
       max_results = 25
     end
