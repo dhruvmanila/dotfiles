@@ -214,7 +214,12 @@ packer.startup({
     use({
       "junegunn/vim-easy-align",
       keys = { { "n", "ge" }, { "x", "ge" } },
-      config = "require('plugin.easy_align')",
+      config = function()
+        require("core.utils").map({ "n", "x" }, "ge", "<Plug>(EasyAlign)", {
+          noremap = false,
+          silent = true,
+        })
+      end,
     })
 
     -- Using only the session management functionalities
