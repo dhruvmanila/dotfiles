@@ -113,9 +113,13 @@ local special_buffer_info = {
     terminal = "Terminal",
     tsplayground = "TSPlayground",
     NvimTree = "NvimTree",
-    fugitive = "Fugitive",
     packer = "Packer",
     gitcommit = "Commit message",
+
+    fugitive = function(ctx)
+      local quit = ctx.inactive and "" or "<q>" .. wrap_hl("StGrey") .. " quit "
+      return "Fugitive" .. "%=" .. quit
+    end,
 
     qf = function(ctx)
       local quit = ctx.inactive and "" or "<q>" .. wrap_hl("StGrey") .. " quit "
