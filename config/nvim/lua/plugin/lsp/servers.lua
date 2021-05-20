@@ -1,4 +1,5 @@
 -- Server configurations
+local warn = require("core.utils").warn
 
 -- efm language server tool configuration
 local mypy = {
@@ -74,9 +75,32 @@ return {
     },
   },
 
-  -- https://github.com/vscode-langservers/vscode-json-languageserver
-  -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#jsonls
-  jsonls = {},
+  -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
+  -- Settings: https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server#settings
+  jsonls = function()
+    local vscode
+    local stable = "/Applications/Visual Studio Code.app"
+    local insider = "/Applications/Visual Studio Code - Insiders.app"
+
+    -- Default to insider if available
+    if vim.fn.isdirectory(insider) > 0 then
+      vscode = insider
+    elseif vim.fn.isdirectory(stable) > 0 then
+      vscode = stable
+    else
+      warn("[LSP] Visual Studio Code not found, defaulting to npm installed server")
+      return {}
+    end
+
+    return {
+      cmd = {
+        "node",
+        vscode
+          .. "/Contents/Resources/app/extensions/json-language-features/server/dist/node/jsonServerMain.js",
+        "--stdio",
+      },
+    }
+  end,
 
   -- Settings: https://github.com/microsoft/pylance-release#settings-and-customization
   pylance = {
