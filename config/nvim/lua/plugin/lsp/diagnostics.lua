@@ -13,7 +13,7 @@ local severity_hl = {
 
 -- Configuration for diagnostics window.
 local config = {
-  show_header = true,
+  show_header = false,
   show_source = true,
   header_hl = "Fg",
   source_hl = "Comment",

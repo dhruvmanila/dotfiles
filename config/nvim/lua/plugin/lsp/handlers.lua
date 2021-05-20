@@ -6,7 +6,7 @@ local border = require("core.icons").border
 lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(
   lsp.diagnostic.on_publish_diagnostics,
   {
-    virtual_text = true,
+    virtual_text = false,
     underline = true,
     signs = true,
     update_in_insert = false,

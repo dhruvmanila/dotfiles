@@ -134,13 +134,11 @@ local function custom_on_attach(client)
       targets = { "<buffer>" },
       command = vim.lsp.buf.clear_references,
     })
-    -- table.insert(lsp_autocmds, {
-    --   events = { "CursorHold" },
-    --   targets = { "<buffer>" },
-    --   command = function()
-    --     vim.lsp.diagnostic.show_line_diagnostics({ show_header = false })
-    --   end,
-    -- })
+    table.insert(lsp_autocmds, {
+      events = { "CursorHold" },
+      targets = { "<buffer>" },
+      command = require("plugin.lsp.diagnostics").show_line_diagnostics,
+    })
   end
 
   if capabilities.code_action then
