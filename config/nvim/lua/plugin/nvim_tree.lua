@@ -3,6 +3,11 @@ local g = vim.g
 local map = vim.api.nvim_set_keymap
 local tree_cb = require("nvim-tree.config").nvim_tree_callback
 
+-- On Ready Event for Lazy Loading to work
+require("nvim-tree.events").on_nvim_tree_ready(function()
+  vim.cmd("NvimTreeRefresh")
+end)
+
 g.nvim_tree_ignore = {
   ".git",
   "__pycache__",
