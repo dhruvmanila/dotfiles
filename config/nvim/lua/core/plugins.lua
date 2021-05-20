@@ -55,6 +55,16 @@ packer.startup({
     -- Color scheme
     use({ "sainnhe/gruvbox-material", config = "require('plugin.colorscheme')" })
 
+    -- Lua
+    use({
+      -- "https://github.com/luvit/luv/blob/master/docs.md" in :help format
+      { "nanotee/luv-vimdocs" },
+
+      -- LSP sumneko setup
+      { "folke/lua-dev.nvim" },
+      { "tjdevries/tree-sitter-lua", opt = true },
+    })
+
     -- Helpful in visualizing colors live in the editor
     use({
       "norcalli/nvim-colorizer.lua",
@@ -180,7 +190,6 @@ packer.startup({
     use({
       { "cespare/vim-toml", ft = "toml" },
       { "raimon49/requirements.txt.vim", ft = "requirements" },
-      { "tjdevries/tree-sitter-lua", opt = true },
     })
 
     -- Git
