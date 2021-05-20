@@ -155,7 +155,7 @@
                             },
                             "to": [
                                 {
-                                    "apple_vendor_top_case_key_code": "keyboard_fn"
+                                    "apple_vendor_top_case_key_code": "osascript ~/dotfiles/mac/karabiner/remove_seleced_files.scpt"
                                 }
                             ]
                         },
