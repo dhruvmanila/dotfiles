@@ -159,17 +159,6 @@ packer.startup({
       { "~/projects/telescope-bookmarks.nvim" },
       { "nvim-telescope/telescope-fzy-native.nvim", opt = true },
       { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-      {
-        "nvim-telescope/telescope-arecibo.nvim",
-        rocks = {
-          "lua-http-parser",
-          {
-            "openssl",
-            env = { OPENSSL_DIR = "/usr/local/Cellar/openssl@1.1/1.1.1k" },
-          },
-        },
-        opt = false,
-      },
     })
 
     -- Treesitter
