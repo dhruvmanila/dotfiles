@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# vim: set filetype=ruby:
+# gs - Browser GitHub stars with fzf
+
+for cmd in gh fzf; do
+  if ! command -v "$cmd" > /dev/null; then
+    echo "[gs]: '$cmd' command not found"
+    exit 1
+  fi
+done
+
+/usr/bin/ruby -x "$0" \
+  | fzf --prompt="GitHub stars ❯ " --ansi --multi --no-hscroll --tiebreak=begin \
+  | awk 'BEGIN { FS = "\t" } { print $2 }' \
+  | xargs open
+
+exit $?
+
+#!ruby
+# encoding: utf-8
+
+require 'json'
+
+width = `tput cols`.strip.to_i / 2
+output = `gh api user/starred --paginate --cache 1h`
+items = JSON.parse(output.gsub('][', ','))
+
+items.each do |item|
+  name = item['full_name'].ljust(width)
+  puts [name, item['html_url']].join("\t\x1b[36m") + "\x1b[m"
+end
