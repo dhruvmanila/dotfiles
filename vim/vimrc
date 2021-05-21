@@ -42,10 +42,16 @@ let g:keep_coc_in_control = 1
 " Start Coc manually (takes precedence over keep_coc_in_control)
 let g:coc_startup_manual_only = 0
 
-
 " PLUGINS
 " -----------------------------------------------------------------------------
 " Ref: https://github.com/junegunn/vim-plug
+
+" Install vim-plug if not found
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
 call plug#begin('~/.vim/plugged')
 

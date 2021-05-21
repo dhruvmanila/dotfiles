@@ -20,6 +20,7 @@ vim/undo/*
 vim/swaps/*
 vim/plugged
 vim/session
+vim/autoload/plug.vim
 
 .vagrant
 
