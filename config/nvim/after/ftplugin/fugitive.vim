@@ -3,7 +3,7 @@ setlocal norelativenumber
 setlocal nolist
 
 " Shift the fugitive window to a vertical split
-if len(nvim_list_wins()) <= 2
+if len(nvim_tabpage_list_wins(0)) <= 2
   wincmd L
   nnoremap <buffer> gh :<C-U>help fugitive-map<CR>
 else
