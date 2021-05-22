@@ -4,16 +4,26 @@ alias python="python3"
 alias g="git"
 alias p="pyenv"
 alias dc="docker-compose"
-alias vi="nvim"
 
 # nnn (to reset less)
 alias nnn='LESS=-R nnn'
+
+# Brew installed neovim (HEAD version)
+alias v="nvim"
+alias vi="nvim"
+
+# Neovim development
+alias dv='cd ${HOME}/contributing/neovim && VIMRUNTIME=runtime ./build/bin/nvim'
+alias dvr='cd ${HOME}/contributing/neovim && VIMRUNTIME=${HOME}/neovim/share/nvim/runtime ./build/bin/nvim'
+
+# Fix ownership in /usr/local/ directories
+alias fixlocal='cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var Frameworks'
 
 # Easy activate/deactivate virtual environments ('p' prefix for Python)
 # alias pva='pyenv activate'
 # alias pvd='pyenv deactivate'
 
-# Easier navigation: .., ..., ...., ..... and -
+# Easier navigation
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
