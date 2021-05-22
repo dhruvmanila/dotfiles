@@ -4,16 +4,37 @@ set -e
 # Debug prompt
 export PS4="\e[1m==> \e[0m"
 
-DOTFILES_DIRECTORY="${HOME}/dotfiles"
 DEFAULT_SHELL="bash"
 
+DOTFILES_DIRECTORY="${HOME}/dotfiles"
+NEOVIM_DIRECTORY="${HOME}/contributing/neovim"
+NEOVIM_INSTALL_DIRECTORY="${HOME}/neovim"
+
 # First version will be the global one
-PYTHON_VERSIONS=("3.9.1")
+PYTHON_VERSIONS=("3.9.4" "3.9.1")
+
+# Packages file
+HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/lib/Brewfile"
+PYTHON_GLOBAL_REQUIREMENTS="${DOTFILES_DIRECTORY}/lib/requirements.txt"
+NPM_GLOBAL_PACKAGES="${DOTFILES_DIRECTORY}/lib/node_modules.txt"
+
+# These directories need to be made if absent
+REQUIRED_DIRECTORIES=(\
+  ~/.config \
+  ~/.gnupg \
+  ~/.ssh \
+  ~/contributing \
+  ~/git \
+  ~/neovim \
+  ~/playground \
+  ~/projects \
+)
 
 # These files/directories will be backed up before symlinking, if they exists.
 BACKUP_DOTFILES=( \
   ~/.bash_profile \
   ~/.bashrc \
+  ~/.config \
   ~/.gitconfig \
   ~/.inputrc \
   ~/.tmux.conf \
@@ -28,6 +49,7 @@ MACOS_DOCK_APPLICATIONS=( \
   # "/Applications/PyCharm CE.app" \
   # "/Applications/Visual Studio Code.app" \
   "/Applications/iTerm.app" \
+  "/Applications/kitty.app" \
   "/System/Applications/Notes.app" \
   "/Applications/Mark Text.app" \
   "/System/Applications/Music.app" \
@@ -46,7 +68,7 @@ YELLOW="\e[1;33m"
 
 
 function header() {
-  printf "%b==> %s %b\n" "$BOLD" "$@" "$RESET_ALL"
+  printf "\n%b==> %s %b\n" "$BOLD" "$@" "$RESET_ALL"
 }
 
 
@@ -98,11 +120,14 @@ function command_exists() {
 }
 
 
-# Make directory if it doesn't exist in $HOME
-function mkdir_in_home() {
-  if [[ ! -d "${HOME}/$1" ]]; then
-    mkdir "${HOME}/$1"
-  fi
+function setup_required_directories() {
+  header "Setting up the required directories..."
+  for directory in "${REQUIRED_DIRECTORIES[@]}"; do
+    if ! [[ -d $directory ]]; then
+      mkdir -p $directory
+      echo "Created $directory"
+    fi
+  done
 }
 
 
@@ -175,7 +200,7 @@ function setup_homebrew_packages() {
   header "Installing everything from Brewfile..."
   # -v: prints output from commands as they are run
   # --no-lock: don't output a Brewfile.lock.json file
-  brew bundle install -v --no-lock --file ~/dotfiles/lib/Brewfile
+  brew bundle install -v --no-lock --file "$HOMEBREW_BUNDLE_FILE"
 
   header "Cleaning up..."
   brew cleanup
@@ -224,11 +249,11 @@ function setup_python() {
     if ! pyenv versions | grep -q "${python_version}"; then
       header "Installing Python ${python_version}..."
       pyenv install "${python_version}"
-      header "Upgrading pip for Python ${python_version}..."
-      "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
     else
       header "Python $python_version is already installed."
     fi
+    header "Upgrading pip for Python ${python_version}..."
+    "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
   done
 
   local pyenv_global_python="${PYTHON_VERSIONS[0]}"
@@ -239,35 +264,44 @@ function setup_python() {
 
   header "Initiating pyenv..."
   eval "$(pyenv init -)"
+  header "Rehashing pyenv shims..."
+  pyenv rehash
 }
 
 
 function setup_python_global_packages() {
-  local pyenv_global_python="${PYTHON_VERSIONS[0]}"
-  header "Installing pipx for Python $pyenv_global_python..."
-  "$(pyenv root)/versions/${pyenv_global_python}/bin/pip" install pipx
+  if ! command_exists "pipx"; then
+    header "Installing pipx from homebrew..."
+    brew install pipx
+  fi
 
+  local pyenv_global_python
   local pipx_list
+  pyenv_global_python="$(pyenv global)"
   pipx_list=$(pipx list)
-  header "Installing packages from ${DOTFILES_DIRECTORY}/lib/requirements.txt..."
+  header "Installing packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
   while IFS= read -r package; do
     if ! echo "$pipx_list" | grep "$package" &> /dev/null; then
       pipx install "$package"
     else
-      echo "==> $package is already installed in Python $pyenv_global_python"
+      echo "    $package is already installed in Python $pyenv_global_python"
     fi
-  done < "${DOTFILES_DIRECTORY}/lib/requirements.txt"
+  done < "${PYTHON_GLOBAL_REQUIREMENTS}"
 }
 
 
-# NOTE: This function should be called after symlinking the dotfiles
-function setup_vim_plugins() {
-  header "Upgrading vim plug..."
-  vim +PlugUpgrade +qa
-  header "Installing vim plugins..."
-  vim +PlugInstall +qa
+function setup_npm_global_packages() {
+  local npm_list
+  npm_list=$(npm --global list)
+  header "Installing packages from ${NPM_GLOBAL_PACKAGES}..."
+  while IFS= read -r package; do
+    if ! echo "$npm_list" | grep "$package" &> /dev/null; then
+      npm --global install "$package"
+    else
+      echo "    $package is already installed"
+    fi
+  done < "${NPM_GLOBAL_PACKAGES}"
 }
-
 
 # NOTE: This function should be called after symlinking the dotfiles
 function setup_tmux_plugins() {
@@ -294,10 +328,7 @@ function setup_github_ssh() {
   ask "Please provide an email address"
   ssh-keygen -f "${HOME}/.ssh/${ssh_filename}" -t "$ssh_algorithm" -C "$REPLY"
 
-  header "Storing SSH agent information in ${ssh_agent_env}"
-  ssh-agent > "${ssh_agent_env}"
-  # shellcheck disable=SC1090
-  source "${ssh_agent_env}"
+  source "$(ssh-agent)"
   header "Adding SSH key to the ssh-agent..."
   ssh-add -K "${HOME}/.ssh/${ssh_filename}"
 
@@ -318,6 +349,35 @@ function setup_github_ssh() {
     fi
     sleep 5
   done
+}
+
+
+function setup_neovim_nightly() {
+  curr_dir=$(pwd)
+  header "Setting up Neovim nightly..."
+  git clone --depth=1 git@github.com:neovim/neovim.git $NEOVIM_DIRECTORY
+  cd "$NEOVIM_DIRECTORY"
+  git checkout master
+  make \
+    CMAKE_BUILD_TYPE=Release \
+    CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$NEOVIM_INSTALL_DIRECTORY"
+  make install
+  cd $curr_dir
+}
+
+
+function setup_lua_language_server() {
+  local curr_dir=$(pwd)
+  header "Setting up the lua language server..."
+  git clone --depth=1 git@github.com:sumneko/lua-language-server.git ~/git/
+  cd ~/git/lua-language-server
+  git checkout master
+  git submodule update --init --recursive
+  cd 3rd/luamake
+  compile/install.sh
+  cd ../..
+  ./3rd/luamake/luamake rebuild
+  cd $curr_dir
 }
 
 
@@ -357,10 +417,6 @@ function link() {
 function setup_symlink() {
   # copy hushlogin as we are not going to be updating it
   cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
-  # Make necessary directories if they do not exist
-  mkdir_in_home ".gnupg"
-  mkdir_in_home ".ssh"
-  mkdir_in_home ".config"
   # Create the necessary symbolic links between the `dotfiles` and `HOME`
   # directory. The `bashrc` sources other files directly from the
   # `dotfiles` repository.
@@ -428,32 +484,38 @@ function update_macos_dock() {
 function sync_lib_files() {
   # header "Syncing Brewfile with the currently installed packages..."
   # HOMEBREW_NO_AUTO_UPDATE=1 brew bundle dump -f
+
   header "Syncing requirements.txt with the global Python packages..."
-  pipx list \
-    | grep package \
-    | cut -d ' ' -f5 > "${DOTFILES_DIRECTORY}/lib/requirements.txt"
+  pipx list --json \
+    | jq -r '.venvs | keys | join("\n")' \
+    | tee "${PYTHON_GLOBAL_REQUIREMENTS}" \
+    | xargs -I{} echo "    {}"
+
+  header "Syncing node_modules.txt with the global Node packages..."
+  npm --global --json list \
+    | jq -r '.dependencies | keys | join("\n")' \
+    | tee "${NPM_GLOBAL_PACKAGES}" \
+    | xargs -I{} echo "    {}"
 }
 
 
 function upgrade_homebrew() {
-  header "Updating homebrew..."
+  header "Updating homebrew and packages..."
   brew update
-  header "Upgrading homebrew packages..."
   brew upgrade
-  header "Cleaning up..."
   brew cleanup
 }
 
 
-function upgrade_python() {
+function upgrade_packages() {
   for python_version in "${PYTHON_VERSIONS[@]}"; do
     header "Upgrading pip for Python $python_version..."
     "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
   done
-  header "Upgrading pipx for Python ${PYTHON_VERSIONS[0]}..."
-  "$(pyenv root)/versions/${PYTHON_VERSIONS[0]}/bin/pip" install --upgrade pipx
   header "Upgrading all pipx packages..."
   pipx upgrade-all
+  header "Upgrading all npm packages..."
+  npm --global upgrade
 }
 
 
@@ -462,9 +524,8 @@ function upgrade_plugins() {
   vim +PlugUpgrade +PlugClean +PlugUpdate +qa
   header "Upgrading neovim plugins..."
   nvim +PackerSync +qa
-  header "Cleaning tmux plugins..."
+  header "Cleaning and updating tmux plugins..."
   ~/.tmux/plugins/tpm/bin/clean_plugins
-  header "Updating tmux plugins..."
   ~/.tmux/plugins/tpm/bin/update_plugins all
 }
 
@@ -472,6 +533,36 @@ function upgrade_plugins() {
 function upgrade_cli_related() {
   header "Updating tldr data..."
   tldr --update
+}
+
+
+function upgrade_neovim_nightly() {
+  curr_dir=$(pwd)
+  header "Upgrading Neovim nightly..."
+  cd "$NEOVIM_DIRECTORY"
+  git checkout master
+  make distclean
+  git pull origin master
+  make \
+    CMAKE_BUILD_TYPE=Release \
+    CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$NEOVIM_INSTALL_DIRECTORY"
+  make install
+  cd $curr_dir
+}
+
+# https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
+function upgrade_lua_language_server() {
+  local curr_dir=$(pwd)
+  header "Upgrading the lua language server..."
+  cd ~/git/lua-language-server
+  git checkout master
+  git pull origin master
+  git submodule update --init --recursive
+  cd 3rd/luamake
+  compile/install.sh
+  cd ../..
+  ./3rd/luamake/luamake rebuild
+  cd $curr_dir
 }
 
 
@@ -508,6 +599,7 @@ function perform_mackup_restore() {
 
 
 function perform_all_functions() {
+  setup_required_directories
   setup_dotfiles_directory
   setup_xcode_command_line_tools
   setup_homebrew
@@ -515,9 +607,11 @@ function perform_all_functions() {
   setup_dotfiles_git_repository
   setup_python
   setup_python_global_packages
+  setup_npm_global_packages
+  setup_neovim_nightly
+  setup_lua_language_server
   # No backup as this is a fresh setup
   setup_symlink
-  setup_vim_plugins
   setup_tmux_plugins
   setup_github_ssh
   update_macos_settings
@@ -525,6 +619,26 @@ function perform_all_functions() {
   perform_mackup_restore
 }
 
+
+function usage() {
+  echo "Usage: $(basename "$0") [-h|--help] <command> [<flags>]"
+  echo ""
+  echo "COMMANDS:"
+  echo ""
+  echo "  all       perform all function (only do this on fresh setup)"
+  echo "  backup    perform backup with mackup"
+  echo "  brew      setup homebrew and install required packages"
+  echo "  dir       setup required directories"
+  echo "  dock      update macOS dock applications"
+  echo "  macos     update macOS settings"
+  echo "  link      backup and symlink (with -f/--force skip backup)"
+  echo "  package   setup global packages"
+  echo "  python    setup python and global packages"
+  echo "  restore   perform restore with mackup"
+  echo "  shell     update default shell"
+  echo "  sync      sync lib files with global packages"
+  echo "  upgrade   perform upgrades (with -g skip confirmation)"
+}
 
 # Most of the functions have an initial check to determine whether they need to
 # be run or not. Example: setup_homebrew checks whether homebrew is already
@@ -536,6 +650,9 @@ case "$1" in
   brew)
     setup_homebrew
     setup_homebrew_packages
+    ;;
+  dir)
+    setup_required_directories
     ;;
   dock)
     update_macos_dock
@@ -554,6 +671,10 @@ case "$1" in
         ;;
     esac
     ;;
+  package)
+    setup_python_global_packages
+    setup_npm_global_packages
+    ;;
   python)
     setup_python
     setup_python_global_packages
@@ -569,12 +690,17 @@ case "$1" in
     ;;
   upgrade)
     upgrade_homebrew
-    upgrade_python
+    upgrade_packages
     upgrade_cli_related
     upgrade_plugins
+    upgrade_neovim_nightly
+    upgrade_lua_language_server
     ;;
   all)
     perform_all_functions
+    ;;
+  -h | --help)
+    usage
     ;;
   *)
     # Default behavior is to do a fresh setup unless the dotfiles directory is
@@ -582,9 +708,7 @@ case "$1" in
     if ! [[ -d "$DOTFILES_DIRECTORY" ]]; then
       perform_all_functions
     else
-      printf "Usage: %s " "$(basename "$0")"
-      printf "{all|backup|brew|dock|macos|link|python|restore|shell|sync|upgrade} "
-      printf "[-f/--force]\n"
+      usage
     fi
     ;;
 esac

@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-curr_dir=$(pwd)
-cd ~/git/neovim
-git checkout master
-git pull origin master
-make CMAKE_BUILD_TYPE=Release
-sudo make install
-cd $curr_dir
