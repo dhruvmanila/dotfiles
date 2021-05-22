@@ -121,12 +121,7 @@ dm.augroup("custom_autocmds", {
 
   -- Automatically go to insert mode on terminal buffer
   {
-    events = { "TermOpen" },
-    targets = { "*" },
-    command = "startinsert",
-  },
-  {
-    events = { "BufEnter" },
+    events = { "TermOpen", "WinEnter" },
     targets = { "term://*" },
     command = "startinsert",
   },
