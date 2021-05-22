@@ -47,7 +47,7 @@ do
     if id then
       vim.fn.timer_stop(id)
     end
-    id = vim.fn.timer_start(2000, function()
+    id = vim.fn.timer_start(5000, function()
       if vim.fn.mode() == "n" then
         vim.api.nvim_echo({}, false, {})
       end
@@ -105,11 +105,11 @@ dm.augroup("custom_autocmds", {
     end,
   },
 
-  -- Start syncing syntax highlighting 200 lines before the current line
+  -- Start syncing syntax highlighting N lines before the current line
   {
     events = { "Syntax" },
     targets = { "*" },
-    command = "syntax sync minlines=200",
+    command = "syntax sync minlines=1000",
   },
 
   -- Check if file changed (more eager than 'autoread')
