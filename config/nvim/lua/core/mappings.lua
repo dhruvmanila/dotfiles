@@ -7,8 +7,8 @@ local map = require("core.utils").map
 map("n", "Q", "<Cmd>qa<CR>")
 
 -- Quick save
-map("n", "<Leader>w", ":w<CR>")
-map("n", "<Leader>q", ":q<CR>")
+map("n", "<Leader>w", ":w<CR>", { silent = true })
+map("n", "<Leader>q", ":q<CR>", { silent = true })
 -- map('n', '<Leader>wq', ':wq<CR>')
 
 -- Make 'Y' behave same as 'C', 'S'
