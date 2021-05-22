@@ -26,20 +26,27 @@ local M = {}
 -- Return the formatted string using diagnostic information.
 --   `<pad_left><icon> <message>[ <source>]<pad_right>`
 ---@param diagnostic table
----@return string
+---@return string #diagnostic line
+---@return number #start position for source string
 local function diagnostic_line(diagnostic)
+  local pre_source = string.format(
+    "%s%s %s",
+    string.rep(" ", config.pad_left),
+    severity_icon[diagnostic.severity],
+    diagnostic.message:gsub("\n", " ")
+  )
+  -- Source starts one character next to the length of pre_source
+  local source_start = api.nvim_strwidth(pre_source) + 1
   local source = (config.show_source and diagnostic.source)
       and " [" .. diagnostic.source:gsub("%.$", "") .. "]"
     or ""
 
   return string.format(
-    "%s%s %s%s%s",
-    string.rep(" ", config.pad_left),
-    severity_icon[diagnostic.severity],
-    diagnostic.message:gsub("\n", " "),
+    "%s%s%s",
+    pre_source,
     source,
     string.rep(" ", config.pad_right)
-  )
+  ), source_start
 end
 
 -- Show the current line diagnostics in a pretty format :)
@@ -52,11 +59,12 @@ function M.show_line_diagnostics()
     return
   end
 
+  local line, source_start
   local lines = {}
   local longest_line = 0
   for _, diagnostic in ipairs(diagnostics) do
-    local line = diagnostic_line(diagnostic)
-    table.insert(lines, line)
+    line, source_start = diagnostic_line(diagnostic)
+    table.insert(lines, { line, source_start })
     longest_line = math.max(longest_line, api.nvim_strwidth(line))
   end
 
@@ -70,17 +78,15 @@ function M.show_line_diagnostics()
     current_row = current_row + 2
   end
 
-  for i, line in ipairs(lines) do
+  for i, info in ipairs(lines) do
+    line, source_start = unpack(info)
     utils.append(bufnr, { line }, severity_hl[diagnostics[i].severity])
-    local start, _ = line:find(
-      "%[.*%]" .. string.rep(" ", config.pad_right) .. "$"
-    )
     api.nvim_buf_add_highlight(
       bufnr,
       -1,
       config.source_hl,
       current_row,
-      start - 1,
+      source_start + 1, -- 0-based
       -1
     )
     current_row = current_row + 1
