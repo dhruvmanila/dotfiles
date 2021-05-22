@@ -30,12 +30,12 @@ alias path='echo -e ${PATH//:/\\n}'
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 
 # Show/hide hidden files in Finder
-alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
-alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
+alias showhidden="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
+alias hidehidden="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
 
-# Hide/show all desktop icons (useful when presenting)
-alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
-alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+# Hide/show all desktop icons
+alias show="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
+alias hide="defaults write com.apple.finder CreateDesktop -bool false && killall Finder"
 
 # Recursively delete `.DS_Store` files
 alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
