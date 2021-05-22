@@ -40,7 +40,10 @@ brew "pyenv"                 # Python version management
 brew "pyenv-virtualenv"      # Python virtual environment management
 brew "rbenv"                 # Ruby virtual environment management
 brew "node"
-brew "go"                    # Go language
+brew "go"                    # Go programming language
+brew "rust"                  # Rust programming language
+
+brew "pipx"           # Global Python packages
 
 # Editors
 brew "neovim", args: ["HEAD"]
@@ -73,18 +76,22 @@ brew "ffmpeg"               # Play, record, convert, and stream audio and video
 brew "fontforge"            # Used for NERDFonts patcher script
 brew "gh"                   # GitHub CLI client
 brew "git"                  # Git
+brew "glow"                 # CLI markdown renderer
 brew "gnupg"
 brew "hyperfine"
 brew "jq"                   # JSON processor
 brew "less"                 # latest less
+brew "lz4"                  # Compression library
 brew "mackup"               # Backup files
 brew "mas"                  # Mac AppStore CLI
 brew "mlton"
+brew "ninja"                # Fast build system
 brew "pinentry-mac"
 brew "postgresql"           # Database
 brew "pup"                  # Parse HTML at commandline
 brew "pv"                   # Monitor data's progress through a pipe
 brew "rename"
+brew "speedtest-cli"
 brew "stow"
 brew "stress"
 brew "tldr"                 # Better help
@@ -94,10 +101,12 @@ brew "heroku/brew/heroku"
 
 # Completions
 brew "docker-completion"
+brew "docker-compose-completion"
 brew "vagrant-completion"
 
-
-# Casks
+# Search engines
+brew "ddgr"        # DuckDuckGo
+brew "googler"     # Google
 
 # Browsers
 cask "brave-browser"
@@ -107,10 +116,11 @@ cask "google-chrome"
 
 # GUI Editors
 cask "emacs"
-cask "mark-text"    # Markdown editor
+cask "mark-text"                    # Markdown editor
 cask "pycharm-ce"
-cask "racket"       # Includes DrRacket
-cask "visual-studio-code"
+cask "racket"                       # Includes DrRacket
+cask "visual-studio-code"           # Also used for shipped JSON language server
+cask "visual-studio-code-insiders"
 
 # Chat
 cask "discord"
@@ -118,9 +128,9 @@ cask "slack"
 cask "whatsapp"
 cask "zoom"
 
-# Fonts (patched manually using NERDFont patcher)
-# cask "font-fira-code-nerd-font"
-# cask "font-jetbrains-mono-nerd-font"
+# Fonts (regular + patched manually using NERDFont patcher)
+cask "font-fira-code"
+cask "font-jetbrains-mono"
 
 # Terminals
 cask "iterm2"
@@ -144,14 +154,9 @@ cask "spotify"
 cask "vlc"
 # cask "wireshark"       # Network monitoring
 
-
 # Mac applications
-mas "Battery Monitor", id: 836505650
-mas "Buffer", id: 1474298973
 mas "Developer", id: 640199958
 mas "GarageBand", id: 682658836
-mas "Grammarly for Safari", id: 1462114288
-mas "Honey", id: 1472777122
 mas "Hotspot Shield", id: 771076721
 mas "iMovie", id: 408981434
 mas "Keynote", id: 409183694
@@ -161,4 +166,3 @@ mas "Pocket", id: 568494494
 mas "Save to Pocket", id: 1477385213
 mas "SHAREit", id: 1040029915
 mas "Speedtest", id: 1153157709
-mas "The Unarchiver", id: 425424353

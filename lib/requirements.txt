@@ -5,8 +5,6 @@ flake8
 ipdb
 ipython
 isort
-jupyterthemes
 line-profiler
 mypy
-notebook
 pre-commit
