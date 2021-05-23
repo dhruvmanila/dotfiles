@@ -223,19 +223,17 @@ packer.startup({
     -- Using only the session management functionalities
     use("mhinz/vim-startify")
 
-    -- File explorer (Mainly used for going through new projects)
+    -- File explorer
     use({
-      "kyazdani42/nvim-tree.lua",
-      requires = { "kyazdani42/nvim-web-devicons" },
-      keys = { { "n", "<C-n>" } },
-      config = "require('plugin.nvim_tree')",
-    })
-
-    -- Path navigator
-    use({
-      { "justinmk/vim-dirvish", config = "require('plugin.dirvish')" },
-      -- TODO: use vim-eunuch instead
-      { "roginfarrer/vim-dirvish-dovish", branch = "main" },
+      -- Project drawer style
+      {
+        "kyazdani42/nvim-tree.lua",
+        requires = { "kyazdani42/nvim-web-devicons" },
+        keys = { { "n", "<C-n>" } },
+        config = "require('plugin.nvim_tree')",
+      },
+      -- Split/floating window style
+      { "tamago324/lir.nvim", config = "require('plugin.lir')" },
     })
 
     -- Indentation tracking
