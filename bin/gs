@@ -22,7 +22,7 @@ exit $?
 require 'json'
 
 width = `tput cols`.strip.to_i / 2
-output = `gh api user/starred --paginate --cache 1h`
+output = `gh api user/starred --paginate --cache 24h`
 items = JSON.parse(output.gsub('][', ','))
 
 items.each do |item|
