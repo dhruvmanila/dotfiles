@@ -7,7 +7,6 @@ local lspconfig = require("lspconfig")
 local lspstatus = require("lsp-status")
 
 require("core.format")
-require("pylance")
 require("plugin.lsp.handlers")
 
 local plugins = require("plugin.lsp.plugins")

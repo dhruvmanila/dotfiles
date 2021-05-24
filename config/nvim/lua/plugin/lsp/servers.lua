@@ -79,35 +79,21 @@ return {
     }
   end,
 
-  -- Settings: https://github.com/microsoft/pylance-release#settings-and-customization
-  pylance = {
+  -- https://github.com/microsoft/pyright
+  -- Settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md
+  pyright = {
     settings = {
+      pyright = {
+        disableOrganizeImports = true,  -- Using isort
+      },
       python = {
+        venvPath = os.getenv("HOME") .. "/.pyenv",
         analysis = {
-          completeFunctionParens = true,
-          typeCheckingMode = "off", -- Using mypy
-          -- https://github.com/microsoft/pylance-release/issues/1055
-          indexing = false,
+          typeCheckingMode = "off",  -- Using mypy
         },
       },
     },
   },
-
-  -- https://github.com/microsoft/pyright
-  -- Settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md
-  -- pyright = {
-  --   settings = {
-  --     pyright = {
-  --       disableOrganizeImports = true  -- Using isort
-  --     },
-  --     python = {
-  --       venvPath = os.getenv('HOME') .. '/.pyenv',
-  --       analysis = {
-  --         typeCheckingMode = 'off'  -- Using mypy
-  --       },
-  --     }
-  --   }
-  -- },
 
   -- https://github.com/sumneko/lua-language-server
   -- Settings: https://github.com/sumneko/vscode-lua/blob/master/setting/schema.json
