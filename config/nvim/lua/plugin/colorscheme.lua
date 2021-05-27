@@ -56,7 +56,6 @@ highlight("TelescopeAreciboPrompt", { force = true, link = "Green" })
 highlight("TelescopeAreciboPromptProgress", { force = true, link = "Comment" })
 
 -- Treesitter
-highlight("TSFunction", { force = true, link = "Function" })
 highlight("TSParameter", { force = true, link = "Blue" })
 highlight("TSProperty", { force = true, link = "Blue" })
 highlight("TSField", { force = true, link = "Blue" })
@@ -65,6 +64,7 @@ highlight("TSKeywordFunction", { force = true, link = "RedItalic" })
 highlight("TSConditional", { force = true, link = "RedItalic" })
 highlight("TSRepeat", { force = true, link = "RedItalic" })
 highlight("TSException", { force = true, link = "RedItalic" })
+highlight("TSInclude", { force = true, link = "RedItalic" })
 
 -- Lsp
 -- highlight("NormalFloat", { force = true, link = "Normal" })
@@ -98,3 +98,12 @@ highlight("CompeDocumentation", {
 
 -- Symbols outline
 highlight("FocusedSymbol", { force = true, link = "CurrentWord" })
+
+-- Lir
+highlight("LirFloatBorder", { force = true, link = "FloatBorder" })
+highlight("LirFloatNormal", { force = true, link = "NormalFloat" })
+highlight("LirSymlink", { force = true, link = "GreyItalic" })
+highlight("LirEmptyDirText", { force = true, link = "LirSymlink" })
+
+-- Cheat40
+highlight("Cheat40Descr", { force = true, link = "Fg" })
