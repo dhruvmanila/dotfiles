@@ -355,9 +355,10 @@ function setup_github_ssh() {
 function setup_neovim_nightly() {
   curr_dir=$(pwd)
   header "Setting up Neovim nightly..."
-  git clone --depth=1 git@github.com:neovim/neovim.git $NEOVIM_DIRECTORY
+  git clone --depth=1 git@github.com:dhruvmanila/neovim.git $NEOVIM_DIRECTORY
   cd "$NEOVIM_DIRECTORY"
   git checkout master
+  git remote add upstream git@github.com:neovim/neovim.git
   make \
     CMAKE_BUILD_TYPE=Release \
     CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$NEOVIM_INSTALL_DIRECTORY"
@@ -520,10 +521,11 @@ function upgrade_packages() {
 
 
 function upgrade_plugins() {
+  # Not quiting vim/neovim to check what's new
   header "Upgrading vim plugins..."
-  vim +PlugUpgrade +PlugClean +PlugUpdate +qa
+  vim +PlugUpgrade +PlugClean +PlugUpdate
   header "Upgrading neovim plugins..."
-  nvim +PackerSync +qa
+  nvim +PackerSync
   header "Cleaning and updating tmux plugins..."
   ~/.tmux/plugins/tpm/bin/clean_plugins
   ~/.tmux/plugins/tpm/bin/update_plugins all
@@ -541,13 +543,26 @@ function upgrade_neovim_nightly() {
   header "Upgrading Neovim nightly..."
   cd "$NEOVIM_DIRECTORY"
   git checkout master
+  curr_hash=$(git rev-parse HEAD)
+  git pull upstream master
+  new_hash=$(git rev-parse HEAD)
+
+  if [[ "$curr_hash" == "$new_hash" ]]; then
+    echo "==> Skipping Neovim upgrade as it is already up to date."
+    return
+  fi
+
+  git push origin master
   make distclean
-  git pull origin master
   make \
     CMAKE_BUILD_TYPE=Release \
     CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$NEOVIM_INSTALL_DIRECTORY"
   make install
   cd $curr_dir
+
+  header "Upgrading brew installed Neovim nightly..."
+  brew uninstall neovim
+  brew install --HEAD neovim
 }
 
 # https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
@@ -556,7 +571,15 @@ function upgrade_lua_language_server() {
   header "Upgrading the lua language server..."
   cd ~/git/lua-language-server
   git checkout master
+  curr_hash=$(git rev-parse HEAD)
   git pull origin master
+  new_hash=$(git rev-parse HEAD)
+
+  if [[ "$curr_hash" == "$new_hash" ]]; then
+    echo "==> Skipping lua-language-server upgrade as it is already up to date."
+    return
+  fi
+
   git submodule update --init --recursive
   cd 3rd/luamake
   compile/install.sh
