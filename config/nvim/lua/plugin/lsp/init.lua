@@ -171,21 +171,6 @@ local function custom_on_attach(client)
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 end
 
--- Override the default capabilities and pass it to the language server on
--- initialization. E.g., adding snippets supports.
--- local client_capabilities = lsp.protocol.make_client_capabilities()
-
--- TODO: Update server **only** after adding a snippet plugin
--- local snippet_capabilities = {
---   textDocument = {
---     completion = {
---       completionItem = {
---         snippetSupport = true
---       }
---     }
---   }
--- }
-
 ---Setting up the servers with the provided configuration and additional
 ---capabilities.
 for server, config in pairs(servers) do
@@ -193,8 +178,18 @@ for server, config in pairs(servers) do
   config.on_attach = custom_on_attach
   config.capabilities = vim.tbl_deep_extend(
     "keep",
-    config.capabilities or {},
+    config.capabilities or vim.lsp.protocol.make_client_capabilities(),
     lspstatus.capabilities
   )
+  -- TODO: Update server after adding a snippet plugin
+  -- config.capabilities.textDocument.completion.completionItem.snippetSupport =
+  --   true
+  config.capabilities.textDocument.completion.completionItem.resolveSupport = {
+    properties = {
+      "documentation",
+      "detail",
+      "additionalTextEdits",
+    },
+  }
   lspconfig[server].setup(config)
 end
