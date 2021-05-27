@@ -1,7 +1,8 @@
 -- Ref: https://github.com/nvim-treesitter/nvim-treesitter
-local map = vim.api.nvim_set_keymap
+local map = require("core.utils").map
 
-map("n", "<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>", { noremap = true })
+map("n", "<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>")
+map("n", "<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>")
 
 require("nvim-treesitter.configs").setup({
   -- one of 'all', 'language', or a list of languages
