@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# FIXME: find a better way to do PATH management
 # Start PATH from here (default path in MacOS)
 PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 

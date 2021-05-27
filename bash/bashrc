@@ -32,8 +32,9 @@ unset load_dotfiles
 # fi
 
 if command -v pyenv &>/dev/null; then
+  eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
-  complete -o default -o nospace -F _pyenv p
+  complete -o nospace -F _pyenv p
 fi
 
 # Commenting it out as this slows down the prompt by injecting the function
