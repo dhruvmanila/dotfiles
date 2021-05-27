@@ -92,7 +92,10 @@ local function custom_on_attach(client)
     "]e",
     "vim.lsp.diagnostic.goto_next({severity_limit = 'Warning', enable_popup = false})"
   )
-  buf_map("gl", "require('plugin.lsp.diagnostics').show_line_diagnostics()")
+  buf_map(
+    "<leader>ld",
+    "require('plugin.lsp.diagnostics').show_line_diagnostics()"
+  )
   buf_map("K", "vim.lsp.buf.hover()")
   buf_map("gd", "vim.lsp.buf.definition()")
   buf_map("gD", "vim.lsp.buf.declaration()")
