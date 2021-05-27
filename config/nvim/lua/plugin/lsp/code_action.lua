@@ -136,7 +136,7 @@ function M.handler(_, _, response)
   api.nvim_buf_set_option(bufnr, "buftype", "nofile")
   api.nvim_buf_set_option(bufnr, "matchpairs", "")
 
-  local win_opts = lsp.util.make_floating_popup_options(
+  local win_opts = utils.make_floating_popup_options(
     longest_line,
     current_row,
     true -- border will be inserted by neovim

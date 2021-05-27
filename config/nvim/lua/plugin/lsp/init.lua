@@ -141,14 +141,17 @@ local function custom_on_attach(client)
   end
 
   if capabilities.code_action then
-    cmd("packadd nvim-lightbulb")
+    if not plugin_loaded("nvim-lightbulb") then
+      require("packer").loader("nvim-lightbulb")
+    end
 
     table.insert(lsp_autocmds, {
       events = { "CursorHold", "CursorHoldI" },
       targets = { "<buffer>" },
       command = require("nvim-lightbulb").update_lightbulb,
     })
-    buf_map("ga", "vim.lsp.buf.code_action()")
+    buf_map("<leader>ca", "vim.lsp.buf.code_action()")
+    buf_map("<leader>ca", "vim.lsp.buf.range_code_action()", "x")
   end
 
   if not vim.tbl_isempty(lsp_autocmds) then
