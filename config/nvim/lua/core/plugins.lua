@@ -61,6 +61,8 @@ packer.startup({
     -- Color scheme
     use({ "sainnhe/gruvbox-material", config = "require('plugin.colorscheme')" })
 
+    use({ "lifepillar/vim-cheat40", config = "vim.g.cheat40_use_default = false" })
+
     -- Lua
     use({
       -- "https://github.com/luvit/luv/blob/master/docs.md" in :help format
