@@ -95,3 +95,9 @@ TAB: menu-complete
 
 # Expand aliases with Ctrl-space
 Control-Space: alias-expand-line
+
+# Map the following keys in vi-command
+set keymap vi-command
+
+"H": beginning-of-line
+"L": end-of-line
