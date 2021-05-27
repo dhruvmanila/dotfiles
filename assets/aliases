@@ -19,6 +19,8 @@ alias dvr='cd ${HOME}/contributing/neovim && VIMRUNTIME=${HOME}/neovim/share/nvi
 # Fix ownership in /usr/local/ directories
 alias fixlocal='cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var Frameworks'
 
+alias yt="youtube-dl"
+
 # Easy activate/deactivate virtual environments ('p' prefix for Python)
 # alias pva='pyenv activate'
 # alias pvd='pyenv deactivate'

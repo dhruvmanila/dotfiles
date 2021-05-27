@@ -16,6 +16,7 @@ fi;
 # Tab completions for aliases
 ___git_complete g __git_main
 complete -o default -o nospace -F _docker_compose dc
+complete -F __youtube_dl yt
 
 # Fzf auto-complete
 if [[ -r "${FZF_COMPLETION_PATH}" ]]; then
