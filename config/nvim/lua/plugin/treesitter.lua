@@ -20,22 +20,26 @@ require("nvim-treesitter.configs").setup({
     "toml",
   },
 
-  -- syntax highlighting
   highlight = {
     enable = true,
+    -- Custom capture groups defined in highlights.scm
     custom_captures = {
       ["docstring"] = "TSComment",
     },
   },
 
+  playground = {
+    enable = true,
+    updatetime = 25,
+  },
+
   incremental_selection = {
     enable = true,
-    -- TODO: useful keybindings?
     keymaps = {
       init_selection = "gnn",
-      node_incremental = "grn",
+      node_incremental = "<TAB>",
       scope_incremental = "grc",
-      node_decremental = "grm",
+      node_decremental = "<S-TAB>",
     },
   },
 })
