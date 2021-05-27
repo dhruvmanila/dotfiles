@@ -115,6 +115,8 @@ require("telescope").setup({
         ["<C-x>"] = custom_actions.remove_current_selection,
         ["<C-y>"] = custom_actions.yank_entry,
         ["<C-l>"] = custom_actions.reset_prompt,
+        ["<Space>"] = actions.toggle_selection + actions.move_selection_worse,
+        ["<C-Space>"] = actions.toggle_selection + actions.move_selection_better,
       },
     },
   },
@@ -190,7 +192,7 @@ tele_map("<Leader>fh", "help_tags")
 tele_map("<Leader>fm", "keymaps")
 tele_map("<Leader>fc", "commands")
 tele_map("<Leader>hi", "highlights")
-tele_map("<Leader>fo", "vim_options")
+tele_map("<Leader>vo", "vim_options")
 tele_map("q:", "command_history")
 tele_map("q/", "search_history")
 
