@@ -181,7 +181,10 @@ end
 ---Return the file encoding and file format.
 ---@param hl string
 ---@return string
-local function file_detail(hl)
+local function file_detail(ctx, hl)
+  if vim.api.nvim_win_get_width(ctx.curwin) < 120 then
+    return ""
+  end
   local encode = vim.bo.fenc ~= "" and vim.bo.fenc or vim.o.enc
   local format = vim.bo.fileformat
   return " " .. wrap_hl(hl) .. encode:upper() .. " " .. format:upper() .. " %*"
@@ -413,7 +416,6 @@ function _G.nvim_statusline()
     return inactive_statusline(ctx, prefix)
   end
 
-  -- TODO: `lsp_status.status()` after #58 gets merged
   local messages = lsp_messages()
   if messages then
     return wrap_hl("StSpecialBuffer") .. prefix .. " " .. messages
@@ -430,7 +432,7 @@ function _G.nvim_statusline()
     .. github_notifications("StOrange")
     .. python_version(ctx, "StBlueBold")
     .. lsp_clients(ctx, "StGreenBold")
-    .. file_detail("StGreyBold")
+    .. file_detail(ctx, "StGreyBold")
     .. lsp_diagnostics(ctx, {
         { severity = "Information", icon = icons.info, hl = "StBlue" },
         { severity = "Hint", icon = icons.hint, hl = "StAqua" },
