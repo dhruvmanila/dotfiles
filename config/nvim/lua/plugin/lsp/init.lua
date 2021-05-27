@@ -121,6 +121,16 @@ local function custom_on_attach(client)
     -- })
   end
 
+  if capabilities.document_range_formatting then
+    vim.api.nvim_buf_set_keymap(
+      0,
+      "v",
+      "<leader>lf",
+      ":<C-U>lua vim.lsp.buf.range_formatting()<CR>",
+      opts
+    )
+  end
+
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
   if capabilities.document_highlight then
     table.insert(lsp_autocmds, {
