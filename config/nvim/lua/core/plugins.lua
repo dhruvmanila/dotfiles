@@ -1,15 +1,21 @@
 local packer = require("packer")
-local execute = vim.api.nvim_command
+local cmd = vim.api.nvim_command
 local fn = vim.fn
 
 local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
 
 if fn.empty(fn.glob(install_path)) > 0 then
-  execute(
-    "!git clone https://github.com/wbthomason/packer.nvim " .. install_path
-  )
-  execute("packadd packer.nvim")
+  cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+  cmd("packadd packer.nvim")
 end
+
+-- PackerSync -> PackerUpdate + PackerClean + PackerCompile
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>ps",
+  "<Cmd>PackerSync<CR>",
+  { noremap = true }
+)
 
 -- By always resetting, the plugins which were removed will be removed from
 -- this table as well.
