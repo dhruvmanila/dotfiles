@@ -41,6 +41,20 @@ function actions.newfile()
   end)
 end
 
+-- Go to the git root directory for the current directory using lspconfig
+-- util function.
+local function goto_git_root()
+  local ok, util = pcall(require, "lspconfig.util")
+  if not ok then
+    return
+  end
+  local dir = util.find_git_ancestor(vim.fn.getcwd())
+  if dir == nil or dir == "" then
+    return
+  end
+  vim.cmd("edit " .. dir)
+end
+
 ---Enhanced clipboard actions. This will automatically mark either the
 ---current selection or visually selected items and call the respective
 ---clipboard action.
@@ -55,7 +69,7 @@ end
 lir.setup({
   show_hidden_files = true,
   devicons_enable = true,
-  hide_cursor = true,
+  hide_cursor = false,
   float = {
     size_percentage = { width = 0.4, height = 0.8 },
     winblend = 0,
@@ -66,6 +80,7 @@ lir.setup({
   mappings = {
     ["q"] = actions.quit,
     ["l"] = actions.edit,
+    ["<CR>"] = actions.edit,
     ["h"] = actions.up,
 
     -- Consistent with telescope and nvim-tree.
@@ -102,6 +117,17 @@ lir.setup({
       M.clipboard_action("cut")
     end,
     ["P"] = clipboard_actions.paste,
+
+    -- Easy access to home, root and git root directory
+    ["~"] = function()
+      vim.cmd("edit " .. vim.loop.os_homedir())
+    end,
+    ["`"] = function()
+      vim.cmd("edit /")
+      -- https://github.com/neovim/neovim/issues/13726
+      vim.cmd("doautocmd BufEnter")
+    end,
+    ["gr"] = goto_git_root,
   },
 })
 
