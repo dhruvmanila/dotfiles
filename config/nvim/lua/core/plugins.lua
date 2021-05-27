@@ -156,6 +156,10 @@ packer.startup({
         cmd = "TSPlaygroundToggle",
         requires = "nvim-treesitter/nvim-treesitter",
       },
+      {
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        requires = "nvim-treesitter/nvim-treesitter",
+      },
     })
 
     -- Language specific

@@ -42,4 +42,25 @@ require("nvim-treesitter.configs").setup({
       node_decremental = "<S-TAB>",
     },
   },
+
+  textobjects = {
+    select = {
+      enable = true,
+      -- Custom capture groups defined in textobjects.scm
+      keymaps = {
+        ["aC"] = "@class.outer",
+        ["iC"] = "@class.inner",
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["aF"] = "@call.outer",
+        ["iF"] = "@call.inner",
+        ["ac"] = "@conditional.outer",
+        ["ic"] = "@conditional.inner",
+        ["al"] = "@loop.outer",
+        ["il"] = "@loop.inner",
+        ["aa"] = "@parameter.outer",
+        ["ia"] = "@parameter.inner",
+      },
+    },
+  },
 })
