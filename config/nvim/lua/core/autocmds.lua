@@ -36,22 +36,17 @@ do
   })
 end
 
--- Automatically clear commandline messages after a few seconds delay
--- Source: https://unix.stackexchange.com/a/613645
 do
-  local id
+  local timeout = 5000
 
-  -- Stop the old timer, if any, and create a new timer to clear out the
-  -- command line messages.
+  -- Automatically clear commandline messages after a few seconds delay
+  -- Source: https://unix.stackexchange.com/a/613645
   local function clear_messages()
-    if id then
-      vim.fn.timer_stop(id)
-    end
-    id = vim.fn.timer_start(5000, function()
+    vim.defer_fn(function()
       if vim.fn.mode() == "n" then
         vim.api.nvim_echo({}, false, {})
       end
-    end)
+    end, timeout)
   end
 
   dm.augroup("clear_command_messages", {
