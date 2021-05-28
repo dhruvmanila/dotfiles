@@ -121,12 +121,10 @@ dm.augroup("custom_autocmds", {
     command = "startinsert",
   },
 
-  -- Remove trailing whitespace and lines on save
-  -- TODO: autocmd or just a simple command?
-  -- TODO: only for filetypes not having a formatter
-  -- {
-  --   events = { "BufWritePre" },
-  --   targets = { "*" },
-  --   command = "TrimTrailingWhitespace | TrimTrailingLines",
-  -- },
+  -- Remove trailing whitespace on save
+  {
+    events = { "BufWritePre" },
+    targets = { "*" },
+    command = "TrimTrailingWhitespace",
+  },
 })
