@@ -2,23 +2,6 @@ local api = vim.api
 local fn = vim.fn
 
 do
-  -- Report the highlight groups active at the current point.
-  -- Ref: https://vim.fandom.com/wiki/Identify_the_syntax_highlighting_group_used_at_the_cursor
-  local function highlight_groups()
-    local line, col = unpack(api.nvim_win_get_cursor(0))
-    col = col + 1 -- zero indexed :(
-
-    local hi = fn.synIDattr(fn.synID(line, col, true), "name")
-    local trans = fn.synIDattr(fn.synID(line, col, false), "name")
-    local lo = fn.synIDattr(fn.synIDtrans(fn.synID(line, col, true)), "name")
-
-    print(string.format("hi: %s  trans: %s  lo: %s", hi, trans, lo))
-  end
-
-  dm.command({ "Hi", highlight_groups })
-end
-
-do
   -- Trim trailing whitespace for the current buffer, restoring the
   -- cursor position.
   local function trim_trailing_whitespace()
