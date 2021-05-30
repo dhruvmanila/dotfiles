@@ -13,8 +13,8 @@ alias v="nvim"
 alias vi="nvim"
 
 # Neovim development
-alias dv='cd ${HOME}/contributing/neovim && VIMRUNTIME=runtime ./build/bin/nvim'
-alias dvr='cd ${HOME}/contributing/neovim && VIMRUNTIME=${HOME}/neovim/share/nvim/runtime ./build/bin/nvim'
+alias dv='cd ${HOME}/contributing/neovim && VIMRUNTIME=runtime ./build/bin/nvim && cd -'
+alias dvr='cd ${HOME}/contributing/neovim && VIMRUNTIME=${HOME}/neovim/share/nvim/runtime ./build/bin/nvim && cd -'
 
 # Fix ownership in /usr/local/ directories
 alias fixlocal='cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var Frameworks'
