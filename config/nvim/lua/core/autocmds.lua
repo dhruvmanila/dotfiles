@@ -62,7 +62,7 @@ dm.augroup("custom_autocmds", {
   -- Highlight current cursorline, but only in the active window and not in
   -- special buffers like dashboard.
   {
-    events = { "WinEnter", "BufEnter" },
+    events = { "WinEnter", "BufEnter", "InsertLeave" },
     targets = { "*" },
     command = function()
       if not vim.wo.cursorline and vim.bo.filetype ~= "dashboard" then
@@ -71,7 +71,7 @@ dm.augroup("custom_autocmds", {
     end,
   },
   {
-    events = { "WinLeave", "BufLeave" },
+    events = { "WinLeave", "BufLeave", "InsertEnter" },
     targets = { "*" },
     command = function()
       if vim.wo.cursorline and vim.bo.filetype ~= "dashboard" then
