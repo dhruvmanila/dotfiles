@@ -4,6 +4,9 @@ setlocal shiftwidth=4
 " Default is 80
 " setlocal colorcolumn=88
 
+" Run with :make
+setlocal makeprg=python3\ %
+
 " Format with 'gq'
 setlocal formatprg=black\ -q\ -
 
