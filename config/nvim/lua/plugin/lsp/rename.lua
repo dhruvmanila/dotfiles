@@ -55,9 +55,8 @@ function M.rename()
   local win_opts = utils.make_floating_popup_options(
     config.width,
     config.height,
-    true
+    icons.border.default
   )
-  win_opts.border = icons.border.default
   local winnr = api.nvim_open_win(bufnr, true, win_opts)
 
   api.nvim_buf_set_option(bufnr, "buftype", "prompt")

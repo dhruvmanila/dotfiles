@@ -139,9 +139,8 @@ function M.handler(_, _, response)
   local win_opts = utils.make_floating_popup_options(
     longest_line,
     current_row,
-    true -- border will be inserted by neovim
+    icons.border.edge
   )
-  win_opts.border = icons.border.edge
   local winnr = api.nvim_open_win(bufnr, true, win_opts)
 
   api.nvim_win_set_cursor(winnr, {
