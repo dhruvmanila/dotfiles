@@ -11,7 +11,7 @@ local severity_hl = {
   "LspDiagnosticsFloatingHint",
 }
 
--- Configuration for diagnostics window.
+-- Configuration for the diagnostics window.
 local config = {
   show_header = false,
   show_source = true,
@@ -19,7 +19,11 @@ local config = {
   source_hl = "Comment",
   pad_left = 1, -- with spaces
   pad_right = 1, -- with spaces
+  timeout = 200, -- Time(ms) after which to display the diagnostics
 }
+
+-- The timer used for displaying the diagnostics in a floating window.
+local diagnostics_timer
 
 local M = {}
 
@@ -49,8 +53,7 @@ local function diagnostic_line(diagnostic)
   ), source_start
 end
 
--- Show the current line diagnostics in a pretty format :)
-function M.show_line_diagnostics()
+local function show_line_diagnostics()
   local current_bufnr = api.nvim_get_current_buf()
   local linenr = api.nvim_win_get_cursor(0)[1] - 1
   local diagnostics = lsp.diagnostic.get_line_diagnostics(current_bufnr, linenr)
@@ -112,6 +115,15 @@ function M.show_line_diagnostics()
     "BufLeave",
     "WinScrolled",
   }, winnr)
+end
+
+-- Show the current line diagnostics in a pretty format :)
+function M.show_line_diagnostics()
+  if diagnostics_timer then
+    diagnostics_timer:stop()
+  end
+
+  diagnostics_timer = vim.defer_fn(show_line_diagnostics, config.timeout)
 end
 
 return M
