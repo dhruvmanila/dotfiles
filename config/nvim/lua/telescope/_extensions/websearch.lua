@@ -16,9 +16,9 @@ local config = require("telescope.config").values
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local entry_display = require("telescope.pickers.entry_display")
-local utils = require("telescope.utils")
 
 local warn = require("core.utils").warn
+local Job = require("plenary.job")
 
 local state = {}
 
@@ -38,6 +38,17 @@ local mode = {
   query = "QUERY",
   result = "RESULT",
 }
+
+-- Simple animation frames displayed as the prompt prefix.
+local anim_frames = { "- ", "\\ ", "| ", "/ " }
+
+-- Callback for setting the prompt animation frame appropriately.
+local function in_progress_animation()
+  state.current_frame = state.current_frame >= #anim_frames and 1
+    or state.current_frame + 1
+  state.picker:change_prompt_prefix(anim_frames[state.current_frame], "Comment")
+  state.picker:reset_prompt()
+end
 
 ---Set the configuration state.
 ---@param opt_name string
@@ -70,19 +81,23 @@ end
 -- Set the telescope finder according to the provided information.
 ---@param new_mode string (default: `mode.query`)
 ---@param results table
-local function set_finder(_, new_mode, results)
+local function set_finder(new_mode, results)
   new_mode = new_mode or mode.query
   state.mode = new_mode
 
   results = results or {}
   state.results = results
+  state.current_frame = 0
 
   local new_finder = finders.new_table({
     results = results,
     entry_maker = entry_maker,
   })
 
-  state.picker:refresh(new_finder, { reset_prompt = true })
+  state.picker:refresh(new_finder, {
+    reset_prompt = true,
+    new_prefix = { state.original_prompt_prefix, "TelescopePromptPrefix" },
+  })
 end
 
 -- Perform the search with the prompt query.
@@ -92,24 +107,48 @@ local function do_search()
     return
   end
 
-  set_finder(_, mode.query)
+  set_finder(mode.query)
 
-  local command = {
-    executable[state.search_engine],
-    "--nocolor",
-    "-n",
-    state.max_results,
-    "--json",
-    "--noprompt",
-    query_text,
-  }
-  local output, code, err = utils.get_os_command_output(command)
-  if code > 0 then
-    error(table.concat(err, "\n"))
+  -- start in-progress animation
+  if not state.anim_timer then
+    state.anim_timer = vim.fn.timer_start(
+      100,
+      in_progress_animation,
+      { ["repeat"] = -1 }
+    )
   end
 
-  output = vim.fn.json_decode(output)
-  set_finder(_, mode.result, output)
+  local stderr = {}
+
+  local function process_complete(job, code)
+    if code > 0 then
+      error(table.concat(stderr, "\n"))
+    end
+    local result = job:result()
+    result = vim.fn.json_decode(result)
+    vim.fn.timer_stop(state.anim_timer)
+    state.anim_timer = nil
+    set_finder(mode.result, result)
+  end
+
+  Job
+    :new({
+      command = executable[state.search_engine],
+      args = {
+        "--nocolor",
+        "-n",
+        state.max_results,
+        "--json",
+        "--noprompt",
+        query_text,
+      },
+      enable_recording = true,
+      on_stderr = function(_, data)
+        table.insert(stderr, data)
+      end,
+      on_exit = vim.schedule_wrap(process_complete),
+    })
+    :start()
 end
 
 -- Define the default action of either searching or opening the URL depending
@@ -120,6 +159,9 @@ local function search_or_select(prompt_bufnr)
     do_search()
   else
     local selection = action_state.get_selected_entry()
+    if not selection then
+      return
+    end
     actions.close(prompt_bufnr)
     os.execute(string.format('%s "%s"', state.open_command, selection.value))
   end
@@ -156,13 +198,15 @@ local function websearch(opts)
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(search_or_select)
-      map("i", "<C-f>", set_finder)
+      map("i", "<C-f>", function()
+        set_finder()
+      end)
       return true
     end,
   })
-
+  state.original_prompt_prefix = state.picker.prompt_prefix
   state.picker:find()
-  set_finder(_, mode.query)
+  set_finder(mode.query)
 end
 
 return telescope.register_extension({
