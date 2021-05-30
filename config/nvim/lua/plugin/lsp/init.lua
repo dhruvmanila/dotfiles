@@ -13,13 +13,14 @@ local plugins = require("plugin.lsp.plugins")
 local servers = require("plugin.lsp.servers")
 
 -- For debugging purposes:
--- vim.lsp.set_log_level("debug")
+-- vim.lsp.set_log_level(vim.lsp.log_levels.DEBUG)
 
 -- Utiliy functions, commands and keybindings
 local function open_lsp_log()
   cmd("botright split")
   cmd("resize 20")
   cmd("edit " .. vim.lsp.get_log_path())
+  vim.api.nvim_win_set_option(0, "wrap", false)
 end
 
 dm.command({ "LspLog", open_lsp_log })
@@ -48,7 +49,7 @@ sign_define("LightBulbSign", {
   texthl = "LspDiagnosticsSignHint",
 })
 
-local opts = { noremap = true }
+local opts = { noremap = true, silent = true }
 
 local function buf_map(key, func, mode)
   mode = mode or "n"
@@ -98,9 +99,13 @@ local function custom_on_attach(client)
   )
   buf_map("K", "vim.lsp.buf.hover()")
   buf_map("gd", "vim.lsp.buf.definition()")
+  buf_map("<leader>pd", "require('plugin.lsp.preview').definition()")
   buf_map("gD", "vim.lsp.buf.declaration()")
+  buf_map("<leader>pD", "require('plugin.lsp.preview').declaration()")
   buf_map("gy", "vim.lsp.buf.type_definition()")
+  buf_map("<leader>py", "require('plugin.lsp.preview').type_definition()")
   buf_map("gi", "vim.lsp.buf.implementation()")
+  buf_map("<leader>pi", "require('plugin.lsp.preview').implementation()")
   buf_map("gr", "vim.lsp.buf.references()")
 
   if capabilities.signature_help then
