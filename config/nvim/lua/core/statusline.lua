@@ -83,6 +83,10 @@ end
 --   return line
 -- end
 
+local function quit_line(ctx)
+  return ctx.inactive and "" or "<q>" .. wrap_hl("StGrey") .. " quit "
+end
+
 ---Special buffer information table.
 ---
 ---This includes the following components:
@@ -117,21 +121,20 @@ local special_buffer_info = {
     gitcommit = "Commit message",
 
     fugitive = function(ctx)
-      local quit = ctx.inactive and "" or "<q>" .. wrap_hl("StGrey") .. " quit "
-      return "Fugitive" .. "%=" .. quit
+      return "Fugitive" .. "%=" .. quit_line(ctx)
     end,
 
     qf = function(ctx)
-      local quit = ctx.inactive and "" or "<q>" .. wrap_hl("StGrey") .. " quit "
+      local list_type = fn.getwininfo(ctx.curwin)[1].loclist == 1 and "Location"
+        or "Quickfix"
       local title = utils.get_var("w", ctx.curwin, "quickfix_title")
       title = title and "[" .. title .. "]" or ""
-      return "Quickfix List " .. title .. "  %l/%L %=" .. quit
+      return list_type .. " List " .. title .. "  %l/%L %=" .. quit_line(ctx)
     end,
 
     help = function(ctx)
-      local quit = ctx.inactive and "" or "<q>" .. wrap_hl("StGrey") .. " quit "
       local name = fn.fnamemodify(ctx.bufname, ":t:r")
-      return "help [" .. name .. "]  %l/%L %=" .. quit
+      return "help [" .. name .. "]  %l/%L %=" .. quit_line(ctx)
     end,
 
     dirvish = function(ctx)
@@ -148,9 +151,8 @@ local special_buffer_info = {
     end,
 
     dashboard = function(ctx)
-      local quit = ctx.inactive and "" or "<q>" .. wrap_hl("StGrey") .. " quit "
       local dir = fn.fnamemodify(ctx.bufname, ":~:s?Dashboard??")
-      return dir .. "%=" .. quit
+      return dir .. "%=" .. quit_line(ctx)
     end,
   },
   icon = {
