@@ -104,6 +104,21 @@ local function custom_on_attach(client)
   buf_map("gr", "vim.lsp.buf.references()")
 
   if capabilities.signature_help then
+    if not plugin_loaded("lsp_signature.nvim") then
+      require("packer").loader("lsp_signature.nvim")
+    end
+
+    require("lsp_signature").on_attach({
+      bind = true,
+      doc_lines = 2,
+      hint_enable = false,
+      use_lspsaga = false,
+      handler_opts = {
+        border = icons.border.edge,
+      },
+      decorator = { "`", "`" },
+    })
+
     buf_map("<C-s>", "vim.lsp.buf.signature_help()")
   end
 

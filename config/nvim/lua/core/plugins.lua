@@ -104,6 +104,7 @@ packer.startup({
     use({
       "nvim-lua/lsp-status.nvim",
       { "kosayoda/nvim-lightbulb", opt = true },
+      { "ray-x/lsp_signature.nvim", opt = true },
       {
         "neovim/nvim-lspconfig",
         event = "BufReadPre",
