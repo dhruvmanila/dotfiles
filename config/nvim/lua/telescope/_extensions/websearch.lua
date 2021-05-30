@@ -118,11 +118,9 @@ local function do_search()
     )
   end
 
-  local stderr = {}
-
   local function process_complete(job, code)
     if code > 0 then
-      error(table.concat(stderr, "\n"))
+      error(job:stderr_result())
     end
     local result = job:result()
     result = vim.fn.json_decode(result)
@@ -143,9 +141,6 @@ local function do_search()
         query_text,
       },
       enable_recording = true,
-      on_stderr = function(_, data)
-        table.insert(stderr, data)
-      end,
       on_exit = vim.schedule_wrap(process_complete),
     })
     :start()
