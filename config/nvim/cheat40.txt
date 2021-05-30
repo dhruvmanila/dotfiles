@@ -95,8 +95,8 @@ About {{{
 Close picker             «Esc»        IN
 Move to  selection      «C-j»         I
 Move to  selection      «C-k»         I
-Toggle selection and    «Spc»         I
-Toggle selection and    «C-Spc»       I
+Toggle selection and    «Tab»         I
+Toggle selection and    «S-Tab»       I
 Send to + open qflist    «C-q»        IM
 Open in horizontal split «C-s»         I
 Open in vertical split   «C-v»        IN

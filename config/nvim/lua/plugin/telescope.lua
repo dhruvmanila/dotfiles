@@ -115,8 +115,6 @@ require("telescope").setup({
         ["<C-x>"] = custom_actions.remove_current_selection,
         ["<C-y>"] = custom_actions.yank_entry,
         ["<C-l>"] = custom_actions.reset_prompt,
-        ["<Space>"] = actions.toggle_selection + actions.move_selection_worse,
-        ["<C-Space>"] = actions.toggle_selection + actions.move_selection_better,
       },
     },
   },
