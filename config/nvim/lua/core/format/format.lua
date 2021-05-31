@@ -5,10 +5,16 @@ local api = vim.api
 local utils = require("core.utils")
 local Job = require("plenary.job")
 
+-- Flag to signal that the BufWrite family autocmds were triggered by Format.
+-- This is done to let other commands to run for these events such as linting,
+-- and to avoid this module going into an infinite loop.
+---@type boolean
+local format_write = false
+
 ---@class Formatter
 ---@field cmd string
----@field args string[]|function
----@field enable function
+---@field args string[]|fun(filepath: string): string[]
+---@field enable fun(filepath: string): boolean?
 ---@field stdin boolean
 
 ---@type table<string, Formatter[]>
@@ -75,7 +81,7 @@ end
 
 -- Run the given formatter asynchronously. If it is disabled for the
 -- current buffer, step onto the next formatter.
----@param formatter table
+---@param formatter Formatter
 function Format:_run(formatter)
   if formatter.enable(self.filepath) == false then
     self:_step()
@@ -142,10 +148,12 @@ function Format:_done()
   if not self._formatted then
     return
   end
+  format_write = true
   local view = fn.winsaveview()
   api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self._output)
   fn.winrestview(view)
-  api.nvim_command("noautocmd update")
+  api.nvim_command(string.format("update %s", self.filepath))
+  format_write = false
 end
 
 -- Start the formatting chain.
@@ -177,6 +185,9 @@ end
 -- input of the second and so on and only at the end writes the output to the
 -- buffer.
 function M.format()
+  if format_write then
+    return
+  end
   if not vim.o.modifiable then
     utils.warn("[format] Buffer is not modifiable")
     return
