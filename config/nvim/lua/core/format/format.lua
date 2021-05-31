@@ -1,9 +1,9 @@
 local M = {}
 
+local uv = vim.loop
 local fn = vim.fn
 local api = vim.api
 local utils = require("core.utils")
-local Job = require("plenary.job")
 
 -- Flag to signal that the BufWrite family autocmds were triggered by Format.
 -- This is done to let other commands to run for these events such as linting,
@@ -58,7 +58,10 @@ end
 ---@field public bufnr number
 ---@field public filepath string
 ---@field public formatters Formatter[]
----@field private _output string[]
+---@field private _input string[]
+---@field private _output string[]?
+---@field private _current_output string
+---@field private _err_output string
 ---@field private _formatted boolean
 local Format = {}
 Format.__index = Format
@@ -74,7 +77,10 @@ function Format:new(formatters)
     bufnr = bufnr,
     filepath = filepath,
     formatters = vim.deepcopy(formatters),
-    _output = api.nvim_buf_get_lines(bufnr, 0, -1, false),
+    _input = api.nvim_buf_get_lines(bufnr, 0, -1, false),
+    _output = nil,
+    _current_output = "",
+    _err_output = "",
     _formatted = false,
   }, self)
 end
@@ -92,40 +98,98 @@ function Format:_run(formatter)
   local args = type(formatter.args) == "function" and formatter.args(self.filepath)
     or formatter.args
 
-  local job_opts = {
-    command = cmd,
+  local stdin = formatter.stdin and uv.new_pipe(false) or nil
+  local stdout = uv.new_pipe(false)
+  local stderr = uv.new_pipe(false)
+
+  local opts = {
     args = args,
-    enable_recording = true,
-    on_exit = vim.schedule_wrap(function(job, code)
-      self:_on_exit(job, code, formatter.stdin)
-    end),
+    stdio = { stdin, stdout, stderr },
+    cwd = vim.loop.cwd(),
+    detached = true,
   }
 
-  if formatter.stdin then
-    job_opts.writer = self._output
-  else
-    self._tempfile_name = create_temp_file(self.filepath, self._output)
-    table.insert(job_opts.args, self._tempfile_name)
+  if not formatter.stdin then
+    self._tempfile_name = create_temp_file(self.filepath, self._input)
+    table.insert(opts.args, self._tempfile_name)
   end
 
-  Job:new(job_opts):start()
+  local handle, pid_or_err
+  handle, pid_or_err = uv.spawn(
+    cmd,
+    opts,
+    vim.schedule_wrap(function(code)
+      stdout:close()
+      stderr:close()
+      handle:close()
+      self:_on_exit(code, formatter.stdin)
+    end)
+  )
+
+  if not handle then
+    stdout:close()
+    stderr:close()
+    error(string.format(
+      "Failed to run formatter '%s': %s",
+      formatter.cmd,
+      pid_or_err
+    ))
+    return
+  end
+
+  stdout:read_start(function(err, data)
+    assert(not err, err)
+    if data then
+      self._current_output = self._current_output .. data
+    else
+      self._current_output = self._current_output:gsub("\n$", "")
+    end
+  end)
+
+  stderr:read_start(function(err, data)
+    assert(not err, err)
+    if data then
+      self._err_output = self._err_output .. data
+    else
+      self._err_output = self._err_output:gsub("\n$", "")
+    end
+  end)
+
+  if formatter.stdin then
+    local input_len = #self._input
+    for i, v in ipairs(self._input) do
+      stdin:write(v)
+      if i ~= input_len then
+        stdin:write("\n")
+      else
+        stdin:write("\n", function()
+          stdin:close()
+        end)
+      end
+    end
+  end
 end
 
 -- Handler for the `on_exit` callback.
 --
 -- This will raise an error if the exitcode is not 0, update the output from
 -- the last job and step into running the next formatter.
-function Format:_on_exit(job, code, stdin)
+function Format:_on_exit(code, stdin)
   if code > 0 then
-    error(job:stderr_result())
+    if not stdin then
+      os.remove(self._tempfile_name)
+    end
+    error(self._err_output)
   end
   if stdin then
-    self._output = job:result()
+    self._output = vim.split(self._current_output, "\n")
   else
     self._output = read_temp_file(self._tempfile_name)
     os.remove(self._tempfile_name)
     self._tempfile_name = nil
   end
+  self._input = self._output
+  self._current_output = ""
   self._formatted = true
   self:_step()
 end
@@ -145,7 +209,7 @@ end
 -- The final callback in the formatting chain which will write the final
 -- output to the current buffer.
 function Format:_done()
-  if not self._formatted then
+  if not self._formatted or not self._output then
     return
   end
   format_write = true
