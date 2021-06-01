@@ -54,15 +54,45 @@ local function read_temp_file(tempfile_name)
   return lines
 end
 
+-- Helper function to close the handles safely
+-- Adopted from `plenary.job.close_safely`
+local function close_safely(...)
+  for _, handle in ipairs({ ... }) do
+    if not handle then
+      return
+    end
+    if not handle:is_closing() then
+      handle:close()
+    end
+  end
+end
+
+-- Reader for stdout and stderr. After the output is buffered, it will be
+-- assigned to `self[key]`
+---@param self Format
+---@param key string
+---@return function
+local function reader(self, key)
+  local buffer = ""
+  return function(err, chunk)
+    assert(not err, err)
+    if chunk then
+      buffer = buffer .. chunk
+    else
+      self[key] = buffer:gsub("\n$", "")
+    end
+  end
+end
+
 ---@class Format
 ---@field public bufnr number
 ---@field public filepath string
 ---@field public formatters Formatter[]
 ---@field private _input string[]
----@field private _output string[]?
+---@field private _output string[]
 ---@field private _current_output string
 ---@field private _err_output string
----@field private _formatted boolean
+---@field private _ran_formatter boolean
 local Format = {}
 Format.__index = Format
 
@@ -72,16 +102,17 @@ Format.__index = Format
 function Format:new(formatters)
   local bufnr = api.nvim_get_current_buf()
   local filepath = api.nvim_buf_get_name(bufnr)
+  local input = api.nvim_buf_get_lines(bufnr, 0, -1, false)
 
   return setmetatable({
     bufnr = bufnr,
     filepath = filepath,
     formatters = vim.deepcopy(formatters),
-    _input = api.nvim_buf_get_lines(bufnr, 0, -1, false),
-    _output = nil,
+    _input = input,
+    _output = input,
     _current_output = "",
     _err_output = "",
-    _formatted = false,
+    _ran_formatter = false,
   }, self)
 end
 
@@ -94,10 +125,8 @@ function Format:_run(formatter)
     return
   end
 
-  local cmd = formatter.cmd
   local args = type(formatter.args) == "function" and formatter.args(self.filepath)
     or formatter.args
-
   local stdin = formatter.stdin and uv.new_pipe(false) or nil
   local stdout = uv.new_pipe(false)
   local stderr = uv.new_pipe(false)
@@ -110,25 +139,22 @@ function Format:_run(formatter)
   }
 
   if not formatter.stdin then
-    self._tempfile_name = create_temp_file(self.filepath, self._input)
+    self._tempfile_name = create_temp_file(self.filepath, self._output)
     table.insert(opts.args, self._tempfile_name)
   end
 
   local handle, pid_or_err
   handle, pid_or_err = uv.spawn(
-    cmd,
+    formatter.cmd,
     opts,
     vim.schedule_wrap(function(code)
-      stdout:close()
-      stderr:close()
-      handle:close()
+      close_safely(stdin, stdout, stderr, handle)
       self:_on_exit(code, formatter.stdin)
     end)
   )
 
   if not handle then
-    stdout:close()
-    stderr:close()
+    close_safely(stdin, stdout, stderr)
     error(string.format(
       "Failed to run formatter '%s': %s",
       formatter.cmd,
@@ -137,33 +163,18 @@ function Format:_run(formatter)
     return
   end
 
-  stdout:read_start(function(err, data)
-    assert(not err, err)
-    if data then
-      self._current_output = self._current_output .. data
-    else
-      self._current_output = self._current_output:gsub("\n$", "")
-    end
-  end)
-
-  stderr:read_start(function(err, data)
-    assert(not err, err)
-    if data then
-      self._err_output = self._err_output .. data
-    else
-      self._err_output = self._err_output:gsub("\n$", "")
-    end
-  end)
+  stdout:read_start(reader(self, "_current_output"))
+  stderr:read_start(reader(self, "_err_output"))
 
   if formatter.stdin then
-    local input_len = #self._input
-    for i, v in ipairs(self._input) do
+    local input_len = #self._output
+    for i, v in ipairs(self._output) do
       stdin:write(v)
       if i ~= input_len then
         stdin:write("\n")
       else
         stdin:write("\n", function()
-          stdin:close()
+          close_safely(stdin)
         end)
       end
     end
@@ -186,11 +197,8 @@ function Format:_on_exit(code, stdin)
   else
     self._output = read_temp_file(self._tempfile_name)
     os.remove(self._tempfile_name)
-    self._tempfile_name = nil
   end
-  self._input = self._output
-  self._current_output = ""
-  self._formatted = true
+  self._ran_formatter = true
   self:_step()
 end
 
@@ -207,17 +215,21 @@ function Format:_step()
 end
 
 -- The final callback in the formatting chain which will write the final
--- output to the current buffer.
+-- output to the current buffer only if there were any changes made.
 function Format:_done()
-  if not self._formatted or not self._output then
+  if not self._ran_formatter then
     return
   end
-  format_write = true
-  local view = fn.winsaveview()
-  api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self._output)
-  fn.winrestview(view)
-  api.nvim_command(string.format("update %s", self.filepath))
-  format_write = false
+  if vim.deep_equal(self._input, self._output) then
+    print("[format] No changes made by the formatters")
+  else
+    format_write = true
+    local view = fn.winsaveview()
+    api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self._output)
+    api.nvim_command(string.format("update %s", self.filepath))
+    fn.winrestview(view)
+    format_write = false
+  end
 end
 
 -- Start the formatting chain.
