@@ -457,6 +457,7 @@ function setup_symlink() {
   link "config/bat"                 ".config/bat"
   link "config/efm-langserver"      ".config/efm-langserver"
   link "config/kitty"               ".config/kitty"
+  link "config/glow"                "Library/Preferences/glow"
 }
 
 
