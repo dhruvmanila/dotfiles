@@ -260,11 +260,8 @@ packer.startup({
 
   config = {
     display = {
-      open_fn = function()
-        return require("packer.util").float({
-          border = require("core.icons").border.edge,
-        })
-      end,
+      open_cmd = "silent botright 80vnew packer",
+      prompt_border = require("core.icons").border.edge,
     },
     profile = {
       enable = true,
