@@ -648,25 +648,36 @@ function usage() {
   echo ""
   echo "COMMANDS:"
   echo ""
-  echo "  all       perform all function (only do this on fresh setup)"
+  echo "  all       perform all setup functions"
   echo "  backup    perform backup with mackup"
   echo "  brew      setup homebrew and install required packages"
   echo "  dir       setup required directories"
   echo "  dock      update macOS dock applications"
   echo "  macos     update macOS settings"
-  echo "  link      backup and symlink (with -f/--force skip backup)"
+  echo "  link      backup and symlink dotfiles"
   echo "  package   setup global packages"
   echo "  python    setup python and global packages"
   echo "  restore   perform restore with mackup"
   echo "  shell     update default shell"
   echo "  sync      sync lib files with global packages"
-  echo "  upgrade   perform upgrades (with -g skip confirmation)"
+  echo "  upgrade   perform upgrades"
+  echo ""
+  echo "Flags:"
+  echo ""
+  echo "  -f, --force    skip dotfiles backup for 'link' command"
+  echo "  -h, --help     show this help and exit"
 }
 
 # Most of the functions have an initial check to determine whether they need to
 # be run or not. Example: setup_homebrew checks whether homebrew is already
 # installed or not.
 case "$1" in
+  all)
+    seek_confirmation "'all' command should only run on fresh setup!"
+    if is_confirmed; then
+      perform_all_functions
+    fi
+    ;;
   backup)
     perform_mackup_backup
     ;;
@@ -718,9 +729,6 @@ case "$1" in
     upgrade_plugins
     upgrade_neovim_nightly
     upgrade_lua_language_server
-    ;;
-  all)
-    perform_all_functions
     ;;
   -h | --help)
     usage
