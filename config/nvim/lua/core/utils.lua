@@ -1,13 +1,20 @@
 local M = {}
 local api = vim.api
 local cmd = api.nvim_command
-local format = string.format
 local icons = require("core.icons")
 
 -- Emit a warning message.
 ---@param msg string
 function M.warn(msg)
   api.nvim_echo({ { msg, "WarningMsg" } }, true, {})
+end
+
+-- Helper function to return the given default value if `x` is `nil`.
+function M.if_nil(x, is_nil)
+  if x == nil then
+    return is_nil
+  end
+  return x
 end
 
 -- Create key bindings for multiple modes with an optional parameters map.
@@ -20,7 +27,7 @@ end
 ---@param opts table (optional)
 function M.map(modes, lhs, rhs, opts)
   opts = opts or {}
-  opts.noremap = opts.noremap == nil and true or opts.noremap
+  opts.noremap = M.if_nil(opts.noremap, true)
   if type(modes) == "string" then
     modes = { modes }
   end
