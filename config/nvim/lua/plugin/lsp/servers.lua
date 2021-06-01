@@ -41,16 +41,16 @@ return {
 
   -- https://github.com/mattn/efm-langserver
   -- Settings: https://github.com/mattn/efm-langserver/blob/master/schema.json
-  efm = {
-    init_options = { documentFormatting = true },
-    filetypes = { "python" },
-    settings = {
-      rootMarkers = { ".git/", "requirements.txt" },
-      languages = {
-        python = { black, isort, flake8, mypy },
-      },
-    },
-  },
+  -- efm = {
+  --   init_options = { documentFormatting = true },
+  --   filetypes = { "python" },
+  --   settings = {
+  --     rootMarkers = { ".git/", "requirements.txt" },
+  --     languages = {
+  --       python = { black, isort, flake8, mypy },
+  --     },
+  --   },
+  -- },
 
   -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
   -- Settings: https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server#settings
