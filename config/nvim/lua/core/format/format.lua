@@ -85,14 +85,14 @@ local function reader(self, key)
 end
 
 ---@class Format
----@field public bufnr number
----@field public filepath string
----@field public formatters Formatter[]
----@field private _input string[]
----@field private _output string[]
----@field private _current_output string
----@field private _err_output string
----@field private _ran_formatter boolean
+---@field bufnr number
+---@field filepath string
+---@field formatters Formatter[]
+---@field input string[]
+---@field output string[]
+---@field current_output string
+---@field err_output string
+---@field ran_formatter boolean
 local Format = {}
 Format.__index = Format
 
@@ -108,20 +108,20 @@ function Format:new(formatters)
     bufnr = bufnr,
     filepath = filepath,
     formatters = vim.deepcopy(formatters),
-    _input = input,
-    _output = input,
-    _current_output = "",
-    _err_output = "",
-    _ran_formatter = false,
+    input = input,
+    output = input,
+    current_output = "",
+    err_output = "",
+    ran_formatter = false,
   }, self)
 end
 
 -- Run the given formatter asynchronously. If it is disabled for the
 -- current buffer, step onto the next formatter.
 ---@param formatter Formatter
-function Format:_run(formatter)
+function Format:run(formatter)
   if formatter.enable(self.filepath) == false then
-    self:_step()
+    self:step()
     return
   end
 
@@ -139,8 +139,8 @@ function Format:_run(formatter)
   }
 
   if not formatter.stdin then
-    self._tempfile_name = create_temp_file(self.filepath, self._output)
-    table.insert(opts.args, self._tempfile_name)
+    self.tempfile_name = create_temp_file(self.filepath, self.output)
+    table.insert(opts.args, self.tempfile_name)
   end
 
   local handle, pid_or_err
@@ -149,7 +149,7 @@ function Format:_run(formatter)
     opts,
     vim.schedule_wrap(function(code)
       close_safely(stdin, stdout, stderr, handle)
-      self:_on_exit(code, formatter.stdin)
+      self:on_exit(code, formatter.stdin)
     end)
   )
 
@@ -163,12 +163,12 @@ function Format:_run(formatter)
     return
   end
 
-  stdout:read_start(reader(self, "_current_output"))
-  stderr:read_start(reader(self, "_err_output"))
+  stdout:read_start(reader(self, "current_output"))
+  stderr:read_start(reader(self, "err_output"))
 
   if formatter.stdin then
-    local input_len = #self._output
-    for i, v in ipairs(self._output) do
+    local input_len = #self.output
+    for i, v in ipairs(self.output) do
       stdin:write(v)
       if i ~= input_len then
         stdin:write("\n")
@@ -185,56 +185,54 @@ end
 --
 -- This will raise an error if the exitcode is not 0, update the output from
 -- the last job and step into running the next formatter.
-function Format:_on_exit(code, stdin)
+---@param code number
+---@param stdin boolean
+function Format:on_exit(code, stdin)
   if code > 0 then
     if not stdin then
-      os.remove(self._tempfile_name)
+      os.remove(self.tempfile_name)
     end
-    error(self._err_output)
+    error(self.err_output)
   end
   if stdin then
-    self._output = vim.split(self._current_output, "\n")
+    self.output = vim.split(self.current_output, "\n")
   else
-    self._output = read_temp_file(self._tempfile_name)
-    os.remove(self._tempfile_name)
+    self.output = read_temp_file(self.tempfile_name)
+    os.remove(self.tempfile_name)
   end
-  self._ran_formatter = true
-  self:_step()
+  self.ran_formatter = true
+  self:step()
 end
 
 -- A helper function to bridge the gap between running multiple formatters
 -- asynchronously because a simple `for` loop won't cut it.
 --
 -- If there are no formatters, then we're done, otherwise run the next one.
-function Format:_step()
+function Format:step()
   if #self.formatters == 0 then
-    self:_done()
+    self:done()
     return
   end
-  self:_run(table.remove(self.formatters, 1))
+  self:run(table.remove(self.formatters, 1))
 end
 
 -- The final callback in the formatting chain which will write the final
 -- output to the current buffer only if there were any changes made.
-function Format:_done()
-  if not self._ran_formatter then
+function Format:done()
+  if not self.ran_formatter or vim.deep_equal(self.input, self.output) then
     return
   end
-  if vim.deep_equal(self._input, self._output) then
-    print("[format] No changes made by the formatters")
-  else
-    format_write = true
-    local view = fn.winsaveview()
-    api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self._output)
-    api.nvim_command(string.format("update %s", self.filepath))
-    fn.winrestview(view)
-    format_write = false
-  end
+  format_write = true
+  local view = fn.winsaveview()
+  api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self.output)
+  api.nvim_command(string.format("update %s", self.filepath))
+  fn.winrestview(view)
+  format_write = false
 end
 
 -- Start the formatting chain.
 function Format:start()
-  self:_step()
+  self:step()
 end
 
 -- Adds a new formatter for the given filetype.
