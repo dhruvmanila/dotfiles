@@ -65,12 +65,14 @@ packer.startup({
     -- Color scheme
     use({ "sainnhe/gruvbox-material", config = "require('plugin.colorscheme')" })
 
+    -- 40 width vertical split containing quick reference to mappings, etc.
     use({ "lifepillar/vim-cheat40", config = "vim.g.cheat40_use_default = false" })
 
     -- Lua
     use({
-      -- "https://github.com/luvit/luv/blob/master/docs.md" in :help format
+      -- Lua related docs in vim help format
       { "nanotee/luv-vimdocs" },
+      { "milisims/nvim-luaref" },
 
       -- LSP sumneko setup
       { "folke/lua-dev.nvim" },
@@ -104,7 +106,7 @@ packer.startup({
     -- TODO: remove after #12587 is fixed (upstream bug)
     use("antoinemadec/FixCursorHold.nvim")
 
-    -- LSP, auto completion and related
+    -- LSP, auto completion, linting and related
     use({
       "nvim-lua/lsp-status.nvim",
       { "kosayoda/nvim-lightbulb", opt = true },
@@ -121,6 +123,10 @@ packer.startup({
         config = require("plugin.completion").config,
       },
       {
+        "mfussenegger/nvim-lint",
+        config = "require('plugin.lint')",
+      },
+      {
         "liuchengxu/vista.vim",
         keys = { { "n", "<Leader>vv" } },
         config = "require('plugin.vista')",
@@ -133,17 +139,10 @@ packer.startup({
       },
     })
 
-    -- Linters and formatters (WIP plugins)
-    use({
-      "mfussenegger/nvim-lint",
-      config = "require('plugin.lint')",
-      opt = true,
-    })
-
     -- Telescope and family
     use({
       {
-        "~/git/telescope.nvim",
+        "~/contributing/telescope.nvim",
         event = "VimEnter",
         config = "require('plugin.telescope')",
         requires = {
@@ -166,11 +165,12 @@ packer.startup({
       },
       {
         "nvim-treesitter/playground",
-        cmd = "TSPlaygroundToggle",
+        cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
         requires = "nvim-treesitter/nvim-treesitter",
       },
       {
         "nvim-treesitter/nvim-treesitter-textobjects",
+        after = "nvim-treesitter",
         requires = "nvim-treesitter/nvim-treesitter",
       },
     })
@@ -193,7 +193,7 @@ packer.startup({
       },
     })
 
-    -- Comment
+    -- tpope
     use("tpope/vim-commentary")
     use("tpope/vim-scriptease")
     use("tpope/vim-eunuch")
@@ -249,7 +249,7 @@ packer.startup({
 
     -- Search
     -- TODO: Convert this to lua :)
-    use({ "romainl/vim-cool", config = [[vim.g.CoolTotalMatches = 1]] })
+    use({ "romainl/vim-cool" })
 
     -- Profiling
     use({ "tweekmonster/startuptime.vim", cmd = "StartupTime" })
