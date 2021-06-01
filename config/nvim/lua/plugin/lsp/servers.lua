@@ -84,12 +84,12 @@ return {
   pyright = {
     settings = {
       pyright = {
-        disableOrganizeImports = true,  -- Using isort
+        disableOrganizeImports = true, -- Using isort
       },
       python = {
         venvPath = os.getenv("HOME") .. "/.pyenv",
         analysis = {
-          typeCheckingMode = "off",  -- Using mypy
+          typeCheckingMode = "off", -- Using mypy
         },
       },
     },
@@ -103,7 +103,7 @@ return {
     return require("lua-dev").setup({
       library = {
         runtime = true,
-        plugins = { "telescope.nvim", "plenary.nvim", "popup.nvim" },
+        plugins = {},
         types = true,
       },
       lspconfig = {
