@@ -296,13 +296,16 @@ end
 ---Ref: https://github.com/nvim-lua/lsp-status.nvim/blob/master/lua/lsp-status/statusline.lua#L37
 ---@return string|nil
 local function lsp_messages()
-  local messages = fn.uniq(lsp_status.messages())
-  local msgs = {}
+  local messages = lsp_status.messages()
   local spinner_frames = icons.spinner_frames
+  -- We are only interested in one message and thus I am choosing the last one.
+  -- This would be similar to debouncing at the trailing edge. Otherwise, the
+  -- statusline gets filled with multiple messages one after the other.
+  local msg = messages[#messages]
+  local contents = ""
 
-  for _, msg in ipairs(messages) do
+  if msg then
     local client_name = "LSP[" .. msg.name .. "]:"
-    local contents
     if msg.progress then
       contents = msg.title
       if msg.message then
@@ -330,12 +333,11 @@ local function lsp_messages()
     else
       contents = msg.content
     end
-    table.insert(msgs, client_name .. " " .. contents)
+    contents = client_name .. " " .. contents
   end
 
-  local status = vim.trim(table.concat(msgs, " "))
-  if status ~= "" then
-    return status .. " "
+  if contents ~= "" then
+    return contents .. " "
   end
 end
 
