@@ -29,10 +29,7 @@ lspstatus.config({
     end
     return items
   end)(),
-  indicator_errors = icons.error,
-  indicator_warnings = icons.warning,
-  indicator_info = icons.info,
-  indicator_hint = icons.hint,
+  diagnostics = false,
 })
 -- Register the progress handler with Neovim's LSP client.
 lspstatus.register_progress()
