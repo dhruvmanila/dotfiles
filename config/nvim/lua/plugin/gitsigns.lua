@@ -1,5 +1,3 @@
--- Ref: https://github.com/lewis6991/gitsigns.nvim
-
 require("gitsigns").setup({
   signs = {
     add = { hl = "GitSignsAdd", text = "┃" },
@@ -14,13 +12,13 @@ require("gitsigns").setup({
     noremap = true,
     buffer = true,
 
-    ["n ]g"] = {
+    ["n ]h"] = {
       expr = true,
-      "&diff ? ']g' : '<cmd>lua require\"gitsigns\".next_hunk()<CR>'",
+      "&diff ? ']h' : '<cmd>lua require\"gitsigns\".next_hunk()<CR>'",
     },
-    ["n [g"] = {
+    ["n [h"] = {
       expr = true,
-      "&diff ? '[g' : '<cmd>lua require\"gitsigns\".prev_hunk()<CR>'",
+      "&diff ? '[h' : '<cmd>lua require\"gitsigns\".prev_hunk()<CR>'",
     },
 
     ["n <leader>hs"] = '<cmd>lua require("gitsigns").stage_hunk()<CR>',
@@ -28,11 +26,17 @@ require("gitsigns").setup({
     ["n <leader>hr"] = '<cmd>lua require("gitsigns").reset_hunk()<CR>',
     ["n <leader>hR"] = '<cmd>lua require("gitsigns").reset_buffer()<CR>',
     ["n <leader>hp"] = '<cmd>lua require("gitsigns").preview_hunk()<CR>',
-    ["n <leader>hb"] = '<cmd>lua require("gitsigns").blame_line()<CR>',
-    -- ['n <leader>bb'] = '<cmd>lua require("gitsigns").toggle_current_line_blame()<CR>',
+    ["n <leader>hb"] = '<cmd>lua require("gitsigns").blame_line(true)<CR>',
 
     -- Text objects
     ["o ih"] = ':<C-U>lua require("gitsigns").select_hunk()<CR>',
     ["x ih"] = ':<C-U>lua require("gitsigns").select_hunk()<CR>',
   },
+  preview_config = {
+    border = require("core.icons").border.edge,
+    row = 1,
+    col = 1,
+  },
+  -- Attach to untracked files?
+  attach_to_untracked = false,
 })

@@ -185,8 +185,8 @@ Git status               gs            N
 Git push                 «Spc»gp       N
 }}}
 Gitsigns Mappings {{{
-Move to  hunk           ]g            N
-Move to  hunk           [g            N
+Move to  hunk           ]h            N
+Move to  hunk           [h            N
 Stage hunk               «Spc»hs       N
 Undo stage hunk          «Spc»hu       N
 Reset hunk               «Spc»hr       N
