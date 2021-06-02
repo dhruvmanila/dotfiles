@@ -74,7 +74,7 @@ lir.setup({
     size_percentage = { width = 0.4, height = 0.8 },
     winblend = 0,
     border = true,
-    borderchars = require("core.icons").border.edgechars,
+    borderchars = require("core.icons").border.edge,
     -- shadow = true,
   },
   mappings = {
