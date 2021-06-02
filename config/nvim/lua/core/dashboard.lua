@@ -84,8 +84,8 @@ end
 
 --- Dashboard entries. Every element is a dictionary with the following keys:
 ---   - `key`: (string) used to create a keymap to trigger `command`
----   - `description`: (string|function) display this on the start page
----   - `command`: (string|function) execute the command on pressing `key`
+---   - `description`: (string[] | fun():string[]) display this on the start page
+---   - `command`: (string | function) execute the command on pressing `key`
 local entries = {
   {
     key = "l",
@@ -95,33 +95,33 @@ local entries = {
   {
     key = "s",
     description = { icons.globe .. "  Find sessions" },
-    command = "lua require('plugin.telescope').startify_sessions()",
+    command = require("plugin.telescope").startify_sessions,
   },
   { key = "e", description = { icons.file .. "  New file" }, command = "enew" },
   {
     key = "h",
     description = { icons.history .. "  Recently opened files" },
-    command = "Telescope oldfiles",
+    command = require("telescope.builtin").oldfiles,
   },
   {
     key = "f",
     description = { icons.files .. "  Find files" },
-    command = "lua require('plugin.telescope').find_files()",
+    command = require("plugin.telescope").find_files,
   },
   {
     key = "d",
     description = { icons.tools .. "  Find in dotfiles" },
-    command = "lua require('plugin.telescope').search_dotfiles()",
+    command = require("plugin.telescope").search_dotfiles,
   },
   {
     key = "b",
     description = { icons.directory .. "  File browser" },
-    command = "Telescope file_browser",
+    command = require("telescope.builtin").file_browser,
   },
   {
     key = "p",
     description = { icons.stopwatch .. "  Startup time" },
-    command = "lua require('core.utils').startuptime()",
+    command = require("core.utils").startuptime,
   },
 }
 
