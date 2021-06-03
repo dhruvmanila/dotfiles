@@ -667,6 +667,16 @@ function usage() {
   echo ""
   echo "  -f, --force    skip dotfiles backup for 'link' command"
   echo "  -h, --help     show this help and exit"
+  echo "  -a, --all      upgrade everything for 'upgrade' command"
+  echo ""
+  echo "Upgrade sub-commands:"
+  echo ""
+  echo "  brew           brew and installed packages"
+  echo "  packages       language specific installed packages"
+  echo "  cli            cli related upgrades"
+  echo "  neovim         neovim nightly"
+  echo "  plugins        vim/neovim/tmux plugins"
+  echo "  lua_lsp        lua language server (sumneko lua)"
 }
 
 # Most of the functions have an initial check to determine whether they need to
@@ -724,12 +734,33 @@ case "$1" in
     sync_lib_files
     ;;
   upgrade)
-    upgrade_homebrew
-    upgrade_packages
-    upgrade_cli_related
-    upgrade_plugins
-    upgrade_neovim_nightly
-    upgrade_lua_language_server
+    case "$2" in
+      brew)
+        upgrade_homebrew
+        ;;
+      packages)
+        upgrade_packages
+        ;;
+      cli)
+        upgrade_cli_related
+        ;;
+      plugins)
+        upgrade_plugins
+        ;;
+      neovim)
+        upgrade_neovim_nightly
+        ;;
+      lua_lsp)
+        upgrade_lua_language_server
+        ;;
+      -a|--all)
+        upgrade_homebrew
+        upgrade_packages
+        upgrade_cli_related
+        upgrade_plugins
+        upgrade_neovim_nightly
+        upgrade_lua_language_server
+    esac
     ;;
   -h | --help)
     usage
