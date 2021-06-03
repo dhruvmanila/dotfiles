@@ -19,7 +19,7 @@ handlers["textDocument/publishDiagnostics"] = lsp.with(
 -- Press 'q' to quit.
 handlers["textDocument/hover"] = function(...)
   local bufnr, _ = vim.lsp.with(vim.lsp.handlers.hover, {
-    border = border.edge,
+    border = border[vim.g.border_style],
   })(...)
 
   local opts = { noremap = true, nowait = true, silent = true }
@@ -29,7 +29,7 @@ end
 handlers["textDocument/signatureHelp"] = vim.lsp.with(
   vim.lsp.handlers.signature_help,
   {
-    border = border.edge,
+    border = border[vim.g.border_style],
   }
 )
 

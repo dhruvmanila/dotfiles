@@ -3,7 +3,8 @@
 -- gruvbox-material: https://github.com/sainnhe/gruvbox-material
 -- gruvbox (lua version): https://github.com/npxbr/gruvbox.nvim
 local g = vim.g
-local highlight = require("core.utils").highlight
+local utils = require("core.utils")
+local highlight = utils.highlight
 
 vim.o.background = "dark"
 
@@ -44,6 +45,21 @@ highlight("GreyBold", { guifg = palette.grey1[1], gui = "bold" })
 -- Current line number
 highlight("CursorLineNr", { force = true, link = "MoreMsg" })
 
+-- Floating window and border highlights according to the global border style.
+if g.border_style == "rounded" then
+  highlight("NormalFloat", { force = true, link = "Normal" })
+  highlight("FloatBorder", { force = true, link = "Normal" })
+elseif g.border_style == "edge" then
+  highlight("NormalFloat", { guifg = "NONE", guibg = "#2d2d2d" })
+  highlight("FloatBorder", { guifg = palette.grey1[1], guibg = "#2d2d2d" })
+else
+  vim.api.nvim_notify(
+    string.format("Unknown value for 'border_style': %s", g.border_style),
+    vim.log.levels.WARN,
+    {}
+  )
+end
+
 -- Telescope.nvim
 highlight("TelescopeSelection", { force = true, link = "Visual" })
 highlight("TelescopeSelectionCaret", { force = true, link = "Yellow" })
@@ -67,10 +83,6 @@ highlight("TSException", { force = true, link = "RedItalic" })
 highlight("TSInclude", { force = true, link = "RedItalic" })
 
 -- Lsp
--- highlight("NormalFloat", { force = true, link = "Normal" })
--- highlight("FloatBorder", { force = true, link = "Grey" })
-highlight("NormalFloat", { guifg = "NONE", guibg = "#2d2d2d" })
-highlight("FloatBorder", { guifg = palette.grey1[1], guibg = "#2d2d2d" })
 highlight("VirtualTextInformation", { force = true, link = "Blue" })
 highlight("VirtualTextHint", { force = true, link = "Aqua" })
 highlight(

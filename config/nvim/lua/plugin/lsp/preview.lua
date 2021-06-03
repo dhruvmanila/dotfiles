@@ -8,7 +8,10 @@ local function preview_location_callback(_, _, response)
     return
   end
   response = vim.tbl_islist(response) and response[1] or response
-  lsp.util.preview_location(response, { border = icons.border.edge })
+  lsp.util.preview_location(
+    response,
+    { border = icons.border[vim.g.border_style] }
+  )
 end
 
 local function make_lsp_preview_action(method)

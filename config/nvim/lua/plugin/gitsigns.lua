@@ -33,7 +33,7 @@ require("gitsigns").setup({
     ["x ih"] = ':<C-U>lua require("gitsigns").select_hunk()<CR>',
   },
   preview_config = {
-    border = require("core.icons").border.edge,
+    border = require("core.icons").border[vim.g.border_style],
     row = 1,
     col = 1,
   },

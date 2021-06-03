@@ -55,6 +55,13 @@ g.startify_session_dir = vim.fn.stdpath("data") .. "/session"
 -- TODO: kitty cuts or reduce size for double width symbol
 g.window_blend = 0
 
+-- Global border style.
+-- Available: "rounded", "edge"
+--
+-- The highlight groups "NormalFloat" and "FloatBorder" will be set according
+-- to the chosen style.
+g.border_style = "edge"
+
 -- Setup neovim providers. Most of the providers are disabled by default and
 -- will be enabled as the need arises.
 g.loaded_python_provider = 0

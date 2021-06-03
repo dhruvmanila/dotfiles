@@ -261,7 +261,7 @@ packer.startup({
   config = {
     display = {
       open_cmd = "silent botright 80vnew packer",
-      prompt_border = require("core.icons").border.edge,
+      prompt_border = require("core.icons").border[vim.g.border_style],
     },
     profile = {
       enable = true,

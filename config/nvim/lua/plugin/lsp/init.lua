@@ -119,7 +119,7 @@ local function custom_on_attach(client)
       hint_enable = false,
       use_lspsaga = false,
       handler_opts = {
-        border = icons.border.edge,
+        border = icons.border[vim.g.border_style],
       },
       hi_parameter = "YellowItalic",
     })

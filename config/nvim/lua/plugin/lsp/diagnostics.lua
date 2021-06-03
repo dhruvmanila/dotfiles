@@ -103,7 +103,7 @@ local function show_line_diagnostics()
   local win_opts = utils.make_floating_popup_options(
     longest_line,
     current_row,
-    icons.border.edge
+    icons.border[vim.g.border_style]
   )
   local winnr = api.nvim_open_win(bufnr, false, win_opts)
 
