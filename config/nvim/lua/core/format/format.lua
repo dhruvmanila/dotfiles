@@ -243,11 +243,11 @@ function M.formatter(filetype, formatter)
   if not registered_formatters[filetype] then
     registered_formatters[filetype] = {}
   end
-  -- By default, every formatter is enabled and uses stdin.
+  -- By default, every formatter is enabled.
   formatter.enable = formatter.enable or function()
     return true
   end
-  formatter.stdin = utils.if_nil(formatter.stdin, true)
+  assert(formatter.stdin, "Formatter must define a 'stdin'")
   assert(formatter.cmd, "Formatter must define a 'cmd'")
   assert(formatter.args, "Formatter must define a 'args' table or function")
   table.insert(registered_formatters[filetype], formatter)
