@@ -305,14 +305,29 @@ function M.open(on_vimenter)
     return
   end
 
+  -- We will ignore all events while creating the dashboard buffer as it might
+  -- result in unintended effect when dashboard is called in a nested fashion.
+  api.nvim_set_option("eventignore", "all")
+
   -- Save the current window/buffer options
-  dashboard.saved_opts = {}
-  option_process(dashboard.opts, "save")
+  -- If we are being called from a dashboard buffer, then we should not save
+  -- the options as it will save the dashboard buffer specific options.
+  if api.nvim_buf_get_option(0, "filetype") ~= "dashboard" then
+    dashboard.saved_opts = {}
+    option_process(dashboard.opts, "save")
+  end
 
   -- Create a new, unnamed buffer
   if fn.line2byte("$") ~= -1 then
     local bufnr = api.nvim_create_buf(true, true)
-    api.nvim_win_set_buf(0, bufnr)
+    -- If we are being called from a dashboard buffer in a nested fashion, we
+    -- should keep the alternate buffer which is the one we go to when we
+    -- quit the dashboard buffer.
+    if api.nvim_buf_get_option(0, "filetype") == "dashboard" then
+      cmd(string.format("keepalt call nvim_win_set_buf(0, %d)", bufnr))
+    else
+      api.nvim_win_set_buf(0, bufnr)
+    end
   end
 
   -- Set the dashboard buffer options
@@ -376,6 +391,7 @@ function M.open(on_vimenter)
   })
   cmd("silent! %foldopen!")
   cmd("normal! zb")
+  api.nvim_set_option("eventignore", "")
 end
 
 -- For debugging purposes:

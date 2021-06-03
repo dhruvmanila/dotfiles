@@ -23,6 +23,7 @@ let g:startify_session_before_save = [
 augroup dashboard
   autocmd!
   autocmd VimEnter * nested call s:on_vimenter()
+  autocmd VimResized * if &ft ==# 'dashboard' | Dashboard | endif
 augroup END
 
 function! s:on_vimenter()
