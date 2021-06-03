@@ -115,13 +115,13 @@ local function custom_on_attach(client)
 
     require("lsp_signature").on_attach({
       bind = true,
-      doc_lines = 2,
+      doc_lines = 0,
       hint_enable = false,
       use_lspsaga = false,
       handler_opts = {
         border = icons.border.edge,
       },
-      decorator = { "`", "`" },
+      hi_parameter = "YellowItalic",
     })
 
     buf_map("<C-s>", "vim.lsp.buf.signature_help()")
