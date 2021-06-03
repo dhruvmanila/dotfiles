@@ -62,6 +62,9 @@ Move to the right split  «C-l»         N
 Move to ‹n› tab          «Spc»‹n›      N
 }}}
 LSP Mappings {{{
+Restart LSP server       «Spc»lr       N
+Show LSP logs            «Spc»ll       N
+# Server Mappings ------------------------
 Show documentation       K             N
 # No severity limit
 Goto  diagnostic        [d            N
