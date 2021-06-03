@@ -107,3 +107,6 @@ highlight("LirEmptyDirText", { force = true, link = "LirSymlink" })
 
 -- Cheat40
 highlight("Cheat40Descr", { force = true, link = "Fg" })
+
+-- Vista
+highlight("VistaFloat", { force = true, link = "NormalFloat" })
