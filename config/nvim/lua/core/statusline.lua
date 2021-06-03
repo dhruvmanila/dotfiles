@@ -7,8 +7,6 @@ local icons = require("core.icons")
 local utils = require("core.utils")
 local lsp_status = require("lsp-status")
 
-local M = {}
-
 -- Colors are taken from the current colorscheme
 -- TODO: Any way of taking the values directly from the common highligh groups?
 local colors = {
@@ -112,6 +110,7 @@ local special_buffer_info = {
     "gitcommit",
     "vista_kind",
     "man",
+    "cheat40",
   },
   line = {
     terminal = "Terminal",
@@ -154,6 +153,10 @@ local special_buffer_info = {
       local dir = fn.fnamemodify(ctx.bufname, ":~:s?Dashboard??")
       return dir .. "%=" .. quit_line(ctx)
     end,
+
+    cheat40 = function(ctx)
+      return "Cheat40" .. "%=" .. quit_line(ctx)
+    end,
   },
   icon = {
     qf = { "StRed", icons.lists },
@@ -168,6 +171,7 @@ local special_buffer_info = {
     vista_kind = { "StBlue", icons.tag },
     man = { "StOrange", icons.book },
     dashboard = { "StBlue", icons.directory },
+    cheat40 = { "StAqua", icons.tools },
   },
 }
 
@@ -433,7 +437,7 @@ function _G.nvim_statusline()
     .. "%<"
     .. lsp_current_function("StGrey")
     .. "%="
-    .. github_notifications("StOrange")
+    .. github_notifications()
     .. python_version(ctx, "StBlueBold")
     .. lsp_clients(ctx, "StGreenBold")
     .. file_detail(ctx, "StGreyBold")
@@ -516,5 +520,3 @@ vim.g.qf_disable_statusline = 1
 
 -- Set the statusline
 vim.o.statusline = "%!v:lua.nvim_statusline()"
-
-return M
