@@ -1,3 +1,4 @@
+local lsp_util = vim.lsp.util
 local format = require("core.format.format")
 local root_pattern = require("lspconfig.util").root_pattern
 
@@ -6,28 +7,28 @@ local finder = {
   ignore_projects = root_pattern("openlibrary", "infogami"),
 }
 
-local cache = {}
+do
+  local stylua_config_dir
 
-format.formatter("lua", {
-  cmd = "stylua",
-  args = function(path)
-    local config_dir = cache.stylua_config_dir
-      or finder.stylua_config_file(path)
-    return { "--config-path", config_dir .. "/stylua.toml", "-" }
-  end,
-  enable = function(path)
-    cache.stylua_config_dir = finder.stylua_config_file(path)
-    if not cache.stylua_config_dir then
-      return false
-    end
-  end,
-  stdin = true,
-})
+  format.formatter("lua", {
+    cmd = "stylua",
+    args = function()
+      return { "--config-path", stylua_config_dir .. "/stylua.toml", "-" }
+    end,
+    enable = function(_, path)
+      stylua_config_dir = finder.stylua_config_file(path)
+      if not stylua_config_dir then
+        return false
+      end
+    end,
+    stdin = true,
+  })
+end
 
 format.formatter("python", {
   cmd = "black",
   args = { "--fast", "--quiet", "-" },
-  enable = function(path)
+  enable = function(_, path)
     if finder.ignore_projects(path) then
       return false
     end
@@ -38,7 +39,7 @@ format.formatter("python", {
 format.formatter("python", {
   cmd = "isort",
   args = { "--profile", "black", "-" },
-  enable = function(path)
+  enable = function(_, path)
     if finder.ignore_projects(path) then
       return false
     end
@@ -46,14 +47,25 @@ format.formatter("python", {
   stdin = true,
 })
 
--- Auto formatting setup
-dm.augroup("auto_formatting", {
-  {
-    events = { "BufWritePost" },
-    targets = { "*" },
-    command = format.format,
-  },
+format.formatter("sh", {
+  cmd = "shfmt",
+  -- -i uint   indent: 0 for tabs (default), >0 for number of spaces
+  -- -bn       binary ops like && and | may start a line
+  -- -ci       switch cases will be indented
+  -- -kp       keep column alignment paddings
+  args = function(bufnr)
+    local indent_size = vim.bo[bufnr].expandtab
+        and lsp_util.get_effective_tabstop(bufnr)
+      or 0
+    return { "-i", indent_size, "-bn", "-ci", "-kp", "-" }
+  end,
+  enable = function()
+    return false
+  end,
+  stdin = true,
 })
+
+format.formatter("json", { use_lsp = true })
 
 do
   -- Flag to denote the current state of auto formatting.
