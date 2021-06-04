@@ -131,12 +131,6 @@ packer.startup({
         keys = { { "n", "<Leader>vv" } },
         config = "require('plugin.vista')",
       },
-      {
-        "simrat39/symbols-outline.nvim",
-        keys = { { "n", "<Leader>so" } },
-        setup = require("plugin.symbols_outline").setup,
-        config = require("plugin.symbols_outline").config,
-      },
     })
 
     -- Telescope and family
