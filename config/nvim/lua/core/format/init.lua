@@ -59,9 +59,6 @@ format.formatter("sh", {
       or 0
     return { "-i", indent_size, "-bn", "-ci", "-kp", "-" }
   end,
-  enable = function()
-    return false
-  end,
   stdin = true,
 })
 

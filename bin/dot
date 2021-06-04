@@ -19,43 +19,43 @@ PYTHON_GLOBAL_REQUIREMENTS="${DOTFILES_DIRECTORY}/lib/requirements.txt"
 NPM_GLOBAL_PACKAGES="${DOTFILES_DIRECTORY}/lib/node_modules.txt"
 
 # These directories need to be made if absent
-REQUIRED_DIRECTORIES=(\
-  ~/.config \
-  ~/.gnupg \
-  ~/.ssh \
-  ~/contributing \
-  ~/git \
-  ~/neovim \
-  ~/playground \
-  ~/projects \
+REQUIRED_DIRECTORIES=(
+  ~/.config
+  ~/.gnupg
+  ~/.ssh
+  ~/contributing
+  ~/git
+  ~/neovim
+  ~/playground
+  ~/projects
 )
 
 # These files/directories will be backed up before symlinking, if they exists.
-BACKUP_DOTFILES=( \
-  ~/.bash_profile \
-  ~/.bashrc \
-  ~/.config \
-  ~/.gitconfig \
-  ~/.inputrc \
-  ~/.tmux.conf \
+BACKUP_DOTFILES=(
+  ~/.bash_profile
+  ~/.bashrc
+  ~/.config
+  ~/.gitconfig
+  ~/.inputrc
+  ~/.tmux.conf
   ~/.vim
 )
 
 # Keep everything quoted due to spaces. Order: left to right
-MACOS_DOCK_APPLICATIONS=( \
-  "/Applications/Safari.app" \
+MACOS_DOCK_APPLICATIONS=(
+  "/Applications/Safari.app"
   # "/Applications/Firefox.app" \
-  "/Applications/Brave Browser.app" \
+  "/Applications/Brave Browser.app"
   # "/Applications/PyCharm CE.app" \
   # "/Applications/Visual Studio Code.app" \
-  "/Applications/iTerm.app" \
-  "/Applications/kitty.app" \
-  "/System/Applications/Notes.app" \
-  "/Applications/Mark Text.app" \
-  "/System/Applications/Music.app" \
-  "/System/Applications/Books.app" \
-  "/Applications/Slack.app" \
-  "/Applications/Discord.app" \
+  "/Applications/iTerm.app"
+  "/Applications/kitty.app"
+  "/System/Applications/Notes.app"
+  "/Applications/Mark Text.app"
+  "/System/Applications/Music.app"
+  "/System/Applications/Books.app"
+  "/Applications/Slack.app"
+  "/Applications/Discord.app"
   "/Applications/Docker.app"
 )
 
@@ -66,21 +66,17 @@ RESET_ALL="\e[0m"
 RED="\e[31m"
 YELLOW="\e[1;33m"
 
-
 function header() {
   printf "\n%b==> %s %b\n" "$BOLD" "$@" "$RESET_ALL"
 }
-
 
 function error() {
   printf "%b✗ %s %b\n" "$RED" "$@" "$RESET_ALL"
 }
 
-
 function warning() {
   printf "%b! %s %b\n" "$YELLOW" "$@" "$RESET_ALL"
 }
-
 
 # Ask for confirmation before proceeding
 function seek_confirmation() {
@@ -104,12 +100,10 @@ function ask() {
   read -r
 }
 
-
 # Test whether we're in a git repo
 function is_git_repo() {
   git rev-parse --is-inside-work-tree &> /dev/null
 }
-
 
 # Test whether a command exists
 function command_exists() {
@@ -118,7 +112,6 @@ function command_exists() {
   fi
   return 1
 }
-
 
 function setup_required_directories() {
   header "Setting up the required directories..."
@@ -129,7 +122,6 @@ function setup_required_directories() {
     fi
   done
 }
-
 
 function setup_dotfiles_directory() {
   if [[ -d "$DOTFILES_DIRECTORY" ]]; then
@@ -146,7 +138,6 @@ function setup_dotfiles_directory() {
   rm -rf ~/dotfiles.tar.gz
 }
 
-
 function setup_xcode_command_line_tools() {
   if xcode-select -p &> /dev/null; then
     header "Xcode command line tools are already installed."
@@ -156,10 +147,9 @@ function setup_xcode_command_line_tools() {
   xcode-select --install
   # wait until the tools are installed...
   until xcode-select -p &> /dev/null; do
-    sleep 5;
+    sleep 5
   done
 }
-
 
 function setup_homebrew() {
   if command_exists 'brew'; then
@@ -189,7 +179,6 @@ function setup_homebrew() {
   set -e
 }
 
-
 function setup_homebrew_packages() {
   # No auto update during the setup process
   export HOMEBREW_NO_AUTO_UPDATE=1
@@ -206,7 +195,6 @@ function setup_homebrew_packages() {
   brew cleanup
 }
 
-
 function setup_default_shell() {
   # https://stackoverflow.com/a/41553295
   if dscl . -read ~/ UserShell | grep $DEFAULT_SHELL &> /dev/null; then
@@ -222,7 +210,6 @@ function setup_default_shell() {
   header "Switching to brew-installed ${DEFAULT_SHELL} as default shell..."
   sudo chsh -s "${brew_prefix}/bin/${DEFAULT_SHELL}"
 }
-
 
 function setup_dotfiles_git_repository() {
   header "Changing directory to $DOTFILES_DIRECTORY..."
@@ -242,7 +229,6 @@ function setup_dotfiles_git_repository() {
   set +x
   cd -
 }
-
 
 function setup_python() {
   for python_version in "${PYTHON_VERSIONS[@]}"; do
@@ -268,7 +254,6 @@ function setup_python() {
   pyenv rehash
 }
 
-
 function setup_python_global_packages() {
   if ! command_exists "pipx"; then
     header "Installing pipx from homebrew..."
@@ -288,7 +273,6 @@ function setup_python_global_packages() {
     fi
   done < "${PYTHON_GLOBAL_REQUIREMENTS}"
 }
-
 
 function setup_npm_global_packages() {
   local npm_list
@@ -312,7 +296,6 @@ function setup_tmux_plugins() {
   header "Installing tmux plugins..."
   ~/.tmux/plugins/tpm/bin/install_plugins
 }
-
 
 # NOTE: This function should be called after symlinking the dotfiles
 function setup_github_ssh() {
@@ -351,7 +334,6 @@ function setup_github_ssh() {
   done
 }
 
-
 function setup_neovim_nightly() {
   curr_dir=$(pwd)
   header "Setting up Neovim nightly..."
@@ -365,7 +347,6 @@ function setup_neovim_nightly() {
   make install
   cd $curr_dir
 }
-
 
 function setup_lua_language_server() {
   local curr_dir=$(pwd)
@@ -381,7 +362,6 @@ function setup_lua_language_server() {
   cd $curr_dir
 }
 
-
 function backup_dotfiles() {
   local backup_dir
   local -i count=0
@@ -391,18 +371,17 @@ function backup_dotfiles() {
   for location in "${BACKUP_DOTFILES[@]}"; do
     if [[ -f $location || -d $location ]]; then
       cp -R "$location" "$backup_dir"
-      (( count+=1 ))
+      ((count += 1))
     fi
   done
 
-  if (( count > 0 )); then
+  if ((count > 0)); then
     header "Created backup in ${backup_dir}"
   else
     header "Skipped backup as there are no dotfiles"
     rm -rf "$backup_dir"
   fi
 }
-
 
 function link() {
   # Force create/replace the symlink.
@@ -413,7 +392,6 @@ function link() {
     ln -fs "$source_file" "$target_file"
   fi
 }
-
 
 function setup_symlink() {
   # copy hushlogin as we are not going to be updating it
@@ -460,12 +438,10 @@ function setup_symlink() {
   link "config/glow"                "Library/Preferences/glow"
 }
 
-
 function update_macos_settings() {
   header "Updating macOS settings..."
   bash "${DOTFILES_DIRECTORY}/lib/osxdefaults"
 }
-
 
 function update_macos_dock() {
   header "Updating macOS dock applications..."
@@ -481,7 +457,6 @@ function update_macos_dock() {
     --sort dateadded \
     --section others
 }
-
 
 function sync_lib_files() {
   # header "Syncing Brewfile with the currently installed packages..."
@@ -500,14 +475,12 @@ function sync_lib_files() {
     | xargs -I{} echo "    {}"
 }
 
-
 function upgrade_homebrew() {
   header "Updating homebrew and packages..."
   brew update
   brew upgrade
   brew cleanup
 }
-
 
 function upgrade_packages() {
   for python_version in "${PYTHON_VERSIONS[@]}"; do
@@ -520,7 +493,6 @@ function upgrade_packages() {
   npm --global upgrade
 }
 
-
 function upgrade_plugins() {
   # Not quiting vim/neovim to check what's new
   header "Upgrading vim plugins..."
@@ -532,12 +504,10 @@ function upgrade_plugins() {
   ~/.tmux/plugins/tpm/bin/update_plugins all
 }
 
-
 function upgrade_cli_related() {
   header "Updating tldr data..."
   tldr --update
 }
-
 
 function upgrade_neovim_nightly() {
   curr_dir=$(pwd)
@@ -589,7 +559,6 @@ function upgrade_lua_language_server() {
   cd $curr_dir
 }
 
-
 function perform_mackup_backup() {
   header "Performing mackup backup..."
   local mackup_test
@@ -605,7 +574,6 @@ function perform_mackup_backup() {
   fi
 }
 
-
 function perform_mackup_restore() {
   header "Performing mackup restore..."
   local mackup_test
@@ -620,7 +588,6 @@ function perform_mackup_restore() {
     echo "==> No files to restore."
   fi
 }
-
 
 function perform_all_functions() {
   setup_required_directories
@@ -642,7 +609,6 @@ function perform_all_functions() {
   update_macos_dock
   perform_mackup_restore
 }
-
 
 function usage() {
   echo "Usage: $(basename "$0") [-h|--help] <command> [<flags>]"
@@ -753,13 +719,14 @@ case "$1" in
       lua_lsp)
         upgrade_lua_language_server
         ;;
-      -a|--all)
+      -a | --all)
         upgrade_homebrew
         upgrade_packages
         upgrade_cli_related
         upgrade_plugins
         upgrade_neovim_nightly
         upgrade_lua_language_server
+        ;;
     esac
     ;;
   -h | --help)

@@ -17,7 +17,7 @@ function it2prof() {
 
 # Create a new directory and enter it
 function mcd() {
-  mkdir -p "$@" && cd "$_" || return;
+  mkdir -p "$@" && cd "$_" || return
 }
 
 # Normalize `open` across Linux, macOS, and Windows.
@@ -25,9 +25,9 @@ function mcd() {
 if [ ! "$(uname -s)" = 'Darwin' ]; then
   if grep -q Microsoft /proc/version; then
     # Ubuntu on Windows using the Linux subsystem
-    alias open='explorer.exe';
+    alias open='explorer.exe'
   else
-    alias open='xdg-open';
+    alias open='xdg-open'
   fi
 fi
 
@@ -35,10 +35,10 @@ fi
 # location
 function o() {
   if [ $# -eq 0 ]; then
-    open .;
+    open .
   else
-    open "$@";
-  fi;
+    open "$@"
+  fi
 }
 
 # To open the python source folder directly using pyc in vscode :)
