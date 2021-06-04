@@ -3,6 +3,7 @@ local M = {}
 local uv = vim.loop
 local fn = vim.fn
 local api = vim.api
+local lsp = vim.lsp
 local utils = require("core.utils")
 
 -- Flag to signal that the BufWrite family autocmds were triggered by Format.
@@ -16,6 +17,8 @@ local format_write = false
 ---@field args string[]|fun(filepath: string): string[]
 ---@field enable fun(filepath: string): boolean?
 ---@field stdin boolean
+---@field use_lsp boolean?
+---@field lsp_opts table?
 
 ---@type table<string, Formatter[]>
 local registered_formatters = {}
@@ -116,16 +119,10 @@ function Format:new(formatters)
   }, self)
 end
 
--- Run the given formatter asynchronously. If it is disabled for the
--- current buffer, step onto the next formatter.
+-- Run the given formatter asynchronously.
 ---@param formatter Formatter
 function Format:run(formatter)
-  if formatter.enable(self.filepath) == false then
-    self:step()
-    return
-  end
-
-  local args = type(formatter.args) == "function" and formatter.args(self.filepath)
+  local args = type(formatter.args) == "function" and formatter.args(self.bufnr, self.filepath)
     or formatter.args
   local stdin = formatter.stdin and uv.new_pipe(false) or nil
   local stdout = uv.new_pipe(false)
@@ -204,16 +201,54 @@ function Format:on_exit(code, stdin)
   self:step()
 end
 
+-- Run the formatter from the LSP client.
+-- This assumes that the formatting requested from a client attached to the
+-- buffer has the ability to do so and there is only one client capable of
+-- performing the request.
+---@param formatter Formatter
+function Format:lsp_run(formatter)
+  lsp.buf_request(
+    self.bufnr,
+    "textDocument/formatting",
+    lsp.util.make_formatting_params(formatter.lsp_opts),
+    function(_, _, result)
+      if result then
+        lsp.util.apply_text_edits(result, self.bufnr)
+        self:write()
+      end
+    end
+  )
+end
+
+-- Check whether the given formatter is enabled for the current buffer.
+---@param formatter Formatter
+---@return boolean
+function Format:is_enabled(formatter)
+  return formatter.enable(self.bufnr, self.filepath) ~= false
+end
+
 -- A helper function to bridge the gap between running multiple formatters
 -- asynchronously because a simple `for` loop won't cut it.
 --
--- If there are no formatters, then we're done, otherwise run the next one.
+-- If there are no formatters, then we're done, otherwise check whether the
+-- formatter is enabled for the current buffer and run it, otherwise run the
+-- next one.
 function Format:step()
   if #self.formatters == 0 then
-    self:done()
-    return
+    return self:done()
   end
-  self:run(table.remove(self.formatters, 1))
+  local formatter = table.remove(self.formatters, 1)
+  -- Just `f()` is not a tail call, not that it makes a difference here.
+  -- This is because lua still have to discard the result of the call and then
+  -- return nil. `f()` is similar to `f(); return` instead of `return f()`
+  if self:is_enabled(formatter) then
+    if formatter.use_lsp then
+      return self:lsp_run(formatter)
+    end
+    return self:run(formatter)
+  else
+    return self:step()
+  end
 end
 
 -- The final callback in the formatting chain which will write the final
@@ -222,17 +257,26 @@ function Format:done()
   if not self.ran_formatter or vim.deep_equal(self.input, self.output) then
     return
   end
-  format_write = true
+  if api.nvim_buf_get_option(self.bufnr, "modified") then
+    utils.warn("[format] Aborting 'update' as buffer was modified")
+    return
+  end
   local view = fn.winsaveview()
   api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self.output)
-  api.nvim_command(string.format("update %s", self.filepath))
+  self:write()
   fn.winrestview(view)
+end
+
+-- Write the formatted buffer without triggering the format autocmd again.
+function Format:write()
+  format_write = true
+  api.nvim_command(string.format("update %s", self.filepath))
   format_write = false
 end
 
 -- Start the formatting chain.
 function Format:start()
-  self:step()
+  return self:step()
 end
 
 -- Adds a new formatter for the given filetype.
@@ -247,9 +291,14 @@ function M.formatter(filetype, formatter)
   formatter.enable = formatter.enable or function()
     return true
   end
-  assert(formatter.stdin, "Formatter must define a 'stdin'")
-  assert(formatter.cmd, "Formatter must define a 'cmd'")
-  assert(formatter.args, "Formatter must define a 'args' table or function")
+  formatter.use_lsp = utils.if_nil(formatter.use_lsp, false)
+  if not formatter.use_lsp then
+    assert(formatter.stdin, "Formatter must define a 'stdin'")
+    assert(formatter.cmd, "Formatter must define a 'cmd'")
+    assert(formatter.args, "Formatter must define a 'args' table or function")
+  else
+    formatter.lsp_opts = formatter.lsp_opts or {}
+  end
   table.insert(registered_formatters[filetype], formatter)
 end
 
@@ -259,14 +308,10 @@ end
 -- input of the second and so on and only at the end writes the output to the
 -- buffer.
 function M.format()
-  if format_write then
+  if format_write or not vim.bo.modifiable then
     return
   end
-  if not vim.o.modifiable then
-    utils.warn("[format] Buffer is not modifiable")
-    return
-  end
-  local formatters = registered_formatters[vim.o.filetype]
+  local formatters = registered_formatters[vim.bo.filetype]
   if not formatters then
     return
   end
