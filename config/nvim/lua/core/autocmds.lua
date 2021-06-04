@@ -125,11 +125,4 @@ dm.augroup("custom_autocmds", {
     targets = { "term://*" },
     command = "startinsert",
   },
-
-  -- Remove trailing whitespace on save
-  {
-    events = { "BufWritePre" },
-    targets = { "*" },
-    command = "TrimTrailingWhitespace",
-  },
 })
