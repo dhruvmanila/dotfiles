@@ -85,6 +85,11 @@ _G.packer_plugins = {
     needs_bufread = false,
     path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/clever-f.vim"
   },
+  ["editorconfig-vim"] = {
+    config = { "\27LJ\2\n√\1\0\0\2\0\a\0\r6\0\0\0009\0\1\0005\1\3\0=\1\2\0006\0\0\0009\0\1\0'\1\5\0=\1\4\0006\0\0\0009\0\1\0)\1\1\0=\1\6\0K\0\1\0(EditorConfig_preserve_formatoptions\tnone$EditorConfig_max_line_indicator\1\3\0\0\18fugitive://.*\rscp://.*\"EditorConfig_exclude_patterns\6g\bvim\0" },
+    loaded = true,
+    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/start/editorconfig-vim"
+  },
   ["gitsigns.nvim"] = {
     config = { "require('plugin.gitsigns')" },
     loaded = false,
@@ -127,7 +132,7 @@ _G.packer_plugins = {
   },
   ["nvim-compe"] = {
     after_files = { "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe/after/plugin/compe.vim" },
-    config = { "\27LJ\2\nF\0\1\a\0\3\0\b6\1\0\0009\1\1\0019\1\2\1\18\3\0\0+\4\2\0+\5\2\0+\6\2\0D\1\5\0\27nvim_replace_termcodes\bapi\bvim£\1\0\0\6\0\b\2\0306\0\0\0009\0\1\0009\0\2\0'\2\3\0B\0\2\2\23\0\0\0\b\0\1\0X\1\16Ä6\1\0\0009\1\1\0019\1\4\1'\3\3\0B\1\2\2\18\3\1\0009\1\5\1\18\4\0\0\18\5\0\0B\1\4\2\18\3\1\0009\1\6\1'\4\a\0B\1\3\2\15\0\1\0X\2\3Ä+\1\2\0L\1\2\0X\1\2Ä+\1\1\0L\1\2\0K\0\1\0\a%s\nmatch\bsub\fgetline\6.\bcol\afn\bvim\2\0ï\1\0\0\3\2\6\1\0236\0\0\0009\0\1\0009\0\2\0B\0\1\2\t\0\0\0X\0\4Ä-\0\0\0'\2\3\0D\0\2\0X\0\fÄ-\0\1\0B\0\1\2\15\0\0\0X\1\4Ä-\0\0\0'\2\4\0D\0\2\0X\0\4Ä6\0\0\0009\0\1\0009\0\5\0D\0\1\0K\0\1\0\2¿\3¿\19compe#complete\n<Tab>\n<C-n>\15pumvisible\afn\bvim\2b\0\0\3\1\5\1\0146\0\0\0009\0\1\0009\0\2\0B\0\1\2\t\0\0\0X\0\4Ä-\0\0\0'\2\3\0D\0\2\0X\0\3Ä-\0\0\0'\2\4\0D\0\2\0K\0\1\0\2¿\f<S-Tab>\n<C-p>\15pumvisible\afn\bvim\2Ø\6\1\0\b\0+\0I6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\1\3\0\18\2\0\0'\4\4\0'\5\5\0'\6\6\0\18\a\1\0B\2\5\1\18\2\0\0'\4\4\0'\5\a\0'\6\b\0\18\a\1\0B\2\5\1\18\2\0\0'\4\4\0'\5\t\0'\6\n\0\18\a\1\0B\2\5\1\18\2\0\0'\4\4\0'\5\v\0'\6\f\0\18\a\1\0B\2\5\1\18\2\0\0'\4\4\0'\5\r\0'\6\14\0\18\a\1\0B\2\5\1\18\2\0\0005\4\15\0'\5\16\0'\6\17\0005\a\18\0B\2\5\1\18\2\0\0005\4\19\0'\5\20\0'\6\21\0005\a\22\0B\2\5\0016\2\0\0'\4\23\0B\2\2\0029\2\24\0025\4\25\0005\5\27\0005\6\26\0=\6\28\0055\6\29\0=\6\30\0055\6\31\0=\6 \0055\6!\0=\6\"\5=\5#\4B\2\2\0013\2$\0003\3%\0006\4&\0003\5(\0=\5'\0046\4&\0003\5*\0=\5)\0042\0\0ÄK\0\1\0\0\19s_tab_complete\0\17tab_complete\a_G\0\0\vsource\rnvim_lua\1\0\1\rpriority\3\n\rnvim_lsp\1\0\1\rpriority\3\n\vbuffer\1\0\2\rpriority\3\b\tmenu\n[Buf]\tpath\1\0\0\1\0\1\rpriority\3\t\1\0\6\15min_length\3\1\17autocomplete\2\fenabled\2\18documentation\2\ndebug\1\14preselect\fdisable\nsetup\ncompe\1\0\1\texpr\2\27v:lua.s_tab_complete()\f<S-Tab>\1\3\0\0\6i\6s\1\0\1\texpr\2\25v:lua.tab_complete()\n<Tab>\1\3\0\0\6i\6s compe#scroll({'delta': -4})\n<C-b> compe#scroll({'delta': +4})\n<C-f>\25compe#close('<C-e>')\n<C-e>\26compe#confirm('<CR>')\t<CR>\21compe#complete()\14<C-Space>\6i\1\0\2\vsilent\2\texpr\2\bmap\15core.utils\frequire\0" },
+    config = { "\27LJ\2\nF\0\1\a\0\3\0\b6\1\0\0009\1\1\0019\1\2\1\18\3\0\0+\4\2\0+\5\2\0+\6\2\0D\1\5\0\27nvim_replace_termcodes\bapi\bvim£\1\0\0\6\0\b\2\0306\0\0\0009\0\1\0009\0\2\0'\2\3\0B\0\2\2\23\0\0\0\b\0\1\0X\1\16Ä6\1\0\0009\1\1\0019\1\4\1'\3\3\0B\1\2\2\18\3\1\0009\1\5\1\18\4\0\0\18\5\0\0B\1\4\2\18\3\1\0009\1\6\1'\4\a\0B\1\3\2\15\0\1\0X\2\3Ä+\1\2\0L\1\2\0X\1\2Ä+\1\1\0L\1\2\0K\0\1\0\a%s\nmatch\bsub\fgetline\6.\bcol\afn\bvim\2\0ï\1\0\0\3\2\6\1\0236\0\0\0009\0\1\0009\0\2\0B\0\1\2\t\0\0\0X\0\4Ä-\0\0\0'\2\3\0D\0\2\0X\0\fÄ-\0\1\0B\0\1\2\15\0\0\0X\1\4Ä-\0\0\0'\2\4\0D\0\2\0X\0\4Ä6\0\0\0009\0\1\0009\0\5\0D\0\1\0K\0\1\0\2¿\3¿\19compe#complete\n<Tab>\n<C-n>\15pumvisible\afn\bvim\2b\0\0\3\1\5\1\0146\0\0\0009\0\1\0009\0\2\0B\0\1\2\t\0\0\0X\0\4Ä-\0\0\0'\2\3\0D\0\2\0X\0\3Ä-\0\0\0'\2\4\0D\0\2\0K\0\1\0\2¿\f<S-Tab>\n<C-p>\15pumvisible\afn\bvim\2Ø\6\1\0\b\0+\0I6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\1\3\0\18\2\0\0'\4\4\0'\5\5\0'\6\6\0\18\a\1\0B\2\5\1\18\2\0\0'\4\4\0'\5\a\0'\6\b\0\18\a\1\0B\2\5\1\18\2\0\0'\4\4\0'\5\t\0'\6\n\0\18\a\1\0B\2\5\1\18\2\0\0'\4\4\0'\5\v\0'\6\f\0\18\a\1\0B\2\5\1\18\2\0\0'\4\4\0'\5\r\0'\6\14\0\18\a\1\0B\2\5\1\18\2\0\0005\4\15\0'\5\16\0'\6\17\0005\a\18\0B\2\5\1\18\2\0\0005\4\19\0'\5\20\0'\6\21\0005\a\22\0B\2\5\0016\2\0\0'\4\23\0B\2\2\0029\2\24\0025\4\25\0005\5\27\0005\6\26\0=\6\28\0055\6\29\0=\6\30\0055\6\31\0=\6 \0055\6!\0=\6\"\5=\5#\4B\2\2\0013\2$\0003\3%\0006\4&\0003\5(\0=\5'\0046\4&\0003\5*\0=\5)\0042\0\0ÄK\0\1\0\0\19s_tab_complete\0\17tab_complete\a_G\0\0\vsource\rnvim_lua\1\0\1\rpriority\3\n\rnvim_lsp\1\0\1\rpriority\3\n\vbuffer\1\0\2\tmenu\n[Buf]\rpriority\3\b\tpath\1\0\0\1\0\1\rpriority\3\t\1\0\6\ndebug\1\18documentation\2\14preselect\fdisable\15min_length\3\1\17autocomplete\2\fenabled\2\nsetup\ncompe\1\0\1\texpr\2\27v:lua.s_tab_complete()\f<S-Tab>\1\3\0\0\6i\6s\1\0\1\texpr\2\25v:lua.tab_complete()\n<Tab>\1\3\0\0\6i\6s compe#scroll({'delta': -4})\n<C-b> compe#scroll({'delta': +4})\n<C-f>\25compe#close('<C-e>')\n<C-e>\26compe#confirm('<CR>')\t<CR>\21compe#complete()\14<C-Space>\6i\1\0\2\texpr\2\vsilent\2\bmap\15core.utils\frequire\0" },
     loaded = false,
     needs_bufread = false,
     path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/nvim-compe"
@@ -211,13 +216,6 @@ _G.packer_plugins = {
     loaded = false,
     needs_bufread = false,
     path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/startuptime.vim"
-  },
-  ["symbols-outline.nvim"] = {
-    config = { "\27LJ\2\nt\0\0\6\0\a\0\t6\0\0\0009\0\1\0009\0\2\0'\2\3\0'\3\4\0'\4\5\0005\5\6\0B\0\5\1K\0\1\0\1\0\1\fnoremap\2\28<Cmd>SymbolsOutline<CR>\15<Leader>so\6n\20nvim_set_keymap\bapi\bvim\0" },
-    keys = { { "n", "<Leader>so" } },
-    loaded = false,
-    needs_bufread = false,
-    path = "/Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/symbols-outline.nvim"
   },
   ["telescope-bookmarks.nvim"] = {
     loaded = true,
@@ -311,80 +309,79 @@ time("packadd for clever-f.vim", false)
 time("Setup for nvim-compe", true)
 try_loadstring("\27LJ\2\n…\3\0\0\2\0\14\00016\0\0\0009\0\1\0)\1\1\0=\1\2\0006\0\0\0009\0\1\0)\1\1\0=\1\3\0006\0\0\0009\0\1\0)\1\1\0=\1\4\0006\0\0\0009\0\1\0)\1\1\0=\1\5\0006\0\0\0009\0\1\0)\1\1\0=\1\6\0006\0\0\0009\0\1\0)\1\1\0=\1\a\0006\0\0\0009\0\1\0)\1\1\0=\1\b\0006\0\0\0009\0\1\0)\1\1\0=\1\t\0006\0\0\0009\0\1\0)\1\1\0=\1\n\0006\0\0\0009\0\1\0)\1\1\0=\1\v\0006\0\0\0009\0\1\0)\1\1\0=\1\f\0006\0\0\0009\0\1\0)\1\1\0=\1\r\0K\0\1\0\23loaded_compe_vsnip\25loaded_compe_vim_lsp\25loaded_compe_vim_lsc\27loaded_compe_ultisnips\28loaded_compe_treesitter\22loaded_compe_tags\23loaded_compe_spell\31loaded_compe_snippets_nvim\22loaded_compe_omni\25loaded_compe_luasnip\23loaded_compe_emoji\22loaded_compe_calc\6g\bvim\0", "setup", "nvim-compe")
 time("Setup for nvim-compe", false)
--- Setup for: symbols-outline.nvim
-time("Setup for symbols-outline.nvim", true)
-try_loadstring("\27LJ\2\nÅ\2\0\0\3\0\a\0\t6\0\0\0009\0\1\0005\1\3\0005\2\4\0=\2\5\0014\2\0\0=\2\6\1=\1\2\0K\0\1\0\18lsp_blacklist\fkeymaps\1\0\6\19focus_location\6o\17code_actions\6a\18rename_symbol\6r\17hover_symbol\14<C-space>\nclose\6q\18goto_location\t<CR>\1\0\4\rposition\nright\17auto_preview\1\16show_guides\2\27highlight_hovered_item\2\20symbols_outline\6g\bvim\0", "setup", "symbols-outline.nvim")
-time("Setup for symbols-outline.nvim", false)
 -- Config for: vim-cheat40
 time("Config for vim-cheat40", true)
 vim.g.cheat40_use_default = false
 time("Config for vim-cheat40", false)
--- Config for: lir.nvim
-time("Config for lir.nvim", true)
-require('plugin.lir')
-time("Config for lir.nvim", false)
 -- Config for: gruvbox-material
 time("Config for gruvbox-material", true)
 require('plugin.colorscheme')
 time("Config for gruvbox-material", false)
--- Config for: nvim-web-devicons
-time("Config for nvim-web-devicons", true)
-require('plugin.nvim_web_devicons')
-time("Config for nvim-web-devicons", false)
--- Config for: nvim-lint
-time("Config for nvim-lint", true)
-require('plugin.lint')
-time("Config for nvim-lint", false)
--- Config for: vim-external
-time("Config for vim-external", true)
-require('plugin.vim_external')
-time("Config for vim-external", false)
 -- Config for: vim-fugitive
 time("Config for vim-fugitive", true)
 require('plugin.fugitive')
 time("Config for vim-fugitive", false)
+-- Config for: nvim-web-devicons
+time("Config for nvim-web-devicons", true)
+require('plugin.nvim_web_devicons')
+time("Config for nvim-web-devicons", false)
+-- Config for: vim-external
+time("Config for vim-external", true)
+require('plugin.vim_external')
+time("Config for vim-external", false)
+-- Config for: nvim-lint
+time("Config for nvim-lint", true)
+require('plugin.lint')
+time("Config for nvim-lint", false)
+-- Config for: lir.nvim
+time("Config for lir.nvim", true)
+require('plugin.lir')
+time("Config for lir.nvim", false)
+-- Config for: editorconfig-vim
+time("Config for editorconfig-vim", true)
+try_loadstring("\27LJ\2\n√\1\0\0\2\0\a\0\r6\0\0\0009\0\1\0005\1\3\0=\1\2\0006\0\0\0009\0\1\0'\1\5\0=\1\4\0006\0\0\0009\0\1\0)\1\1\0=\1\6\0K\0\1\0(EditorConfig_preserve_formatoptions\tnone$EditorConfig_max_line_indicator\1\3\0\0\18fugitive://.*\rscp://.*\"EditorConfig_exclude_patterns\6g\bvim\0", "config", "editorconfig-vim")
+time("Config for editorconfig-vim", false)
 
 -- Command lazy-loads
 time("Defining lazy-load commands", true)
+vim.cmd [[command! -nargs=* -range -bang -complete=file TSPlaygroundToggle lua require("packer.load")({'playground'}, { cmd = "TSPlaygroundToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 vim.cmd [[command! -nargs=* -range -bang -complete=file TSHighlightCapturesUnderCursor lua require("packer.load")({'playground'}, { cmd = "TSHighlightCapturesUnderCursor", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 vim.cmd [[command! -nargs=* -range -bang -complete=file StartupTime lua require("packer.load")({'startuptime.vim'}, { cmd = "StartupTime", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
-vim.cmd [[command! -nargs=* -range -bang -complete=file TSPlaygroundToggle lua require("packer.load")({'playground'}, { cmd = "TSPlaygroundToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
 time("Defining lazy-load commands", false)
 
 -- Keymap lazy-loads
 time("Defining lazy-load keymaps", true)
-vim.cmd [[nnoremap <silent> <Leader>vv <cmd>lua require("packer.load")({'vista.vim'}, { keys = "<lt>Leader>vv", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> <C-n> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-n>", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[nnoremap <silent> <Leader>cc <cmd>lua require("packer.load")({'nvim-colorizer.lua'}, { keys = "<lt>Leader>cc", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> <Leader>vv <cmd>lua require("packer.load")({'vista.vim'}, { keys = "<lt>Leader>vv", prefix = "" }, _G.packer_plugins)<cr>]]
 vim.cmd [[xnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
-vim.cmd [[nnoremap <silent> <Leader>so <cmd>lua require("packer.load")({'symbols-outline.nvim'}, { keys = "<lt>Leader>so", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> <C-n> <cmd>lua require("packer.load")({'nvim-tree.lua'}, { keys = "<lt>C-n>", prefix = "" }, _G.packer_plugins)<cr>]]
+vim.cmd [[nnoremap <silent> ge <cmd>lua require("packer.load")({'vim-easy-align'}, { keys = "ge", prefix = "" }, _G.packer_plugins)<cr>]]
 time("Defining lazy-load keymaps", false)
 
 vim.cmd [[augroup packer_load_aucmds]]
 vim.cmd [[au!]]
   -- Filetype lazy-loads
 time("Defining lazy-load filetype autocommands", true)
+vim.cmd [[au FileType requirements ++once lua require("packer.load")({'requirements.txt.vim'}, { ft = "requirements" }, _G.packer_plugins)]]
 vim.cmd [[au FileType toml ++once lua require("packer.load")({'vim-toml'}, { ft = "toml" }, _G.packer_plugins)]]
 vim.cmd [[au FileType applescript ++once lua require("packer.load")({'applescript.vim'}, { ft = "applescript" }, _G.packer_plugins)]]
-vim.cmd [[au FileType requirements ++once lua require("packer.load")({'requirements.txt.vim'}, { ft = "requirements" }, _G.packer_plugins)]]
 time("Defining lazy-load filetype autocommands", false)
   -- Event lazy-loads
 time("Defining lazy-load event autocommands", true)
-vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
-vim.cmd [[au BufNewFile * ++once lua require("packer.load")({'nvim-treesitter', 'gitsigns.nvim'}, { event = "BufNewFile *" }, _G.packer_plugins)]]
 vim.cmd [[au VimEnter * ++once lua require("packer.load")({'telescope.nvim'}, { event = "VimEnter *" }, _G.packer_plugins)]]
+vim.cmd [[au BufNewFile * ++once lua require("packer.load")({'gitsigns.nvim', 'nvim-treesitter'}, { event = "BufNewFile *" }, _G.packer_plugins)]]
+vim.cmd [[au InsertEnter * ++once lua require("packer.load")({'nvim-compe'}, { event = "InsertEnter *" }, _G.packer_plugins)]]
 vim.cmd [[au BufRead * ++once lua require("packer.load")({'nvim-treesitter'}, { event = "BufRead *" }, _G.packer_plugins)]]
 vim.cmd [[au BufReadPre * ++once lua require("packer.load")({'gitsigns.nvim', 'nvim-lspconfig'}, { event = "BufReadPre *" }, _G.packer_plugins)]]
 time("Defining lazy-load event autocommands", false)
 vim.cmd("augroup END")
 vim.cmd [[augroup filetypedetect]]
-time("Sourcing ftdetect script at: /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/vim-toml/ftdetect/toml.vim", true)
-vim.cmd [[source /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/vim-toml/ftdetect/toml.vim]]
-time("Sourcing ftdetect script at: /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/vim-toml/ftdetect/toml.vim", false)
 time("Sourcing ftdetect script at: /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/requirements.txt.vim/ftdetect/requirements.vim", true)
 vim.cmd [[source /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/requirements.txt.vim/ftdetect/requirements.vim]]
 time("Sourcing ftdetect script at: /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/requirements.txt.vim/ftdetect/requirements.vim", false)
+time("Sourcing ftdetect script at: /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/vim-toml/ftdetect/toml.vim", true)
+vim.cmd [[source /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/vim-toml/ftdetect/toml.vim]]
+time("Sourcing ftdetect script at: /Users/dhruvmanilawala/.local/share/nvim/site/pack/packer/opt/vim-toml/ftdetect/toml.vim", false)
 vim.cmd("augroup END")
 if should_profile then save_profiles(0) end
 

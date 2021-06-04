@@ -188,7 +188,7 @@ end
 ---@param hl string
 ---@return string
 local function file_detail(ctx, hl)
-  if vim.api.nvim_win_get_width(ctx.curwin) < 120 then
+  if vim.api.nvim_win_get_width(ctx.curwin) < 100 then
     return ""
   end
   local encode = vim.bo.fenc ~= "" and vim.bo.fenc or vim.o.enc
