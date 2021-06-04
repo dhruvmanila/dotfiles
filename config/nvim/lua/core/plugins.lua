@@ -106,6 +106,16 @@ packer.startup({
     -- TODO: remove after #12587 is fixed (upstream bug)
     use("antoinemadec/FixCursorHold.nvim")
 
+    -- Common config across editors and teams
+    use({
+      "editorconfig/editorconfig-vim",
+      config = function()
+        vim.g.EditorConfig_exclude_patterns = { "fugitive://.*", "scp://.*" }
+        vim.g.EditorConfig_max_line_indicator = "none"
+        vim.g.EditorConfig_preserve_formatoptions = 1
+      end,
+    })
+
     -- LSP, auto completion, linting and related
     use({
       "nvim-lua/lsp-status.nvim",
