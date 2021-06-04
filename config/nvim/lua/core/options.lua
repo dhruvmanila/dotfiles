@@ -60,7 +60,6 @@ opt.cursorline = true
 opt.number = true
 opt.relativenumber = true
 opt.signcolumn = "yes:1"
-opt.foldenable = false
 
 opt.wrap = true -- Visually wrap lines longer than window width
 opt.breakindent = true -- Every wrapped line will continue visually indented
