@@ -1,4 +1,3 @@
--- Ref: https://github.com/nvim-treesitter/nvim-treesitter
 local map = require("core.utils").map
 
 map("n", "<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>")

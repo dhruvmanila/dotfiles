@@ -1,4 +1,3 @@
--- Ref: https://github.com/hrsh7th/nvim-compe
 local M = {}
 
 function M.setup()

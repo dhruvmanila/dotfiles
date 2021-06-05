@@ -1,4 +1,3 @@
--- Ref: https://github.com/Yggdroot/indentLine
 local g = vim.g
 
 -- | ¦ ┆ │ ┊ │  ▏

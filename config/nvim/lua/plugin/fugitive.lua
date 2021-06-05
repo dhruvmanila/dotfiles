@@ -1,4 +1,3 @@
--- Ref: https://github.com/tpope/vim-fugitive
 local map = vim.api.nvim_set_keymap
 
 -- 'gs' originally means goto sleep for {count} seconds which is of no use

@@ -1,4 +1,3 @@
--- Ref: https://github.com/nvim-telescope/telescope.nvim
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local themes = require("telescope.themes")

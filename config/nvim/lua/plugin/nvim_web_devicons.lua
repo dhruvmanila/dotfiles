@@ -1,4 +1,3 @@
--- Ref: https://github.com/kyazdani42/nvim-web-devicons
 local icons = require("core.icons")
 
 require("nvim-web-devicons").setup({

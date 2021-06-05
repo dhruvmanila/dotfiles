@@ -1,7 +1,3 @@
--- Ref:
--- sonokai: https://github.com/sainnhe/sonokai
--- gruvbox-material: https://github.com/sainnhe/gruvbox-material
--- gruvbox (lua version): https://github.com/npxbr/gruvbox.nvim
 local g = vim.g
 local utils = require("core.utils")
 local highlight = utils.highlight
