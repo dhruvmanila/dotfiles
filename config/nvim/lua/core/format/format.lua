@@ -167,17 +167,8 @@ function Format:run(formatter)
   stderr:read_start(reader(self, "err_output"))
 
   if formatter.stdin then
-    local input_len = #self.output
-    for i, v in ipairs(self.output) do
-      stdin:write(v)
-      if i ~= input_len then
-        stdin:write("\n")
-      else
-        stdin:write("\n", function()
-          close_safely(stdin)
-        end)
-      end
-    end
+    stdin:write(table.concat(self.output, "\n"))
+    stdin:shutdown()
   end
 end
 
