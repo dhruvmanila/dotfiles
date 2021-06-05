@@ -63,10 +63,14 @@ packer.startup({
     use("wbthomason/packer.nvim")
 
     -- Color scheme
-    use({ "sainnhe/gruvbox-material", config = "require('plugin.colorscheme')" })
+    use(
+      { "sainnhe/gruvbox-material", config = "require('plugin.colorscheme')" }
+    )
 
     -- 40 width vertical split containing quick reference to mappings, etc.
-    use({ "lifepillar/vim-cheat40", config = "vim.g.cheat40_use_default = false" })
+    use(
+      { "lifepillar/vim-cheat40", config = "vim.g.cheat40_use_default = false" }
+    )
 
     -- Lua
     use({

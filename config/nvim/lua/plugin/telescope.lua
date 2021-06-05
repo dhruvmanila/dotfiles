@@ -271,19 +271,23 @@ function M.search_dotfiles()
 end
 
 function M.installed_plugins()
-  require("telescope").extensions.installed_plugins.installed_plugins(themes.get_dropdown({
-    width = _CachedPluginInfo.max_length + 10,
-    results_height = 0.8,
-    previewer = false,
-  }))
+  require("telescope").extensions.installed_plugins.installed_plugins(
+    themes.get_dropdown({
+      width = _CachedPluginInfo.max_length + 10,
+      results_height = 0.8,
+      previewer = false,
+    })
+  )
 end
 
 function M.startify_sessions()
-  require("telescope").extensions.startify_sessions.startify_sessions(themes.get_dropdown({
-    width = 40,
-    results_height = 0.5,
-    previewer = false,
-  }))
+  require("telescope").extensions.startify_sessions.startify_sessions(
+    themes.get_dropdown({
+      width = 40,
+      results_height = 0.5,
+      previewer = false,
+    })
+  )
 end
 
 function M.help_tags()

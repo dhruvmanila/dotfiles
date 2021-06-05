@@ -7,7 +7,9 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error("This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)")
+  error(
+    "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
+  )
 end
 
 local finders = require("telescope.finders")
@@ -168,11 +170,13 @@ local function websearch(opts)
   local search_engine = state.search_engine
 
   if vim.fn.executable(executable[search_engine]) <= 0 then
-    error(string.format(
-      "This plugin requires the `%s` executable for searching on '%s'",
-      executable[search_engine],
-      search_engine
-    ))
+    error(
+      string.format(
+        "This plugin requires the `%s` executable for searching on '%s'",
+        executable[search_engine],
+        search_engine
+      )
+    )
   end
 
   state.displayer = entry_display.create({

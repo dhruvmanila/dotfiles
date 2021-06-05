@@ -65,7 +65,9 @@ return {
     elseif vim.fn.isdirectory(stable) > 0 then
       vscode = stable
     else
-      warn("[LSP] Visual Studio Code not found, defaulting to npm installed server")
+      warn(
+        "[LSP] Visual Studio Code not found, defaulting to npm installed server"
+      )
       return {}
     end
 

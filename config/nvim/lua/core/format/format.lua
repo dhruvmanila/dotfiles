@@ -122,8 +122,10 @@ end
 -- Run the given formatter asynchronously.
 ---@param formatter Formatter
 function Format:run(formatter)
-  local args = type(formatter.args) == "function" and formatter.args(self.bufnr, self.filepath)
-    or formatter.args
+  local args = type(formatter.args) == "function" and formatter.args(
+    self.bufnr,
+    self.filepath
+  ) or formatter.args
   local stdin = formatter.stdin and uv.new_pipe(false) or nil
   local stdout = uv.new_pipe(false)
   local stderr = uv.new_pipe(false)
@@ -152,11 +154,13 @@ function Format:run(formatter)
 
   if not handle then
     close_safely(stdin, stdout, stderr)
-    error(string.format(
-      "Failed to run formatter '%s': %s",
-      formatter.cmd,
-      pid_or_err
-    ))
+    error(
+      string.format(
+        "Failed to run formatter '%s': %s",
+        formatter.cmd,
+        pid_or_err
+      )
+    )
     return
   end
 

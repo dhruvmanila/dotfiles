@@ -442,11 +442,11 @@ function _G.nvim_statusline()
     .. lsp_clients(ctx, "StGreenBold")
     .. file_detail(ctx, "StGreyBold")
     .. lsp_diagnostics(ctx, {
-        { severity = "Information", icon = icons.info, hl = "StBlue" },
-        { severity = "Hint", icon = icons.hint, hl = "StAqua" },
-        { severity = "Warning", icon = icons.warning, hl = "StYellow" },
-        { severity = "Error", icon = icons.error, hl = "StRed" },
-      })
+      { severity = "Information", icon = icons.info, hl = "StBlue" },
+      { severity = "Hint", icon = icons.hint, hl = "StAqua" },
+      { severity = "Warning", icon = icons.warning, hl = "StYellow" },
+      { severity = "Error", icon = icons.error, hl = "StRed" },
+    })
 end
 
 ---Create a timer for the given task and interval.

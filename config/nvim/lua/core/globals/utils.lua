@@ -70,14 +70,16 @@ function dm.autocmd(opts)
     local fn_id = dm._create(command)
     command = format("lua dm._execute('%s')", fn_id)
   end
-  vim.cmd(format(
-    "autocmd %s %s %s %s %s",
-    opts.group or "",
-    table.concat(opts.events, ","),
-    table.concat(opts.targets or {}, ","),
-    table.concat(opts.modifiers or {}, " "),
-    command
-  ))
+  vim.cmd(
+    format(
+      "autocmd %s %s %s %s %s",
+      opts.group or "",
+      table.concat(opts.events, ","),
+      table.concat(opts.targets or {}, ","),
+      table.concat(opts.modifiers or {}, " "),
+      command
+    )
+  )
 end
 
 -- Lua interface to vim augroup.
