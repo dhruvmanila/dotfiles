@@ -61,10 +61,7 @@ end
 -- Adopted from `plenary.job.close_safely`
 local function close_safely(...)
   for _, handle in ipairs({ ... }) do
-    if not handle then
-      return
-    end
-    if not handle:is_closing() then
+    if handle and not handle:is_closing() then
       handle:close()
     end
   end
