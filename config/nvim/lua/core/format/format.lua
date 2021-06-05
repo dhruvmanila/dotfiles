@@ -96,6 +96,7 @@ end
 ---@field current_output string
 ---@field err_output string
 ---@field ran_formatter boolean
+---@field changedtick number
 local Format = {}
 Format.__index = Format
 
@@ -116,6 +117,7 @@ function Format:new(formatters)
     current_output = "",
     err_output = "",
     ran_formatter = false,
+    changedtick = api.nvim_buf_get_changedtick(bufnr),
   }, self)
 end
 
@@ -216,6 +218,9 @@ function Format:lsp_run(formatter)
     "textDocument/formatting",
     lsp.util.make_formatting_params(formatter.lsp_opts),
     function(_, _, result)
+      if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
+        return
+      end
       if result then
         lsp.util.apply_text_edits(result, self.bufnr)
         self:write()
@@ -256,13 +261,15 @@ function Format:step()
 end
 
 -- The final callback in the formatting chain which will write the final
--- output to the current buffer only if there were any changes made.
+-- output to the current buffer only if:
+--   - Buffer was not changed
+--   - One of the formatter did run
+--   - Output differs from the input
 function Format:done()
-  if not self.ran_formatter or vim.deep_equal(self.input, self.output) then
+  if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
     return
   end
-  if api.nvim_buf_get_option(self.bufnr, "modified") then
-    utils.warn("[format] Aborting 'update' as buffer was modified")
+  if not self.ran_formatter or vim.deep_equal(self.input, self.output) then
     return
   end
   local view = fn.winsaveview()
