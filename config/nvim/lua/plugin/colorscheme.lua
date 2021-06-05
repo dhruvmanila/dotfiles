@@ -66,10 +66,6 @@ highlight("TelescopeSelectionCaret", { force = true, link = "Yellow" })
 highlight("TelescopeMatching", { force = true, link = "Blue" })
 -- highlight('TelescopeBorder', {force = true, link = 'Normal'})
 highlight("TelescopePromptPrefix", { force = true, link = "Green" })
-highlight("TelescopeAreciboUrl", { force = true, link = "Comment" })
-highlight("TelescopeAreciboNumber", { force = true, link = "Blue" })
-highlight("TelescopeAreciboPrompt", { force = true, link = "Green" })
-highlight("TelescopeAreciboPromptProgress", { force = true, link = "Comment" })
 
 -- Treesitter
 highlight("TSParameter", { force = true, link = "Blue" })
