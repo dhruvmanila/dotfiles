@@ -200,9 +200,12 @@ end
 ---@param hl string
 ---@return string
 local function git_branch(hl)
-  local head = vim.fn.FugitiveHead()
-  if head and head ~= "" then
-    return " " .. wrap_hl(hl) .. icons.git_branch .. " " .. head .. "%* "
+  local FugitiveHead = vim.fn["FugitiveHead"]
+  if FugitiveHead then
+    local head = FugitiveHead()
+    if head and head ~= "" then
+      return " " .. wrap_hl(hl) .. icons.git_branch .. " " .. head .. "%* "
+    end
   end
   return ""
 end
