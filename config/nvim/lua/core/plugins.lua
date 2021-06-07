@@ -42,6 +42,12 @@ packer.set_handler("type", function(_, plugin, type)
   })
 end)
 
+-- Helper function to create the 'config' string value for packer.
+---@param config_name string
+---@return string
+local function conf(config_name)
+  return string.format("require('plugin.%s')", config_name)
+end
 
 packer.startup({
   function(use)
@@ -49,9 +55,7 @@ packer.startup({
     use("wbthomason/packer.nvim")
 
     -- Color scheme
-    use(
-      { "sainnhe/gruvbox-material", config = "require('plugin.colorscheme')" }
-    )
+    use({ "sainnhe/gruvbox-material", config = conf("colorscheme") })
 
     -- 40 width vertical split containing quick reference to mappings, etc.
     use(
@@ -86,10 +90,7 @@ packer.startup({
 
     -- Icons
     use({
-      {
-        "kyazdani42/nvim-web-devicons",
-        config = "require('plugin.nvim_web_devicons')",
-      },
+      { "kyazdani42/nvim-web-devicons", config = conf("nvim_web_devicons") },
       "yamatsum/nvim-nonicons",
     })
 
@@ -111,25 +112,18 @@ packer.startup({
       "nvim-lua/lsp-status.nvim",
       { "kosayoda/nvim-lightbulb", opt = true },
       { "ray-x/lsp_signature.nvim", opt = true },
-      {
-        "neovim/nvim-lspconfig",
-        event = "BufReadPre",
-        config = "require('plugin.lsp')",
-      },
+      { "neovim/nvim-lspconfig", event = "BufReadPre", config = conf("lsp") },
       {
         "hrsh7th/nvim-compe",
         event = "InsertEnter",
         setup = require("plugin.completion").setup,
         config = require("plugin.completion").config,
       },
-      {
-        "mfussenegger/nvim-lint",
-        config = "require('plugin.lint')",
-      },
+      { "mfussenegger/nvim-lint", config = conf("lint") },
       {
         "liuchengxu/vista.vim",
         keys = { { "n", "<Leader>vv" } },
-        config = "require('plugin.vista')",
+        config = conf("vista"),
       },
     })
 
@@ -138,7 +132,7 @@ packer.startup({
       {
         "~/contributing/telescope.nvim",
         event = "VimEnter",
-        config = "require('plugin.telescope')",
+        config = conf("telescope"),
         requires = {
           { "nvim-lua/popup.nvim" },
           { "nvim-lua/plenary.nvim" },
@@ -155,7 +149,7 @@ packer.startup({
         "nvim-treesitter/nvim-treesitter",
         event = { "BufRead", "BufNewFile" },
         run = ":TSUpdate",
-        config = "require('plugin.treesitter')",
+        config = conf("treesitter"),
       },
       {
         "nvim-treesitter/playground",
@@ -178,12 +172,12 @@ packer.startup({
 
     -- Git
     use({
-      { "tpope/vim-fugitive", config = "require('plugin.fugitive')" },
+      { "tpope/vim-fugitive", config = conf("fugitive") },
       {
         "lewis6991/gitsigns.nvim",
         event = { "BufReadPre", "BufNewFile" },
         requires = "nvim-lua/plenary.nvim",
-        config = "require('plugin.gitsigns')",
+        config = conf("gitsigns"),
       },
     })
 
@@ -226,10 +220,10 @@ packer.startup({
         "kyazdani42/nvim-tree.lua",
         requires = { "kyazdani42/nvim-web-devicons" },
         keys = { { "n", "<C-n>" } },
-        config = "require('plugin.nvim_tree')",
+        config = conf("nvim_tree"),
       },
       -- Split/floating window style
-      { "tamago324/lir.nvim", config = "require('plugin.lir')" },
+      { "tamago324/lir.nvim", config = conf("lir") },
     })
 
     -- Indentation tracking
@@ -237,7 +231,7 @@ packer.startup({
       "lukas-reineke/indent-blankline.nvim",
       branch = "lua",
       event = { "BufRead", "BufNewFile" },
-      config = "require('plugin.indentline')",
+      config = conf("indentline"),
       disable = true,
     })
 
@@ -249,7 +243,7 @@ packer.startup({
     use({ "tweekmonster/startuptime.vim", cmd = "StartupTime" })
 
     -- Open external browsers, editor, finder from Neovim
-    use({ "itchyny/vim-external", config = "require('plugin.vim_external')" })
+    use({ "itchyny/vim-external", config = conf("vim_external") })
   end,
 
   config = {
