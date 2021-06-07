@@ -113,12 +113,7 @@ packer.startup({
       { "kosayoda/nvim-lightbulb", opt = true },
       { "ray-x/lsp_signature.nvim", opt = true },
       { "neovim/nvim-lspconfig", event = "BufReadPre", config = conf("lsp") },
-      {
-        "hrsh7th/nvim-compe",
-        event = "InsertEnter",
-        setup = require("plugin.completion").setup,
-        config = require("plugin.completion").config,
-      },
+      { "hrsh7th/nvim-compe", event = "InsertEnter", config = conf("completion") },
       { "mfussenegger/nvim-lint", config = conf("lint") },
       {
         "liuchengxu/vista.vim",
