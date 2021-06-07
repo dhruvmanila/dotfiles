@@ -42,21 +42,7 @@ packer.set_handler("type", function(_, plugin, type)
   })
 end)
 
---[[
-Notes:
 
-A lot of the plugins will be lazy loaded on keys/commands to improve the
-startup time. There are two ways of doing this:
-
-- Keep the plugins keymap separated in the respective plugin configuration file
-which in this case will be lua/plugin/*.lua files. Add the plugin configuration
-to be lazy loaded on those keys.
-
-- Add the plugins keymap in the core/mappings.lua file which will be loaded on
-startup. Add the plugin configuration to be lazy loaded on the commands to
-which the keys were bound to.
-
---]]
 packer.startup({
   function(use)
     -- Packer
