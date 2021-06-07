@@ -131,29 +131,6 @@ local function custom_on_attach(client)
     buf_map("<Leader>rn", "require('plugin.lsp.rename').rename()")
   end
 
-  -- Setup auto-formatting on save if the language server supports it.
-  if capabilities.document_formatting then
-    buf_map("<Leader>lf", "vim.lsp.buf.formatting()")
-    -- TODO: auto format setup as per the configuration option b.auto_format_<ft> ?
-    -- table.insert(lsp_autocmds, {
-    --   events = { "BufWritePre" },
-    --   targets = { "<buffer>" },
-    --   command = function()
-    --     vim.lsp.buf.formatting_sync(nil, 1000)
-    --   end,
-    -- })
-  end
-
-  if capabilities.document_range_formatting then
-    vim.api.nvim_buf_set_keymap(
-      0,
-      "v",
-      "<leader>lf",
-      ":<C-U>lua vim.lsp.buf.range_formatting()<CR>",
-      opts
-    )
-  end
-
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
   if capabilities.document_highlight then
     table.insert(lsp_autocmds, {
