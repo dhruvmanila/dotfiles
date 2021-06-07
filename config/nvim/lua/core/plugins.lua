@@ -134,7 +134,6 @@ packer.startup({
         },
       },
       { "~/projects/telescope-bookmarks.nvim" },
-      { "nvim-telescope/telescope-fzy-native.nvim", opt = true },
       { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
     })
 
