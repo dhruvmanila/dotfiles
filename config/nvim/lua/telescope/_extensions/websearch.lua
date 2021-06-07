@@ -37,8 +37,8 @@ local aliases = {
 }
 
 local mode = {
-  query = "QUERY",
-  result = "RESULT",
+  QUERY = "QUERY",
+  RESULT = "RESULT",
 }
 
 -- Simple animation frames displayed as the prompt prefix.
@@ -81,10 +81,10 @@ local function entry_maker(entry)
 end
 
 -- Set the telescope finder according to the provided information.
----@param new_mode string (default: `mode.query`)
+---@param new_mode string (default: `mode.QUERY`)
 ---@param results table
 local function set_finder(new_mode, results)
-  new_mode = new_mode or mode.query
+  new_mode = new_mode or mode.QUERY
   state.mode = new_mode
 
   results = results or {}
@@ -109,7 +109,7 @@ local function do_search()
     return
   end
 
-  set_finder(mode.query)
+  set_finder(mode.QUERY)
 
   -- start in-progress animation
   if not state.anim_timer then
@@ -128,7 +128,7 @@ local function do_search()
     result = vim.fn.json_decode(result)
     vim.fn.timer_stop(state.anim_timer)
     state.anim_timer = nil
-    set_finder(mode.result, result)
+    set_finder(mode.RESULT, result)
   end
 
   Job
@@ -152,7 +152,7 @@ end
 -- on the current mode.
 ---@param prompt_bufnr number
 local function search_or_select(prompt_bufnr)
-  if state.mode == mode.query then
+  if state.mode == mode.QUERY then
     do_search()
   else
     local selection = action_state.get_selected_entry()
@@ -205,7 +205,7 @@ local function websearch(opts)
   })
   state.original_prompt_prefix = state.picker.prompt_prefix
   state.picker:find()
-  set_finder(mode.query)
+  set_finder(mode.QUERY)
 end
 
 return telescope.register_extension({
