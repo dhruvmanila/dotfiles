@@ -1,5 +1,5 @@
 local lsp_util = vim.lsp.util
-local format = require("core.format.format")
+local format = require("core.formatter.format")
 local root_pattern = require("lspconfig.util").root_pattern
 
 local finder = {

@@ -6,7 +6,7 @@ local map = require("core.utils").map
 local lspconfig = require("lspconfig")
 local lspstatus = require("lsp-status")
 
-require("core.format")
+require("core.formatter")
 require("plugin.lsp.handlers")
 
 local plugins = require("plugin.lsp.plugins")
