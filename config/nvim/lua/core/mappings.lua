@@ -116,10 +116,6 @@ map("x", "K", [[:m '<-2<CR>gv=gv]])
 map("x", "<", "<gv")
 map("x", ">", ">gv")
 
--- '*' and '#' in visual mode
-map("v", "*", [["vygv:<C-U>/\<<C-R>v\><CR>]], { silent = true })
-map("v", "#", [["vygv:<C-U>?\<<C-R>v\><CR>]], { silent = true })
-
 -- Easy moving through the command history
 -- <C-p>/<C-n> does the some thing, remove this?
 map("c", "<C-k>", "<Up>")

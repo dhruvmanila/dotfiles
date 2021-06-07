@@ -229,9 +229,8 @@ packer.startup({
       disable = true,
     })
 
-    -- Search
-    -- TODO: Convert this to lua :)
-    use({ "romainl/vim-cool" })
+    -- Automatically clears search highlight and improved star-search
+    use("junegunn/vim-slash")
 
     -- Profiling
     use({ "tweekmonster/startuptime.vim", cmd = "StartupTime" })
