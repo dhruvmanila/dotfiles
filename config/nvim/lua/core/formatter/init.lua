@@ -64,29 +64,3 @@ format.formatter("sh", {
 })
 
 format.formatter("json", { use_lsp = true })
-
-do
-  -- Flag to denote the current state of auto formatting.
-  local auto_formatting = false
-  local format_fn = format.format
-
-  local function toggle_auto_formatting()
-    local commands = {}
-    if not auto_formatting then
-      table.insert(commands, {
-        events = { "BufWritePost" },
-        targets = { "*" },
-        command = format_fn,
-      })
-      auto_formatting = true
-    else
-      auto_formatting = false
-    end
-    dm.augroup("auto_formatting", commands)
-  end
-
-  dm.command({ "AutoFormatting", toggle_auto_formatting })
-
-  -- By default, auto formatting is turned on.
-  toggle_auto_formatting()
-end
