@@ -7,4 +7,5 @@ ipython
 isort
 line-profiler
 mypy
+poetry
 pre-commit
