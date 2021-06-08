@@ -2,7 +2,6 @@ local lsp = vim.lsp
 local api = vim.api
 local handlers = lsp.handlers
 local code_action = require("plugin.lsp.code_action")
-local border = require("core.icons").border
 
 -- Can use `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`
 handlers["textDocument/publishDiagnostics"] = lsp.with(
@@ -12,24 +11,6 @@ handlers["textDocument/publishDiagnostics"] = lsp.with(
     underline = true,
     signs = true,
     update_in_insert = false,
-  }
-)
-
--- Press 'K' for hover and then 'K' again to enter the hover window.
--- Press 'q' to quit.
-handlers["textDocument/hover"] = function(...)
-  local bufnr, _ = vim.lsp.with(vim.lsp.handlers.hover, {
-    border = border[vim.g.border_style],
-  })(...)
-
-  local opts = { noremap = true, nowait = true, silent = true }
-  vim.api.nvim_buf_set_keymap(bufnr, "n", "q", "<Cmd>quit<CR>", opts)
-end
-
-handlers["textDocument/signatureHelp"] = vim.lsp.with(
-  vim.lsp.handlers.signature_help,
-  {
-    border = border[vim.g.border_style],
   }
 )
 

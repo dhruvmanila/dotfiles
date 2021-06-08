@@ -49,6 +49,22 @@ sign_define("LightBulbSign", {
   texthl = "LspDiagnosticsSignHint",
 })
 
+-- Set the default options for all LSP floating windows.
+--   - Default border according to `vim.g.border_style`
+--   - 'q' to quit with `nowait = true`
+do
+  local default = vim.lsp.util.open_floating_preview
+  vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
+    opts = vim.tbl_deep_extend("force", opts, {
+      border = icons.border[vim.g.border_style],
+    })
+    local bufnr, winnr = default(contents, syntax, opts)
+    local o = { noremap = true, nowait = true, silent = true }
+    vim.api.nvim_buf_set_keymap(bufnr, "n", "q", "<Cmd>bdelete<CR>", o)
+    return bufnr, winnr
+  end
+end
+
 local opts = { noremap = true, silent = true }
 
 local function buf_map(key, func, mode)
