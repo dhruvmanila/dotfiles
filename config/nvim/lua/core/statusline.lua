@@ -440,7 +440,7 @@ function _G.nvim_statusline()
     .. "%<"
     .. lsp_current_function("StGrey")
     .. "%="
-    .. github_notifications()
+    .. github_notifications("StGrey")
     .. python_version(ctx, "StBlueBold")
     .. lsp_clients(ctx, "StGreenBold")
     .. file_detail(ctx, "StGreyBold")
