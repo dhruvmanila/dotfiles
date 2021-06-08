@@ -400,6 +400,7 @@ function setup_symlink() {
   # directory. The `bashrc` sources other files directly from the
   # `dotfiles` repository.
   header "Creating the necessary symlinks..."
+  link ".editorconfig"              ".editorconfig"
   # Bash
   link "bash/bashrc"                ".bashrc"
   link "bash/bash_profile"          ".bash_profile"
