@@ -18,9 +18,9 @@ handlers["textDocument/codeAction"] = code_action.handler
 
 -- Modified version of the original handler. This will open the quickfix
 -- window only if the response is a list and the count is greater than 1.
-local function location_handler(_, _, response)
+local function location_handler(_, method, response)
   if not response or vim.tbl_isempty(response) then
-    print("[LSP] No definition found")
+    print(string.format("[LSP] No results found for: %s", method))
     return
   end
 
