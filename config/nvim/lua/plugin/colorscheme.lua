@@ -18,6 +18,7 @@ g.gruvbox_material_menu_selection_background = "blue"
 g.gruvbox_material_sign_column_background = "none"
 g.gruvbox_material_diagnostic_virtual_text = "colored"
 -- g.gruvbox_material_visual = 'reverse'
+g.gruvbox_material_show_eob = 0
 
 -- Generates after/ftplugin/*.vim files for lazy loading
 g.gruvbox_material_better_performance = 1
