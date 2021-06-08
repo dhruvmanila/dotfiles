@@ -47,7 +47,7 @@ g.mapleader = " "
 g.vimsyn_embed = "l"
 
 -- Enable syntax highlighting in markdown between triple backticks.
-g.markdown_fenced_languages = { "python", "lua" }
+g.markdown_fenced_languages = { "bash=sh", "json", "python", "lua", "sh" }
 
 -- Default sessions directory
 -- This is set here as it is accessed by Dashboard as well
