@@ -1,33 +1,35 @@
-local cmd = vim.api.nvim_command
+local api = vim.api
 local sign_define = vim.fn.sign_define
+local nvim_command = api.nvim_command
 local nvim_buf_set_keymap = api.nvim_buf_set_keymap
 
 local icons = require("core.icons")
-local map = require("core.utils").map
 local lspconfig = require("lspconfig")
 local lspstatus = require("lsp-status")
+local plugins = require("plugin.lsp.plugins")
+local servers = require("plugin.lsp.servers")
 
 require("core.formatter")
 require("plugin.lsp.handlers")
 
-local plugins = require("plugin.lsp.plugins")
-local servers = require("plugin.lsp.servers")
-
 -- For debugging purposes:
 -- vim.lsp.set_log_level(vim.lsp.log_levels.DEBUG)
 
--- Utiliy functions, commands and keybindings
-local function open_lsp_log()
-  cmd("botright split")
-  cmd("resize 20")
-  cmd("edit " .. vim.lsp.get_log_path())
-  vim.api.nvim_win_set_option(0, "wrap", false)
+-- Utility functions, commands and keybindings
+do
+  local opts = { noremap = true, silent = true }
+
+  local function open_lsp_log()
+    nvim_command("botright split")
+    nvim_command("resize 20")
+    nvim_command("edit " .. vim.lsp.get_log_path())
+    api.nvim_win_set_option(0, "wrap", false)
+  end
+
+  dm.command({ "LspLog", open_lsp_log })
+  api.nvim_set_keymap("n", "<Leader>ll", "<Cmd>LspLog<CR>", opts)
+  api.nvim_set_keymap("n", "<Leader>lr", "<Cmd>LspRestart<CR>", opts)
 end
-
-dm.command({ "LspLog", open_lsp_log })
-
-map("n", "<Leader>ll", "<Cmd>LspLog<CR>")
-map("n", "<Leader>lr", "<Cmd>LspRestart<CR>")
 
 -- Adding VSCode like icons to the completion menu.
 -- vscode-codicons: https://github.com/microsoft/vscode-codicons
