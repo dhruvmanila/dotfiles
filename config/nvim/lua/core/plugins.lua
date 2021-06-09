@@ -125,7 +125,7 @@ packer.startup({
     -- Telescope and family
     use({
       {
-        "~/contributing/telescope.nvim",
+        "nvim-telescope/telescope.nvim",
         event = "VimEnter",
         config = conf("telescope"),
         requires = {
