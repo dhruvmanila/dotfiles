@@ -1,5 +1,6 @@
 local cmd = vim.api.nvim_command
 local sign_define = vim.fn.sign_define
+local nvim_buf_set_keymap = api.nvim_buf_set_keymap
 
 local icons = require("core.icons")
 local map = require("core.utils").map
@@ -60,17 +61,9 @@ do
     })
     local bufnr, winnr = default(contents, syntax, opts)
     local o = { noremap = true, nowait = true, silent = true }
-    vim.api.nvim_buf_set_keymap(bufnr, "n", "q", "<Cmd>bdelete<CR>", o)
+    nvim_buf_set_keymap(bufnr, "n", "q", "<Cmd>bdelete<CR>", o)
     return bufnr, winnr
   end
-end
-
-local opts = { noremap = true, silent = true }
-
-local function buf_map(key, func, mode)
-  mode = mode or "n"
-  local command = "<Cmd>lua " .. func .. "<CR>"
-  vim.api.nvim_buf_set_keymap(0, mode, key, command, opts)
 end
 
 -- The main `on_attach` function to be called by each of the language server
@@ -80,7 +73,7 @@ end
 -- This function needs to be passed to every language server. If a language
 -- server requires either more config or less, it should also be done in this
 -- function using the `filetype` conditions.
-local function custom_on_attach(client)
+local function custom_on_attach(client, bufnr)
   local lsp_autocmds = {}
   local capabilities = client.resolved_capabilities
 
@@ -88,63 +81,49 @@ local function custom_on_attach(client)
   plugins.on_attach(client)
 
   -- Used to setup per filetype
-  -- local filetype = vim.api.nvim_buf_get_option(0, 'filetype')
+  -- local filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
 
   -- Keybindings:
   -- For all types of diagnostics: [d | ]d
   -- For warning and error diagnostics: [e | ]e
-  -- { enable_popup = false }
-  -- local edge_border = "require('core.icons').border.edge"
-  -- local popup_opts = string.format(
-  --   "{show_header = false, border = %s}",
-  --   edge_border
-  -- )
-  buf_map("[d", "vim.lsp.diagnostic.goto_prev({enable_popup = false})")
-  buf_map("]d", "vim.lsp.diagnostic.goto_next({enable_popup = false})")
-  buf_map(
-    "[e",
-    "vim.lsp.diagnostic.goto_prev({severity_limit = 'Warning', enable_popup = false})"
-  )
-  buf_map(
-    "]e",
-    "vim.lsp.diagnostic.goto_next({severity_limit = 'Warning', enable_popup = false})"
-  )
-  buf_map(
-    "<leader>ld",
-    "require('plugin.lsp.diagnostics').show_line_diagnostics()"
-  )
-  buf_map("K", "vim.lsp.buf.hover()")
-  buf_map("gd", "vim.lsp.buf.definition()")
-  buf_map("<leader>pd", "require('plugin.lsp.preview').definition()")
-  buf_map("gD", "vim.lsp.buf.declaration()")
-  buf_map("<leader>pD", "require('plugin.lsp.preview').declaration()")
-  buf_map("gy", "vim.lsp.buf.type_definition()")
-  buf_map("<leader>py", "require('plugin.lsp.preview').type_definition()")
-  buf_map("gi", "vim.lsp.buf.implementation()")
-  buf_map("<leader>pi", "require('plugin.lsp.preview').implementation()")
-  buf_map("gr", "vim.lsp.buf.references()")
+  local mappings = {
+    ["n [d"] = "vim.lsp.diagnostic.goto_prev({enable_popup = false})",
+    ["n ]d"] = "vim.lsp.diagnostic.goto_next({enable_popup = false})",
+    ["n ]e"] = "vim.lsp.diagnostic.goto_prev({severity_limit = 'Warning', enable_popup = false})",
+    ["n [e"] = "vim.lsp.diagnostic.goto_next({severity_limit = 'Warning', enable_popup = false})",
+    ["n <leader>ld"] = "require('plugin.lsp.diagnostics').show_line_diagnostics()",
+  }
 
-  if capabilities.signature_help then
-    if not plugin_loaded("lsp_signature.nvim") then
-      require("packer").loader("lsp_signature.nvim")
-    end
+  if capabilities.hover then
+    mappings["n K"] = "vim.lsp.buf.hover()"
+  end
 
-    require("lsp_signature").on_attach({
-      bind = true,
-      doc_lines = 0,
-      hint_enable = false,
-      use_lspsaga = false,
-      handler_opts = {
-        border = icons.border[vim.g.border_style],
-      },
-      hi_parameter = "YellowItalic",
-    })
+  if capabilities.goto_definition then
+    mappings["n gd"] = "vim.lsp.buf.definition()"
+    mappings["n <leader>pd"] = "require('plugin.lsp.preview').definition()"
+  end
 
-    buf_map("<C-s>", "vim.lsp.buf.signature_help()")
+  if capabilities.declaration then
+    mappings["n gD"] = "vim.lsp.buf.declaration()"
+    mappings["n <leader>pD"] = "require('plugin.lsp.preview').declaration()"
+  end
+
+  if capabilities.type_definition then
+    mappings["n gy"] = "vim.lsp.buf.type_definition()"
+    mappings["n <leader>py"] = "require('plugin.lsp.preview').type_definition()"
+  end
+
+  if capabilities.implementation then
+    mappings["n gi"] = "vim.lsp.buf.implementation()"
+    mappings["n <leader>pi"] = "require('plugin.lsp.preview').implementation()"
+  end
+
+  if capabilities.find_references then
+    mappings["n gr"] = "vim.lsp.buf.references()"
   end
 
   if capabilities.rename then
-    buf_map("<Leader>rn", "require('plugin.lsp.rename').rename()")
+    mappings["n <leader>rn"] = "require('plugin.lsp.rename').rename()"
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
@@ -166,6 +145,25 @@ local function custom_on_attach(client)
     })
   end
 
+  if capabilities.signature_help then
+    if not plugin_loaded("lsp_signature.nvim") then
+      require("packer").loader("lsp_signature.nvim")
+    end
+
+    require("lsp_signature").on_attach({
+      bind = true,
+      doc_lines = 0,
+      hint_enable = false,
+      use_lspsaga = false,
+      handler_opts = {
+        border = icons.border[vim.g.border_style],
+      },
+      hi_parameter = "YellowItalic",
+    })
+
+    mappings["n <C-s>"] = "vim.lsp.buf.signature_help()"
+  end
+
   if capabilities.code_action then
     if not plugin_loaded("nvim-lightbulb") then
       require("packer").loader("nvim-lightbulb")
@@ -176,12 +174,26 @@ local function custom_on_attach(client)
       targets = { "<buffer>" },
       command = require("nvim-lightbulb").update_lightbulb,
     })
-    buf_map("<leader>ca", "vim.lsp.buf.code_action()")
-    buf_map("<leader>ca", "vim.lsp.buf.range_code_action()", "x")
+
+    mappings["n <leader>ca"] = "vim.lsp.buf.code_action()"
+    mappings["x <leader>ca"] = "vim.lsp.buf.range_code_action()"
   end
 
+  -- Set the LSP autocmds
   if not vim.tbl_isempty(lsp_autocmds) then
     dm.augroup("custom_lsp_autocmds", lsp_autocmds)
+  end
+
+  -- Set the LSP mappings
+  do
+    local mode
+    local opts = { noremap = true, silent = true }
+
+    for key, command in pairs(mappings) do
+      mode, key = key:match("^(.)[ ]*(.+)$")
+      command = "<Cmd>lua " .. command .. "<CR>"
+      nvim_buf_set_keymap(bufnr, mode, key, command, opts)
+    end
   end
 
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
