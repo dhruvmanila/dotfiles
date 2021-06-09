@@ -4,6 +4,7 @@ local/
 /mac/karabiner/automatic_backups/
 
 config/nvim/scratch/
+config/nvim/plugin/packer_compiled.vim
 
 vim/undo/*
 vim/swaps/*
