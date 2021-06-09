@@ -1,19 +1,8 @@
-# Compiled Python files
-*.pyc
-
-# Folder view configuration files
 *.DS_Store
-Desktop.ini
-
-# Thumbnail cache files
-._*
-Thumbs.db
-
-# Files that might appear on external disks
-.Spotlight-V100
-.Trashes
-
 local/
+.vagrant
+/mac/karabiner/automatic_backups/
+
 config/nvim/scratch/
 
 vim/undo/*
@@ -21,9 +10,4 @@ vim/swaps/*
 vim/plugged
 vim/session
 vim/autoload/plug.vim
-
-.vagrant
-
-/mac/karabiner/automatic_backups/
-
 vim/.netrwhist
