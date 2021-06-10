@@ -35,7 +35,7 @@ local function find_files_in_plugin(prompt_bufnr)
   actions.close(prompt_bufnr)
 
   vim.schedule(function()
-    require("plugin.telescope").find_files_in_dir(selection.path, {})
+    require("telescope.builtin").find_files({ cwd = selection.path })
   end)
 end
 
