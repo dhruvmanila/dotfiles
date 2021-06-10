@@ -232,6 +232,17 @@ packer.startup({
     -- Automatically clears search highlight and improved star-search
     use("junegunn/vim-slash")
 
+    -- Change working directory to project root
+    use({
+      "airblade/vim-rooter",
+      setup = function()
+        vim.g.rooter_cd_cmd = "lcd"
+        vim.g.rooter_silent_chdir = 0
+        vim.g.rooter_resolve_links = 1
+        vim.g.rooter_patterns = { ".git", "Makefile", "*requirements*.txt" }
+      end,
+    })
+
     -- Profiling
     use({ "tweekmonster/startuptime.vim", cmd = "StartupTime" })
 
