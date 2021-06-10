@@ -34,10 +34,8 @@ end
 
 --- Delete the selected startify session.
 local function delete_session(prompt_bufnr)
-  local selection = action_state.get_selected_entry()
-  actions.close(prompt_bufnr)
-
-  vim.schedule(function()
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  current_picker:delete_selection(function(selection)
     vim.fn["startify#session_delete"](false, selection.value)
   end)
 end
@@ -95,7 +93,8 @@ local function startify_sessions(opts)
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(load_session)
-      -- map('i', '<C-x>', delete_session)
+      map("i", "<C-x>", delete_session)
+      map("n", "<C-x>", delete_session)
       return true
     end,
   }):find()
