@@ -59,28 +59,6 @@ custom_actions.reset_prompt = function(prompt_bufnr)
   action_state.get_current_picker(prompt_bufnr):reset_prompt()
 end
 
--- Simple previewer to set the current content value in the preview window
--- with 'wrap' turned on. This is used in command_history where the commands
--- could get pretty long and the entire command will be previewed similar
--- to fzf.
-local function wrap_previewer()
-  return require("telescope.previewers").new_buffer_previewer({
-    get_buffer_by_name = function(_, entry)
-      return entry.value
-    end,
-    define_preview = function(self, entry, status)
-      vim.api.nvim_win_set_option(status.preview_win, "wrap", true)
-      vim.api.nvim_buf_set_lines(
-        self.state.bufnr,
-        0,
-        -1,
-        false,
-        { "  " .. entry.value }
-      )
-    end,
-  })
-end
-
 require("telescope").setup({
   defaults = {
     prompt_prefix = require("core.icons").telescope .. " ",
@@ -340,23 +318,6 @@ function M.search_history()
     },
   }))
 end
-
--- function M.command_history()
---   require("telescope.builtin").command_history({
---     previewer = wrap_previewer(),
---     results_title = false,
---     preview_title = "Command",
-
---     -- 'center' does not have a layout config :(
---     layout_strategy = "vertical",
---     layout_config = {
---       preview_height = 3,
---       mirror = true,
---       width_padding = math.max(10, (vim.o.columns - 100) / 2),
---       height_padding = math.max(3, (vim.o.lines - 30) / 2),
---     },
---   })
--- end
 
 -- function M.search_history()
 --   require("telescope.builtin").search_history(themes.get_dropdown({
