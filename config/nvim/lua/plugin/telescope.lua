@@ -1,8 +1,8 @@
+local notify = vim.api.nvim_notify
+local log_levels = vim.log.levels
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local themes = require("telescope.themes")
-local utils = require("core.utils")
-local map = utils.map
 
 local should_reload = true
 
@@ -16,42 +16,9 @@ end
 local custom_actions = {}
 
 -- Yank the selected entry into the selection register '*'
-custom_actions.yank_entry = function(prompt_bufnr)
+custom_actions.yank_entry = function()
   local entry = action_state.get_selected_entry()
-  -- actions.close(prompt_bufnr)
   vim.fn.setreg(vim.api.nvim_get_vvar("register"), entry.value)
-
-  vim.schedule(function()
-    print("[telescope] Yanked: " .. entry.value)
-  end)
-end
-
--- Delete the selected buffer or all the buffers selected using multi selection.
--- custom_actions.delete_buffer = function(prompt_bufnr)
---   local current_picker = action_state.get_current_picker(prompt_bufnr)
---   local multi_selection = current_picker:get_multi_selection()
---   actions.close(prompt_bufnr)
-
---   if vim.tbl_isempty(multi_selection) then
---     local selection = action_state.get_selected_entry()
---     vim.api.nvim_buf_delete(selection.bufnr, {force = true})
---   else
---     for _, selection in ipairs(multi_selection) do
---       vim.api.nvim_buf_delete(selection.bufnr, {force = true})
---     end
---   end
--- end
-
-custom_actions.delete_buffer = function(prompt_bufnr)
-  local current_picker = action_state.get_current_picker(prompt_bufnr)
-  current_picker:delete_selection(function(selection)
-    vim.api.nvim_buf_delete(selection.bufnr, { force = true })
-  end)
-end
-
-custom_actions.remove_current_selection = function(prompt_bufnr)
-  local current_picker = action_state.get_current_picker(prompt_bufnr)
-  current_picker:delete_selection()
 end
 
 -- Reset the prompt keeping the cursor at the current entry in the results window.
@@ -59,16 +26,22 @@ custom_actions.reset_prompt = function(prompt_bufnr)
   action_state.get_current_picker(prompt_bufnr):reset_prompt()
 end
 
+-- Default dropdown theme options.
+local default_dropdown = themes.get_dropdown({
+  width = 0.8,
+  results_height = 0.8,
+  previewer = false,
+})
+
 require("telescope").setup({
   defaults = {
     prompt_prefix = require("core.icons").telescope .. " ",
     selection_caret = "❯ ",
     prompt_position = "top",
     sorting_strategy = "ascending",
-    layout_strategy = "horizontal",
-    color_devicons = true,
     winblend = vim.g.window_blend,
     file_ignore_patterns = { "__pycache__", ".mypy_cache" },
+    layout_strategy = "horizontal",
     layout_defaults = {
       horizontal = {
         preview_width = 0.55,
@@ -89,11 +62,66 @@ require("telescope").setup({
         ["<C-k>"] = actions.move_selection_previous,
         ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
         ["<C-s>"] = actions.select_horizontal,
-        ["<C-x>"] = custom_actions.remove_current_selection,
         ["<C-y>"] = custom_actions.yank_entry,
         ["<C-l>"] = custom_actions.reset_prompt,
       },
     },
+  },
+  pickers = {
+    find_files = {
+      layout_strategy = "flex",
+      layout_config = {
+        flip_columns = 120,
+      },
+    },
+    buffers = {
+      sort_lastused = true,
+      show_all_buffers = true,
+      theme = "dropdown",
+      previewer = false,
+      mappings = {
+        i = {
+          ["<C-x>"] = actions.delete_buffer,
+        },
+        n = {
+          ["<C-x>"] = actions.delete_buffer,
+        },
+      },
+    },
+    live_grep = {
+      shorten_path = true,
+    },
+    grep_string = {
+      shorten_path = true,
+    },
+    help_tags = {
+      layout_config = {
+        preview_width = 0.65,
+        width_padding = 0.10,
+      },
+    },
+    highlights = {
+      layout_config = {
+        preview_width = 0.65,
+        width_padding = 0.10,
+      },
+    },
+    command_history = {
+      theme = "ivy",
+      layout_config = {
+        height = 20,
+      },
+    },
+    search_history = {
+      theme = "ivy",
+      layout_config = {
+        height = 20,
+      },
+    },
+    current_buffer_fuzzy_find = default_dropdown,
+    vim_options = default_dropdown,
+    keymaps = default_dropdown,
+    commands = default_dropdown,
   },
   extensions = {
     fzf = {
@@ -116,101 +144,34 @@ require("telescope").setup({
   },
 })
 
----Helper function to load the telescope extensions without blowing up.
----It only emits a small warning :)
----@param extensions table
-local function load_telescope_extensions(extensions)
+-- Load the telescope extensions without blowing up. It only emits a
+-- small warning. Only the required extensions are loaded, the others
+-- will be loaded lazily by telescope.
+do
+  local extensions = {
+    "fzf",
+    "github_stars",
+  }
+
   for _, name in ipairs(extensions) do
-    local ok, _ = pcall(require("telescope").load_extension, name)
-    if not ok then
-      utils.warn("[Telescope] Failed to load the extension: " .. name)
+    local loaded, _ = pcall(require("telescope").load_extension, name)
+    if not loaded then
+      notify(
+        string.format("[Telescope] Failed to load the extension: '%s'", name),
+        log_levels.WARN,
+        {}
+      )
     end
   end
 end
 
--- Load the extensions
-load_telescope_extensions({
-  "fzf",
-  -- "bookmarks",
-  "github_stars",
-  -- "installed_plugins",
-  -- "startify_sessions",
-  -- "dirvish_cd",
-  -- "websearch",
-})
-
--- Helper function to set the keymaps for telescope functions
-local function tele_map(key, funcname, module)
-  module = module or "plugin.telescope"
-  map("n", key, '<Cmd>lua require("' .. module .. '").' .. funcname .. "()<CR>")
-end
-
--- Meta
-tele_map("<Leader>te", "builtin", "telescope.builtin")
-
--- Files
-tele_map("<C-p>", "find_files")
-tele_map("<Leader>;", "buffers")
-tele_map("<C-f>", "current_buffer")
-tele_map("<Leader>rp", "grep_prompt")
-tele_map("<Leader>rg", "live_grep")
-tele_map("<Leader>fd", "search_dotfiles")
-tele_map("<Leader>fp", "installed_plugins")
-tele_map("<Leader>fa", "search_all_files")
-
--- Git
-tele_map("<Leader>gc", "git_commits", "telescope.builtin")
-tele_map("<Leader>gs", "github_stars")
-
--- Neovim (NOTE: Use <nowait> for 'q' only keymap)
-tele_map("<Leader>fh", "help_tags")
-tele_map("<Leader>fm", "keymaps")
-tele_map("<Leader>fc", "commands")
-tele_map("<Leader>hi", "highlights")
-tele_map("<Leader>vo", "vim_options")
-tele_map("q:", "command_history")
-tele_map("q/", "search_history")
-
--- Extensions
-tele_map("<Leader>fb", "bookmarks")
-tele_map("<Leader>fw", "websearch")
-tele_map("<Leader>fs", "startify_sessions")
-
 -- Entrypoints which will allow me to configure each command individually.
 local M = {}
 
----Default no previewer dropdown theme opts.
-local function no_previewer()
-  return themes.get_dropdown({
-    width = 0.8,
-    results_height = 0.8,
-    previewer = false,
-  })
-end
-
----Generic function to find files in given directory.
----Also used in installed_plugins extension
-function M.find_files_in_dir(dir, opts)
-  opts = opts or {}
-  local dir_opts = {
-    prompt_title = "Find Files (" .. vim.fn.fnamemodify(dir, ":t") .. ")",
-    cwd = dir,
-    layout_strategy = "flex",
-    layout_config = {
-      flip_columns = 120,
-    },
-  }
-  dir_opts = vim.tbl_deep_extend("force", dir_opts, opts)
-  require("telescope.builtin").find_files(dir_opts)
-end
-
-function M.find_files()
-  M.find_files_in_dir(utils.get_project_root())
-end
-
-function M.search_all_files()
-  require("plugin.telescope").find_files_in_dir(utils.get_project_root(), {
-    prompt_title = "Search All Files",
+-- This is mainly to avoid .gitignore patterns.
+function M.find_all_files()
+  require("telescope.builtin").find_files({
+    prompt_title = "Find All Files",
     find_command = {
       "fd",
       "--type",
@@ -226,27 +187,31 @@ end
 
 function M.grep_prompt()
   require("telescope.builtin").grep_string({
-    cwd = utils.get_project_root(),
-    shorten_path = true,
     search = vim.fn.input("Grep String > "),
   })
 end
 
-function M.live_grep()
-  require("telescope.builtin").live_grep({
-    cwd = utils.get_project_root(),
-    shorten_path = true,
-  })
-end
-
-function M.search_dotfiles()
-  M.find_files_in_dir("~/dotfiles", {
+function M.find_dotfiles()
+  require("telescope.builtin").find_files({
+    prompt_title = "Find dotfiles",
+    cwd = "~/dotfiles",
     hidden = true,
     follow = true,
     file_ignore_patterns = { ".git/" },
   })
 end
 
+function M.buffers()
+  -- Number of listed buffers
+  local buflisted = #vim.fn.getbufinfo({ buflisted = 1 })
+  require("telescope.builtin").buffers({
+    width = math.min(vim.o.columns - 20, 100),
+    results_height = math.max(10, math.min(vim.o.lines - 10, buflisted)),
+  })
+end
+
+-- List out all the installed plugins and provide action to either go to the
+-- GitHub page of the plugin or find files within the plugin using telescope.
 function M.installed_plugins()
   require("telescope").extensions.installed_plugins.installed_plugins(
     themes.get_dropdown({
@@ -257,6 +222,8 @@ function M.installed_plugins()
   )
 end
 
+-- List out all the saved startify sessions and provide action to either open
+-- them or delete them.
 function M.startify_sessions()
   require("telescope").extensions.startify_sessions.startify_sessions(
     themes.get_dropdown({
@@ -267,101 +234,65 @@ function M.startify_sessions()
   )
 end
 
-function M.help_tags()
-  require("telescope.builtin").help_tags({
-    layout_config = {
-      preview_width = 0.65,
-      width_padding = 0.10,
-    },
-  })
-end
-
-function M.highlights()
-  require("telescope.builtin").highlights({
-    layout_config = {
-      preview_width = 0.65,
-      width_padding = 0.10,
-    },
-  })
-end
-
-function M.current_buffer()
-  require("telescope.builtin").current_buffer_fuzzy_find(no_previewer())
-end
-
-function M.vim_options()
-  require("telescope.builtin").vim_options(no_previewer())
-end
-
-function M.keymaps()
-  require("telescope.builtin").keymaps(no_previewer())
-end
-
-function M.commands()
-  require("telescope.builtin").commands(no_previewer())
-end
-
-function M.command_history()
-  require("telescope.builtin").command_history(themes.get_ivy({
-    previewer = false,
-    layout_config = {
-      height = math.floor(0.4 * vim.o.lines),
-    },
-  }))
-end
-
-function M.search_history()
-  require("telescope.builtin").search_history(themes.get_ivy({
-    previewer = false,
-    layout_config = {
-      height = math.floor(0.4 * vim.o.lines),
-    },
-  }))
-end
-
--- function M.search_history()
---   require("telescope.builtin").search_history(themes.get_dropdown({
---     width = math.min(100, vim.o.columns - 20),
---     results_height = math.min(30, vim.o.lines - 10),
---     previewer = false,
---   }))
--- end
-
+-- Using `ddgr/googler` search the web and fuzzy find through the results and
+-- open them up in the browser.
 function M.websearch()
-  require("telescope").extensions.websearch.websearch(no_previewer())
+  require("telescope").extensions.websearch.websearch(default_dropdown)
 end
 
+-- Fuzzy find over your browser bookmarks.
 function M.bookmarks()
-  require("telescope").extensions.bookmarks.bookmarks(no_previewer())
+  require("telescope").extensions.bookmarks.bookmarks(default_dropdown)
 end
 
+-- Gaze the stars with the power of telescope.
 function M.github_stars()
-  require("telescope").extensions.github_stars.github_stars(no_previewer())
+  require("telescope").extensions.github_stars.github_stars(default_dropdown)
 end
 
--- https://github.com/nvim-telescope/telescope.nvim/issues/621#issuecomment-802222898
--- Added the ability to delete multiple buffers in one go using multi-selection.
-function M.buffers()
-  require("telescope.builtin").buffers(themes.get_dropdown({
-    -- sorting_strategy = 'descending',
-    previewer = false,
-    sort_lastused = true,
-    show_all_buffers = true,
-    shorten_path = false,
-    width = math.min(vim.o.columns - 20, 110),
+do
+  local nvim_set_keymap = vim.api.nvim_set_keymap
+  local opts = { noremap = true, silent = true }
 
-    -- Height ranges from 10 to #lines - 10 (depending on the number of buffers)
-    results_height = math.max(
-      10,
-      math.min(vim.o.lines - 10, #vim.fn.getbufinfo({ buflisted = 1 }))
-    ),
+  local mappings = {
+    -- Meta
+    ["<leader>te"] = "require('telescope.builtin').builtin()",
 
-    attach_mappings = function(_, tmap)
-      tmap("i", "<C-x>", custom_actions.delete_buffer)
-      tmap("n", "<C-x>", custom_actions.delete_buffer)
-      return true
-    end,
-  }))
+    -- Files
+    ["<C-p>"] = "require('telescope.builtin').find_files()",
+    ["<C-f>"] = "require('telescope.builtin').current_buffer_fuzzy_find()",
+    ["<leader>;"] = "require('plugin.telescope').buffers()",
+    ["<leader>fd"] = "require('plugin.telescope').find_dotfiles()",
+    ["<leader>fa"] = "require('plugin.telescope').find_all_files()",
+
+    -- Grep
+    ["<leader>rp"] = "require('plugin.telescope').grep_prompt()",
+    ["<leader>rg"] = "require('telescope.builtin').live_grep()",
+
+    -- Git
+    ["<leader>gc"] = "require('telescope.builtin').git_commits()",
+
+    -- Neovim
+    ["<leader>fh"] = "require('telescope.builtin').help_tags()",
+    ["<leader>fm"] = "require('telescope.builtin').keymaps()",
+    ["<leader>fc"] = "require('telescope.builtin').commands()",
+    ["<leader>hi"] = "require('telescope.builtin').highlights()",
+    ["<leader>vo"] = "require('telescope.builtin').vim_options()",
+    ["<leader>:"] = "require('telescope.builtin').command_history()",
+    ["<leader>/"] = "require('telescope.builtin').search_history()",
+
+    -- Extensions
+    ["<leader>gs"] = "require('plugin.telescope').github_stars()",
+    ["<leader>fp"] = "require('plugin.telescope').installed_plugins()",
+    ["<leader>fb"] = "require('plugin.telescope').bookmarks()",
+    ["<leader>fw"] = "require('plugin.telescope').websearch()",
+    ["<leader>fs"] = "require('plugin.telescope').startify_sessions()",
+  }
+
+  for key, command in pairs(mappings) do
+    command = "<Cmd>lua " .. command .. "<CR>"
+    nvim_set_keymap("n", key, command, opts)
+  end
 end
 
 return M
