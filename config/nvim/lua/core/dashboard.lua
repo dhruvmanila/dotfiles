@@ -106,12 +106,12 @@ local entries = {
   {
     key = "f",
     description = { icons.files .. "  Find files" },
-    command = require("plugin.telescope").find_files,
+    command = require("telescope.builtin").find_files,
   },
   {
     key = "d",
     description = { icons.tools .. "  Find in dotfiles" },
-    command = require("plugin.telescope").search_dotfiles,
+    command = require("plugin.telescope").find_dotfiles,
   },
   {
     key = "b",
