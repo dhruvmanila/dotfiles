@@ -205,7 +205,11 @@ function Format:lsp_run(formatter)
     self.bufnr,
     "textDocument/formatting",
     lsp.util.make_formatting_params(formatter.lsp_opts),
-    function(_, _, result)
+    function(err, _, result)
+      if err then
+        vim.api.nvim_err_writeln("[formatter]: " .. err.message)
+        return
+      end
       if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
         return
       end
