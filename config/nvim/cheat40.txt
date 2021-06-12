@@ -140,6 +140,27 @@ Open session             «CR»         ^I
 Delete session           «C-x»        ^I
 }}}
 Treesitter Mappings {{{
+# Playground -----------------------------
+TSPlaygroundToggle       «Spc»tp       N
+TSHighlightCaptures...   «Spc»th       N
+# Incremental selection ------------------
+Init selection           gnn           N
+Scope incremental        grc           X
+Node incremental         «Tab»         X
+Node decremental         «S-Tab»       X
+# Textobjects ----------------------------
+@class.outer             aC            T
+@class.inner             iC            T
+@function.outer          af            T
+@function.inner          if            T
+@call.outer              aF            T
+@call.inner              iF            T
+@conditional.outer       ac            T
+@conditional.inner       ic            T
+@loop.outer              al            T
+@loop.inner              il            T
+@parameter.outer         aa            T
+@parameter.inner         ip            T
 }}}
 Lir File Explorer Mappings {{{
 Toggle floating Lir      -             N
