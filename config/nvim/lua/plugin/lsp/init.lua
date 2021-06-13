@@ -13,7 +13,7 @@ require("core.formatter")
 require("plugin.lsp.handlers")
 
 -- For debugging purposes:
--- vim.lsp.set_log_level(vim.lsp.log_levels.DEBUG)
+vim.lsp.set_log_level(vim.lsp.log_levels.DEBUG)
 
 -- Utility functions, commands and keybindings
 do
