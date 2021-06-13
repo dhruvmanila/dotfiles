@@ -136,3 +136,21 @@ dm.opt = setmetatable({}, {
     end
   end,
 })
+
+-- Similar to case statement.
+---@alias CaseT string|number|function
+---@param value CaseT
+---@param blocks table<CaseT, CaseT>
+---@param errmsg? string
+function dm.case(value, blocks, errmsg)
+  value = type(value) == "function" and value() or value
+  for match, block in pairs(blocks) do
+    match = type(match) == "function" and match(value) or match
+    if match == true or match == value then
+      return type(block) == "function" and block(value) or block
+    end
+  end
+  if errmsg then
+    api.nvim_err_writeln(errmsg)
+  end
+end
