@@ -102,22 +102,6 @@ function M.get_var(scope, handle, name)
   end
 end
 
--- Return the current working directory using the given root pattern. Defaults
--- to the current working directory if the root pattern is not found.
----@param pattern string[] Default: {'.git', 'requirements.txt'}
----@return string
-function M.get_project_root(pattern)
-  local ok, util = pcall(require, "lspconfig.util")
-  local default_pattern = { ".git", "requirements.txt" }
-
-  if ok then
-    pattern = vim.list_extend(pattern or {}, default_pattern)
-    return util.root_pattern(pattern)(vim.fn.expand("%")) or vim.loop.cwd()
-  else
-    return vim.loop.cwd()
-  end
-end
-
 -- Append the given lines in the provided bufnr, defaults to the current buffer.
 -- If `hl` is provided then add the given highlight group to the respective lines.
 ---@param bufnr number
