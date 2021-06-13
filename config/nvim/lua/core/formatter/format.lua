@@ -4,7 +4,7 @@ local uv = vim.loop
 local fn = vim.fn
 local api = vim.api
 local lsp = vim.lsp
-local utils = require("core.utils")
+local validate = vim.validate
 
 -- Flag to signal that the BufWrite family autocmds were triggered by Format.
 -- This is done to let other commands to run for these events such as linting,
@@ -13,12 +13,14 @@ local utils = require("core.utils")
 local format_write = false
 
 ---@class Formatter
----@field cmd string
----@field args string[]|fun(filepath: string): string[]
----@field enable fun(filepath: string): boolean?
----@field stdin boolean
----@field use_lsp boolean?
----@field lsp_opts table?
+---@field enable function? enable/disable formatter for current file
+---@field use string type for formatter to run, one of 'cmd', 'lsp', 'daemon_client'
+---@field cmd string formatter command
+---@field args string[]|function formatter arguments to pass
+---@field stdin boolean whether to use stdin or not
+---@field opts table LSP formatting options
+---@field start_cmd string[] start command for the server
+---@field headers table headers to pass for the request
 
 ---@type table<string, Formatter[]>
 local registered_formatters = {}
@@ -204,7 +206,7 @@ function Format:lsp_run(formatter)
   lsp.buf_request(
     self.bufnr,
     "textDocument/formatting",
-    lsp.util.make_formatting_params(formatter.lsp_opts),
+    lsp.util.make_formatting_params(formatter.opts),
     function(err, _, result)
       if err then
         vim.api.nvim_err_writeln("[formatter]: " .. err.message)
@@ -282,27 +284,61 @@ function Format:start()
   return self:step()
 end
 
--- Adds a new formatter for the given filetype.
+-- Register the formatters for the given filetype.
 ---@param filetype string
----@param formatter Formatter
-function M.formatter(filetype, formatter)
-  vim.validate({ filetype = { filetype, "s" }, formatter = { formatter, "t" } })
+---@param formatters Formatter|Formatter[]
+function M.register(filetype, formatters)
+  validate({ filetype = { filetype, "s" }, formatters = { formatters, "t" } })
+  formatters = vim.tbl_islist(formatters) and formatters or { formatters }
   if not registered_formatters[filetype] then
     registered_formatters[filetype] = {}
   end
-  -- By default, every formatter is enabled.
-  formatter.enable = formatter.enable or function()
-    return true
+
+  for _, formatter in ipairs(formatters) do
+    -- By default, every formatter is enabled.
+    formatter.enable = formatter.enable or function()
+      return true
+    end
+
+    dm.case(
+      formatter.use,
+      {
+        ["cmd"] = function()
+          validate({
+            cmd = { formatter.cmd, "s" },
+            stdin = { formatter.stdin, "b" },
+            args = {
+              formatter.args,
+              function(a)
+                local atype = type(a)
+                return atype == "table" or atype == "function", string.format(
+                  "'formatter.args': expected a table or function, got %s",
+                  atype
+                )
+              end,
+            },
+          })
+        end,
+        ["lsp"] = function()
+          validate({ opts = { formatter.opts, "t", true } })
+          formatter.opts = formatter.opts or {}
+        end,
+        ["daemon_client"] = function()
+          validate({
+            start_cmd = { formatter.start_cmd, "t" },
+            headers = { formatter.headers, "t", true },
+          })
+          formatter.headers = formatter.headers or {}
+        end,
+      },
+      string.format(
+        "'formatter.use': expected either 'cmd', 'lsp' or 'daemon_client', but got %s",
+        formatter.use
+      )
+    )
+
+    table.insert(registered_formatters[filetype], formatter)
   end
-  formatter.use_lsp = utils.if_nil(formatter.use_lsp, false)
-  if not formatter.use_lsp then
-    assert(formatter.stdin, "Formatter must define a 'stdin'")
-    assert(formatter.cmd, "Formatter must define a 'cmd'")
-    assert(formatter.args, "Formatter must define a 'args' table or function")
-  else
-    formatter.lsp_opts = formatter.lsp_opts or {}
-  end
-  table.insert(registered_formatters[filetype], formatter)
 end
 
 -- Run all formatters for the current buffer.

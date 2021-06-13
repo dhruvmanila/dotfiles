@@ -10,7 +10,8 @@ local finder = {
 do
   local stylua_config_dir
 
-  format.formatter("lua", {
+  format.register("lua", {
+    use = "cmd",
     cmd = "stylua",
     args = function()
       return { "--config-path", stylua_config_dir .. "/stylua.toml", "-" }
@@ -25,29 +26,33 @@ do
   })
 end
 
-format.formatter("python", {
-  cmd = "black",
-  args = { "--fast", "--quiet", "-" },
-  enable = function(_, path)
-    if finder.ignore_projects(path) then
-      return false
-    end
-  end,
-  stdin = true,
+format.register("python", {
+  {
+    use = "cmd",
+    cmd = "black",
+    args = { "--fast", "--quiet", "-" },
+    enable = function(_, path)
+      if finder.ignore_projects(path) then
+        return false
+      end
+    end,
+    stdin = true,
+  },
+  {
+    use = "cmd",
+    cmd = "isort",
+    args = { "--profile", "black", "-" },
+    enable = function(_, path)
+      if finder.ignore_projects(path) then
+        return false
+      end
+    end,
+    stdin = true,
+  },
 })
 
-format.formatter("python", {
-  cmd = "isort",
-  args = { "--profile", "black", "-" },
-  enable = function(_, path)
-    if finder.ignore_projects(path) then
-      return false
-    end
-  end,
-  stdin = true,
-})
-
-format.formatter("sh", {
+format.register("sh", {
+  use = "cmd",
   cmd = "shfmt",
   -- -i uint   indent: 0 for tabs (default), >0 for number of spaces
   -- -bn       binary ops like && and | may start a line
@@ -63,4 +68,14 @@ format.formatter("sh", {
   stdin = true,
 })
 
-format.formatter("json", { use_lsp = true })
+format.register("json", { use = "lsp" })
+
+format.register("yaml", {
+  use = "cmd",
+  cmd = "prettier",
+  args = function(bufnr)
+    local tabwidth = lsp_util.get_effective_tabstop(bufnr)
+    return { "--parser", "yaml", "--tab-width", tabwidth }
+  end,
+  stdin = true,
+})
