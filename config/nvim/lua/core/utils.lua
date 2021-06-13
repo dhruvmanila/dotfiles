@@ -199,7 +199,7 @@ end
 -- Helper function to create a floating window in which the output of
 -- `:StartupTime` will be displayed.
 function M.startuptime()
-  local width = math.min(100, vim.o.columns - 10)
+  local width = vim.o.columns - 20
   local height = vim.o.lines - 9
   local bufnr = api.nvim_create_buf(false, true)
 
