@@ -1,7 +1,7 @@
 local lsp = vim.lsp
 local api = vim.api
 local handlers = lsp.handlers
-local code_action = require("plugin.lsp.code_action")
+local code_action = require "plugin.lsp.code_action"
 
 -- Can use `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`
 handlers["textDocument/publishDiagnostics"] = lsp.with(
@@ -29,8 +29,8 @@ local function location_handler(_, method, response)
   if vim.tbl_islist(response) then
     if vim.tbl_count(response) > 1 then
       lsp.util.set_qflist(lsp.util.locations_to_items(response))
-      api.nvim_command("copen")
-      api.nvim_command("wincmd p")
+      api.nvim_command "copen"
+      api.nvim_command "wincmd p"
     end
     lsp.util.jump_to_location(response[1])
   else

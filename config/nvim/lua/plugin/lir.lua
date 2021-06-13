@@ -1,10 +1,10 @@
-local lir = require("lir")
-local utils = require("lir.utils")
-local actions = require("lir.actions")
-local mark_actions = require("lir.mark.actions")
-local clipboard_actions = require("lir.clipboard.actions")
+local lir = require "lir"
+local utils = require "lir.utils"
+local actions = require "lir.actions"
+local mark_actions = require "lir.mark.actions"
+local clipboard_actions = require "lir.clipboard.actions"
 
-local Path = require("plenary.path")
+local Path = require "plenary.path"
 local M = {}
 
 -- Helper function to jump the cursor to the given name (file/directory)
@@ -20,7 +20,7 @@ end
 -- in the file system and puts the cursor above the file, similar to `mkdir`.
 -- Original implementation just creates a vim buffer and opens it.
 function actions.newfile()
-  local name = vim.fn.input("Create file: ")
+  local name = vim.fn.input "Create file: "
   if name == "" then
     return
   end
@@ -28,7 +28,7 @@ function actions.newfile()
   local ctx = lir.get_context()
   local path = Path:new(ctx.dir .. name)
   if path:exists() then
-    utils.error("[lir] File already exists")
+    utils.error "[lir] File already exists"
     cursor_jump(name)
     return
   end
@@ -66,7 +66,7 @@ function M.clipboard_action(action, mode)
   clipboard_actions[action]()
 end
 
-lir.setup({
+lir.setup {
   show_hidden_files = true,
   devicons_enable = true,
   hide_cursor = false,
@@ -99,21 +99,21 @@ lir.setup({
     -- <Space> to toggle mark and move down
     ["<Space>"] = function()
       mark_actions.toggle_mark()
-      vim.cmd("normal! j")
+      vim.cmd "normal! j"
     end,
 
     -- <CTRL-Space> to toggle mark and move up
     ["<C-Space>"] = function()
       mark_actions.toggle_mark()
-      vim.cmd("normal! k")
+      vim.cmd "normal! k"
     end,
 
     -- Enhanced cut and copy.
     ["C"] = function()
-      M.clipboard_action("copy")
+      M.clipboard_action "copy"
     end,
     ["X"] = function()
-      M.clipboard_action("cut")
+      M.clipboard_action "cut"
     end,
     ["P"] = clipboard_actions.paste,
 
@@ -122,13 +122,13 @@ lir.setup({
       vim.cmd("edit " .. vim.loop.os_homedir())
     end,
     ["`"] = function()
-      vim.cmd("edit /")
+      vim.cmd "edit /"
       -- https://github.com/neovim/neovim/issues/13726
-      vim.cmd("doautocmd BufEnter")
+      vim.cmd "doautocmd BufEnter"
     end,
     ["gr"] = goto_git_root,
   },
-})
+}
 
 -- Similar to dirvish
 vim.api.nvim_set_keymap("n", "-", [[<Cmd>lua require('lir.float').toggle()<CR>]], {

@@ -2,7 +2,7 @@
 local M = {}
 
 local lsp = vim.lsp
-local parsers = require("nvim-treesitter.parsers")
+local parsers = require "nvim-treesitter.parsers"
 
 -- Table consisting of treesitter node types to use for preview.
 local node_types = {
@@ -116,9 +116,9 @@ local function make_lsp_preview_action(method)
   end
 end
 
-M.definition = make_lsp_preview_action("textDocument/definition")
-M.declaration = make_lsp_preview_action("textDocument/declaration")
-M.implementation = make_lsp_preview_action("textDocument/implementation")
-M.type_definition = make_lsp_preview_action("textDocument/typeDefinition")
+M.definition = make_lsp_preview_action "textDocument/definition"
+M.declaration = make_lsp_preview_action "textDocument/declaration"
+M.implementation = make_lsp_preview_action "textDocument/implementation"
+M.type_definition = make_lsp_preview_action "textDocument/typeDefinition"
 
 return M

@@ -1,15 +1,15 @@
 local notify = vim.api.nvim_notify
 local log_levels = vim.log.levels
-local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
-local themes = require("telescope.themes")
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
+local themes = require "telescope.themes"
 
 local should_reload = true
 
 if should_reload then
-  RELOAD("plenary")
-  RELOAD("popup")
-  RELOAD("telescope")
+  RELOAD "plenary"
+  RELOAD "popup"
+  RELOAD "telescope"
 end
 
 -- Namespace to hold custom actions
@@ -18,7 +18,7 @@ local custom_actions = {}
 -- Yank the selected entry into the selection register '*'
 custom_actions.yank_entry = function()
   local entry = action_state.get_selected_entry()
-  vim.fn.setreg(vim.api.nvim_get_vvar("register"), entry.value)
+  vim.fn.setreg(vim.api.nvim_get_vvar "register", entry.value)
 end
 
 -- Reset the prompt keeping the cursor at the current entry in the results window.
@@ -27,13 +27,13 @@ custom_actions.reset_prompt = function(prompt_bufnr)
 end
 
 -- Default dropdown theme options.
-local default_dropdown = themes.get_dropdown({
+local default_dropdown = themes.get_dropdown {
   width = 0.8,
   results_height = 0.8,
   previewer = false,
-})
+}
 
-require("telescope").setup({
+require("telescope").setup {
   defaults = {
     prompt_prefix = require("core.icons").telescope .. " ",
     selection_caret = "❯ ",
@@ -142,7 +142,7 @@ require("telescope").setup({
       max_results = 0,
     },
   },
-})
+}
 
 -- Load the telescope extensions without blowing up. It only emits a
 -- small warning. Only the required extensions are loaded, the others
@@ -170,7 +170,7 @@ local M = {}
 
 -- This is mainly to avoid .gitignore patterns.
 function M.find_all_files()
-  require("telescope.builtin").find_files({
+  require("telescope.builtin").find_files {
     prompt_title = "Find All Files",
     find_command = {
       "fd",
@@ -182,43 +182,43 @@ function M.find_all_files()
       ".git",
       "--no-ignore",
     },
-  })
+  }
 end
 
 function M.grep_prompt()
-  require("telescope.builtin").grep_string({
-    search = vim.fn.input("Grep String > "),
-  })
+  require("telescope.builtin").grep_string {
+    search = vim.fn.input "Grep String > ",
+  }
 end
 
 function M.find_dotfiles()
-  require("telescope.builtin").find_files({
+  require("telescope.builtin").find_files {
     prompt_title = "Find dotfiles",
     cwd = "~/dotfiles",
     hidden = true,
     follow = true,
     file_ignore_patterns = { ".git/" },
-  })
+  }
 end
 
 function M.buffers()
   -- Number of listed buffers
-  local buflisted = #vim.fn.getbufinfo({ buflisted = 1 })
-  require("telescope.builtin").buffers({
+  local buflisted = #vim.fn.getbufinfo { buflisted = 1 }
+  require("telescope.builtin").buffers {
     width = math.min(vim.o.columns - 20, 100),
     results_height = math.max(10, math.min(vim.o.lines - 10, buflisted)),
-  })
+  }
 end
 
 -- List out all the installed plugins and provide action to either go to the
 -- GitHub page of the plugin or find files within the plugin using telescope.
 function M.installed_plugins()
   require("telescope").extensions.installed_plugins.installed_plugins(
-    themes.get_dropdown({
+    themes.get_dropdown {
       width = _CachedPluginInfo.max_length + 10,
       results_height = 0.8,
       previewer = false,
-    })
+    }
   )
 end
 
@@ -226,11 +226,11 @@ end
 -- them or delete them.
 function M.startify_sessions()
   require("telescope").extensions.startify_sessions.startify_sessions(
-    themes.get_dropdown({
+    themes.get_dropdown {
       width = 40,
       results_height = 0.5,
       previewer = false,
-    })
+    }
   )
 end
 

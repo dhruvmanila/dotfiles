@@ -1,7 +1,7 @@
 local api = vim.api
 local lsp = vim.lsp
-local icons = require("core.icons")
-local utils = require("core.utils")
+local icons = require "core.icons"
+local utils = require "core.utils"
 
 local severity_icon = { icons.error, icons.warning, icons.info, icons.hint }
 local severity_hl = {

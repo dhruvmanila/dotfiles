@@ -1,7 +1,7 @@
 local api = vim.api
 local lsp = vim.lsp
-local icons = require("core.icons")
-local utils = require("core.utils")
+local icons = require "core.icons"
+local utils = require "core.utils"
 
 local code_action = {}
 local config = { show_header = true }
@@ -66,7 +66,7 @@ end
 -- the code action under the cursor.
 ---@param choice number|nil
 function M.do_code_action(choice)
-  choice = choice or tonumber(vim.fn.expand("<cword>"))
+  choice = choice or tonumber(vim.fn.expand "<cword>")
   local action_chosen = code_action.actions[choice]
   api.nvim_win_close(0, true)
 
@@ -89,7 +89,7 @@ end
 -- Main handler for the code action response from the language server.
 function M.handler(_, _, response)
   if response == nil or vim.tbl_isempty(response) then
-    print("[LSP] No code actions available")
+    print "[LSP] No code actions available"
     return
   end
 

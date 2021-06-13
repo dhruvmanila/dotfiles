@@ -65,9 +65,7 @@ return {
     elseif vim.fn.isdirectory(stable) > 0 then
       vscode = stable
     else
-      warn(
-        "[LSP] Visual Studio Code not found, defaulting to npm installed server"
-      )
+      warn "[LSP] Visual Studio Code not found, defaulting to npm installed server"
       return {}
     end
 
@@ -89,7 +87,7 @@ return {
         disableOrganizeImports = true, -- Using isort
       },
       python = {
-        venvPath = os.getenv("HOME") .. "/.pyenv",
+        venvPath = os.getenv "HOME" .. "/.pyenv",
         analysis = {
           typeCheckingMode = "off", -- Using mypy
         },
@@ -102,7 +100,7 @@ return {
   sumneko_lua = function()
     local home = vim.loop.os_homedir()
 
-    return require("lua-dev").setup({
+    return require("lua-dev").setup {
       library = {
         runtime = true,
         plugins = {},
@@ -122,7 +120,7 @@ return {
           },
         },
       },
-    })
+    }
   end,
 
   -- https://github.com/iamcco/vim-language-server

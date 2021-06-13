@@ -1,9 +1,9 @@
 local lsp_util = vim.lsp.util
-local format = require("core.formatter.format")
+local format = require "core.formatter.format"
 local root_pattern = require("lspconfig.util").root_pattern
 
 local finder = {
-  stylua_config_file = root_pattern("stylua.toml"),
+  stylua_config_file = root_pattern "stylua.toml",
   ignore_projects = root_pattern("openlibrary", "infogami"),
 }
 

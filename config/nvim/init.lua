@@ -51,7 +51,7 @@ g.markdown_fenced_languages = { "bash=sh", "json", "python", "lua", "sh" }
 
 -- Default sessions directory
 -- This is set here as it is accessed by Dashboard as well
-g.startify_session_dir = vim.fn.stdpath("data") .. "/session"
+g.startify_session_dir = vim.fn.stdpath "data" .. "/session"
 
 -- Global window blend value. This will be used for:
 --   - Completion menu
@@ -99,13 +99,13 @@ g.loaded_tutor_mode_plugin = 1
 -- `globals` module contains the functions which will be available in the
 -- lua global table `_G`. This includes the namespace `dm` which contains
 -- the lua port to vim's builtin `autocmd`, `command` and more.
-require("core.globals")
+require "core.globals"
 
 -- `plugins` module contains the plugin specification for `packer.nvim`.
 -- This will also automatically install packer.nvim if it is not installed.
 -- A lot of plugins are lazy loaded on events, keymaps and commands to increase
 -- the startuptime.
-require("core.plugins")
+require "core.plugins"
 
 -- `statusline` module contains the configuration for the custom statusline.
 -- This includes the statusline for regular buffers, inactive buffers and
@@ -121,19 +121,19 @@ require("core.plugins")
 --     - Python version
 --     - GitHub notification count
 --   - Python virtual environment name
-require("core.statusline")
+require "core.statusline"
 
 -- `tabline` module contains the specification for the custom tabline.
 -- The file related components are displayed on the tabline instead of the
 -- statusline.
 --
 -- Why waste the tabline region and cram everything into the statusline?
-require("core.tabline")
+require "core.tabline"
 
 -- Following modules, as the name suggests, are the core editor configurations.
-require("core.options")
-require("core.commands")
-require("core.mappings")
+require "core.options"
+require "core.commands"
+require "core.mappings"
 
 -- This is where a lot of the automation is configured. This includes:
 --   - Clearing out the commandline messages after a period of time
@@ -142,4 +142,4 @@ require("core.mappings")
 --     avoid setting it for special buffers and set it as per the filetype.
 --   - Trim trailing whitespace
 -- And more...
-require("core.autocmds")
+require "core.autocmds"

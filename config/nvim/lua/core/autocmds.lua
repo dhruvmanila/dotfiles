@@ -91,7 +91,7 @@ dm.augroup("custom_autocmds", {
     targets = { "*" },
     command = function()
       local last_tab = vim.api.nvim_get_current_tabpage()
-      vim.cmd("tabdo wincmd =")
+      vim.cmd "tabdo wincmd ="
       vim.api.nvim_set_current_tabpage(last_tab)
     end,
   },
@@ -101,7 +101,7 @@ dm.augroup("custom_autocmds", {
     events = { "TextYankPost" },
     targets = { "*" },
     command = function()
-      vim.highlight.on_yank({ higroup = "Substitute", timeout = 200 })
+      vim.highlight.on_yank { higroup = "Substitute", timeout = 200 }
     end,
   },
 

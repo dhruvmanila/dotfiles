@@ -1,9 +1,9 @@
-local icons = require("core.icons")
-local lspstatus = require("lsp-status")
+local icons = require "core.icons"
+local lspstatus = require "lsp-status"
 
 local plugins = {}
 
-lspstatus.config({
+lspstatus.config {
   -- The sumneko lua server sends valueRange (which is not specified in the
   -- protocol) to give the range for a function's start and end.
   select_symbol = function(cursor_pos, symbol)
@@ -30,7 +30,7 @@ lspstatus.config({
     return items
   end)(),
   diagnostics = false,
-})
+}
 -- Register the progress handler with Neovim's LSP client.
 lspstatus.register_progress()
 

@@ -7,20 +7,18 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error(
-    "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
-  )
+  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
 end
 
-local finders = require("telescope.finders")
-local pickers = require("telescope.pickers")
+local finders = require "telescope.finders"
+local pickers = require "telescope.pickers"
 local config = require("telescope.config").values
-local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
-local entry_display = require("telescope.pickers.entry_display")
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
+local entry_display = require "telescope.pickers.entry_display"
 
 local warn = require("core.utils").warn
-local Job = require("plenary.job")
+local Job = require "plenary.job"
 
 local state = {}
 
@@ -61,10 +59,10 @@ local function set_config_state(opt_name, value, default)
 end
 
 local function make_display(entry)
-  return state.displayer({
+  return state.displayer {
     entry.title,
     { entry.url, "Comment" },
-  })
+  }
 end
 
 ---@param entry table
@@ -91,10 +89,10 @@ local function set_finder(new_mode, results)
   state.results = results
   state.current_frame = 0
 
-  local new_finder = finders.new_table({
+  local new_finder = finders.new_table {
     results = results,
     entry_maker = entry_maker,
-  })
+  }
 
   state.picker:refresh(new_finder, {
     reset_prompt = true,
@@ -179,20 +177,20 @@ local function websearch(opts)
     )
   end
 
-  state.displayer = entry_display.create({
+  state.displayer = entry_display.create {
     separator = " ",
     items = {
       { width = math.min(65, config.width * vim.o.columns / 2) },
       { remaining = true },
     },
-  })
+  }
 
   state.picker = pickers.new(opts, {
     prompt_title = aliases[search_engine] .. " Search",
-    finder = finders.new_table({
+    finder = finders.new_table {
       results = {},
       entry_maker = entry_maker,
-    }),
+    },
     previewer = false,
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
@@ -208,13 +206,13 @@ local function websearch(opts)
   set_finder(mode.QUERY)
 end
 
-return telescope.register_extension({
+return telescope.register_extension {
   setup = function(ext_config)
     local search_engine = ext_config.search_engine
     local max_results = ext_config.max_results or 25
 
     if search_engine == "duckduckgo" and max_results > 25 then
-      warn("[telescope] duckduckgo (ddgr) supports a maximum of 25 results")
+      warn "[telescope] duckduckgo (ddgr) supports a maximum of 25 results"
       max_results = 25
     end
 
@@ -223,4 +221,4 @@ return telescope.register_extension({
     set_config_state("open_command", ext_config.open_command, "open")
   end,
   exports = { websearch = websearch },
-})
+}

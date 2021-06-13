@@ -1,7 +1,7 @@
 local M = {}
 local api = vim.api
 local cmd = api.nvim_command
-local icons = require("core.icons")
+local icons = require "core.icons"
 
 -- Emit a warning message.
 ---@param msg string
@@ -163,7 +163,7 @@ function M.make_floating_popup_options(width, height, border)
   local row, col
 
   local lines_above = vim.fn.winline() - 1
-  local lines_below = api.nvim_get_option("lines") - lines_above
+  local lines_below = api.nvim_get_option "lines" - lines_above
 
   if lines_above < lines_below then
     anchor = anchor .. "N"
@@ -176,7 +176,7 @@ function M.make_floating_popup_options(width, height, border)
   end
 
   local col_left = api.nvim_win_get_position(0)[2] + vim.fn.wincol() + width
-  if col_left <= api.nvim_get_option("columns") then
+  if col_left <= api.nvim_get_option "columns" then
     anchor = anchor .. "W"
     col = 0
   else
@@ -213,7 +213,7 @@ function M.startuptime()
     border = icons.border.edge,
   })
 
-  cmd("StartupTime")
+  cmd "StartupTime"
   vim.bo.bufhidden = "wipe"
   vim.wo.cursorline = true
   local quit_fn = string.format(

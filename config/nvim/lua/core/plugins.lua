@@ -2,16 +2,16 @@ local fn = vim.fn
 local cmd = vim.api.nvim_command
 
 do
-  local install_path = fn.stdpath("data")
+  local install_path = fn.stdpath "data"
     .. "/site/pack/packer/start/packer.nvim"
 
   if fn.empty(fn.glob(install_path)) > 0 then
     cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
-    cmd("packadd packer.nvim")
+    cmd "packadd packer.nvim"
   end
 end
 
-local packer = require("packer")
+local packer = require "packer"
 
 -- PackerSync -> PackerUpdate + PackerClean + PackerCompile
 vim.api.nvim_set_keymap(
@@ -49,21 +49,22 @@ local function conf(config_name)
   return string.format("require('plugin.%s')", config_name)
 end
 
-packer.startup({
+packer.startup {
   function(use)
     -- Packer
-    use("wbthomason/packer.nvim")
+    use "wbthomason/packer.nvim"
 
     -- Color scheme
-    use({ "sainnhe/gruvbox-material", config = conf("colorscheme") })
+    use { "sainnhe/gruvbox-material", config = conf "colorscheme" }
 
     -- 40 width vertical split containing quick reference to mappings, etc.
-    use(
-      { "lifepillar/vim-cheat40", config = "vim.g.cheat40_use_default = false" }
-    )
+    use {
+      "lifepillar/vim-cheat40",
+      config = "vim.g.cheat40_use_default = false",
+    }
 
     -- Lua
-    use({
+    use {
       -- Lua related docs in vim help format
       { "nanotee/luv-vimdocs" },
       { "milisims/nvim-luaref" },
@@ -71,10 +72,10 @@ packer.startup({
       -- LSP sumneko setup
       { "folke/lua-dev.nvim" },
       { "tjdevries/tree-sitter-lua", opt = true },
-    })
+    }
 
     -- Helpful in visualizing colors live in the editor
-    use({
+    use {
       "norcalli/nvim-colorizer.lua",
       keys = { "<Leader>cc" },
       config = function()
@@ -86,44 +87,48 @@ packer.startup({
         )
         require("colorizer").setup()
       end,
-    })
+    }
 
     -- Icons
-    use({
-      { "kyazdani42/nvim-web-devicons", config = conf("nvim_web_devicons") },
+    use {
+      { "kyazdani42/nvim-web-devicons", config = conf "nvim_web_devicons" },
       "yamatsum/nvim-nonicons",
-    })
+    }
 
     -- TODO: remove after #12587 is fixed (upstream bug)
-    use("antoinemadec/FixCursorHold.nvim")
+    use "antoinemadec/FixCursorHold.nvim"
 
     -- Common config across editors and teams
-    use({
+    use {
       "editorconfig/editorconfig-vim",
       setup = function()
         vim.g.EditorConfig_exclude_patterns = { "fugitive://.*", "scp://.*" }
         vim.g.EditorConfig_max_line_indicator = "none"
         vim.g.EditorConfig_preserve_formatoptions = 1
       end,
-    })
+    }
 
     -- LSP, auto completion, linting and related
-    use({
+    use {
       "nvim-lua/lsp-status.nvim",
       { "kosayoda/nvim-lightbulb", opt = true },
       { "ray-x/lsp_signature.nvim", opt = true },
-      { "neovim/nvim-lspconfig", event = "BufReadPre", config = conf("lsp") },
-      { "hrsh7th/nvim-compe", event = "InsertEnter", config = conf("completion") },
-      { "mfussenegger/nvim-lint", config = conf("lint") },
-      { "liuchengxu/vista.vim", keys = { "<Leader>vv" }, config = conf("vista") },
-    })
+      { "neovim/nvim-lspconfig", event = "BufReadPre", config = conf "lsp" },
+      {
+        "hrsh7th/nvim-compe",
+        event = "InsertEnter",
+        config = conf "completion",
+      },
+      { "mfussenegger/nvim-lint", config = conf "lint" },
+      { "liuchengxu/vista.vim", keys = { "<Leader>vv" }, config = conf "vista" },
+    }
 
     -- Telescope and family
-    use({
+    use {
       {
         "nvim-telescope/telescope.nvim",
         event = "VimEnter",
-        config = conf("telescope"),
+        config = conf "telescope",
         requires = {
           { "nvim-lua/popup.nvim" },
           { "nvim-lua/plenary.nvim" },
@@ -131,15 +136,15 @@ packer.startup({
       },
       { "~/projects/telescope-bookmarks.nvim" },
       { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-    })
+    }
 
     -- Treesitter
-    use({
+    use {
       {
         "nvim-treesitter/nvim-treesitter",
         event = { "BufRead", "BufNewFile" },
         run = ":TSUpdate",
-        config = conf("treesitter"),
+        config = conf "treesitter",
       },
       {
         "nvim-treesitter/playground",
@@ -151,35 +156,35 @@ packer.startup({
         after = "nvim-treesitter",
         requires = "nvim-treesitter/nvim-treesitter",
       },
-    })
+    }
 
     -- Language specific
-    use({
+    use {
       { "cespare/vim-toml" },
       { "raimon49/requirements.txt.vim" },
       { "vim-scripts/applescript.vim" },
-    })
+    }
 
     -- Git
-    use({
-      { "tpope/vim-fugitive", config = conf("fugitive") },
+    use {
+      { "tpope/vim-fugitive", config = conf "fugitive" },
       {
         "lewis6991/gitsigns.nvim",
         event = { "BufReadPre", "BufNewFile" },
         requires = "nvim-lua/plenary.nvim",
-        config = conf("gitsigns"),
+        config = conf "gitsigns",
       },
-    })
+    }
 
     -- tpope
-    use({
+    use {
       { "tpope/vim-commentary" },
       { "tpope/vim-scriptease" },
       { "tpope/vim-eunuch" },
-    })
+    }
 
     -- Motion
-    use({
+    use {
       "rhysd/clever-f.vim",
       setup = function()
         vim.g.clever_f_across_no_line = 1
@@ -188,10 +193,10 @@ packer.startup({
         -- `f;` and `f:` matches all signs
         vim.g.clever_f_chars_match_any_signs = ";:"
       end,
-    })
+    }
 
     -- Pretification
-    use({
+    use {
       "junegunn/vim-easy-align",
       keys = { "ge" },
       config = function()
@@ -199,38 +204,38 @@ packer.startup({
         vim.api.nvim_set_keymap("n", "ge", "<Plug>(EasyAlign)", opts)
         vim.api.nvim_set_keymap("x", "ge", "<Plug>(EasyAlign)", opts)
       end,
-    })
+    }
 
     -- Using only the session management functionalities
-    use("mhinz/vim-startify")
+    use "mhinz/vim-startify"
 
     -- File explorer
-    use({
+    use {
       -- Project drawer style
       {
         "kyazdani42/nvim-tree.lua",
         requires = { "kyazdani42/nvim-web-devicons" },
         keys = { "<C-n>" },
-        config = conf("nvim_tree"),
+        config = conf "nvim_tree",
       },
       -- Split/floating window style
-      { "tamago324/lir.nvim", config = conf("lir") },
-    })
+      { "tamago324/lir.nvim", config = conf "lir" },
+    }
 
     -- Indentation tracking
-    use({
+    use {
       "lukas-reineke/indent-blankline.nvim",
       branch = "lua",
       event = { "BufRead", "BufNewFile" },
-      config = conf("indentline"),
+      config = conf "indentline",
       disable = true,
-    })
+    }
 
     -- Automatically clears search highlight and improved star-search
-    use("junegunn/vim-slash")
+    use "junegunn/vim-slash"
 
     -- Change working directory to project root
-    use({
+    use {
       "airblade/vim-rooter",
       setup = function()
         vim.g.rooter_cd_cmd = "lcd"
@@ -238,13 +243,13 @@ packer.startup({
         vim.g.rooter_resolve_links = 1
         vim.g.rooter_patterns = { ".git", "Makefile", "*requirements*.txt" }
       end,
-    })
+    }
 
     -- Profiling
-    use({ "tweekmonster/startuptime.vim", cmd = "StartupTime" })
+    use { "tweekmonster/startuptime.vim", cmd = "StartupTime" }
 
     -- Open external browsers, editor, finder from Neovim
-    use({ "itchyny/vim-external", config = conf("vim_external") })
+    use { "itchyny/vim-external", config = conf "vim_external" }
   end,
 
   config = {
@@ -257,4 +262,4 @@ packer.startup({
       threshold = 0, -- ms
     },
   },
-})
+}

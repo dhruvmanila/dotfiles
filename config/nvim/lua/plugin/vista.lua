@@ -1,5 +1,5 @@
 local g = vim.g
-local icons = require("core.icons")
+local icons = require "core.icons"
 
 g.vista_default_executive = "nvim_lsp"
 g.vista_sidebar_width = 35

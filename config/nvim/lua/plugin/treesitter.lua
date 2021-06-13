@@ -3,7 +3,7 @@ local map = require("core.utils").map
 map("n", "<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>")
 map("n", "<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>")
 
-require("nvim-treesitter.configs").setup({
+require("nvim-treesitter.configs").setup {
   -- one of 'all', 'language', or a list of languages
   ensure_installed = {
     "bash",
@@ -62,4 +62,4 @@ require("nvim-treesitter.configs").setup({
       },
     },
   },
-})
+}

@@ -1,4 +1,4 @@
-require("gitsigns").setup({
+require("gitsigns").setup {
   signs = {
     add = { hl = "GitSignsAdd", text = "┃" },
     change = { hl = "GitSignsChange", text = "┃" },
@@ -39,4 +39,4 @@ require("gitsigns").setup({
   },
   -- Attach to untracked files?
   attach_to_untracked = false,
-})
+}

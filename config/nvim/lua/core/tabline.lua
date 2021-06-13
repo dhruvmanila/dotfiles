@@ -1,7 +1,7 @@
 local fn = vim.fn
-local icons = require("core.icons")
-local devicons = require("nvim-web-devicons")
-local utils = require("core.utils")
+local icons = require "core.icons"
+local devicons = require "nvim-web-devicons"
+local utils = require "core.utils"
 
 local M = {}
 
@@ -124,7 +124,7 @@ end
 function _G.nvim_tabline()
   local line = ""
   local current_tabpage = fn.tabpagenr()
-  for i = 1, fn.tabpagenr("$") do
+  for i = 1, fn.tabpagenr "$" do
     local is_active = i == current_tabpage
     line = line .. tabline_label(i, is_active)
   end

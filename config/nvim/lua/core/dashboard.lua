@@ -1,5 +1,5 @@
-local icons = require("core.icons")
-local utils = require("core.utils")
+local icons = require "core.icons"
+local utils = require "core.utils"
 
 -- Extract out the required namespace/function
 local vim = vim
@@ -242,15 +242,15 @@ end
 ---   - Quitting the Dashboard buffer
 function M.session_cleanup()
   if api.nvim_buf_get_option(0, "filetype") == "dashboard" then
-    local calling_buffer = fn.bufnr("#")
+    local calling_buffer = fn.bufnr "#"
     if calling_buffer > 0 then
       api.nvim_set_current_buf(calling_buffer)
     end
   end
 
-  if plugin_loaded("nvim-tree.lua") then
+  if plugin_loaded "nvim-tree.lua" then
     local curtab = api.nvim_get_current_tabpage()
-    cmd("silent tabdo NvimTreeClose")
+    cmd "silent tabdo NvimTreeClose"
     api.nvim_set_current_tabpage(curtab)
   end
 end
@@ -265,15 +265,15 @@ function M.close()
 
   if #buflisted - curbuflisted ~= 0 then
     if
-      api.nvim_buf_is_loaded(fn.bufnr("#"))
-      and fn.bufnr("#") ~= fn.bufnr("%")
+      api.nvim_buf_is_loaded(fn.bufnr "#")
+      and fn.bufnr "#" ~= fn.bufnr "%"
     then
-      cmd("buffer #")
+      cmd "buffer #"
     else
-      cmd("bnext")
+      cmd "bnext"
     end
   else
-    cmd("quit")
+    cmd "quit"
   end
 end
 
@@ -303,7 +303,7 @@ function M.open(on_vimenter)
   end
 
   if not vim.o.hidden and vim.o.modified then
-    utils.warn("[dashboard] Please save your changes first.")
+    utils.warn "[dashboard] Please save your changes first."
     return
   end
 
@@ -320,7 +320,7 @@ function M.open(on_vimenter)
   end
 
   -- Create a new, unnamed buffer
-  if fn.line2byte("$") ~= -1 then
+  if fn.line2byte "$" ~= -1 then
     local bufnr = api.nvim_create_buf(true, true)
     -- If we are being called from a dashboard buffer in a nested fashion, we
     -- should keep the alternate buffer which is the one we go to when we
@@ -373,26 +373,26 @@ function M.open(on_vimenter)
   api.nvim_win_set_cursor(0, { dashboard.firstline, 0 })
 
   -- Fix column position to the first letter of the second word (skipping the icon)
-  cmd("normal! ^ w")
+  cmd "normal! ^ w"
   dashboard.fixed_column = api.nvim_win_get_cursor(0)[2]
 
-  dm.autocmd({
+  dm.autocmd {
     group = "dashboard",
     events = { "CursorMoved" },
     targets = { "<buffer>" },
     command = function()
       require("core.utils").fixed_column_movement(dashboard)
     end,
-  })
-  dm.autocmd({
+  }
+  dm.autocmd {
     group = "dashboard",
     events = { "BufWipeout" },
     targets = { "dashboard" },
     modifiers = { "++once" },
     command = reset_opts,
-  })
-  cmd("silent! %foldopen!")
-  cmd("normal! zb")
+  }
+  cmd "silent! %foldopen!"
+  cmd "normal! zb"
   api.nvim_set_option("eventignore", "")
 end
 

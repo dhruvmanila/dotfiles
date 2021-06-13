@@ -2,10 +2,10 @@
 -- https://github.com/akinsho/dotfiles/blob/main/.config/nvim/lua/as/statusline
 local fn = vim.fn
 local contains = vim.tbl_contains
-local devicons = require("nvim-web-devicons")
-local icons = require("core.icons")
-local utils = require("core.utils")
-local lsp_status = require("lsp-status")
+local devicons = require "nvim-web-devicons"
+local icons = require "core.icons"
+local utils = require "core.utils"
+local lsp_status = require "lsp-status"
 
 -- Colors are taken from the current colorscheme
 -- TODO: Any way of taking the values directly from the common highligh groups?
@@ -82,7 +82,7 @@ end
 -- end
 
 local function quit_line(ctx)
-  return ctx.inactive and "" or "<q>" .. wrap_hl("StGrey") .. " quit "
+  return ctx.inactive and "" or "<q>" .. wrap_hl "StGrey" .. " quit "
 end
 
 ---Special buffer information table.
@@ -124,7 +124,8 @@ local special_buffer_info = {
     end,
 
     qf = function(ctx)
-      local list_type = fn.getwininfo(ctx.curwin)[1].loclist == 1 and "Location"
+      local list_type = fn.getwininfo(ctx.curwin)[1].loclist == 1
+          and "Location"
         or "Quickfix"
       local title = utils.get_var("w", ctx.curwin, "quickfix_title")
       title = title and "[" .. title .. "]" or ""
@@ -232,7 +233,7 @@ end
 ---@return string
 local function python_version(ctx, hl)
   if ctx.filetype == "python" then
-    local env = os.getenv("VIRTUAL_ENV")
+    local env = os.getenv "VIRTUAL_ENV"
     local version = vim.g.current_python_version
     if env or version then
       env = env and "(" .. fn.fnamemodify(env, ":t") .. ") " or ""
@@ -397,7 +398,7 @@ local function special_buffer_statusline(ctx, inactive, prefix)
   local line = special_buffer_line(ctx, typ)
   local color, icon = unpack(special_buffer_info.icon[typ] or { "", "" })
   local hl = inactive and "" or wrap_hl(color)
-  local name_hl = inactive and "" or wrap_hl("StSpecialBuffer")
+  local name_hl = inactive and "" or wrap_hl "StSpecialBuffer"
 
   return prefix .. " " .. hl .. icon .. "%* " .. name_hl .. line
 end
@@ -429,18 +430,18 @@ function _G.nvim_statusline()
 
   local messages = lsp_messages()
   if messages then
-    return wrap_hl("StSpecialBuffer") .. prefix .. " " .. messages
+    return wrap_hl "StSpecialBuffer" .. prefix .. " " .. messages
   end
 
-  return wrap_hl("StAqua")
+  return wrap_hl "StAqua"
     .. prefix
     .. "%*"
-    .. lineinfo("StSpecialBuffer")
-    .. git_branch("StGreenBold")
+    .. lineinfo "StSpecialBuffer"
+    .. git_branch "StGreenBold"
     .. "%<"
-    .. lsp_current_function("StGrey")
+    .. lsp_current_function "StGrey"
     .. "%="
-    .. github_notifications("StGrey")
+    .. github_notifications "StGrey"
     .. python_version(ctx, "StBlueBold")
     .. lsp_clients(ctx, "StGreenBold")
     .. file_detail(ctx, "StGreyBold")
@@ -488,13 +489,13 @@ local function fetch_github_notifications()
 end
 
 local function python_version_job()
-  if fn.executable("python") > 0 then
+  if fn.executable "python" > 0 then
     job(5 * 1000, set_python_version)
   end
 end
 
 local function github_notifications_job()
-  if fn.executable("gh") > 0 then
+  if fn.executable "gh" > 0 then
     job(5 * 60 * 1000, fetch_github_notifications)
   end
 end

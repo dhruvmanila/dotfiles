@@ -3,14 +3,14 @@ local sign_define = vim.fn.sign_define
 local nvim_command = api.nvim_command
 local nvim_buf_set_keymap = api.nvim_buf_set_keymap
 
-local icons = require("core.icons")
-local lspconfig = require("lspconfig")
-local lspstatus = require("lsp-status")
-local plugins = require("plugin.lsp.plugins")
-local servers = require("plugin.lsp.servers")
+local icons = require "core.icons"
+local lspconfig = require "lspconfig"
+local lspstatus = require "lsp-status"
+local plugins = require "plugin.lsp.plugins"
+local servers = require "plugin.lsp.servers"
 
-require("core.formatter")
-require("plugin.lsp.handlers")
+require "core.formatter"
+require "plugin.lsp.handlers"
 
 -- For debugging purposes:
 vim.lsp.set_log_level(vim.lsp.log_levels.DEBUG)
@@ -20,13 +20,13 @@ do
   local opts = { noremap = true, silent = true }
 
   local function open_lsp_log()
-    nvim_command("botright split")
-    nvim_command("resize 20")
+    nvim_command "botright split"
+    nvim_command "resize 20"
     nvim_command("edit " .. vim.lsp.get_log_path())
     api.nvim_win_set_option(0, "wrap", false)
   end
 
-  dm.command({ "LspLog", open_lsp_log })
+  dm.command { "LspLog", open_lsp_log }
   api.nvim_set_keymap("n", "<Leader>ll", "<Cmd>LspLog<CR>", opts)
   api.nvim_set_keymap("n", "<Leader>lr", "<Cmd>LspRestart<CR>", opts)
 end
@@ -148,11 +148,11 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.signature_help then
-    if not plugin_loaded("lsp_signature.nvim") then
-      require("packer").loader("lsp_signature.nvim")
+    if not plugin_loaded "lsp_signature.nvim" then
+      require("packer").loader "lsp_signature.nvim"
     end
 
-    require("lsp_signature").on_attach({
+    require("lsp_signature").on_attach {
       bind = true,
       doc_lines = 0,
       hint_enable = false,
@@ -161,14 +161,14 @@ local function custom_on_attach(client, bufnr)
         border = icons.border[vim.g.border_style],
       },
       hi_parameter = "YellowItalic",
-    })
+    }
 
     mappings["n <C-s>"] = "vim.lsp.buf.signature_help()"
   end
 
   if capabilities.code_action then
-    if not plugin_loaded("nvim-lightbulb") then
-      require("packer").loader("nvim-lightbulb")
+    if not plugin_loaded "nvim-lightbulb" then
+      require("packer").loader "nvim-lightbulb"
     end
 
     table.insert(lsp_autocmds, {
@@ -192,7 +192,7 @@ local function custom_on_attach(client, bufnr)
     local opts = { noremap = true, silent = true }
 
     for key, command in pairs(mappings) do
-      mode, key = key:match("^(.)[ ]*(.+)$")
+      mode, key = key:match "^(.)[ ]*(.+)$"
       command = "<Cmd>lua " .. command .. "<CR>"
       nvim_buf_set_keymap(bufnr, mode, key, command, opts)
     end

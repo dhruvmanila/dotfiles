@@ -6,15 +6,15 @@ do
   -- cursor position.
   local function trim_trailing_whitespace()
     local pos = api.nvim_win_get_cursor(0)
-    vim.cmd([[keeppatterns keepjumps %s/\s\+$//e]])
+    vim.cmd [[keeppatterns keepjumps %s/\s\+$//e]]
     api.nvim_win_set_cursor(0, pos)
   end
 
-  dm.command({
+  dm.command {
     "TrimTrailingWhitespace",
     trim_trailing_whitespace,
     attr = { "-bar" },
-  })
+  }
 end
 
 do
@@ -32,5 +32,5 @@ do
     api.nvim_win_set_cursor(0, pos)
   end
 
-  dm.command({ "TrimTrailingLines", trim_trailing_lines, attr = { "-bar" } })
+  dm.command { "TrimTrailingLines", trim_trailing_lines, attr = { "-bar" } }
 end

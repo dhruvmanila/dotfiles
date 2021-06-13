@@ -1,5 +1,5 @@
 local g = vim.g
-local utils = require("core.utils")
+local utils = require "core.utils"
 local highlight = utils.highlight
 
 vim.o.background = "dark"
@@ -23,7 +23,7 @@ g.gruvbox_material_show_eob = 0
 -- Generates after/ftplugin/*.vim files for lazy loading
 g.gruvbox_material_better_performance = 1
 
-vim.cmd("colorscheme gruvbox-material")
+vim.cmd "colorscheme gruvbox-material"
 
 local palette = vim.fn["gruvbox_material#get_palette"](
   g.gruvbox_material_background,

@@ -1,8 +1,8 @@
 local api = vim.api
 local lsp = vim.lsp
 local cmd = api.nvim_command
-local utils = require("core.utils")
-local icons = require("core.icons")
+local utils = require "core.utils"
+local icons = require "core.icons"
 
 local config = { width = 40, height = 1, border_hl = "TabLineSel" }
 
@@ -12,7 +12,7 @@ local M = {}
 --   - Exit from insert mode
 --   - Delete the prompt buffer
 function M.cleanup()
-  cmd("stopinsert")
+  cmd "stopinsert"
   api.nvim_buf_delete(0, { force = true })
 end
 
@@ -38,7 +38,7 @@ end
 ---@param new_name string
 local function callback(new_name)
   M.cleanup()
-  local orig_name = vim.fn.expand("<cword>")
+  local orig_name = vim.fn.expand "<cword>"
   if not new_name or #new_name == 0 or new_name == orig_name then
     return
   end
@@ -50,7 +50,7 @@ end
 -- Entrypoint to rename the current word at cursor. The current word will be set
 -- in the prompt buffer.
 function M.rename()
-  local orig_name = vim.fn.expand("<cword>")
+  local orig_name = vim.fn.expand "<cword>"
   local bufnr = api.nvim_create_buf(false, true)
   local win_opts = utils.make_floating_popup_options(
     config.width,
@@ -73,7 +73,7 @@ function M.rename()
   vim.fn.prompt_setcallback(bufnr, callback)
 
   set_mappings(bufnr)
-  cmd("startinsert!")
+  cmd "startinsert!"
   api.nvim_feedkeys(orig_name, "i", true)
 end
 

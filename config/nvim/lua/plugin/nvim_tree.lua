@@ -4,7 +4,7 @@ local tree_cb = require("nvim-tree.config").nvim_tree_callback
 
 -- On Ready Event for Lazy Loading to work
 require("nvim-tree.events").on_nvim_tree_ready(function()
-  vim.cmd("NvimTreeRefresh")
+  vim.cmd "NvimTreeRefresh"
 end)
 
 g.nvim_tree_ignore = {
@@ -23,9 +23,9 @@ g.nvim_tree_disable_netrw = 0
 g.nvim_tree_hijack_netrw = 0
 
 g.nvim_tree_bindings = {
-  ["."] = tree_cb("toggle_dotfiles"),
-  ["l"] = tree_cb("edit"),
-  ["h"] = tree_cb("close_node"),
+  ["."] = tree_cb "toggle_dotfiles",
+  ["l"] = tree_cb "edit",
+  ["h"] = tree_cb "close_node",
 }
 
 g.nvim_tree_show_icons = {
@@ -53,4 +53,4 @@ g.nvim_tree_icons = {
 
 map("n", "<C-n>", "<Cmd>NvimTreeToggle<CR>", { noremap = true })
 
-vim.cmd([[highlight link NvimTreeIndentMarker Comment]])
+vim.cmd [[highlight link NvimTreeIndentMarker Comment]]

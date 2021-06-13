@@ -1,17 +1,15 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error(
-    "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
-  )
+  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
 end
 
-local finders = require("telescope.finders")
-local pickers = require("telescope.pickers")
+local finders = require "telescope.finders"
+local pickers = require "telescope.pickers"
 local config = require("telescope.config").values
-local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
-local entry_display = require("telescope.pickers.entry_display")
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
+local entry_display = require "telescope.pickers.entry_display"
 
 local warn = require("core.utils").warn
 
@@ -35,7 +33,7 @@ local function find_files_in_plugin(prompt_bufnr)
   actions.close(prompt_bufnr)
 
   vim.schedule(function()
-    require("telescope.builtin").find_files({ cwd = selection.path })
+    require("telescope.builtin").find_files { cwd = selection.path }
   end)
 end
 
@@ -62,26 +60,26 @@ local function installed_plugins(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedPluginInfo.plugins) then
-    warn("[Telescope] Plugin information was not cached")
+    warn "[Telescope] Plugin information was not cached"
     return nil
   end
 
-  local displayer = entry_display.create({
+  local displayer = entry_display.create {
     separator = " ",
     items = {
       { remaining = true },
     },
-  })
+  }
 
   local function make_display(entry)
-    return displayer({
+    return displayer {
       entry.value,
-    })
+    }
   end
 
   pickers.new(opts, {
     prompt_title = "Installed Plugins",
-    finder = finders.new_table({
+    finder = finders.new_table {
       results = _CachedPluginInfo.plugins,
       entry_maker = function(entry)
         return {
@@ -92,7 +90,7 @@ local function installed_plugins(opts)
           ordinal = entry.name,
         }
       end,
-    }),
+    },
     previewer = false,
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
@@ -104,6 +102,6 @@ local function installed_plugins(opts)
   }):find()
 end
 
-return telescope.register_extension({
+return telescope.register_extension {
   exports = { installed_plugins = installed_plugins },
-})
+}

@@ -1,18 +1,16 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error(
-    "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
-  )
+  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
 end
 
-local Job = require("plenary.job")
-local finders = require("telescope.finders")
-local pickers = require("telescope.pickers")
+local Job = require "plenary.job"
+local finders = require "telescope.finders"
+local pickers = require "telescope.pickers"
 local config = require("telescope.config").values
-local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
-local entry_display = require("telescope.pickers.entry_display")
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
+local entry_display = require "telescope.pickers.entry_display"
 
 local warn = require("core.utils").warn
 
@@ -97,28 +95,28 @@ local function github_stars(opts)
 
   -- TODO: start the job again? run the job synchronously?
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    warn("[Telescope] No GitHub stars are cached yet.")
+    warn "[Telescope] No GitHub stars are cached yet."
     return nil
   end
 
-  local displayer = entry_display.create({
+  local displayer = entry_display.create {
     separator = " ",
     items = {
       { width = _CachedGithubStars.max_length + 2 },
       { remaining = true },
     },
-  })
+  }
 
   local function make_display(entry)
-    return displayer({
+    return displayer {
       entry.value,
       { entry.description, "Comment" },
-    })
+    }
   end
 
   pickers.new(opts, {
     prompt_title = "Search GitHub Stars",
-    finder = finders.new_table({
+    finder = finders.new_table {
       results = _CachedGithubStars.stars,
       entry_maker = function(entry)
         return {
@@ -129,7 +127,7 @@ local function github_stars(opts)
           ordinal = entry.name .. " " .. entry.description,
         }
       end,
-    }),
+    },
     previewer = false,
     sorter = config.generic_sorter(opts),
     attach_mappings = function()
@@ -141,11 +139,11 @@ local function github_stars(opts)
   }):find()
 end
 
-return telescope.register_extension({
+return telescope.register_extension {
   setup = function(_)
     if vim.tbl_isempty(_CachedGithubStars.stars) then
       collect_github_stars()
     end
   end,
   exports = { github_stars = github_stars },
-})
+}

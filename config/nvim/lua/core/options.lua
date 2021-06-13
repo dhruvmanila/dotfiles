@@ -38,7 +38,7 @@ opt.pumheight = 20
 opt.pumblend = vim.g.window_blend
 
 -- Set the default grep program to ripgrep if available
-if vim.fn.executable("rg") then
+if vim.fn.executable "rg" then
   opt.grepprg = "rg --vimgrep"
   opt.grepformat = "%f:%l:%c:%m," .. opt.grepformat
 end
@@ -75,13 +75,13 @@ opt.shiftwidth = 2 -- number of spaces of an indent
 opt.tabstop = 2 -- number of spaces that a TAB counts for
 opt.textwidth = 0 -- Do not automatically wrap text
 
-opt.formatoptions = table.concat({
+opt.formatoptions = table.concat {
   "c", -- Comments should respect textwidth
   "q", -- Allow formatting of comments with 'gq'
   "r", -- Continue comments when pressing Enter in Insert mode
   "j", -- When it makes sense, remove a comment Leader when joining lines.
   "n", -- Use hanging indent on numbered list (formatlistpat)
-})
+}
 
 opt.swapfile = false
 opt.undofile = true

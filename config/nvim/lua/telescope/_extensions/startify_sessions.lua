@@ -1,21 +1,19 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error(
-    "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
-  )
+  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
 end
 
-local finders = require("telescope.finders")
-local pickers = require("telescope.pickers")
+local finders = require "telescope.finders"
+local pickers = require "telescope.pickers"
 local config = require("telescope.config").values
-local actions = require("telescope.actions")
-local action_state = require("telescope.actions.state")
-local entry_display = require("telescope.pickers.entry_display")
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
+local entry_display = require "telescope.pickers.entry_display"
 
 --- Return the current session name.
 local function get_current_session_name()
-  local this_session = vim.api.nvim_get_vvar("this_session")
+  local this_session = vim.api.nvim_get_vvar "this_session"
   if this_session and this_session ~= "" then
     return vim.fn.fnamemodify(vim.fn.resolve(this_session), ":t")
   end
@@ -25,7 +23,7 @@ end
 local function load_session(prompt_bufnr)
   local selection = action_state.get_selected_entry()
   if selection.current then
-    print("[telescope] Selected session is currectly active")
+    print "[telescope] Selected session is currectly active"
     return
   end
   actions.close(prompt_bufnr)
@@ -58,7 +56,7 @@ local function startify_sessions(opts)
 
   local results = {}
   local current_session = get_current_session_name()
-  for _, name in ipairs(vim.fn["startify#session_list"]("")) do
+  for _, name in ipairs(vim.fn["startify#session_list"] "") do
     table.insert(results, {
       value = name,
       name = name == current_session and name .. " (*)" or name,
@@ -66,18 +64,18 @@ local function startify_sessions(opts)
     })
   end
 
-  local displayer = entry_display.create({
+  local displayer = entry_display.create {
     separator = " ",
     items = { { remaining = true } },
-  })
+  }
 
   local function make_display(entry)
-    return displayer({ entry.name })
+    return displayer { entry.name }
   end
 
   pickers.new(opts, {
     prompt_title = "Startify Sessions",
-    finder = finders.new_table({
+    finder = finders.new_table {
       results = results,
       entry_maker = function(entry)
         return {
@@ -88,7 +86,7 @@ local function startify_sessions(opts)
           ordinal = entry.name,
         }
       end,
-    }),
+    },
     previewer = false,
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
@@ -100,6 +98,6 @@ local function startify_sessions(opts)
   }):find()
 end
 
-return telescope.register_extension({
+return telescope.register_extension {
   exports = { startify_sessions = startify_sessions },
-})
+}

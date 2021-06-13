@@ -40,7 +40,7 @@ end
 ---@param f function
 ---@return string
 function dm._create(f)
-  vim.validate({ f = { f, "f" } })
+  vim.validate { f = { f, "f" } }
   local id = create_id(f)
   if not id or id == "" then
     id = tostring(vim.tbl_count(dm._store) + 1)
@@ -87,11 +87,11 @@ end
 ---@param commands table ref: dm.autocmd
 function dm.augroup(name, commands)
   vim.cmd("augroup " .. name)
-  vim.cmd("autocmd!")
+  vim.cmd "autocmd!"
   for _, c in ipairs(commands) do
     dm.autocmd(c)
   end
-  vim.cmd("augroup END")
+  vim.cmd "augroup END"
 end
 
 -- Lua interface to vim command.

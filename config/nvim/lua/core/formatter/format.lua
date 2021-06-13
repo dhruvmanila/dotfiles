@@ -62,7 +62,7 @@ end
 -- Helper function to close the handles safely
 -- Adopted from `plenary.job.close_safely`
 local function close_safely(...)
-  for _, handle in ipairs({ ... }) do
+  for _, handle in ipairs { ... } do
     if handle and not handle:is_closing() then
       handle:close()
     end
@@ -123,10 +123,9 @@ end
 -- Run the given formatter asynchronously.
 ---@param formatter Formatter
 function Format:run(formatter)
-  local args = type(formatter.args) == "function" and formatter.args(
-    self.bufnr,
-    self.filepath
-  ) or formatter.args
+  local args = type(formatter.args) == "function"
+      and formatter.args(self.bufnr, self.filepath)
+    or formatter.args
   local stdin = formatter.stdin and uv.new_pipe(false) or nil
   local stdout = uv.new_pipe(false)
   local stderr = uv.new_pipe(false)
@@ -288,7 +287,7 @@ end
 ---@param filetype string
 ---@param formatters Formatter|Formatter[]
 function M.register(filetype, formatters)
-  validate({ filetype = { filetype, "s" }, formatters = { formatters, "t" } })
+  validate { filetype = { filetype, "s" }, formatters = { formatters, "t" } }
   formatters = vim.tbl_islist(formatters) and formatters or { formatters }
   if not registered_formatters[filetype] then
     registered_formatters[filetype] = {}
@@ -304,7 +303,7 @@ function M.register(filetype, formatters)
       formatter.use,
       {
         ["cmd"] = function()
-          validate({
+          validate {
             cmd = { formatter.cmd, "s" },
             stdin = { formatter.stdin, "b" },
             args = {
@@ -317,17 +316,17 @@ function M.register(filetype, formatters)
                 )
               end,
             },
-          })
+          }
         end,
         ["lsp"] = function()
-          validate({ opts = { formatter.opts, "t", true } })
+          validate { opts = { formatter.opts, "t", true } }
           formatter.opts = formatter.opts or {}
         end,
         ["daemon_client"] = function()
-          validate({
+          validate {
             start_cmd = { formatter.start_cmd, "t" },
             headers = { formatter.headers, "t", true },
-          })
+          }
           formatter.headers = formatter.headers or {}
         end,
       },
