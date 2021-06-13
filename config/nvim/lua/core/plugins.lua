@@ -76,7 +76,7 @@ packer.startup({
     -- Helpful in visualizing colors live in the editor
     use({
       "norcalli/nvim-colorizer.lua",
-      keys = { { "n", "<Leader>cc" } },
+      keys = { "<Leader>cc" },
       config = function()
         vim.api.nvim_set_keymap(
           "n",
@@ -100,7 +100,7 @@ packer.startup({
     -- Common config across editors and teams
     use({
       "editorconfig/editorconfig-vim",
-      config = function()
+      setup = function()
         vim.g.EditorConfig_exclude_patterns = { "fugitive://.*", "scp://.*" }
         vim.g.EditorConfig_max_line_indicator = "none"
         vim.g.EditorConfig_preserve_formatoptions = 1
@@ -115,11 +115,7 @@ packer.startup({
       { "neovim/nvim-lspconfig", event = "BufReadPre", config = conf("lsp") },
       { "hrsh7th/nvim-compe", event = "InsertEnter", config = conf("completion") },
       { "mfussenegger/nvim-lint", config = conf("lint") },
-      {
-        "liuchengxu/vista.vim",
-        keys = { { "n", "<Leader>vv" } },
-        config = conf("vista"),
-      },
+      { "liuchengxu/vista.vim", keys = { "<Leader>vv" }, config = conf("vista") },
     })
 
     -- Telescope and family
@@ -159,9 +155,9 @@ packer.startup({
 
     -- Language specific
     use({
-      { "cespare/vim-toml", ft = "toml" },
-      { "raimon49/requirements.txt.vim", ft = "requirements" },
-      { "vim-scripts/applescript.vim", ft = "applescript" },
+      { "cespare/vim-toml" },
+      { "raimon49/requirements.txt.vim" },
+      { "vim-scripts/applescript.vim" },
     })
 
     -- Git
@@ -176,9 +172,11 @@ packer.startup({
     })
 
     -- tpope
-    use("tpope/vim-commentary")
-    use("tpope/vim-scriptease")
-    use("tpope/vim-eunuch")
+    use({
+      { "tpope/vim-commentary" },
+      { "tpope/vim-scriptease" },
+      { "tpope/vim-eunuch" },
+    })
 
     -- Motion
     use({
@@ -195,12 +193,11 @@ packer.startup({
     -- Pretification
     use({
       "junegunn/vim-easy-align",
-      keys = { { "n", "ge" }, { "x", "ge" } },
+      keys = { "ge" },
       config = function()
-        require("core.utils").map({ "n", "x" }, "ge", "<Plug>(EasyAlign)", {
-          noremap = false,
-          silent = true,
-        })
+        local opts = { noremap = true, silent = true }
+        vim.api.nvim_set_keymap("n", "ge", "<Plug>(EasyAlign)", opts)
+        vim.api.nvim_set_keymap("x", "ge", "<Plug>(EasyAlign)", opts)
       end,
     })
 
@@ -213,7 +210,7 @@ packer.startup({
       {
         "kyazdani42/nvim-tree.lua",
         requires = { "kyazdani42/nvim-web-devicons" },
-        keys = { { "n", "<C-n>" } },
+        keys = { "<C-n>" },
         config = conf("nvim_tree"),
       },
       -- Split/floating window style
