@@ -4,21 +4,25 @@ set -e
 # Debug prompt
 export PS4="\e[1m==> \e[0m"
 
+# Global constants
+# Default shell {{{
 DEFAULT_SHELL="bash"
-
+# }}}
+# Common directories {{{
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 NEOVIM_DIRECTORY="${HOME}/contributing/neovim"
 NEOVIM_INSTALL_DIRECTORY="${HOME}/neovim"
-
+# }}}
+# Python versions {{{
 # First version will be the global one
 PYTHON_VERSIONS=("3.9.4" "3.9.1")
-
-# Packages file
+# }}}
+# Packages file {{{
 HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/lib/Brewfile"
 PYTHON_GLOBAL_REQUIREMENTS="${DOTFILES_DIRECTORY}/lib/requirements.txt"
 NPM_GLOBAL_PACKAGES="${DOTFILES_DIRECTORY}/lib/node_modules.txt"
-
-# These directories need to be made if absent
+# }}}
+# Required directories {{{
 REQUIRED_DIRECTORIES=(
   ~/.config
   ~/.gnupg
@@ -29,7 +33,8 @@ REQUIRED_DIRECTORIES=(
   ~/playground
   ~/projects
 )
-
+# }}}
+# Backup dotfiles {{{
 # These files/directories will be backed up before symlinking, if they exists.
 BACKUP_DOTFILES=(
   ~/.bash_profile
@@ -40,7 +45,8 @@ BACKUP_DOTFILES=(
   ~/.tmux.conf
   ~/.vim
 )
-
+# }}}
+# MacOS dock applications {{{
 # Keep everything quoted due to spaces. Order: left to right
 MACOS_DOCK_APPLICATIONS=(
   "/Applications/Safari.app"
@@ -58,72 +64,115 @@ MACOS_DOCK_APPLICATIONS=(
   "/Applications/Discord.app"
   "/Applications/Docker.app"
 )
-
-# Colors
+# }}}
+# Colors {{{
 BOLD="\e[1m"
 RESET_ALL="\e[0m"
 # GREEN="\e[32m"
 RED="\e[31m"
 YELLOW="\e[1;33m"
+# }}}
 
-function header() {
-  printf "\n%b==> %s %b\n" "$BOLD" "$@" "$RESET_ALL"
+# Utility functions
+function header() { # {{{
+  # Logging helper for providing a description about the upcoming command.
+  #
+  # $1 (string): command description
+  # outputs: Log to stdout in bold color.
+  printf "\n%b==> %s %b\n" "$BOLD" "$1" "$RESET_ALL"
 }
-
-function error() {
-  printf "%b✗ %s %b\n" "$RED" "$@" "$RESET_ALL"
+# }}}
+function error() { # {{{
+  # Logging helper for providing the error message for the last command.
+  #
+  # $1 (string): error description
+  # outputs: Log to stdout in red color.
+  printf "%b✗ %s %b\n" "$RED" "$1" "$RESET_ALL"
 }
-
-function warning() {
-  printf "%b! %s %b\n" "$YELLOW" "$@" "$RESET_ALL"
+# }}}
+function warning() { # {{{
+  # Logging helper for providing the warning message for the last command.
+  #
+  # $1 (string): warning description
+  # outputs: Log to stdout in yellow color.
+  printf "%b! %s %b\n" "$YELLOW" "$1" "$RESET_ALL"
 }
-
-# Ask for confirmation before proceeding
-function seek_confirmation() {
+# }}}
+function seek_confirmation() { # {{{
+  # Ask for confirmation before proceeding.
+  #
+  # This is to be used in conjunction with `is_confirmed` to know the
+  # response of the user.
+  #
+  # $1 (string): confirmation description
+  # outputs: Provide warning message asking for confirmation.
   printf "\n"
-  warning "$@"
+  warning "$1"
   read -rp "Continue? (y/n) " -n 1
   printf "\n"
 }
-
-# Test whether the result of an 'ask' is a confirmation
-function is_confirmed() {
+# }}}
+function is_confirmed() { # {{{
+  # Test whether the result of an 'ask' is a confirmation.
+  #
+  # This is to be used in conjunction with `seek_confirmation` to provide
+  # the confirmation prompt.
+  #
+  # return: 0 if the answer was a '[Yy]es', 1 on anything else.
   if [[ "$REPLY" =~ ^[Yy]$ ]]; then
     return 0
   fi
   return 1
 }
-
-# Ask the user for some information
-function ask() {
+# }}}
+function ask() { # {{{
+  # Ask the user for some information.
+  #
+  # This is similar to `seek_confirmation`, although this does not require either
+  # a 'yes' or 'no'. The response from the user is stored in `$REPLY` environment
+  # variable and is to be extracted from there.
+  #
+  # $1 (string): message
+  # outputs: Provide warning message asking for information.
   printf "%b[?] %s: %b" "$YELLOW" "$1" "$RESET_ALL"
   read -r
 }
-
-# Test whether we're in a git repo
-function is_git_repo() {
+# }}}
+function is_git_repo() { # {{{
   git rev-parse --is-inside-work-tree &> /dev/null
 }
-
-# Test whether a command exists
-function command_exists() {
+# }}}
+function command_exists() { # {{{
+  # Test whether a command exists.
+  #
+  # $1 (string): the command name to check
+  # return: 0 if it exists, 1 otherwise
   if command -v "$1" > /dev/null; then
     return 0
   fi
   return 1
 }
+# }}}
 
-function setup_required_directories() {
+# Setup functions
+function setup_required_directories() { # {{{
+  # Helper function to create the required directories mentioned in
+  # `REQUIRED_DIRECTORIES` global variable.
   header "Setting up the required directories..."
   for directory in "${REQUIRED_DIRECTORIES[@]}"; do
     if ! [[ -d $directory ]]; then
-      mkdir -p $directory
-      echo "Created $directory"
+      mkdir -p "$directory"
+      echo "    Created $directory"
     fi
   done
 }
-
-function setup_dotfiles_directory() {
+# }}}
+function setup_dotfiles_directory() { # {{{
+  # Setup the dotfiles directory on a fresh setup.
+  #
+  # This is suppose to be used when the script was downloaded directly. It won't
+  # proceed if the dotfiles directory is already present. If not, then it will
+  # download the tarball from GitHub and extract it out to the appropriate location.
   if [[ -d "$DOTFILES_DIRECTORY" ]]; then
     header "$DOTFILES_DIRECTORY already exists."
     return
@@ -134,11 +183,14 @@ function setup_dotfiles_directory() {
 
   header "Extracting the dotfiles..."
   tar -zxf "${HOME}/dotfiles.tar.gz" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
-  # Remove the tarball
   rm -rf ~/dotfiles.tar.gz
 }
-
-function setup_xcode_command_line_tools() {
+# }}}
+function setup_xcode_command_line_tools() { # {{{
+  # Setup xcode command line tools if they are absent from the system.
+  #
+  # This runs the command which installs the tools using a GUI tool so it will
+  # enter an infinite loop until it finds the tools.
   if xcode-select -p &> /dev/null; then
     header "Xcode command line tools are already installed."
     return
@@ -150,17 +202,19 @@ function setup_xcode_command_line_tools() {
     sleep 5
   done
 }
-
-function setup_homebrew() {
+# }}}
+function setup_homebrew() { # {{{
+  # Setup homebrew using the recommended method.
+  #
+  # Install performs `brew update` but the homebrew-core tap is a shallow clone
+  # So, if the command fails and if the repository is shallow, we will run the
+  # recommended command.
+  # Ref: https://github.com/Homebrew/brew/pull/9447
   if command_exists 'brew'; then
     header "Homebrew is already installed."
     return
   fi
   header "Installing Homebrew..."
-  # Install performs `brew update` but the homebrew-core tap is a shallow clone
-  # https://github.com/Homebrew/brew/pull/9447
-  # So, if the command fails and if the repository is shallow, we will run the
-  # recommended command
   set +e
   if ! /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"; then
     error "Failure occured during Homebrew installation."
@@ -178,8 +232,10 @@ function setup_homebrew() {
   fi
   set -e
 }
-
-function setup_homebrew_packages() {
+# }}}
+function setup_homebrew_packages() { # {{{
+  # Setup all the packages required using homebrew and Brewfile present in the
+  # lib directory.
   # No auto update during the setup process
   export HOMEBREW_NO_AUTO_UPDATE=1
 
@@ -194,8 +250,14 @@ function setup_homebrew_packages() {
   header "Cleaning up..."
   brew cleanup
 }
-
-function setup_default_shell() {
+# }}}
+function setup_default_shell() { # {{{
+  # Setup the default shell as mentioned in the DEFAULT_SHELL global variable.
+  #
+  # This will skip if the shell is already the default one.
+  #
+  # Assumption: The shells are assumed to be installed using homebrew as it uses
+  # the shell path in homebrew directory to change the default shell.
   # https://stackoverflow.com/a/41553295
   if dscl . -read ~/ UserShell | grep $DEFAULT_SHELL &> /dev/null; then
     header "$DEFAULT_SHELL is already the default shell."
@@ -210,8 +272,8 @@ function setup_default_shell() {
   header "Switching to brew-installed ${DEFAULT_SHELL} as default shell..."
   sudo chsh -s "${brew_prefix}/bin/${DEFAULT_SHELL}"
 }
-
-function setup_dotfiles_git_repository() {
+# }}}
+function setup_dotfiles_git_repository() { # {{{
   header "Changing directory to $DOTFILES_DIRECTORY..."
   cd "$DOTFILES_DIRECTORY"
   if is_git_repo; then
@@ -229,8 +291,8 @@ function setup_dotfiles_git_repository() {
   set +x
   cd -
 }
-
-function setup_python() {
+# }}}
+function setup_python() { # {{{
   for python_version in "${PYTHON_VERSIONS[@]}"; do
     if ! pyenv versions | grep -q "${python_version}"; then
       header "Installing Python ${python_version}..."
@@ -253,8 +315,8 @@ function setup_python() {
   header "Rehashing pyenv shims..."
   pyenv rehash
 }
-
-function setup_python_global_packages() {
+# }}}
+function setup_python_global_packages() { # {{{
   if ! command_exists "pipx"; then
     header "Installing pipx from homebrew..."
     brew install pipx
@@ -273,8 +335,8 @@ function setup_python_global_packages() {
     fi
   done < "${PYTHON_GLOBAL_REQUIREMENTS}"
 }
-
-function setup_npm_global_packages() {
+# }}}
+function setup_npm_global_packages() { # {{{
   local npm_list
   npm_list=$(npm --global list)
   header "Installing packages from ${NPM_GLOBAL_PACKAGES}..."
@@ -286,9 +348,9 @@ function setup_npm_global_packages() {
     fi
   done < "${NPM_GLOBAL_PACKAGES}"
 }
-
-# NOTE: This function should be called after symlinking the dotfiles
-function setup_tmux_plugins() {
+# }}}
+function setup_tmux_plugins() { # {{{
+  # NOTE: This function should be called after symlinking the dotfiles
   if ! [[ -d ~/.tmux/plugins/tpm ]]; then
     header "Installing tmux plugin manager..."
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
@@ -296,9 +358,9 @@ function setup_tmux_plugins() {
   header "Installing tmux plugins..."
   ~/.tmux/plugins/tpm/bin/install_plugins
 }
-
-# NOTE: This function should be called after symlinking the dotfiles
-function setup_github_ssh() {
+# }}}
+function setup_github_ssh() { # {{{
+  # NOTE: This function should be called after symlinking the dotfiles
   ssh -T git@github.com &> /dev/null
   if [[ $? -eq 1 ]]; then
     return
@@ -333,8 +395,8 @@ function setup_github_ssh() {
     sleep 5
   done
 }
-
-function setup_neovim_nightly() {
+# }}}
+function setup_neovim_nightly() { # {{{
   curr_dir=$(pwd)
   header "Setting up Neovim nightly..."
   git clone --depth=1 git@github.com:dhruvmanila/neovim.git $NEOVIM_DIRECTORY
@@ -347,8 +409,8 @@ function setup_neovim_nightly() {
   make install
   cd $curr_dir
 }
-
-function setup_lua_language_server() {
+# }}}
+function setup_lua_language_server() { # {{{
   local curr_dir=$(pwd)
   header "Setting up the lua language server..."
   git clone --depth=1 git@github.com:sumneko/lua-language-server.git ~/git/
@@ -361,8 +423,10 @@ function setup_lua_language_server() {
   ./3rd/luamake/luamake rebuild
   cd $curr_dir
 }
+# }}}
 
-function backup_dotfiles() {
+# Symlink setup
+function backup_dotfiles() { # {{{
   local backup_dir
   local -i count=0
   backup_dir="${HOME}/dotfiles_$(date +"%Y_%m_%dT%H_%M_%S").backup"
@@ -382,8 +446,8 @@ function backup_dotfiles() {
     rm -rf "$backup_dir"
   fi
 }
-
-function link() {
+# }}}
+function link() { # {{{
   # Force create/replace the symlink.
   local source_file="${DOTFILES_DIRECTORY}/${1}"
   local target_file="${HOME}/${2}"
@@ -392,8 +456,8 @@ function link() {
     ln -fs "$source_file" "$target_file"
   fi
 }
-
-function setup_symlink() {
+# }}}
+function setup_symlink() { # {{{
   # copy hushlogin as we are not going to be updating it
   cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
   # Create the necessary symbolic links between the `dotfiles` and `HOME`
@@ -438,13 +502,15 @@ function setup_symlink() {
   link "config/kitty"               ".config/kitty"
   link "config/glow"                "Library/Preferences/glow"
 }
+# }}}
 
-function update_macos_settings() {
+# MacOS setup
+function update_macos_settings() { # {{{
   header "Updating macOS settings..."
   bash "${DOTFILES_DIRECTORY}/lib/osxdefaults"
 }
-
-function update_macos_dock() {
+# }}}
+function update_macos_dock() { # {{{
   header "Updating macOS dock applications..."
   dockutil --remove all
   for app in "${MACOS_DOCK_APPLICATIONS[@]}"; do
@@ -458,8 +524,10 @@ function update_macos_dock() {
     --sort dateadded \
     --section others
 }
+# }}}
 
-function sync_lib_files() {
+# Upgrade functions
+function sync_lib_files() { # {{{
   # header "Syncing Brewfile with the currently installed packages..."
   # HOMEBREW_NO_AUTO_UPDATE=1 brew bundle dump -f
 
@@ -475,15 +543,15 @@ function sync_lib_files() {
     | tee "${NPM_GLOBAL_PACKAGES}" \
     | xargs -I{} echo "    {}"
 }
-
-function upgrade_homebrew() {
+# }}}
+function upgrade_homebrew() { # {{{
   header "Updating homebrew and packages..."
   brew update
   brew upgrade
   brew cleanup
 }
-
-function upgrade_packages() {
+# }}}
+function upgrade_packages() { # {{{
   for python_version in "${PYTHON_VERSIONS[@]}"; do
     header "Upgrading pip for Python $python_version..."
     "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
@@ -493,8 +561,8 @@ function upgrade_packages() {
   header "Upgrading all npm packages..."
   npm --global upgrade
 }
-
-function upgrade_plugins() {
+# }}}
+function upgrade_plugins() { # {{{
   # Not quiting vim/neovim to check what's new
   header "Upgrading vim plugins..."
   vim +PlugUpgrade +PlugClean +PlugUpdate
@@ -504,13 +572,13 @@ function upgrade_plugins() {
   ~/.tmux/plugins/tpm/bin/clean_plugins
   ~/.tmux/plugins/tpm/bin/update_plugins all
 }
-
-function upgrade_cli_related() {
+# }}}
+function upgrade_cli_related() { # {{{
   header "Updating tldr data..."
   tldr --update
 }
-
-function upgrade_neovim_nightly() {
+# }}}
+function upgrade_neovim_nightly() { # {{{
   curr_dir=$(pwd)
   header "Upgrading Neovim nightly..."
   cd "$NEOVIM_DIRECTORY"
@@ -536,9 +604,9 @@ function upgrade_neovim_nightly() {
   brew uninstall neovim
   brew install --HEAD neovim
 }
-
-# https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
-function upgrade_lua_language_server() {
+# }}}
+function upgrade_lua_language_server() { # {{{
+  # https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
   local curr_dir=$(pwd)
   header "Upgrading the lua language server..."
   cd ~/git/lua-language-server
@@ -559,8 +627,10 @@ function upgrade_lua_language_server() {
   ./3rd/luamake/luamake rebuild
   cd $curr_dir
 }
+# }}}
 
-function perform_mackup_backup() {
+# Mackup
+function perform_mackup_backup() { # {{{
   header "Performing mackup backup..."
   local mackup_test
   mackup_test="$(mackup -n backup)"
@@ -574,8 +644,8 @@ function perform_mackup_backup() {
     echo "==> No files to backup."
   fi
 }
-
-function perform_mackup_restore() {
+# }}}
+function perform_mackup_restore() { # {{{
   header "Performing mackup restore..."
   local mackup_test
   mackup_test="$(mackup -n restore)"
@@ -589,8 +659,10 @@ function perform_mackup_restore() {
     echo "==> No files to restore."
   fi
 }
+# }}}
 
-function perform_all_functions() {
+# Main
+function perform_all_functions() { # {{{
   setup_required_directories
   setup_dotfiles_directory
   setup_xcode_command_line_tools
@@ -610,25 +682,25 @@ function perform_all_functions() {
   update_macos_dock
   perform_mackup_restore
 }
-
-function usage() {
-  echo "Usage: $(basename "$0") [-h|--help] <command> [<flags>]"
+# }}}
+function usage() { # {{{
+  echo "Usage: $(basename "$0") [-h|--help] <command> [<flags>|<commands>]"
   echo ""
   echo "COMMANDS:"
   echo ""
-  echo "  all       perform all setup functions"
-  echo "  backup    perform backup with mackup"
-  echo "  brew      setup homebrew and install required packages"
-  echo "  dir       setup required directories"
-  echo "  dock      update macOS dock applications"
-  echo "  macos     update macOS settings"
-  echo "  link      backup and symlink dotfiles"
-  echo "  package   setup global packages"
-  echo "  python    setup python and global packages"
-  echo "  restore   perform restore with mackup"
-  echo "  shell     update default shell"
-  echo "  sync      sync lib files with global packages"
-  echo "  upgrade   perform upgrades"
+  echo "  all            perform all setup functions"
+  echo "  backup         perform backup with mackup"
+  echo "  brew           setup homebrew and install required packages"
+  echo "  dir            setup required directories"
+  echo "  dock           update macOS dock applications"
+  echo "  macos          update macOS settings"
+  echo "  link           backup and symlink dotfiles"
+  echo "  package        setup global packages"
+  echo "  python         setup python and global packages"
+  echo "  restore        perform restore with mackup"
+  echo "  shell          update default shell"
+  echo "  sync           sync lib files with global packages"
+  echo "  upgrade        perform upgrades"
   echo ""
   echo "Flags:"
   echo ""
@@ -645,7 +717,8 @@ function usage() {
   echo "  plugins        vim/neovim/tmux plugins"
   echo "  lua_lsp        lua language server (sumneko lua)"
 }
-
+# }}}
+# Main entrypoint {{{
 # Most of the functions have an initial check to determine whether they need to
 # be run or not. Example: setup_homebrew checks whether homebrew is already
 # installed or not.
@@ -743,3 +816,6 @@ case "$1" in
     fi
     ;;
 esac
+# }}}
+
+# vim: foldmethod=marker
