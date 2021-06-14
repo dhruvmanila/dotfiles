@@ -495,7 +495,6 @@ function setup_symlink() { # {{{
   link "config/youtube-dl"                 ".config/youtube-dl"
   link "config/bpytop"                     ".config/bpytop"
   link "config/htop"                       ".config/htop"
-  link "config/luaformatter"               ".config/luaformatter"
   link "config/bottom"                     "Library/Application Support/bottom"
   link "config/bat"                        ".config/bat"
   link "config/efm-langserver"             ".config/efm-langserver"
