@@ -24,13 +24,6 @@ function load_dotfiles() {
 load_dotfiles
 unset load_dotfiles
 
-# if [ -e "${HOME}/.config/broot/launcher/bash/br" ]; then
-#   source "${HOME}/.config/broot/launcher/bash/br"
-# elif type -P "broot"; then
-#   broot --install &> /dev/null
-#   source "${HOME}/.config/broot/launcher/bash/br"
-# fi
-
 if command -v pyenv &>/dev/null; then
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"

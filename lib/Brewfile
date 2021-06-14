@@ -56,7 +56,6 @@ brew "clementtsang/bottom/bottom"    # Written in Rust
 
 # File navigation, search and related
 brew "bat"        # (cat) syntax highlighting
-brew "broot"
 brew "fd"         # better find
 brew "fzf"        # fuzzy finder
 brew "ripgrep"    # better grep

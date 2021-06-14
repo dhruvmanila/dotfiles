@@ -491,7 +491,6 @@ function setup_symlink() { # {{{
   link "mac/mackup"                        ".mackup"
   link "mac/karabiner"                     ".config/karabiner"
   # CLI config
-  link "config/broot"                      ".config/broot"
   link "config/youtube-dl"                 ".config/youtube-dl"
   link "config/bpytop"                     ".config/bpytop"
   link "config/htop"                       ".config/htop"
