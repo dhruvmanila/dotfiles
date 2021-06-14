@@ -141,16 +141,28 @@ dm.opt = setmetatable({}, {
 ---@alias CaseT string|number|function
 ---@param value CaseT
 ---@param blocks table<CaseT, CaseT>
----@param errmsg? string
-function dm.case(value, blocks, errmsg)
+---@param err? boolean
+function dm.case(value, blocks, err)
+  local expected = {}
   value = type(value) == "function" and value() or value
   for match, block in pairs(blocks) do
     match = type(match) == "function" and match(value) or match
+    table.insert(expected, match)
     if match == true or match == value then
       return type(block) == "function" and block(value) or block
     end
   end
-  if errmsg then
-    api.nvim_err_writeln(errmsg)
+  local default = blocks["*"]
+  if default then
+    return type(default) == "function" and default(value) or default
+  end
+  if err == nil or err == true then
+    local msg = string.format(
+      "expected one of '%s', got %s (%s)",
+      table.concat(expected, "', '"),
+      vim.inspect(value),
+      type(value)
+    )
+    error(debug.traceback(msg, 2), 2)
   end
 end
