@@ -1,4 +1,5 @@
 local fn = vim.fn
+local api = vim.api
 local icons = require "core.icons"
 local devicons = require "nvim-web-devicons"
 local utils = require "core.utils"
@@ -10,6 +11,8 @@ local highlights = {
   TabLine = { guifg = "#928374", guibg = "#242424" },
   TabLineFill = { guifg = "#928374", guibg = "#1e1e1e" },
 }
+
+local offset_ft = { "NvimTree" }
 
 ---Setting up the highlights
 local function tabline_highlights()
@@ -46,7 +49,7 @@ local function filename(ctx, is_active)
   if ctx.bufname and #ctx.bufname > 0 then
     local modifier
     if is_active and ctx.filetype ~= "help" and ctx.buftype ~= "terminal" then
-      local worktree = vim.fn.FugitiveWorkTree()
+      local worktree = fn.FugitiveWorkTree()
       modifier = worktree ~= "" and ":s?" .. worktree .. "/??" or ":~:."
     else
       modifier = ":p:t"
@@ -93,7 +96,8 @@ local function tabline_label(tabnr, is_active)
   icon_hl = is_active and icon_hl or "TabLine"
   local flag_hl = is_active and "YellowSign" or "TabLine"
   local tab_hl = is_active and "%#TabLineSel#" or "%#TabLine#"
-  local sep = is_active and "▌" or " "
+  -- Ref: https://en.wikipedia.org/wiki/Block_Elements
+  local sep = is_active and "▐" or " "
 
   return tab_hl
     .. "%"
@@ -119,16 +123,37 @@ local function tabline_label(tabnr, is_active)
     .. " "
 end
 
+-- Provide offset padding for tabline which will be used to move the tabline
+-- towards the right side when there are special buffers present.
+-- NOTE: Buffers present only on the far left hand side and in the `offset_ft`
+-- table will be considered.
+---@return string
+local function offset_padding()
+  local left = ""
+  local hl = "%#TabLineSel#"
+  local wins = api.nvim_tabpage_list_wins(0)
+  if #wins > 1 then
+    local first_win = wins[1]
+    local first_bufnr = api.nvim_win_get_buf(first_win)
+    if vim.tbl_contains(offset_ft, vim.bo[first_bufnr].filetype) then
+      local width = api.nvim_win_get_width(first_win)
+      left = hl .. string.rep(" ", width) .. "%*"
+    end
+  end
+  return left
+end
+
 ---Provide the tabline
 ---@return string
 function _G.nvim_tabline()
   local line = ""
-  local current_tabpage = fn.tabpagenr()
-  for i = 1, fn.tabpagenr "$" do
+  local current_tabpage = api.nvim_get_current_tabpage()
+  for _, i in ipairs(api.nvim_list_tabpages()) do
     local is_active = i == current_tabpage
     line = line .. tabline_label(i, is_active)
   end
-  line = line
+  line = offset_padding()
+    .. line
     .. "%#TabLineFill#" -- After the last tab fill with TabLineFill
     .. "%T" -- Ends mouse click target region(s)
     .. "%="
