@@ -62,7 +62,9 @@ g.startify_session_dir = vim.fn.stdpath "data" .. "/session"
 g.window_blend = 0
 
 -- Global border style.
--- Available: "rounded", "edge"
+-- Custom: "edge"
+-- Defaults: "single", "double", "shadow", "rounded", "solid"
+-- https://github.com/neovim/neovim/blob/master/src/nvim/api/private/helpers.c#L1763
 --
 -- The highlight groups "NormalFloat" and "FloatBorder" will be set according
 -- to the chosen style.
