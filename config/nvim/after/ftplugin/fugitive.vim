@@ -2,8 +2,12 @@ setlocal nonumber
 setlocal norelativenumber
 setlocal nolist
 
-" Shift the fugitive window to a vertical split
-if len(nvim_tabpage_list_wins(0)) <= 2 && nvim_win_get_width(0) >= 140
+" If there is a NvimTree window, then the limit should be 3.
+let s:limit = getbufvar(winbufnr(1), "&ft") ==# "NvimTree" ? 3 : 2
+let s:wins = tabpagewinnr(tabpagenr(), "$")
+
+" Open the fugitive buffer in a vertical split when there is space.
+if s:wins <= s:limit && winwidth(0) >= 140
   wincmd L
   nnoremap <buffer> gh :<C-U>help fugitive-map<CR>
 else
