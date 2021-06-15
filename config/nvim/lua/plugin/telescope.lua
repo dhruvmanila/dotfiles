@@ -1,5 +1,3 @@
-local notify = vim.api.nvim_notify
-local log_levels = vim.log.levels
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local themes = require "telescope.themes"
@@ -156,10 +154,9 @@ do
   for _, name in ipairs(extensions) do
     local loaded, _ = pcall(require("telescope").load_extension, name)
     if not loaded then
-      notify(
-        string.format("[Telescope] Failed to load the extension: '%s'", name),
-        log_levels.WARN,
-        {}
+      vim.notify(
+        "[Telescope] Failed to load the extension: " .. name,
+        vim.log.levels.WARN
       )
     end
   end

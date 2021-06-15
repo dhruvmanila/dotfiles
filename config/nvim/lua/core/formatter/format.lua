@@ -210,7 +210,7 @@ function Format:lsp_run(formatter)
     lsp.util.make_formatting_params(formatter.opts),
     function(err, _, result)
       if err then
-        vim.api.nvim_err_writeln("[formatter]: " .. err.message)
+        vim.notify("[formatter]: " .. err.message, vim.log.levels.WARN)
         return
       end
       if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
