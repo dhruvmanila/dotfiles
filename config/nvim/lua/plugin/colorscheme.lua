@@ -109,3 +109,6 @@ highlight("Cheat40Descr", { force = true, link = "Fg" })
 
 -- Vista
 highlight("VistaFloat", { force = true, link = "NormalFloat" })
+
+-- NvimTree
+highlight("NvimTreeIndentMarker", { force = true, link = "Comment" })

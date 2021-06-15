@@ -52,5 +52,3 @@ g.nvim_tree_icons = {
 }
 
 map("n", "<C-n>", "<Cmd>NvimTreeToggle<CR>", { noremap = true })
-
-vim.cmd [[highlight link NvimTreeIndentMarker Comment]]
