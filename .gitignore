@@ -3,6 +3,7 @@ local/
 .vagrant
 /mac/karabiner/automatic_backups/
 
+config/bpytop/error.log
 config/nvim/scratch/
 config/nvim/plugin/packer_compiled.vim
 
