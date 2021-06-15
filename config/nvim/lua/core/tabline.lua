@@ -147,8 +147,8 @@ end
 ---@return string
 function _G.nvim_tabline()
   local line = ""
-  local current_tabpage = api.nvim_get_current_tabpage()
-  for _, i in ipairs(api.nvim_list_tabpages()) do
+  local current_tabpage = fn.tabpagenr()
+  for i = 1, fn.tabpagenr "$" do
     local is_active = i == current_tabpage
     line = line .. tabline_label(i, is_active)
   end
