@@ -95,9 +95,6 @@ highlight("CompeDocumentation", {
   guibg = palette.bg4[1],
 })
 
--- Symbols outline
-highlight("FocusedSymbol", { force = true, link = "CurrentWord" })
-
 -- Lir
 highlight("LirFloatBorder", { force = true, link = "FloatBorder" })
 highlight("LirFloatNormal", { force = true, link = "NormalFloat" })
