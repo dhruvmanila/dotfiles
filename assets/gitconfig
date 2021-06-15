@@ -32,6 +32,9 @@
 	# List aliases.
 	aliases = config --get-regexp alias
 
+	# Enhance git diff with delta
+	delta = "!f() { git diff \"$@\" | delta; }; f"
+
 [color "branch"]
 	current = yellow reverse
 	local = yellow
@@ -53,5 +56,20 @@
 
 [gpg]
 	program = gpg
+
 [init]
 	defaultBranch = main
+
+[delta]
+	syntax-theme = gruvbox-dark
+	line-numbers = true
+	side-by-side = true
+	features = styles
+
+[delta "styles"]
+	plus-style = syntax "#003800"
+	minus-style = syntax "#3f0001"
+	commit-style = yellow bold auto
+	file-style = bold yellow ul
+	file-decoration-style = none
+	hunk-header-decoration-style = cyan box ul

@@ -69,6 +69,7 @@ brew "bdw-gc"
 brew "tcl-tk"
 brew "ctags"
 brew "datamash"
+brew "delta"
 brew "docker-compose"
 brew "dockutil"             # Manage Mac dock applications
 brew "ffmpeg"               # Play, record, convert, and stream audio and video
