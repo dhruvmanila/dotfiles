@@ -1,4 +1,4 @@
-# vi :set ft=gitconfig:
+# vim: set ft=gitconfig:
 [user]
 	name = Dhruv Manilawala
 	email = dhruvmanila@gmail.com
@@ -11,18 +11,18 @@
 	ignorecase = false
 
 [alias]
-	c = commit           # commit
-	cl = clone           # clone
-	br = branch          # branch
-	co = checkout        # checkout
-	nb = checkout -b     # new branch
-	st = status -sb      # status in a concise manner
+	c = commit
+	cl = clone
+	br = branch
+	co = checkout
+	nb = checkout -b
+	st = status -sb
 
 	# View abbreviated SHA, description, and history graph of the latest 10 commits.
 	l = log --oneline -n 10 --graph
 	la = log --oneline -n 10 --graph --all
-	undo = reset --soft HEAD~1  # Undo your last commit
-	ammend = commit --ammend  # ammend your last commit
+	undo = reset --soft HEAD~1 # Undo your last commit
+	ammend = commit --ammend # ammend your last commit
 
 	# Show verbose output about tags, branches or remotes
 	tags = tag -l
