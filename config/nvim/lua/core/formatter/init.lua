@@ -54,11 +54,6 @@ format.register("python", {
 format.register("sh", {
   use = "cmd",
   cmd = "shfmt",
-  -- -i uint   indent: 0 for tabs (default), >0 for number of spaces
-  -- -bn       binary ops like && and | may start a line
-  -- -ci       switch cases will be indented
-  -- -sr       redirect operators will be followed by a space
-  -- -kp       keep column alignment paddings
   args = function(bufnr)
     local indent_size = vim.bo[bufnr].expandtab
         and lsp_util.get_effective_tabstop(bufnr)
