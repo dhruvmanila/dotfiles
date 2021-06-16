@@ -15,7 +15,7 @@ local entry_display = require "telescope.pickers.entry_display"
 local path = require "telescope.path"
 local themes = require "telescope.themes"
 
-local warn = require("core.utils").warn
+local warn = require("dm.utils").warn
 
 -- Previewer is turned off by default. If it is enabled, then use the
 -- horizontal layout.

@@ -17,7 +17,7 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
 
-local warn = require("core.utils").warn
+local warn = require("dm.utils").warn
 local Job = require "plenary.job"
 
 local state = {}

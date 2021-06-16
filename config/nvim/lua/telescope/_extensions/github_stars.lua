@@ -12,7 +12,7 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
 
-local warn = require("core.utils").warn
+local warn = require("dm.utils").warn
 
 -- Keep the values around between reloads
 _CachedGithubStars = _CachedGithubStars or { stars = {}, max_length = 0 }

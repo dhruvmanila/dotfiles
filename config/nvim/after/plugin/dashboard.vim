@@ -17,7 +17,7 @@ let g:startify_session_autoload = 0
 let g:startify_session_sort = 0
 
 let g:startify_session_before_save = [
-      \ 'lua require("core.dashboard").session_cleanup()',
+      \ 'lua require("dm.dashboard").session_cleanup()',
       \ ]
 
 augroup dashboard
@@ -28,7 +28,7 @@ augroup END
 
 function! s:on_vimenter()
   if !argc() && line2byte('$') == -1
-    lua require('core.dashboard').open(true)
+    lua require('dm.dashboard').open(true)
   endif
   autocmd! dashboard VimEnter
 endfunction
@@ -37,7 +37,7 @@ silent autocmd! startify QuickFixCmdPre
 silent autocmd! startify QuickFixCmdPost
 silent delcommand Startify
 
-command! -nargs=0 -bar Dashboard lua require('core.dashboard').open(false)
+command! -nargs=0 -bar Dashboard lua require('dm.dashboard').open(false)
 command! -nargs=0 -bar Startify Dashboard
 
 nnoremap <silent> <leader>` <Cmd>Dashboard<CR>
