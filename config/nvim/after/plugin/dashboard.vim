@@ -11,6 +11,7 @@ let g:loaded_dashboard = 1
 let g:startify_disable_at_vimenter = 1
 let g:startify_update_oldfiles = 0
 
+let g:startify_session_dir = stdpath("data") .. "/session"
 let g:startify_session_persistence = 1
 let g:startify_session_delete_buffers = 1
 let g:startify_session_autoload = 0
