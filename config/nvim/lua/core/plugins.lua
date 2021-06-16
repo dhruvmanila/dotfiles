@@ -263,3 +263,8 @@ packer.startup {
     },
   },
 }
+
+-- Manual workaround until #405 is fixed and #402 is merged.
+-- This is done so that the handlers get called on startup and store the
+-- plugin information.
+pcall(packer.__manage_all)
