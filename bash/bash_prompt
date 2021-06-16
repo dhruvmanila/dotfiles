@@ -42,48 +42,47 @@ function gitstatus_prompt_update() {
     where="${VCS_STATUS_COMMIT:0:8}"
   fi
 
-  (( ${#where} > 32 )) && where="${where:0:12}…${where: -12}"  # truncate long branch names and tags
+  ((${#where} > 32))   && where="${where:0:12}…${where: -12}"  # truncate long branch names and tags
   p+="${clean}${where}"
 
   # ⇣42 if behind the remote.
-  (( VCS_STATUS_COMMITS_BEHIND )) && p+=" ${clean}⇣${VCS_STATUS_COMMITS_BEHIND}"
+  ((VCS_STATUS_COMMITS_BEHIND))   && p+=" ${clean}⇣${VCS_STATUS_COMMITS_BEHIND}"
   # ⇡42 if ahead of the remote; no leading space if also behind the remote: ⇣42⇡42.
-  (( VCS_STATUS_COMMITS_AHEAD && !VCS_STATUS_COMMITS_BEHIND )) && p+=" "
-  (( VCS_STATUS_COMMITS_AHEAD  )) && p+="${clean}⇡${VCS_STATUS_COMMITS_AHEAD}"
+  ((VCS_STATUS_COMMITS_AHEAD && !VCS_STATUS_COMMITS_BEHIND))   && p+=" "
+  ((VCS_STATUS_COMMITS_AHEAD))    && p+="${clean}⇡${VCS_STATUS_COMMITS_AHEAD}"
   # ⇠42 if behind the push remote.
-  (( VCS_STATUS_PUSH_COMMITS_BEHIND )) && p+=" ${clean}⇠${VCS_STATUS_PUSH_COMMITS_BEHIND}"
-  (( VCS_STATUS_PUSH_COMMITS_AHEAD && !VCS_STATUS_PUSH_COMMITS_BEHIND )) && p+=" "
+  ((VCS_STATUS_PUSH_COMMITS_BEHIND))   && p+=" ${clean}⇠${VCS_STATUS_PUSH_COMMITS_BEHIND}"
+  ((VCS_STATUS_PUSH_COMMITS_AHEAD && !VCS_STATUS_PUSH_COMMITS_BEHIND))   && p+=" "
   # ⇢42 if ahead of the push remote; no leading space if also behind: ⇠42⇢42.
-  (( VCS_STATUS_PUSH_COMMITS_AHEAD  )) && p+="${clean}⇢${VCS_STATUS_PUSH_COMMITS_AHEAD}"
+  ((VCS_STATUS_PUSH_COMMITS_AHEAD))    && p+="${clean}⇢${VCS_STATUS_PUSH_COMMITS_AHEAD}"
   # *42 if have stashes.
-  (( VCS_STATUS_STASHES        )) && p+=" ${clean}*${VCS_STATUS_STASHES}"
+  ((VCS_STATUS_STASHES))          && p+=" ${clean}*${VCS_STATUS_STASHES}"
   # 'merge' if the repo is in an unusual state.
   [[ -n "$VCS_STATUS_ACTION"   ]] && p+=" ${conflicted}${VCS_STATUS_ACTION}"
   # ~42 if have merge conflicts.
-  (( VCS_STATUS_NUM_CONFLICTED )) && p+=" ${conflicted}~${VCS_STATUS_NUM_CONFLICTED}"
+  ((VCS_STATUS_NUM_CONFLICTED))   && p+=" ${conflicted}~${VCS_STATUS_NUM_CONFLICTED}"
   # +42 if have staged changes.
-  (( VCS_STATUS_NUM_STAGED     )) && p+=" ${modified}+${VCS_STATUS_NUM_STAGED}"
+  ((VCS_STATUS_NUM_STAGED))       && p+=" ${modified}+${VCS_STATUS_NUM_STAGED}"
   # !42 if have unstaged changes.
-  (( VCS_STATUS_NUM_UNSTAGED   )) && p+=" ${modified}!${VCS_STATUS_NUM_UNSTAGED}"
+  ((VCS_STATUS_NUM_UNSTAGED))     && p+=" ${modified}!${VCS_STATUS_NUM_UNSTAGED}"
   # ?42 if have untracked files. It's really a question mark, your font isn't broken.
-  (( VCS_STATUS_NUM_UNTRACKED  )) && p+=" ${untracked}?${VCS_STATUS_NUM_UNTRACKED}"
+  ((VCS_STATUS_NUM_UNTRACKED))    && p+=" ${untracked}?${VCS_STATUS_NUM_UNTRACKED}"
 
-  echo -e "${p}${reset}";
+  echo -e "${p}${reset}"
 }
 
 # Start gitstatusd in the background.
 gitstatus_stop && gitstatus_start -s -1 -u -1 -c -1 -d -1
 
-
 function build_prompt() {
   local -i exit="$?"
   local git_prompt
 
-  local -r reset="\[\e[0m\]";
-  local -r red="\[\e[0;31m\]";
-  local -r yellow="\[\e[0;33m\]";
-  local -r blue="\[\e[1;34m\]";
-  local -r white="\[\e[1;37m\]";
+  local -r reset="\[\e[0m\]"
+  local -r red="\[\e[0;31m\]"
+  local -r yellow="\[\e[0;33m\]"
+  local -r blue="\[\e[1;34m\]"
+  local -r white="\[\e[1;37m\]"
 
   PS1="\n"
 
@@ -113,7 +112,7 @@ function build_prompt() {
   PS1+="${yellow}\w"
 
   # Git repository details
-  git_prompt="$(gitstatus_prompt_update "$@")";
+  git_prompt="$(gitstatus_prompt_update "$@")"
   if [[ -n "${git_prompt}" ]]; then
     PS1+="${white} on ${git_prompt}"
   fi
@@ -127,13 +126,12 @@ function build_prompt() {
 
   # ---------------------------------------------
   # Continuition prompt
-  PS2="${yellow}→ ${reset}";
+  PS2="${yellow}→ ${reset}"
 
   # Debug prompt
-  PS4="${white}==> ${reset}";
+  PS4="${white}==> ${reset}"
 
 }
-
 
 # Set the various prompt commands (PS1, PS2, PS4)
 # Include previous values to maintain Apple Terminal support (window title path and sessions)

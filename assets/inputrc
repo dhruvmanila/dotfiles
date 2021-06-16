@@ -14,7 +14,6 @@ set blink-matching-paren on
 # Disable Bash 5.1 highlighted paste feature.
 set enable-bracketed-paste off
 
-
 # Completion
 # ----------
 
@@ -52,7 +51,6 @@ set mark-symlinked-directories on
 # List possible completions before cycling through them
 set menu-complete-display-prefix on
 
-
 # Vi mode
 # -------
 
@@ -64,12 +62,10 @@ set show-mode-in-prompt on
 set vi-cmd-mode-string "\1\e[1;37m\2: \1\e[0m\2"
 set vi-ins-mode-string "\1\e[1;37m\2+ \1\e[0m\2"
 
-
 # Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
 set input-meta on
 set output-meta on
 set convert-meta off
-
 
 # Keybindings
 # -----------

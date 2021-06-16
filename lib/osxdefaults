@@ -18,11 +18,10 @@ sudo -v
 
 # Keep-alive: update existing `sudo` time stamp until `osxdefaults` has finished
 while true; do
-  sudo -n true;
-  sleep 60;
-  kill -0 "$$" || exit;
-done 2>/dev/null &
-
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2> /dev/null &
 
 #---------------------------------------------------------------------#
 #                            General UI/UX                            #
@@ -108,7 +107,6 @@ defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 
 # Disable auto-correct  'defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
-
 #---------------------------------------------------------------------#
 #    Trackpad, mouse, keyboard, Bluetooth accessories, and input      #
 #---------------------------------------------------------------------#
@@ -135,7 +133,6 @@ defaults write NSGlobalDomain AppleMetricUnits -bool true
 
 # Set the timezone; see `sudo systemsetup -listtimezones` for other values
 sudo systemsetup -settimezone "Asia/Calcutta"
-
 
 #---------------------------------------------------------------------#
 #                            Energy saving                            #
@@ -180,7 +177,6 @@ sudo systemsetup -setcomputersleep Off
 # …and make sure it can’t be rewritten
 # sudo chflags uchg /private/var/vm/sleepimage
 
-
 #---------------------------------------------------------------------#
 #                               Screen                                #
 #---------------------------------------------------------------------#
@@ -209,7 +205,6 @@ defaults write NSGlobalDomain AppleFontSmoothing -int 0
 
 # Enable HiDPI display modes (requires restart)
 sudo defaults write /Library/Preferences/com.apple.windowserver DisplayResolutionEnabled -bool true
-
 
 #---------------------------------------------------------------------#
 #                               Finder                                #
@@ -323,7 +318,6 @@ sudo chflags nohidden /Volumes
 # “General”, “Open with”, and “Sharing & Permissions”
 defaults write com.apple.finder FXInfoPanesExpanded -dict General -bool true OpenWith -bool true Privileges -bool true
 
-
 #---------------------------------------------------------------------#
 #                Dock, Dashboard, and hot corners                     #
 #---------------------------------------------------------------------#
@@ -411,7 +405,6 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 defaults write com.apple.dock wvous-br-corner -int 3
 defaults write com.apple.dock wvous-br-modifier -int 0
 
-
 #---------------------------------------------------------------------#
 #                            Safari & WebKit                          #
 #---------------------------------------------------------------------#
@@ -493,7 +486,6 @@ defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
 # Update extensions automatically
 defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 
-
 #---------------------------------------------------------------------#
 #                              Spotlight                              #
 #---------------------------------------------------------------------#
@@ -502,7 +494,6 @@ defaults write com.apple.Safari InstallExtensionUpdatesAutomatically -bool true
 # sudo chmod 600 /System/Library/CoreServices/Search.bundle/Contents/MacOS/Search
 
 # TODO: Research about indexing and add the missing code if applicable
-
 
 #---------------------------------------------------------------------#
 #                          Terminal & iTerm2                          #
@@ -526,7 +517,6 @@ defaults write com.apple.Terminal ShowLineMarks -int 0
 # Don’t display the annoying prompt when quitting iTerm
 defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 
-
 #---------------------------------------------------------------------#
 #                           Activity Monitor                          #
 #---------------------------------------------------------------------#
@@ -544,7 +534,6 @@ defaults write com.apple.ActivityMonitor ShowCategory -int 0
 defaults write com.apple.ActivityMonitor SortColumn -string "CPUUsage"
 defaults write com.apple.ActivityMonitor SortDirection -int 0
 
-
 #---------------------------------------------------------------------#
 #                      TextEdit and Disk Utility                      #
 #---------------------------------------------------------------------#
@@ -559,14 +548,12 @@ defaults write com.apple.TextEdit PlainTextEncodingForWrite -int 4
 defaults write com.apple.DiskUtility DUDebugMenuEnabled -bool true
 defaults write com.apple.DiskUtility advanced-image-options -bool true
 
-
 #---------------------------------------------------------------------#
 #                                Photos                               #
 #---------------------------------------------------------------------#
 
 # Prevent Photos from opening automatically when devices are plugged in
 defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
-
 
 #---------------------------------------------------------------------#
 #                    Kill affected applications                       #
@@ -575,19 +562,19 @@ set +e
 set +x
 
 for app in "Activity Monitor" \
-	"Address Book" \
-	"Calendar" \
-	"cfprefsd" \
-	"Contacts" \
-	"Dock" \
-	"Finder" \
-	"Mail" \
-	"Messages" \
-	"Photos" \
-	"Safari" \
-	"SystemUIServer" \
-	"Terminal"; do
-	killall "${app}" &> /dev/null
+  "Address Book" \
+  "Calendar" \
+  "cfprefsd" \
+  "Contacts" \
+  "Dock" \
+  "Finder" \
+  "Mail" \
+  "Messages" \
+  "Photos" \
+  "Safari" \
+  "SystemUIServer" \
+  "Terminal"; do
+  killall "${app}" &> /dev/null
 done
 
 printf "\nDone. Note that some of these changes require a logout/restart to take effect."

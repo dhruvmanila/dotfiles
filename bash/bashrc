@@ -24,7 +24,7 @@ function load_dotfiles() {
 load_dotfiles
 unset load_dotfiles
 
-if command -v pyenv &>/dev/null; then
+if command -v pyenv &> /dev/null; then
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
   complete -o nospace -F _pyenv p
