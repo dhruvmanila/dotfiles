@@ -54,30 +54,7 @@ return {
 
   -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
   -- Settings: https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server#settings
-  jsonls = function()
-    local vscode
-    local stable = "/Applications/Visual Studio Code.app"
-    local insider = "/Applications/Visual Studio Code - Insiders.app"
-
-    -- Default to insider if available
-    if vim.fn.isdirectory(insider) > 0 then
-      vscode = insider
-    elseif vim.fn.isdirectory(stable) > 0 then
-      vscode = stable
-    else
-      warn "[LSP] Visual Studio Code not found, defaulting to npm installed server"
-      return {}
-    end
-
-    return {
-      cmd = {
-        "node",
-        vscode
-          .. "/Contents/Resources/app/extensions/json-language-features/server/dist/node/jsonServerMain.js",
-        "--stdio",
-      },
-    }
-  end,
+  jsonls = {},
 
   -- https://github.com/microsoft/pyright
   -- Settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md
