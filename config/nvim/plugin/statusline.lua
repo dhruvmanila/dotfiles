@@ -72,19 +72,6 @@ local function wrap_hl(hl)
   return hl and "%#" .. hl .. "#" or ""
 end
 
--- local function mapping_line(maps, hl)
---   local line = ''
---   for _, info in ipairs(maps) do
---     local key, msg = unpack(info)
---     line = line .. wrap_hl(hl) .. key .. ' ' .. wrap_hl('StGrey') .. msg .. ' '
---   end
---   return line
--- end
-
-local function quit_line(ctx)
-  return ctx.inactive and "" or "<q>" .. wrap_hl "StGrey" .. " quit "
-end
-
 ---Special buffer information table.
 ---
 ---This includes the following components:
@@ -93,8 +80,8 @@ end
 ---      function where the `ctx` variable will be passed as the only argument.
 ---icon: Table containing the icon color and icon for the special buffer.
 ---
----Special buffers included in `special_buffer_info` can be excluded from this
----table which will mean to not display anything for that buffer.
+---Special buffers included in `types` but not in `line` means to make the line
+---invisible using 'Normal' highlight group.
 local special_buffer_info = {
   types = {
     "qf",
@@ -102,7 +89,7 @@ local special_buffer_info = {
     "help",
     "tsplayground",
     "NvimTree",
-    "dirvish",
+    "lir",
     "fugitive",
     "startify",
     "dashboard",
@@ -115,13 +102,10 @@ local special_buffer_info = {
   line = {
     terminal = "Terminal",
     tsplayground = "TSPlayground",
-    NvimTree = "NvimTree",
     packer = "Packer",
     gitcommit = "Commit message",
-
-    fugitive = function(ctx)
-      return "Fugitive" .. "%=" .. quit_line(ctx)
-    end,
+    fugitive = "Fugitive",
+    cheat40 = "Cheat40",
 
     qf = function(ctx)
       local list_type = fn.getwininfo(ctx.curwin)[1].loclist == 1
@@ -129,15 +113,15 @@ local special_buffer_info = {
         or "Quickfix"
       local title = utils.get_var("w", ctx.curwin, "quickfix_title")
       title = title and "[" .. title .. "]" or ""
-      return list_type .. " List " .. title .. "  %l/%L %=" .. quit_line(ctx)
+      return list_type .. " List " .. title .. "  %l/%L"
     end,
 
     help = function(ctx)
       local name = fn.fnamemodify(ctx.bufname, ":t:r")
-      return "help [" .. name .. "]  %l/%L %=" .. quit_line(ctx)
+      return "help [" .. name .. "]  %l/%L"
     end,
 
-    dirvish = function(ctx)
+    lir = function(ctx)
       return "%<" .. fn.fnamemodify(ctx.bufname, ":~") .. " "
     end,
 
@@ -151,12 +135,7 @@ local special_buffer_info = {
     end,
 
     dashboard = function(ctx)
-      local dir = fn.fnamemodify(ctx.bufname, ":~:s?Dashboard??")
-      return dir .. "%=" .. quit_line(ctx)
-    end,
-
-    cheat40 = function(ctx)
-      return "Cheat40" .. "%=" .. quit_line(ctx)
+      return fn.fnamemodify(ctx.bufname, ":~:s?Dashboard??")
     end,
   },
   icon = {
@@ -164,8 +143,7 @@ local special_buffer_info = {
     terminal = { "StYellow", icons.terminal },
     help = { "StYellow", icons.info },
     tsplayground = { "StGreen", icons.tree },
-    NvimTree = { "StBlue", icons.directory },
-    dirvish = { "StBlue", icons.directory },
+    lir = { "StBlue", icons.directory },
     fugitive = { "StYellow", icons.git_logo },
     packer = { "StAqua", icons.package },
     gitcommit = { "StYellow", icons.git_commit },
