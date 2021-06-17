@@ -49,8 +49,7 @@ local function filename(ctx, is_active)
   if ctx.bufname and #ctx.bufname > 0 then
     local modifier
     if is_active and ctx.filetype ~= "help" and ctx.buftype ~= "terminal" then
-      local worktree = fn.FugitiveWorkTree()
-      modifier = worktree ~= "" and ":s?" .. worktree .. "/??" or ":~:."
+      modifier = ":~:."
     else
       modifier = ":p:t"
     end
