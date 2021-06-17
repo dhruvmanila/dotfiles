@@ -482,6 +482,7 @@ function setup_symlink() { # {{{
   # Git
   link "assets/git/gitignore"              ".gitignore"
   link "assets/git/gitconfig"              ".gitconfig"
+  link "assets/git/gitmessage"             ".gitmessage"
   # Shell
   link "assets/inputrc"                    ".inputrc"
   link "assets/gpg/gpg.conf"               ".gnupg/gpg.conf"
