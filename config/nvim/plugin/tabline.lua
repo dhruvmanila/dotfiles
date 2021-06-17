@@ -97,7 +97,7 @@ local function tabline_label(tabnr, is_active)
   local flag_hl = is_active and "YellowSign" or "TabLine"
   local tab_hl = is_active and "%#TabLineSel#" or "%#TabLine#"
   -- Ref: https://en.wikipedia.org/wiki/Block_Elements
-  local sep = is_active and "▐" or " "
+  local sep = is_active and "▌" or " "
 
   return tab_hl
     .. "%"
@@ -152,8 +152,9 @@ function _G.nvim_tabline()
     local is_active = i == current_tabpage
     line = line .. tabline_label(i, is_active)
   end
-  line = offset_padding()
-    .. line
+  local left_offset = offset_padding()
+  line = left_offset
+    .. (left_offset ~= "" and line:gsub("▌", "▐", 1) or line)
     .. "%#TabLineFill#" -- After the last tab fill with TabLineFill
     .. "%T" -- Ends mouse click target region(s)
     .. "%="
