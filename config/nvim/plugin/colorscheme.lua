@@ -53,7 +53,10 @@ end
 
 -- Telescope.nvim
 highlight("TelescopeSelection", { force = true, link = "Visual" })
-highlight("TelescopeSelectionCaret", { force = true, link = "Yellow" })
+highlight(
+  "TelescopeSelectionCaret",
+  { guifg = palette.yellow[1], guibg = palette.bg3[1] }
+)
 highlight("TelescopeMatching", { force = true, link = "Blue" })
 -- highlight('TelescopeBorder', {force = true, link = 'Normal'})
 highlight("TelescopePromptPrefix", { force = true, link = "Green" })
