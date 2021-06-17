@@ -212,7 +212,7 @@ end
 function M.installed_plugins()
   require("telescope").extensions.installed_plugins.installed_plugins(
     themes.get_dropdown {
-      width = _CachedPluginInfo.max_length + 10,
+      width = _PackerPluginInfo.max_length + 10,
       results_height = 0.8,
       previewer = false,
     }

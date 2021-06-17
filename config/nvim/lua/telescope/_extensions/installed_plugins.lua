@@ -42,7 +42,7 @@ end
 --- browser or a telescope finder for plugin files.
 ---
 --- The information regarding the plugins is cached in `core.plugins` as a
---- global variable (`_CachedPluginInfo`) which contains the following
+--- global variable (`_PackerPluginInfo`) which contains the following
 --- two fields:
 ---   - `plugins`: List of tables each containing plugin information:
 ---     - `name`: Full name as provided by the user (user/repo)
@@ -59,7 +59,7 @@ end
 local function installed_plugins(opts)
   opts = opts or {}
 
-  if vim.tbl_isempty(_CachedPluginInfo.plugins) then
+  if vim.tbl_isempty(_PackerPluginInfo.plugins) then
     warn "[Telescope] Plugin information was not cached"
     return nil
   end
@@ -80,7 +80,7 @@ local function installed_plugins(opts)
   pickers.new(opts, {
     prompt_title = "Installed Plugins",
     finder = finders.new_table {
-      results = _CachedPluginInfo.plugins,
+      results = _PackerPluginInfo.plugins,
       entry_maker = function(entry)
         return {
           display = make_display,
