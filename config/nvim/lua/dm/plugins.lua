@@ -1,17 +1,7 @@
 local g = vim.g
-local fn = vim.fn
 local cmd = vim.cmd
 local format = string.format
 local packer = nil
-
-do
-  local install_path = fn.stdpath "data" .. "/site/pack/packer/opt/packer.nvim"
-
-  if not vim.loop.fs_stat(install_path) then
-    print "Installing packer.nvim..."
-    cmd("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
-  end
-end
 
 -- Reset the global plugin info variable.
 local function reset_plugin_info()
