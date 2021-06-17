@@ -22,10 +22,10 @@ end
 ---@param config_name string
 ---@return string
 local function conf(config_name)
-  return dm.case(config_name, {
-    ["lsp"] = format("require('dm.%s')", config_name),
-    ["*"] = format("require('dm.plugin.%s')", config_name),
-  })
+  if config_name == "lsp" then
+    return format("require('dm.%s')", config_name)
+  end
+  return format("require('dm.plugin.%s')", config_name)
 end
 
 -- Extending packer with a custom handler to store plugin information to be
