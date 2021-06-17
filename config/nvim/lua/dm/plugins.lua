@@ -57,7 +57,6 @@ local function load_packer()
     disable_commands = true,
     display = {
       open_cmd = "silent botright 80vnew packer",
-      prompt_border = require("dm.icons").border[g.border_style],
     },
     profile = {
       enable = true,
