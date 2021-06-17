@@ -9,7 +9,7 @@ let s:wins = tabpagewinnr(tabpagenr(), "$")
 " Open the fugitive buffer in a vertical split when there is space.
 if s:wins <= s:limit && winwidth(0) >= 140
   wincmd L
-  nnoremap <buffer> gh :<C-U>help fugitive-map<CR>
+  nmap <buffer> gh g?
 else
   " For horizontal position, open the help window in the vertical split.
   nnoremap <buffer> gh :<C-U>vertical help fugitive-map<CR>
