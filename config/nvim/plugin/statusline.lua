@@ -303,7 +303,8 @@ end
 ---Neovim LSP messages
 ---Ref: https://github.com/nvim-lua/lsp-status.nvim/blob/master/lua/lsp-status/statusline.lua#L37
 ---@return string|nil
-local function lsp_messages()
+local function lsp_messages(hl)
+  hl = wrap_hl(hl)
   local messages = lsp_status.messages()
   local spinner_frames = icons.spinner_frames
   -- We are only interested in one message and thus I am choosing the last one.
@@ -313,7 +314,6 @@ local function lsp_messages()
   local contents = ""
 
   if msg then
-    local client_name = "LSP[" .. msg.name .. "]:"
     if msg.progress then
       contents = msg.title
       if msg.message then
@@ -341,12 +341,9 @@ local function lsp_messages()
     else
       contents = msg.content
     end
-    contents = client_name .. " " .. contents
   end
 
-  if contents ~= "" then
-    return contents .. " "
-  end
+  return contents ~= "" and hl .. contents .. " %*" or ""
 end
 
 ---Create the statusline for the inactive buffer.
@@ -396,6 +393,13 @@ end
 local function special_buffer_statusline(ctx, inactive, prefix)
   local typ = ctx.filetype ~= "" and ctx.filetype or ctx.buftype
   local line = special_buffer_line(ctx, typ)
+
+  -- If there is no line registered but the buffer is considered to be special,
+  -- then we will make the line invisible.
+  if line == "" then
+    return wrap_hl "Normal"
+  end
+
   local color, icon = unpack(special_buffer_info.icon[typ] or { "", "" })
   local hl = inactive and "" or wrap_hl(color)
   local name_hl = inactive and "" or wrap_hl "StSpecialBuffer"
@@ -428,11 +432,6 @@ function _G.nvim_statusline()
     return inactive_statusline(ctx, prefix)
   end
 
-  local messages = lsp_messages()
-  if messages then
-    return wrap_hl "StSpecialBuffer" .. prefix .. " " .. messages
-  end
-
   return wrap_hl "StAqua"
     .. prefix
     .. "%*"
@@ -444,6 +443,7 @@ function _G.nvim_statusline()
     .. github_notifications "StGrey"
     .. python_version(ctx, "StBlueBold")
     .. lsp_clients(ctx, "StGreenBold")
+    .. lsp_messages "StGrey"
     .. file_detail(ctx, "StGreyBold")
     .. lsp_diagnostics(ctx, {
       { severity = "Information", icon = icons.info, hl = "StBlue" },
