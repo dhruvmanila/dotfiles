@@ -479,10 +479,11 @@ function setup_symlink() { # {{{
   link "python/pylintrc"                   ".pylintrc"
   link "python/ipython/ipython_config.py"  ".ipython/profile_default/ipython_config.py"
   link "python/ipython/startup"            ".ipython/profile_default/startup"
+  # Git
+  link "assets/git/gitignore"              ".gitignore"
+  link "assets/git/gitconfig"              ".gitconfig"
   # Shell
   link "assets/inputrc"                    ".inputrc"
-  link "assets/gitignore"                  ".gitignore"
-  link "assets/gitconfig"                  ".gitconfig"
   link "assets/gpg/gpg.conf"               ".gnupg/gpg.conf"
   link "assets/gpg/gpg-agent.conf"         ".gnupg/gpg-agent.conf"
   link "assets/ssh/config"                 ".ssh/config"
