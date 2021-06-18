@@ -74,12 +74,9 @@ local function generate_header()
 end
 
 local function generate_sub_header()
-  local v = vim.version()
-  v = "v" .. v.major .. "." .. v.minor .. "." .. v.patch
-
-  -- NVIM v0.5.0-dev+b227cedf8 | Build type: Release | LuaJIT 2.1.0-beta3
-  -- local v = fn.split(api.nvim_exec('version', true), '\n')
-  -- v = table.concat({unpack(version, 1, 3)}, " | ")
+  -- local v = vim.version()
+  -- v = "v" .. v.major .. "." .. v.minor .. "." .. v.patch
+  local v = fn.split(fn.split(api.nvim_exec("version", true), "\n")[1])[2]
   return { v, "", "" }
 end
 
