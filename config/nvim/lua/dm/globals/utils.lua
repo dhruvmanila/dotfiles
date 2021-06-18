@@ -12,7 +12,6 @@ _G.dm = {
   _store = _NvimGlobalCallbacks,
 }
 
-local api = vim.api
 local format = string.format
 
 -- Create a unique identification string readable by human for the given
@@ -121,21 +120,6 @@ function dm.command(opts)
 
   vim.cmd(format("command! -nargs=%d %s %s %s", nargs, attr, name, rhs))
 end
-
--- Helper function to set the neovim options until #13479 merges. This will
--- make sure each option is set to the respective scope.
-dm.opt = setmetatable({}, {
-  __index = vim.o,
-  __newindex = function(_, key, value)
-    vim.o[key] = value
-    local scope = api.nvim_get_option_info(key).scope
-    if scope == "win" then
-      vim.wo[key] = value
-    elseif scope == "buf" then
-      vim.bo[key] = value
-    end
-  end,
-})
 
 -- Similar to case statement.
 ---@alias CaseT string|number|function

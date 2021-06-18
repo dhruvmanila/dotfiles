@@ -1,3 +1,6 @@
+local o = vim.o
+local api = vim.api
+
 do
   -- 'colorcolumn' value for specific filetypes
   ---@type table<string, string>
@@ -6,14 +9,14 @@ do
   -- Set the colorcolumn value of the window appropriately.
   ---@param leaving boolean
   local function set_colorcolumn(leaving)
-    if vim.bo.buftype == "prompt" then
+    if o.buftype == "prompt" then
       return
     end
     -- Don't set it when there isn't enough space or we're leaving insert mode.
-    if vim.api.nvim_win_get_width(0) <= 90 or leaving then
-      vim.wo.colorcolumn = ""
-    elseif vim.wo.colorcolumn == "" then
-      vim.wo.colorcolumn = ft_colorcolumn[vim.bo.filetype] or "80"
+    if api.nvim_win_get_width(0) <= 90 or leaving then
+      o.colorcolumn = ""
+    elseif o.colorcolumn == "" then
+      o.colorcolumn = ft_colorcolumn[o.filetype] or "80"
     end
   end
 
@@ -49,7 +52,7 @@ do
 
     timer = vim.defer_fn(function()
       if vim.fn.mode() == "n" then
-        vim.api.nvim_echo({}, false, {})
+        api.nvim_echo({}, false, {})
       end
     end, timeout)
   end
@@ -70,8 +73,8 @@ dm.augroup("custom_autocmds", {
     events = { "WinEnter", "BufEnter", "InsertLeave" },
     targets = { "*" },
     command = function()
-      if not vim.wo.cursorline and vim.bo.filetype ~= "dashboard" then
-        vim.wo.cursorline = true
+      if not o.cursorline and o.filetype ~= "dashboard" then
+        o.cursorline = true
       end
     end,
   },
@@ -79,8 +82,8 @@ dm.augroup("custom_autocmds", {
     events = { "WinLeave", "BufLeave", "InsertEnter" },
     targets = { "*" },
     command = function()
-      if vim.wo.cursorline and vim.bo.filetype ~= "dashboard" then
-        vim.wo.cursorline = false
+      if o.cursorline and o.filetype ~= "dashboard" then
+        o.cursorline = false
       end
     end,
   },
@@ -90,9 +93,9 @@ dm.augroup("custom_autocmds", {
     events = { "VimResized" },
     targets = { "*" },
     command = function()
-      local last_tab = vim.api.nvim_get_current_tabpage()
+      local last_tab = api.nvim_get_current_tabpage()
       vim.cmd "tabdo wincmd ="
-      vim.api.nvim_set_current_tabpage(last_tab)
+      api.nvim_set_current_tabpage(last_tab)
     end,
   },
 

@@ -3,6 +3,7 @@ local utils = require "dm.utils"
 
 -- Extract out the required namespace/function
 local vim = vim
+local o = vim.o
 local api = vim.api
 local fn = vim.fn
 local cmd = vim.cmd
@@ -241,7 +242,7 @@ end
 ---   - Closing the NvimTree buffer
 ---   - Quitting the Dashboard buffer
 function M.session_cleanup()
-  if api.nvim_buf_get_option(0, "filetype") == "dashboard" then
+  if o.filetype == "dashboard" then
     local calling_buffer = fn.bufnr "#"
     if calling_buffer > 0 then
       api.nvim_set_current_buf(calling_buffer)
@@ -298,23 +299,23 @@ end
 --- Open the dashboard buffer in the current buffer if it is empty or create
 --- a new buffer for the current window.
 function M.open(on_vimenter)
-  if on_vimenter and (vim.o.insertmode or not vim.o.modifiable) then
+  if on_vimenter and (o.insertmode or not o.modifiable) then
     return
   end
 
-  if not vim.o.hidden and vim.o.modified then
+  if not o.hidden and o.modified then
     utils.warn "[dashboard] Please save your changes first."
     return
   end
 
   -- We will ignore all events while creating the dashboard buffer as it might
   -- result in unintended effect when dashboard is called in a nested fashion.
-  api.nvim_set_option("eventignore", "all")
+  o.eventignore = "all"
 
   -- Save the current window/buffer options
   -- If we are being called from a dashboard buffer, then we should not save
   -- the options as it will save the dashboard buffer specific options.
-  if api.nvim_buf_get_option(0, "filetype") ~= "dashboard" then
+  if o.filetype ~= "dashboard" then
     dashboard.saved_opts = {}
     option_process(dashboard.opts, "save")
   end
@@ -325,7 +326,7 @@ function M.open(on_vimenter)
     -- If we are being called from a dashboard buffer in a nested fashion, we
     -- should keep the alternate buffer which is the one we go to when we
     -- quit the dashboard buffer.
-    if api.nvim_buf_get_option(0, "filetype") == "dashboard" then
+    if o.filetype == "dashboard" then
       cmd(string.format("keepalt call nvim_win_set_buf(0, %d)", bufnr))
     else
       api.nvim_win_set_buf(0, bufnr)
@@ -393,7 +394,7 @@ function M.open(on_vimenter)
   }
   cmd "silent! %foldopen!"
   cmd "normal! zb"
-  api.nvim_set_option("eventignore", "")
+  o.eventignore = ""
 end
 
 -- For debugging purposes:
