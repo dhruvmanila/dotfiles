@@ -4,7 +4,7 @@ local themes = require "telescope.themes"
 
 local should_reload = true
 
-if should_reload then
+if should_reload and vim.is_callable(RELOAD) then
   RELOAD "plenary"
   RELOAD "popup"
   RELOAD "telescope"
