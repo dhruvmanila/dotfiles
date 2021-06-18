@@ -148,21 +148,6 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.signature_help then
-    if not plugin_loaded "lsp_signature.nvim" then
-      require("packer").loader "lsp_signature.nvim"
-    end
-
-    require("lsp_signature").on_attach {
-      bind = true,
-      doc_lines = 0,
-      hint_enable = false,
-      use_lspsaga = false,
-      handler_opts = {
-        border = icons.border[vim.g.border_style],
-      },
-      hi_parameter = "YellowItalic",
-    }
-
     mappings["n <C-s>"] = "vim.lsp.buf.signature_help()"
   end
 

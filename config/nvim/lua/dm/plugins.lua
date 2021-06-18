@@ -119,7 +119,6 @@ local function load_plugins()
       cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
     },
     { "raimon49/requirements.txt.vim" },
-    { "ray-x/lsp_signature.nvim", opt = true },
     { "rhysd/clever-f.vim" },
     { "sainnhe/gruvbox-material" },
     { "tamago324/lir.nvim" },
