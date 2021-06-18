@@ -247,6 +247,19 @@ function M.github_stars()
   require("telescope").extensions.github_stars.github_stars(default_dropdown)
 end
 
+-- Start a telescope search to cd into any directory from the current one.
+-- This is bound to '/', but only in the lir buffer.
+---@see `after/ftplugin/lir`
+function M.lir_cd()
+  -- Previewer is turned off by default. If it is enabled, then use the
+  -- horizontal layout with wider results window and narrow preview window.
+  require("telescope").extensions.lir_cd.lir_cd(themes.get_dropdown {
+    width = math.min(100, vim.o.columns - 10),
+    results_height = 0.8,
+    previewer = false,
+  })
+end
+
 do
   local nvim_set_keymap = vim.api.nvim_set_keymap
   local opts = { noremap = true, silent = true }
