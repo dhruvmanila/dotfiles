@@ -42,11 +42,9 @@ end
 --- Start a new asynchronous job to collect the user GitHub stars using
 --- GitHub's CLI tool `gh`.
 local function collect_github_stars()
-  local stderr = {}
-
   local function process_complete(job, code)
     if code > 0 then
-      error(table.concat(stderr, "\n"))
+      error(job:stderr_result())
     end
     local result = job:result()
     if result and result[1] ~= "" then
@@ -59,9 +57,6 @@ local function collect_github_stars()
       command = "gh",
       args = { "api", "user/starred", "--paginate" },
       enable_recording = true,
-      on_stderr = function(_, data)
-        table.insert(stderr, data)
-      end,
       on_exit = vim.schedule_wrap(process_complete),
     })
     :start()
