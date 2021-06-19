@@ -76,19 +76,12 @@ return {
   -- Settings: https://github.com/sumneko/vscode-lua/blob/master/setting/schema.json
   sumneko_lua = function()
     local home = vim.loop.os_homedir()
+    local root = home .. "/git/lua-language-server"
+    local bin = root .. "/bin/macOS/lua-language-server"
 
     return require("lua-dev").setup {
-      library = {
-        runtime = true,
-        plugins = {},
-        types = true,
-      },
       lspconfig = {
-        cmd = {
-          home .. "/git/lua-language-server/bin/macOS/lua-language-server",
-          "-E",
-          home .. "/git/lua-language-server/main.lua",
-        },
+        cmd = { bin, "-E", root .. "/main.lua" },
         settings = {
           Lua = {
             workspace = {
