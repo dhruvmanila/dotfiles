@@ -238,6 +238,7 @@ end
 --- Cleanup performed before saving the session. This includes:
 ---   - Closing the NvimTree buffer
 ---   - Quitting the Dashboard buffer
+---   - Stop all the active LSP clients
 function M.session_cleanup()
   if o.filetype == "dashboard" then
     local calling_buffer = fn.bufnr "#"
@@ -251,6 +252,8 @@ function M.session_cleanup()
     cmd "silent tabdo NvimTreeClose"
     api.nvim_set_current_tabpage(curtab)
   end
+
+  vim.lsp.stop_client(vim.lsp.get_active_clients())
 end
 
 --- Close the dashboard buffer and either quit neovim or move back to the
