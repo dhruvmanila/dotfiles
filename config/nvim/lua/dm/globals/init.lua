@@ -1,19 +1,26 @@
 require "dm.globals.utils"
 
 -- https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals/init.lua
+---@generic T
+---@param v T
+---@return T
 P = function(v)
   print(vim.inspect(v))
   return v
 end
 
-local ok, reload = pcall(require, "plenary.reload")
-if ok then
-  RELOAD = reload.reload_module
+-- Clear the 'require' cache for the module name.
+---@param name string
+RELOAD = function(name)
+  package.loaded[name] = nil
+end
 
-  R = function(name)
-    RELOAD(name)
-    return require(name)
-  end
+-- Reload and require the givem module name.
+---@param name string
+---@return any
+R = function(name)
+  RELOAD(name)
+  return require(name)
 end
 
 -- Dump the contents of the given arguments.
