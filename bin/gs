@@ -11,8 +11,8 @@ done
 
 /usr/bin/ruby -x "$0" \
   | fzf --prompt="GitHub stars ❯ " --ansi --multi --no-hscroll --tiebreak=begin \
-  | awk 'BEGIN { FS = "\t" } { print $2 }' \
-  | xargs open
+  | awk 'BEGIN { FS = "\t" } { print $1 }' \
+  | xargs -I{} open https://github.com/{}
 
 exit $?
 
@@ -21,11 +21,14 @@ exit $?
 
 require 'json'
 
-width = `tput cols`.strip.to_i / 2
+# Get the max value from `:lua print(_CachedGithubStars.max_length)`
+available = `tput cols`.strip.to_i / 2
+width = [available, 50].min
+
 output = `gh api user/starred --paginate --cache 24h`
 items = JSON.parse(output.gsub('][', ','))
 
 items.each do |item|
   name = item['full_name'].ljust(width)
-  puts [name, item['html_url']].join("\t\x1b[36m") + "\x1b[m"
+  puts [name, item['description']].join("\t\x1b[36m") + "\x1b[m"
 end
