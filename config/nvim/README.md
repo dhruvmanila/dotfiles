@@ -1,10 +1,6 @@
 # Neovim Configuration
 
-### Proposed Neovim config structure
-
-With the merge of the PR (https://github.com/neovim/neovim/pull/14686), we can
-now add `.lua` files in runtime paths and they will be sourced by Neovim. So,
-this is me brainstorming about my config structure:
+### Overview:
 
 ```
 .
@@ -13,7 +9,7 @@ this is me brainstorming about my config structure:
 │   │   └── ...
 │   ├── queries                # Override treesitter queries
 │   │   └── ...
-│   └── plugin                 # Plugins configuration
+│   └── plugin                 # Plugin configurations
 │       └── ...
 ├── ftdetect                   # Help filetype detection
 │   └── ...
@@ -40,6 +36,9 @@ this is me brainstorming about my config structure:
 └── minimal.vim
 ```
 
-### TODO:
-
-- [ ] Update to `vim.opt`. Refer `:h vim.opt`
+### Packer related files:
+```
+.local/share/nvim/site/pack/loader/start/packer.nvim/plugin/
+├── packer_compiled.vim
+└── packer_plugin_info.lua
+```
