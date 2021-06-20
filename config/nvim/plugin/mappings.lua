@@ -56,11 +56,11 @@ map("n", "]t", "<Cmd>tabnext<CR>")
 map("n", "[t", "<Cmd>tabprev<CR>")
 map("n", "]T", "<Cmd>tablast<CR>")
 map("n", "[T", "<Cmd>tabfirst<CR>")
-map("n", "<Leader>1", "1gt")
-map("n", "<Leader>2", "2gt")
-map("n", "<Leader>3", "3gt")
-map("n", "<Leader>4", "4gt")
-map("n", "<Leader>5", "5gt")
+
+-- `<leader>n` goes to nth tab
+for i = 1, 9 do
+  map("n", "<leader>" .. i, i .. "gt")
+end
 
 -- Quicker window movement
 map("n", "<C-j>", "<C-w>j")
