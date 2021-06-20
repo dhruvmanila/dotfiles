@@ -34,3 +34,6 @@ do
 
   dm.command { "TrimTrailingLines", trim_trailing_lines, attr = { "-bar" } }
 end
+
+dm.command { "Vterm", "vnew | term" }
+dm.command { "Tterm", "tabnew | term" }
