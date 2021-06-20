@@ -93,28 +93,28 @@ local entries = {
   {
     key = "s",
     description = { icons.globe .. "  Find sessions" },
-    command = require("dm.plugin.telescope").startify_sessions,
+    command = 'lua require("dm.plugin.telescope").startify_sessions()',
   },
   { key = "e", description = { icons.file .. "  New file" }, command = "enew" },
   {
     key = "h",
     description = { icons.history .. "  Recently opened files" },
-    command = require("telescope.builtin").oldfiles,
+    command = 'lua require("telescope.builtin").oldfiles()',
   },
   {
     key = "f",
     description = { icons.files .. "  Find files" },
-    command = require("telescope.builtin").find_files,
+    command = 'lua require("telescope.builtin").find_files()',
   },
   {
     key = "d",
     description = { icons.tools .. "  Find in dotfiles" },
-    command = require("dm.plugin.telescope").find_dotfiles,
+    command = 'lua require("dm.plugin.telescope").find_dotfiles()',
   },
   {
     key = "b",
     description = { icons.directory .. "  File browser" },
-    command = require("telescope.builtin").file_browser,
+    command = 'lua require("telescope.builtin").file_browser()',
   },
   {
     key = "p",
