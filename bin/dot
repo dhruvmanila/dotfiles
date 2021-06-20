@@ -54,7 +54,7 @@ MACOS_DOCK_APPLICATIONS=(
   "/Applications/Brave Browser.app"
   # "/Applications/PyCharm CE.app" \
   # "/Applications/Visual Studio Code.app" \
-  "/Applications/iTerm.app"
+  # "/Applications/iTerm.app"
   "/Applications/kitty.app"
   "/System/Applications/Notes.app"
   "/Applications/Mark Text.app"
