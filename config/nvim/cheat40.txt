@@ -6,10 +6,9 @@ Cheatsheet
 
 About {{{2
   Abbreviations used in descriptions:
-        Next
-        Previous
-        Forwards/rightwards
-        Backwards/leftwards
+
+  »      Forwards/next/rightwards
+  «      Backwards/previous/leftwards
 
   Notation for key sequences:
 
@@ -58,7 +57,7 @@ Move to the left split   «C-h»         N
 Move to the split below  «C-j»         N
 Move to the split above  «C-k»         N
 Move to the right split  «C-l»         N
-# Limit: 5
+# Range(n): 1-9
 Move to ‹n› tab          «Spc»‹n›      N
 }}}
 LSP Mappings {{{
@@ -67,11 +66,11 @@ Show LSP logs            «Spc»ll       N
 # Server Mappings ------------------------
 Show documentation       K             N
 # No severity limit
-Goto  diagnostic        [d            N
-Goto  diagnostic        ]d            N
+Goto » diagnostic        ]d            N
+Goto « diagnostic        [d            N
 # Severity limit is 'Warning'
-Goto  diagnostic        [e            N
-Goto  diagnostic        ]e            N
+Goto » diagnostic        ]e            N
+Goto « diagnostic        [e            N
 Goto definition          gd            N
 Goto declaration         gD            N
 Goto type definition     gy            N
@@ -96,10 +95,10 @@ About {{{
 }}}
 # Mappings common to all pickers ---------
 Close picker             «Esc»        IN
-Move to  selection      «C-j»         I
-Move to  selection      «C-k»         I
-Toggle selection and    «Tab»         I
-Toggle selection and    «S-Tab»       I
+Move to » selection      «C-j»         I
+Move to « selection      «C-k»         I
+Toggle selection and »   «Tab»         I
+Toggle selection and «   «S-Tab»       I
 Send to + open qflist    «C-q»        IM
 Open in horizontal split «C-s»         I
 Open in vertical split   «C-v»        IN
@@ -179,8 +178,8 @@ Delete                   x             N
 Toggle show hidden       .             N
 Change directory         @             N
 Yank path                yy            N
-Toggle mark and move    «Spc»         N
-Toggle mark and move    «C-Spc»       N
+Toggle mark and move »   «Spc»         N
+Toggle mark and move «   «C-Spc»       N
 Copy                     C            NV
 Cut                      X            NV
 Paste                    P             N
@@ -199,10 +198,10 @@ Completion Mappings {{{
 Open completion menu     «C-Spc»       I
 Confirm completion       «CR»          I
 Close menu               «C-e»         I
-Scroll  documentation   «C-f»         I
-Scroll  documentation   «C-b»         I
-Move to  item           «Tab»        IS
-Move to  item           «S-Tab»      IS
+Scroll » documentation   «C-f»         I
+Scroll « documentation   «C-b»         I
+Move to » item           «Tab»        IS
+Move to « item           «S-Tab»      IS
 }}}
 Fugitive Mappings {{{
 Git status               gs            N
@@ -210,8 +209,8 @@ Git push                 «Spc»gp       N
 GBrowse                  «Spc»gb      NV
 }}}
 Gitsigns Mappings {{{
-Move to  hunk           ]h            N
-Move to  hunk           [h            N
+Move to » hunk           ]h            N
+Move to « hunk           [h            N
 Stage hunk               «Spc»hs       N
 Undo stage hunk          «Spc»hu       N
 Reset hunk               «Spc»hr       N
@@ -223,8 +222,8 @@ Inside hunk              ih            T
 GitMessenger Mappings {{{
 Open GitMessenger        «Spc»gm       N
 # GitMessenger buffer mappings -----------
-Goto « older commit      «C-o»         N
 Goto » newer commit      «C-i»         N
+Goto « older commit      «C-o»         N
 Close popup window       q             N
 Show help                ?             N
 # Toggle mappings
