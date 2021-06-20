@@ -1,4 +1,5 @@
 local o = vim.o
+local fn = vim.fn
 local api = vim.api
 
 do
@@ -51,7 +52,7 @@ do
     end
 
     timer = vim.defer_fn(function()
-      if vim.fn.mode() == "n" then
+      if fn.mode() == "n" then
         api.nvim_echo({}, false, {})
       end
     end, timeout)
@@ -65,6 +66,30 @@ do
     },
   })
 end
+
+-- Triger `autoread` when files changes on disk and notify after file change.
+-- Ref: https://unix.stackexchange.com/a/383044
+dm.augroup("dm__auto_reload_file", {
+  {
+    events = { "FocusGained", "BufEnter" },
+    targets = { "*" },
+    command = function()
+      if fn.mode() ~= "c" and fn.getcmdwintype() == "" then
+        vim.cmd "checktime"
+      end
+    end,
+  },
+  {
+    events = { "FileChangedShellPost" },
+    targets = { "*" },
+    command = function()
+      vim.notify(
+        "[auto-reload] file changed on disk, buffer reloaded",
+        vim.log.levels.WARN
+      )
+    end,
+  },
+})
 
 dm.augroup("custom_autocmds", {
   -- Highlight current cursorline, but only in the active window and not in
@@ -113,13 +138,6 @@ dm.augroup("custom_autocmds", {
     events = { "Syntax" },
     targets = { "*" },
     command = "syntax sync minlines=1000",
-  },
-
-  -- Check if file changed (more eager than 'autoread')
-  {
-    events = { "FocusGained", "BufEnter" },
-    targets = { "*" },
-    command = "checktime",
   },
 
   -- Automatically go to insert mode on terminal buffer
