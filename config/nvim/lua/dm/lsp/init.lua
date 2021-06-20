@@ -12,8 +12,8 @@ local servers = require "dm.lsp.servers"
 require "dm.formatter"
 require "dm.lsp.handlers"
 
--- For debugging purposes:
-vim.lsp.set_log_level(vim.lsp.log_levels.DEBUG)
+-- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
+vim.lsp.set_log_level "info"
 
 -- Utility functions, commands and keybindings
 do
@@ -22,11 +22,14 @@ do
   local function open_lsp_log()
     nvim_command "botright split"
     nvim_command "resize 20"
-    nvim_command("edit " .. vim.lsp.get_log_path())
+    nvim_command("edit + " .. vim.lsp.get_log_path())
     api.nvim_win_set_option(0, "wrap", false)
   end
 
   dm.command { "LspLog", open_lsp_log }
+  dm.command { "LspClients", function()
+    print(vim.inspect(vim.lsp.buf_get_clients()))
+  end }
   api.nvim_set_keymap("n", "<Leader>ll", "<Cmd>LspLog<CR>", opts)
   api.nvim_set_keymap("n", "<Leader>lr", "<Cmd>LspRestart<CR>", opts)
 end
@@ -55,11 +58,16 @@ sign_define("LightBulbSign", {
 -- Set the default options for all LSP floating windows.
 --   - Default border according to `vim.g.border_style`
 --   - 'q' to quit with `nowait = true`
+--   - Max width and height of the window as per the editor width and height
 do
   local default = vim.lsp.util.open_floating_preview
   vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
+    local max_width = math.max(math.floor(vim.o.columns * 0.7), 100)
     opts = vim.tbl_deep_extend("force", opts, {
       border = icons.border[vim.g.border_style],
+      max_width = max_width,
+      max_height = math.max(math.floor(vim.o.lines * 0.3), 30),
+      wrap_at = max_width,
     })
     local bufnr, winnr = default(contents, syntax, opts)
     local o = { noremap = true, nowait = true, silent = true }
