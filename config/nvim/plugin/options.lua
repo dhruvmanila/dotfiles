@@ -89,8 +89,9 @@ opt.textwidth = 0 -- do not automatically wrap text
 opt.undofile = true
 opt.updatetime = 100
 
--- Complete longest common string : show the wildmenu,
--- start completing each full match
-opt.wildmode = "longest:full,full"
+opt.wildmode = {
+  "longest:full", -- complete longest common string : show the wildmenu
+  "full", -- start completing each full match
+}
 
 opt.wrap = true -- visually wrap lines longer than window width
