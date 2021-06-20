@@ -90,9 +90,8 @@ map("n", "<Leader>su", [[:%s/\<<C-r><C-w>\>//g<Left><Left>]])
 -- Set windows to equal width and height
 map("n", "<Leader>=", "<Cmd>wincmd =<CR>")
 
--- Source files
-map("n", "<Leader>sl", ":luafile %<CR>", { silent = true })
-map("n", "<Leader>sv", ":source %<CR>", { silent = true })
+-- Source files (works only with either lua or vim files)
+map("n", "<leader>so", ":source %<CR>", { silent = true })
 
 -- Jump to start and end of line using the home row keys
 map({ "n", "x" }, "H", "^")
