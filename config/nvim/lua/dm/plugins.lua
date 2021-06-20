@@ -120,6 +120,7 @@ local function load_plugins()
     },
     { "raimon49/requirements.txt.vim" },
     { "rhysd/clever-f.vim" },
+    { "rhysd/git-messenger.vim" },
     { "sainnhe/gruvbox-material" },
     { "tamago324/lir.nvim" },
     { "tjdevries/tree-sitter-lua", opt = true },

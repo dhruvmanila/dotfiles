@@ -219,6 +219,19 @@ Preview hunk             «Spc»hp       N
 Blame line               «Spc»hb       N
 Inside hunk              ih            T
 }}}
+GitMessenger Mappings {{{
+Open GitMessenger        «Spc»gm       N
+# GitMessenger buffer mappings -----------
+Goto « older commit      «C-o»         N
+Goto » newer commit      «C-i»         N
+Close popup window       q             N
+Show help                ?             N
+# Toggle mappings
+Current file diffs       d             N
+All diffs                D             N
+Current file word diffs  r             N
+All word diffs           R             N
+}}}
 Vim External Mappings {{{
 External browser         «Spc»eb       N
 External editor          «Spc»ee       N
