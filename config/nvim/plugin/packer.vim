@@ -43,12 +43,16 @@ if empty(glob(s:install_path)) > 0
 endif
 
 " Define all the necessary commands similar to packer.nvim
+" Don't use `require`, because we really do want to load it fresh before every
+" Packer command, otherwise we are stuck with whatever was in that file the
+" first time. Another way to do this is using `dofile` but that requires the
+" full path name of the file: "stdpath('config') .. '/lua/dm/plugins.lua'"
 " Refer: `packer.make_commands`
-command! PackerInstall lua require('dm.plugins').install()
-command! PackerUpdate lua require('dm.plugins').update()
-command! PackerSync lua require('dm.plugins').sync()
-command! PackerCompile lua require('dm.plugins').compile()
-command! PackerClean lua require('dm.plugins').clean()
+command! PackerInstall lua R('dm.plugins').install()
+command! PackerUpdate lua R('dm.plugins').update()
+command! PackerSync lua R('dm.plugins').sync()
+command! PackerCompile lua R('dm.plugins').compile()
+command! PackerClean lua R('dm.plugins').clean()
 command! PackerStatus lua require('dm.plugins').status()
 command! PackerProfile lua require('dm.plugins').profile_output()
 command! PackerCompiledEdit exe "tabedit " . g:packer_compiled_path
