@@ -207,6 +207,7 @@ Move to  item           «S-Tab»      IS
 Fugitive Mappings {{{
 Git status               gs            N
 Git push                 «Spc»gp       N
+GBrowse                  «Spc»gb      NV
 }}}
 Gitsigns Mappings {{{
 Move to  hunk           ]h            N

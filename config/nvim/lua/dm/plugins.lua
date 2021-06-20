@@ -127,6 +127,7 @@ local function load_plugins()
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
     { "tpope/vim-fugitive" },
+    { "tpope/vim-rhubarb" },
     { "tpope/vim-scriptease" },
     { "tweekmonster/startuptime.vim", cmd = "StartupTime" },
     { "vim-scripts/applescript.vim" },
