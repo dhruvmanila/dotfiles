@@ -22,9 +22,11 @@ g.nvim_tree_follow = 1
 g.nvim_tree_disable_netrw = 0
 g.nvim_tree_hijack_netrw = 0
 
+-- TODO: synchronize this with lir and nnn
 g.nvim_tree_bindings = {
   ["."] = tree_cb "toggle_dotfiles",
   ["l"] = tree_cb "edit",
+  ["<CR>"] = tree_cb "edit",
   ["h"] = tree_cb "close_node",
 }
 
