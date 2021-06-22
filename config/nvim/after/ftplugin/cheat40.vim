@@ -19,18 +19,3 @@ endfunction
 
 nnoremap <buffer><nowait><silent> e :call <SID>edit_cheat40()<CR>
 nnoremap <buffer><nowait><silent> <space> za
-
-" Plugin sets the keymap with `nowait = false` after the `filetype` option is
-" set and thus after everything in this file is executed. This will help us
-" override the mappings set by the plugin in the future.
-lua << EOF
-vim.schedule(function()
-  vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    "q",
-    "<Cmd>bd<CR>",
-    { noremap = true, nowait = true }
-  )
-end)
-EOF
