@@ -29,8 +29,7 @@
 │           └── ...            # Custom telescope extensions
 ├── plugin
 │   ├── *.vim ...              # First all .vim files are loaded
-│   ├── *.lua ...              # And then all .lua files are loaded
-│   └── packer_compiled.vim
+│   └── *.lua ...              # And then all .lua files are loaded
 ├── cheat40.txt
 ├── init.lua                   # Global vars and require globals module
 └── minimal.vim
