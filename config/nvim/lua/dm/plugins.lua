@@ -81,7 +81,7 @@ local function load_plugins()
       config = conf "gitsigns",
     },
     { "lifepillar/vim-cheat40" },
-    { "liuchengxu/vista.vim", cmd = "Vista" },
+    { "liuchengxu/vista.vim" },
     {
       "lukas-reineke/indent-blankline.nvim",
       branch = "lua",
