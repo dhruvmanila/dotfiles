@@ -122,7 +122,7 @@ local function load_plugins()
     { "rhysd/clever-f.vim" },
     { "rhysd/git-messenger.vim" },
     { "sainnhe/gruvbox-material" },
-    { "tamago324/lir.nvim" },
+    { "tamago324/lir.nvim", keys = "-", config = conf "lir" },
     { "tjdevries/tree-sitter-lua", opt = true },
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
