@@ -437,8 +437,17 @@ end
 local function job(interval, task)
   -- A one-shot job to initialize the data
   vim.defer_fn(task, 100)
+  ---@type number
+  local pending_job
   -- Start the job every `interval` milliseconds ad infinitum
-  fn.timer_start(interval, task, { ["repeat"] = -1 })
+  fn.timer_start(interval, function()
+    if pending_job then
+      fn.jobstop(pending_job)
+    end
+    pending_job = task()
+  end, {
+    ["repeat"] = -1,
+  })
 end
 
 ---Function to start a job which sets the current Python version.
