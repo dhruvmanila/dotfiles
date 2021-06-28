@@ -5,7 +5,6 @@ local contains = vim.tbl_contains
 local devicons = require "nvim-web-devicons"
 local icons = require "dm.icons"
 local utils = require "dm.utils"
-local lsp_status = require "lsp-status"
 
 -- Colors are taken from the current colorscheme
 -- TODO: Any way of taking the values directly from the common highligh groups?
@@ -279,49 +278,14 @@ local function lsp_current_function(hl)
 end
 
 ---Neovim LSP messages
----Ref: https://github.com/nvim-lua/lsp-status.nvim/blob/master/lua/lsp-status/statusline.lua#L37
----@return string|nil
+---@param hl string
+---@return string
 local function lsp_messages(hl)
-  hl = wrap_hl(hl)
-  local messages = lsp_status.messages()
-  local spinner_frames = icons.spinner_frames
-  -- We are only interested in one message and thus I am choosing the last one.
-  -- This would be similar to debouncing at the trailing edge. Otherwise, the
-  -- statusline gets filled with multiple messages one after the other.
-  local msg = messages[#messages]
-  local contents = ""
-
-  if msg then
-    if msg.progress then
-      contents = msg.title
-      if msg.message then
-        contents = contents .. " " .. msg.message
-      end
-      if msg.percentage then
-        contents = contents .. string.format(" (%.0f%%%%)", msg.percentage)
-      end
-      if msg.spinner then
-        contents = spinner_frames[(msg.spinner % #spinner_frames) + 1]
-          .. " "
-          .. contents
-      end
-    elseif msg.status then
-      contents = msg.content
-      if msg.uri then
-        local filename = vim.uri_to_fname(msg.uri)
-        filename = fn.fnamemodify(filename, ":~:.")
-        local space = math.min(60, math.floor(0.6 * fn.winwidth(0)))
-        if #filename > space then
-          filename = fn.pathshorten(filename)
-        end
-        contents = "(" .. filename .. ") " .. contents
-      end
-    else
-      contents = msg.content
-    end
+  local message = vim.g.lsp_progress_message
+  if message and message ~= "" then
+    return wrap_hl(hl) .. message .. " %*"
   end
-
-  return contents ~= "" and hl .. contents .. " %*" or ""
+  return ""
 end
 
 ---Create the statusline for the inactive buffer.
@@ -505,6 +469,48 @@ dm.augroup("custom_statusline", {
     command = github_notifications_job,
   },
 })
+
+do
+  local timeout = 1000
+  local clear_message_timer
+
+  local function format_data(data)
+    local message
+    if data.progress then
+      message = data.title
+      if data.message then
+        message = message .. " " .. data.message
+      end
+      if data.percentage then
+        message = message .. string.format(" (%.0f%%%%)", data.percentage)
+      end
+    else
+      message = data.content
+    end
+    return message
+  end
+
+  local function on_progress_update()
+    local messages = vim.lsp.util.get_progress_messages()
+    for _, data in ipairs(messages) do
+      vim.g.lsp_progress_message = format_data(data)
+    end
+    if clear_message_timer then
+      clear_message_timer:stop()
+    end
+    -- Reset the variable to clear the statusline.
+    clear_message_timer = vim.defer_fn(function()
+      vim.g.lsp_progress_message = nil
+      clear_message_timer = nil
+    end, timeout)
+  end
+
+  dm.autocmd {
+    group = "custom_statusline",
+    events = { "User LspProgressUpdate" },
+    command = on_progress_update,
+  }
+end
 
 -- :h qf.vim, disable quickfix statusline
 vim.g.qf_disable_statusline = 1

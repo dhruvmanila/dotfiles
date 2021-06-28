@@ -5,7 +5,6 @@ local nvim_buf_set_keymap = api.nvim_buf_set_keymap
 
 local icons = require "dm.icons"
 local lspconfig = require "lspconfig"
-local lspstatus = require "lsp-status"
 local plugins = require "dm.lsp.plugins"
 local servers = require "dm.lsp.servers"
 
@@ -199,11 +198,9 @@ end
 for server, config in pairs(servers) do
   config = type(config) == "function" and config() or config
   config.on_attach = custom_on_attach
-  config.capabilities = vim.tbl_deep_extend(
-    "keep",
-    config.capabilities or vim.lsp.protocol.make_client_capabilities(),
-    lspstatus.capabilities
-  )
+  if not config.capabilities then
+    config.capabilities = vim.lsp.protocol.make_client_capabilities()
+  end
   -- TODO: Update server after adding a snippet plugin
   -- config.capabilities.textDocument.completion.completionItem.snippetSupport =
   --   true

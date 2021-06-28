@@ -31,8 +31,6 @@ lspstatus.config {
   end)(),
   diagnostics = false,
 }
--- Register the progress handler with Neovim's LSP client.
-lspstatus.register_progress()
 
 -- Include all the plugins `on_attach` calls in this function which should be
 -- called in the main `on_attach` function in `lsp/init.lua`
