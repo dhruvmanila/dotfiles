@@ -7,4 +7,4 @@ map("n", "<leader>gp", "<Cmd>Git push<CR>", opts)
 
 -- Open current file on GitHub (requires `vim-rhubarb`)
 map("n", "<leader>gb", "<Cmd>GBrowse<CR>", opts)
-map("v", "<leader>gb", "<Cmd>GBrowse<CR>", opts)
+map("v", "<leader>gb", ":GBrowse<CR>", opts)
