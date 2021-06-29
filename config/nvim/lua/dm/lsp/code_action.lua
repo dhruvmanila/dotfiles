@@ -45,16 +45,16 @@ local function set_autocmds(bufnr, winnr)
   local target_buffer = string.format("<buffer=%s>", bufnr)
   dm.augroup("code_action_autocmds", {
     {
-      events = { "CursorMoved" },
-      targets = { target_buffer },
+      events = "CursorMoved",
+      targets = target_buffer,
       command = function()
         require("dm.utils").fixed_column_movement(code_action)
       end,
     },
     {
       events = { "BufLeave", "WinLeave" },
-      targets = { target_buffer },
-      modifiers = { "++once" },
+      targets = target_buffer,
+      modifiers = "++once",
       command = function()
         api.nvim_win_close(winnr, true)
       end,

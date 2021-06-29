@@ -138,18 +138,18 @@ local function custom_on_attach(client, bufnr)
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
   if capabilities.document_highlight then
     table.insert(lsp_autocmds, {
-      events = { "CursorHold" },
-      targets = { "<buffer>" },
+      events = "CursorHold",
+      targets = "<buffer>",
       command = vim.lsp.buf.document_highlight,
     })
     table.insert(lsp_autocmds, {
-      events = { "CursorMoved" },
-      targets = { "<buffer>" },
+      events = "CursorMoved",
+      targets = "<buffer>",
       command = vim.lsp.buf.clear_references,
     })
     table.insert(lsp_autocmds, {
-      events = { "CursorHold" },
-      targets = { "<buffer>" },
+      events = "CursorHold",
+      targets = "<buffer>",
       command = require("dm.lsp.diagnostics").show_line_diagnostics,
     })
   end
@@ -165,7 +165,7 @@ local function custom_on_attach(client, bufnr)
 
     table.insert(lsp_autocmds, {
       events = { "CursorHold", "CursorHoldI" },
-      targets = { "<buffer>" },
+      targets = "<buffer>",
       command = require("nvim-lightbulb").update_lightbulb,
     })
 

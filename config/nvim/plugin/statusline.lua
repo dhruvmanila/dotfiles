@@ -455,17 +455,17 @@ end
 dm.augroup("custom_statusline", {
   {
     events = { "VimEnter", "ColorScheme" },
-    targets = { "*" },
+    targets = "*",
     command = statusline_highlights,
   },
   {
-    events = { "FileType" },
-    targets = { "python" },
+    events = "FileType",
+    targets = "python",
     command = python_version_job,
   },
   {
-    events = { "VimEnter" },
-    targets = { "*" },
+    events = "VimEnter",
+    targets = "*",
     command = github_notifications_job,
   },
 })
@@ -507,7 +507,7 @@ do
 
   dm.autocmd {
     group = "custom_statusline",
-    events = { "User LspProgressUpdate" },
+    events = "User LspProgressUpdate",
     command = on_progress_update,
   }
 end

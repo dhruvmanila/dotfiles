@@ -55,35 +55,45 @@ function dm._execute(id, ...)
   dm._store[id](...)
 end
 
--- Lua interface to vim autocommands.
--- `opts` table can contain the following keys:
---   - `group` (string) (optional) augroup name
---   - `events` (string[]) array of events
---   - `targets` (string[]) array of target patterns
---   - `modifiers` (string[]) array of modifiers (++once, ++nested)
---   - `command` (string|function) command to execute
----@param opts table
-function dm.autocmd(opts)
-  local command = opts.command
-  if type(command) == "function" then
-    local fn_id = dm._create(command)
-    command = format("lua dm._execute('%s')", fn_id)
+---@class AutocmdOpts
+---@field group string augroup name
+---@field events string|string[] a single event or list of events
+---@field targets string|string[] a single target or list of targets
+---@field modifiers string|string[] a single modifier or list of modifiers (once, nested)
+---@field command string|function
+
+do
+  -- Helper function to resolve autocmd options.
+  ---@param opt? string|string[]
+  ---@return string[]
+  local function resolve(opt)
+    return opt and (type(opt) == "string" and { opt } or opt) or {}
   end
-  vim.cmd(
-    format(
-      "autocmd %s %s %s %s %s",
-      opts.group or "",
-      table.concat(opts.events, ","),
-      table.concat(opts.targets or {}, ","),
-      table.concat(opts.modifiers or {}, " "),
-      command
+
+  -- Lua interface to vim autocommands.
+  ---@param opts AutocmdOpts
+  function dm.autocmd(opts)
+    local command = opts.command
+    if type(command) == "function" then
+      local fn_id = dm._create(command)
+      command = format("lua dm._execute('%s')", fn_id)
+    end
+    vim.cmd(
+      format(
+        "autocmd %s %s %s %s %s",
+        opts.group or "",
+        table.concat(resolve(opts.events), ","),
+        table.concat(resolve(opts.targets), ","),
+        table.concat(resolve(opts.modifiers), " "),
+        command
+      )
     )
-  )
+  end
 end
 
 -- Lua interface to vim augroup.
----@param name string group name of the given commands
----@param commands table ref: dm.autocmd
+---@param name string group name of the given autocmds
+---@param commands AutocmdOpts[]
 function dm.augroup(name, commands)
   vim.cmd("augroup " .. name)
   vim.cmd "autocmd!"

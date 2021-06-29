@@ -163,7 +163,7 @@ end
 dm.augroup("custom_tabline", {
   {
     events = { "VimEnter", "ColorScheme" },
-    targets = { "*" },
+    targets = "*",
     command = tabline_highlights,
   },
 })

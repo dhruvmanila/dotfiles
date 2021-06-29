@@ -379,17 +379,17 @@ function M.open(on_vimenter)
 
   dm.autocmd {
     group = "dashboard",
-    events = { "CursorMoved" },
-    targets = { "<buffer>" },
+    events = "CursorMoved",
+    targets = "<buffer>",
     command = function()
       require("dm.utils").fixed_column_movement(dashboard)
     end,
   }
   dm.autocmd {
     group = "dashboard",
-    events = { "BufWipeout" },
-    targets = { "dashboard" },
-    modifiers = { "++once" },
+    events = "BufWipeout",
+    targets = "dashboard",
+    modifiers = "++once",
     command = reset_opts,
   }
   cmd "silent! %foldopen!"

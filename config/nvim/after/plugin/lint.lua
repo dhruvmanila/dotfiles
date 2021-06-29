@@ -7,8 +7,8 @@ lint.linters_by_ft = {
 
 dm.augroup("auto_linting", {
   {
-    events = { "BufWritePost" },
-    targets = { "*" },
+    events = "BufWritePost",
+    targets = "*",
     command = lint.try_lint,
   },
 })

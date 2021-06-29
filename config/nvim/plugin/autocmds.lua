@@ -24,15 +24,15 @@ do
   -- Highlight colorcolumn only in insert mode
   dm.augroup("auto_colorcolumn", {
     {
-      events = { "InsertEnter" },
-      targets = { "*" },
+      events = "InsertEnter",
+      targets = "*",
       command = function()
         set_colorcolumn(false)
       end,
     },
     {
-      events = { "InsertLeave" },
-      targets = { "*" },
+      events = "InsertLeave",
+      targets = "*",
       command = function()
         set_colorcolumn(true)
       end,
@@ -61,7 +61,7 @@ do
   dm.augroup("clear_command_messages", {
     {
       events = { "CmdlineLeave", "CmdlineChanged" },
-      targets = { ":" },
+      targets = ":",
       command = clear_messages,
     },
   })
@@ -72,7 +72,7 @@ end
 dm.augroup("dm__auto_reload_file", {
   {
     events = { "FocusGained", "BufEnter" },
-    targets = { "*" },
+    targets = "*",
     command = function()
       if fn.mode() ~= "c" and fn.getcmdwintype() == "" then
         vim.cmd "checktime"
@@ -80,8 +80,8 @@ dm.augroup("dm__auto_reload_file", {
     end,
   },
   {
-    events = { "FileChangedShellPost" },
-    targets = { "*" },
+    events = "FileChangedShellPost",
+    targets = "*",
     command = function()
       vim.notify(
         "[auto-reload] file changed on disk, buffer reloaded",
@@ -96,7 +96,7 @@ dm.augroup("custom_autocmds", {
   -- special buffers like dashboard.
   {
     events = { "WinEnter", "BufEnter", "InsertLeave" },
-    targets = { "*" },
+    targets = "*",
     command = function()
       if not o.cursorline and o.filetype ~= "dashboard" then
         o.cursorline = true
@@ -105,7 +105,7 @@ dm.augroup("custom_autocmds", {
   },
   {
     events = { "WinLeave", "BufLeave", "InsertEnter" },
-    targets = { "*" },
+    targets = "*",
     command = function()
       if o.cursorline and o.filetype ~= "dashboard" then
         o.cursorline = false
@@ -115,8 +115,8 @@ dm.augroup("custom_autocmds", {
 
   -- Equalize window dimensions when resizing vim
   {
-    events = { "VimResized" },
-    targets = { "*" },
+    events = "VimResized",
+    targets = "*",
     command = function()
       local last_tab = api.nvim_get_current_tabpage()
       vim.cmd "tabdo wincmd ="
@@ -126,8 +126,8 @@ dm.augroup("custom_autocmds", {
 
   -- Highlighted yank
   {
-    events = { "TextYankPost" },
-    targets = { "*" },
+    events = "TextYankPost",
+    targets = "*",
     command = function()
       vim.highlight.on_yank { higroup = "Substitute", timeout = 200 }
     end,
@@ -135,15 +135,15 @@ dm.augroup("custom_autocmds", {
 
   -- Start syncing syntax highlighting N lines before the current line
   {
-    events = { "Syntax" },
-    targets = { "*" },
+    events = "Syntax",
+    targets = "*",
     command = "syntax sync minlines=1000",
   },
 
   -- Automatically go to insert mode on terminal buffer
   {
     events = { "TermOpen", "WinEnter" },
-    targets = { "term://*" },
+    targets = "term://*",
     command = "startinsert",
   },
 })

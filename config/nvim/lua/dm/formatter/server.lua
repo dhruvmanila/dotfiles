@@ -116,9 +116,9 @@ do
     formatter._state.running = false
 
     dm.autocmd {
-      events = { "FileType" },
-      targets = { filetype },
-      modifiers = { "++once" },
+      events = "FileType",
+      targets = filetype,
+      modifiers = "++once",
       command = function()
         start_server(formatter)
       end,
@@ -127,8 +127,8 @@ do
     if not cleanup_set then
       dm.augroup("formatter_cleanup", {
         {
-          events = { "VimLeavePre" },
-          targets = { "*" },
+          events = "VimLeavePre",
+          targets = "*",
           command = kill_servers,
         },
       })
