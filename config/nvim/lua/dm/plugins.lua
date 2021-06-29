@@ -77,7 +77,7 @@ local function load_plugins()
     { "kyazdani42/nvim-web-devicons" },
     {
       "lewis6991/gitsigns.nvim",
-      event = { "BufReadPre", "BufNewFile" },
+      event = "BufReadPre",
       config = conf "gitsigns",
     },
     { "lifepillar/vim-cheat40" },
@@ -114,10 +114,7 @@ local function load_plugins()
       config = conf "treesitter",
     },
     { "nvim-treesitter/nvim-treesitter-textobjects", after = "nvim-treesitter" },
-    {
-      "nvim-treesitter/playground",
-      cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
-    },
+    { "nvim-treesitter/playground", after = "nvim-treesitter" },
     { "raimon49/requirements.txt.vim" },
     { "rhysd/clever-f.vim" },
     { "rhysd/git-messenger.vim" },
