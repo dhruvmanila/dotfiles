@@ -5,6 +5,7 @@ opt.breakindent = true -- every wrapped line will continue visually indented
 
 opt.clipboard = { "unnamed" } -- use OS clipboard
 opt.cmdheight = 1
+opt.colorcolumn = "" -- Default value, it changes on Insert* events
 
 opt.completeopt = {
   "menuone", -- show menu even if there is only one match
