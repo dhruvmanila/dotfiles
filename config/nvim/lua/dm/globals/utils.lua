@@ -7,7 +7,6 @@
 _NvimGlobalCallbacks = _NvimGlobalCallbacks or {}
 
 -- Create a global namespace to store callbacks, global functions, etc.
--- TODO: can we use 'nvim', 'g', 'neovim' or something similar to neovim itself?
 _G.dm = {
   _store = _NvimGlobalCallbacks,
 }
@@ -27,6 +26,7 @@ local function create_id(f)
   end
   local source = info.source
     :gsub(".*/lua/(.*)", "%1") -- path from "../lua/" module
+    :gsub(".*/nvim/(.*)", "%1") -- OR path from "../nvim/"
     :gsub("/", ".") -- replace "/" with "."
     :gsub("%.lua$", "") -- remove the ".lua" extension
   local name = info.name and "_" .. info.name or ""
