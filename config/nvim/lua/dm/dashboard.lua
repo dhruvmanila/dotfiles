@@ -37,7 +37,7 @@ dashboard.opts = {
 --- Last session entry description.
 --- This also sets the global variable `startify_last_session_name` to be used
 --- to load the session.
----@return table
+---@return string[]
 local function last_session_description()
   local last_session = ""
   local last_edited = 0
@@ -59,7 +59,7 @@ local function last_session_description()
 end
 
 --- Generate and return the header of the start page.
----@return table
+---@return string[]
 local function generate_header()
   return {
     "",
@@ -73,6 +73,7 @@ local function generate_header()
   }
 end
 
+---@return string[]
 local function generate_sub_header()
   -- local v = vim.version()
   -- v = "v" .. v.major .. "." .. v.minor .. "." .. v.patch
@@ -80,10 +81,12 @@ local function generate_sub_header()
   return { v, "", "" }
 end
 
---- Dashboard entries. Every element is a dictionary with the following keys:
----   - `key`: (string) used to create a keymap to trigger `command`
----   - `description`: (string[] | fun():string[]) display this on the start page
----   - `command`: (string | function) execute the command on pressing `key`
+---@class DashboardEntry
+---@field key string keymap to trigger the `command`
+---@field description string[]|function command description
+---@field command string|function execute the `command` on `key` or `<CR>`
+
+---@type DashboardEntry[]
 local entries = {
   {
     key = "l",
@@ -124,7 +127,7 @@ local entries = {
 }
 
 --- Generate and return the footer of the start page.
----@return table
+---@return string[]
 local function generate_footer()
   local loaded_plugins = #vim.tbl_filter(
     plugin_loaded,
@@ -135,18 +138,18 @@ end
 
 --- Add the key value to the right end of the given line with the appropriate
 --- padding as per the `length` value.
----@param line table
+---@param line string[]
 ---@param key string
 ---@param length number
----@return table
+---@return string[]
 local function add_key(line, key, length)
   return { line[1] .. string.rep(" ", length - #line[1]) .. key }
 end
 
 --- Add paddings on the left side of every line to make it look like its in the
 --- center of the current window.
----@param lines table
----@return table
+---@param lines string[]
+---@return string[]
 local function center(lines)
   local longest_line = math.max(unpack(vim.tbl_map(function(line)
     return api.nvim_strwidth(line)
@@ -159,11 +162,11 @@ local function center(lines)
   end, lines)
 end
 
---- Perform either of the three process for the given/saved options:
----   - set the given options
----   - save the option values for the given `opts` in `saved_opts` table
----@param opts table|nil
----@param process string - set|save
+---@alias Process
+---|'"set"' # set the options using the `opts` table
+---|'"save"' # save the option values for the given `opts` table
+---@param opts? table<string, any>
+---@param process Process
 local function option_process(opts, process)
   for name, value in pairs(opts) do
     dm.case(process, {
@@ -178,7 +181,7 @@ local function option_process(opts, process)
 end
 
 --- Register the entry into the dashboard table for the current line
----@param entry table
+---@param entry DashboardEntry
 local function register_entry(entry)
   local line = api.nvim_buf_line_count(0) - 1
   dashboard.entries[line] = {
@@ -188,7 +191,7 @@ local function register_entry(entry)
   }
 end
 
---- Set the entries in the UI and register it in the dashboard table.
+--- Set the entries in the UI and register it in the dashboard namespace.
 local function set_entries()
   for _, entry in ipairs(entries) do
     local description = entry.description
@@ -277,19 +280,18 @@ end
 --- Open the entry as per the given `line`. If `line` is `nil`, then open the
 --- entry at the cursor position (coming from pressing <CR>), otherwise open
 --- the entry at the given line (coming from pressing `key`).
----@param line nil|number
+---@param line? number
 function M.open_entry(line)
   line = line or api.nvim_win_get_cursor(0)[1]
   local entry = dashboard.entries[line]
-  local command_type = type(entry.command)
+  local command = entry.command
 
-  if command_type == "function" then
-    entry.command()
-  elseif command_type == "string" then
-    cmd(entry.command)
-  else
-    utils.warn("[dashboard] Unsupported 'command' type: " .. command_type)
-  end
+  dm.case(type(command), {
+    ["function"] = command,
+    ["string"] = function()
+      cmd(command)
+    end,
+  })
 end
 
 --- Open the dashboard buffer in the current buffer if it is empty or create
