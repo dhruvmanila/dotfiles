@@ -166,18 +166,14 @@ end
 ---@param process string - set|save
 local function option_process(opts, process)
   for name, value in pairs(opts) do
-    local scope = api.nvim_get_option_info(name).scope
-    scope = (scope == "buf" or scope == "win") and scope .. "_" or ""
-    if process == "set" then
-      api["nvim_" .. scope .. "set_option"](0, name, value)
-    elseif process == "save" then
-      dashboard.saved_opts[name] = api["nvim_" .. scope .. "get_option"](
-        0,
-        name
-      )
-    else
-      error("Unknown 'process' value: " .. process)
-    end
+    dm.case(process, {
+      ["set"] = function()
+        o[name] = value
+      end,
+      ["save"] = function()
+        dashboard.saved_opts[name] = o[name]
+      end,
+    })
   end
 end
 
