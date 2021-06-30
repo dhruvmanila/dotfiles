@@ -131,32 +131,40 @@ function dm.command(opts)
   vim.cmd(format("command! -nargs=%d %s %s %s", nargs, attr, name, rhs))
 end
 
--- Similar to case statement.
----@alias CaseT string|number|function
----@param value CaseT
----@param blocks table<CaseT, CaseT>
----@param err? boolean
-function dm.case(value, blocks, err)
-  local expected = {}
-  value = type(value) == "function" and value() or value
-  for match, block in pairs(blocks) do
-    match = type(match) == "function" and match(value) or match
-    table.insert(expected, match)
-    if match == true or match == value then
-      return type(block) == "function" and block(value) or block
+do
+  ---@alias CaseT string|number|function
+
+  ---@param x CaseT
+  ---@return any
+  local function resolve(x, ...)
+    return type(x) == "function" and x(...) or x
+  end
+
+  -- Similar to case statement.
+  ---@param value CaseT
+  ---@param blocks table<CaseT, CaseT>
+  ---@param err? boolean
+  function dm.case(value, blocks, err)
+    local expected = {}
+    value = resolve(value)
+    for match, block in pairs(blocks) do
+      match = resolve(match, value)
+      if match == "*" then
+        return resolve(block, value)
+      end
+      table.insert(expected, match)
+      if match == true or match == value then
+        return resolve(block, value)
+      end
     end
-  end
-  local default = blocks["*"]
-  if default then
-    return type(default) == "function" and default(value) or default
-  end
-  if err == nil or err == true then
-    local msg = string.format(
-      "expected one of '%s', got %s (%s)",
-      table.concat(expected, "', '"),
-      vim.inspect(value),
-      type(value)
-    )
-    error(debug.traceback(msg, 2), 2)
+    if err == nil or err == true then
+      local msg = string.format(
+        "expected one of '%s', got %s (%s)",
+        table.concat(expected, "', '"),
+        vim.inspect(value),
+        type(value)
+      )
+      error(debug.traceback(msg, 2), 2)
+    end
   end
 end
