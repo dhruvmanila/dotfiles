@@ -31,4 +31,7 @@ PATH="${PATH}:${CARGO_HOME}/bin"
 # Setting PATH for BasicTex
 PATH="/Library/TeX/texbin:${PATH}"
 
+# Neovim nightly
+PATH="${HOME}/neovim/bin:${PATH}"
+
 export PATH

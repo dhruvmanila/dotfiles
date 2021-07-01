@@ -599,10 +599,6 @@ function upgrade_neovim_nightly() { # {{{
     CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$NEOVIM_INSTALL_DIRECTORY"
   make install
   cd $curr_dir
-
-  header "Upgrading brew installed Neovim nightly..."
-  brew uninstall neovim
-  brew install --HEAD neovim
 }
 # }}}
 function upgrade_lua_language_server() { # {{{

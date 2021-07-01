@@ -46,7 +46,6 @@ brew "rust"                  # Rust programming language
 brew "pipx"           # Global Python packages
 
 # Editors
-brew "neovim", args: ["HEAD"]
 brew "vim"
 
 # System monitoring
