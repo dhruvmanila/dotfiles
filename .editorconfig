@@ -12,7 +12,7 @@ trim_trailing_whitespace = true
 [*.{py,pyi}]
 indent_size = 4
 
-[*.{json,lua,rb,rkt,sh,sml,toml,yaml,yml}]
+[*.{c,json,lua,rb,rkt,sh,sml,toml,yaml,yml}]
 indent_size = 2
 
 [karabiner.json]
@@ -20,3 +20,6 @@ indent_size = 4
 
 [*{gitconfig,Makefile}]
 indent_style = tab
+
+[*/cs50/**.c]
+indent_size = 4
