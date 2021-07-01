@@ -24,10 +24,10 @@ g.nvim_tree_hijack_netrw = 0
 
 -- TODO: synchronize this with lir and nnn
 g.nvim_tree_bindings = {
-  ["."] = tree_cb "toggle_dotfiles",
-  ["l"] = tree_cb "edit",
-  ["<CR>"] = tree_cb "edit",
-  ["h"] = tree_cb "close_node",
+  { key = ".", cb = tree_cb "toggle_dotfiles" },
+  { key = { "l", "<CR>" }, cb = tree_cb "edit" },
+  { key = "h", cb = tree_cb "close_node" },
+  { key = "gh", cb = tree_cb "toggle_help" },
 }
 
 g.nvim_tree_show_icons = {
