@@ -1,3 +1,4 @@
+wincmd =
 call nvim_win_set_cursor(0, [7, 0]) " Set the cursor to About section
 setlocal signcolumn=no
 
