@@ -67,15 +67,9 @@ map("n", "<M-h>", "<Cmd>vertical resize -2<CR>")
 map("n", "<M-l>", "<Cmd>vertical resize +2<CR>")
 
 -- Keep the cursor at the center
--- (zt) &scrolloff lines away from the top
--- (zz) the center
 -- (``) don't move the cursor to the next match
-map("n", "*", "*``zz")
-map("n", "#", "#``zz")
-map("n", "n", "nzz")
-map("n", "N", "Nzz")
-map("n", "<C-o>", "<C-o>zz")
-map("n", "<C-i>", "<C-i>zz")
+map("n", "*", "*``")
+map("n", "#", "#``")
 
 -- Search for visually selected text using '*' and '#'
 -- https://vim.fandom.com/wiki/Search_for_visually_selected_text#Simple
