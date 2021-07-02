@@ -69,8 +69,9 @@ map("n", "<M-l>", "<Cmd>vertical resize +2<CR>")
 -- Keep the cursor at the center
 -- (zt) &scrolloff lines away from the top
 -- (zz) the center
-map("n", "*", "*zz")
-map("n", "#", "#zz")
+-- (``) don't move the cursor to the next match
+map("n", "*", "*``zz")
+map("n", "#", "#``zz")
 map("n", "n", "nzz")
 map("n", "N", "Nzz")
 map("n", "<C-o>", "<C-o>zz")
