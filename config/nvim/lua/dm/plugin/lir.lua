@@ -1,9 +1,11 @@
+local api = vim.api
 local lir = require "lir"
 local utils = require "lir.utils"
 local actions = require "lir.actions"
 local mark_actions = require "lir.mark.actions"
 local clipboard_actions = require "lir.clipboard.actions"
 
+local icons = require "dm.icons"
 local Path = require "plenary.path"
 local M = {}
 
@@ -55,15 +57,40 @@ local function goto_git_root()
   vim.cmd("edit " .. dir)
 end
 
+---@alias Action '"copy"'|'"cut"'
+---@alias Mode '"n"'|'"v"'
 ---Enhanced clipboard actions. This will automatically mark either the
 ---current selection or visually selected items and call the respective
 ---clipboard action.
----@param action string one of "copy" or "cut"
----@param mode string one of "n" or "v" (default: "n")
+---@param action Action
+---@param mode Mode
 function M.clipboard_action(action, mode)
   mode = mode or "n"
   mark_actions.mark(mode)
   clipboard_actions[action]()
+end
+
+-- Construct the Lir floating window options according to the window we are
+-- currently in. The position of the window will be centered in the current
+-- window, thus not blocking other windows if opened.
+---@return table<string, any>
+local function construct_win_opts()
+  local winpos = api.nvim_win_get_position(0)
+  local winwidth = api.nvim_win_get_width(0)
+  local winheight = api.nvim_win_get_height(0)
+
+  local width = math.min(80, winwidth - 14)
+  local height = winheight - 6
+  local row = (winheight / 2) - (height / 2) - 1
+  local col = (winwidth / 2) - (width / 2)
+
+  return {
+    width = width,
+    height = height,
+    row = row + winpos[1],
+    col = col + winpos[2],
+    border = icons.border[vim.g.border_style],
+  }
 end
 
 lir.setup {
@@ -71,10 +98,8 @@ lir.setup {
   devicons_enable = true,
   hide_cursor = false,
   float = {
-    size_percentage = { width = 0.4, height = 0.8 },
-    winblend = 0,
-    border = true,
-    borderchars = require("dm.icons").border[vim.g.border_style],
+    winblend = vim.g.window_blend,
+    win_opts = construct_win_opts,
   },
   mappings = {
     ["q"] = actions.quit,
@@ -130,7 +155,6 @@ lir.setup {
   },
 }
 
--- Similar to dirvish
 vim.api.nvim_set_keymap("n", "-", [[<Cmd>lua require('lir.float').toggle()<CR>]], {
   noremap = true,
 })
