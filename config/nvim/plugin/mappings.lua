@@ -30,14 +30,13 @@ map("n", "]<Leader>", "<Cmd>bnext<CR>")
 map("n", "[<Leader>", "<Cmd>bprev<CR>")
 map("n", "<Leader><BS>", "<Cmd>bdelete<CR>")
 
--- Quickfix and location list
+-- Quickfix list
 map("n", "]q", "<Cmd>cnext<CR>")
 map("n", "[q", "<Cmd>cprev<CR>")
 map("n", "]Q", "<Cmd>clast<CR>")
 map("n", "[Q", "<Cmd>cfirst<CR>")
--- TODO: This slows down <Leader>q
--- map('n', '<Leader>qo', '<Cmd>copen<CR>')
--- map('n', '<Leader>qc', '<Cmd>cclose<CR>')
+
+-- Location list
 map("n", "]l", "<Cmd>lnext<CR>")
 map("n", "[l", "<Cmd>lprev<CR>")
 map("n", "]L", "<Cmd>llast<CR>")
@@ -46,17 +45,9 @@ map("n", "[L", "<Cmd>lfirst<CR>")
 -- Fast switching between last and current file
 map("n", "<Leader><Leader>", "<Cmd>buffer#<CR>")
 
--- Quick cd and lcd
-map("n", "<Leader>cd", "<Cmd>cd %:p:h<CR>")
-map("n", "<Leader>lcd", "<Cmd>lcd %:p:h<CR>")
-map("n", "<Leader>tcd", "<Cmd>tcd %:p:h<CR>")
-
--- Quick tabs movement (trying out tabs)
+-- Tabs
 map("n", "]t", "<Cmd>tabnext<CR>")
 map("n", "[t", "<Cmd>tabprev<CR>")
-map("n", "]T", "<Cmd>tablast<CR>")
-map("n", "[T", "<Cmd>tabfirst<CR>")
-
 -- `<leader>n` goes to nth tab
 for i = 1, 9 do
   map("n", "<leader>" .. i, i .. "gt")
@@ -89,11 +80,8 @@ map("n", "<C-i>", "<C-i>zz")
 map("x", "*", [[y/\V<C-R>=escape(@",'/\')<CR><CR>]])
 map("x", "#", [[y?\V<C-R>=escape(@",'/?')<CR><CR>]])
 
--- Substitue the word on cursor globally
+-- Substitute the word on cursor globally
 map("n", "<Leader>su", [[:%s/\<<C-r><C-w>\>//g<Left><Left>]])
-
--- Set windows to equal width and height
-map("n", "<Leader>=", "<Cmd>wincmd =<CR>")
 
 -- Source files (works only with either lua or vim files)
 map("n", "<leader>so", ":source %<CR>", { silent = true })
