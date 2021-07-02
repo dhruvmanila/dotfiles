@@ -16,7 +16,14 @@ require("compe").setup {
   debug = false,
   min_length = 1,
   preselect = "disable",
-  documentation = true,
+  documentation = {
+    border = require("dm.icons").border[vim.g.border_style],
+    winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
+    max_width = 120,
+    min_width = 60,
+    max_height = math.floor(vim.o.lines * 0.3),
+    min_height = 1,
+  },
 
   source = {
     path = { priority = 9 },
