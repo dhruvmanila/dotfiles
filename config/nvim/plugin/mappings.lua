@@ -84,6 +84,11 @@ map("n", "N", "Nzz")
 map("n", "<C-o>", "<C-o>zz")
 map("n", "<C-i>", "<C-i>zz")
 
+-- Search for visually selected text using '*' and '#'
+-- https://vim.fandom.com/wiki/Search_for_visually_selected_text#Simple
+map("x", "*", [[y/\V<C-R>=escape(@",'/\')<CR><CR>]])
+map("x", "#", [[y?\V<C-R>=escape(@",'/?')<CR><CR>]])
+
 -- Substitue the word on cursor globally
 map("n", "<Leader>su", [[:%s/\<<C-r><C-w>\>//g<Left><Left>]])
 
