@@ -26,8 +26,10 @@ end
 
 -- Default dropdown theme options.
 local default_dropdown = themes.get_dropdown {
-  width = 0.8,
-  results_height = 0.8,
+  layout_config = {
+    width = 0.8,
+    height = 0.8,
+  },
   previewer = false,
 }
 
@@ -35,22 +37,23 @@ require("telescope").setup {
   defaults = {
     prompt_prefix = require("dm.icons").telescope .. " ",
     selection_caret = "❯ ",
-    prompt_position = "top",
     sorting_strategy = "ascending",
     winblend = vim.g.window_blend,
     file_ignore_patterns = { "__pycache__", ".mypy_cache" },
-    layout_strategy = "horizontal",
-    layout_defaults = {
+    layout_strategy = "flex",
+    layout_config = {
+      prompt_position = "top",
+      width = { padding = 12 },
+      height = { padding = 4 },
       horizontal = {
         preview_width = 0.55,
-        width_padding = 0.05,
-        height_padding = 0.1,
       },
       vertical = {
         preview_height = 0.5,
-        width_padding = 0.1,
-        height_padding = 0.06,
         mirror = true,
+      },
+      flex = {
+        flip_columns = 120,
       },
     },
     mappings = {
@@ -66,12 +69,6 @@ require("telescope").setup {
     },
   },
   pickers = {
-    find_files = {
-      layout_strategy = "flex",
-      layout_config = {
-        flip_columns = 120,
-      },
-    },
     buffers = {
       sort_lastused = true,
       show_all_buffers = true,
@@ -85,6 +82,16 @@ require("telescope").setup {
           ["<C-x>"] = actions.delete_buffer,
         },
       },
+      layout_config = {
+        width = function(_, editor_width, _)
+          return math.min(editor_width - 20, 100)
+        end,
+        height = function(_, _, editor_height)
+          -- Number of listed buffers
+          local buflisted = #vim.fn.getbufinfo { buflisted = 1 }
+          return math.max(10, math.min(editor_height - 10, buflisted))
+        end,
+      },
     },
     live_grep = {
       shorten_path = true,
@@ -94,14 +101,18 @@ require("telescope").setup {
     },
     help_tags = {
       layout_config = {
-        preview_width = 0.65,
-        width_padding = 0.10,
+        width = 0.8,
+        horizontal = {
+          preview_width = 0.65,
+        },
       },
     },
     highlights = {
       layout_config = {
-        preview_width = 0.65,
-        width_padding = 0.10,
+        width = 0.8,
+        horizontal = {
+          preview_width = 0.65,
+        },
       },
     },
     command_history = {
@@ -115,6 +126,10 @@ require("telescope").setup {
       layout_config = {
         height = 20,
       },
+    },
+    git_branches = {
+      theme = "dropdown",
+      previewer = false,
     },
     current_buffer_fuzzy_find = default_dropdown,
     vim_options = default_dropdown,
@@ -184,7 +199,8 @@ end
 
 function M.grep_prompt()
   require("telescope.builtin").grep_string {
-    search = vim.fn.input "Grep String > ",
+    use_regex = true,
+    search = vim.fn.input "Grep pattern > ",
   }
 end
 
@@ -198,22 +214,15 @@ function M.find_dotfiles()
   }
 end
 
-function M.buffers()
-  -- Number of listed buffers
-  local buflisted = #vim.fn.getbufinfo { buflisted = 1 }
-  require("telescope.builtin").buffers {
-    width = math.min(vim.o.columns - 20, 100),
-    results_height = math.max(10, math.min(vim.o.lines - 10, buflisted)),
-  }
-end
-
 -- List out all the installed plugins and provide action to either go to the
 -- GitHub page of the plugin or find files within the plugin using telescope.
 function M.installed_plugins()
   require("telescope").extensions.installed_plugins.installed_plugins(
     themes.get_dropdown {
-      width = _PackerPluginInfo.max_length + 10,
-      results_height = 0.8,
+      layout_config = {
+        width = _PackerPluginInfo.max_length + 10,
+        height = 0.8,
+      },
       previewer = false,
     }
   )
@@ -224,8 +233,10 @@ end
 function M.startify_sessions()
   require("telescope").extensions.startify_sessions.startify_sessions(
     themes.get_dropdown {
-      width = 40,
-      results_height = 0.5,
+      layout_config = {
+        width = 40,
+        height = 0.5,
+      },
       previewer = false,
     }
   )
@@ -248,14 +259,18 @@ function M.github_stars()
 end
 
 -- Start a telescope search to cd into any directory from the current one.
--- This is bound to '/', but only in the lir buffer.
+-- The keybinding is defined only for the lir buffer.
 ---@see `after/ftplugin/lir`
 function M.lir_cd()
   -- Previewer is turned off by default. If it is enabled, then use the
   -- horizontal layout with wider results window and narrow preview window.
   require("telescope").extensions.lir_cd.lir_cd(themes.get_dropdown {
-    width = math.min(100, vim.o.columns - 10),
-    results_height = 0.8,
+    layout_config = {
+      width = function(_, editor_width, _)
+        return math.min(100, editor_width - 10)
+      end,
+      height = 0.8,
+    },
     previewer = false,
   })
 end
@@ -271,7 +286,7 @@ do
     -- Files
     ["<C-p>"] = "require('telescope.builtin').find_files()",
     ["<C-f>"] = "require('telescope.builtin').current_buffer_fuzzy_find()",
-    ["<leader>;"] = "require('dm.plugin.telescope').buffers()",
+    ["<leader>;"] = "require('telescope.builtin').buffers()",
     ["<leader>fd"] = "require('dm.plugin.telescope').find_dotfiles()",
     ["<leader>fa"] = "require('dm.plugin.telescope').find_all_files()",
 
@@ -281,6 +296,7 @@ do
 
     -- Git
     ["<leader>gc"] = "require('telescope.builtin').git_commits()",
+    [";b"] = "require('telescope.builtin').git_branches()",
 
     -- Neovim
     ["<leader>fh"] = "require('telescope.builtin').help_tags()",
