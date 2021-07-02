@@ -12,7 +12,11 @@ end
 -- Clear the 'require' cache for the module name.
 ---@param name string
 RELOAD = function(name)
-  package.loaded[name] = nil
+  for pack, _ in pairs(package.loaded) do
+    if string.find(pack, name, 1, true) then
+      package.loaded[name] = nil
+    end
+  end
 end
 
 -- Reload and require the givem module name.
