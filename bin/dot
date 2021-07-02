@@ -528,8 +528,8 @@ function update_macos_dock() { # {{{
 
 # Upgrade functions
 function sync_lib_files() { # {{{
-  # header "Syncing Brewfile with the currently installed packages..."
-  # HOMEBREW_NO_AUTO_UPDATE=1 brew bundle dump -f
+  header "Syncing Brewfile with the currently installed packages..."
+  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle dump -f --describe
 
   header "Syncing requirements.txt with the global Python packages..."
   pipx list --json \
