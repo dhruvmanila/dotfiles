@@ -171,10 +171,10 @@ local function option_process(opts, process)
   for name, value in pairs(opts) do
     dm.case(process, {
       ["set"] = function()
-        o[name] = value
+        vim.opt_local[name] = value
       end,
       ["save"] = function()
-        dashboard.saved_opts[name] = o[name]
+        dashboard.saved_opts[name] = vim.opt_local[name]:get()
       end,
     })
   end
