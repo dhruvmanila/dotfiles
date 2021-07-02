@@ -1,4 +1,5 @@
 require "dm.globals.utils"
+require "dm.globals.notify"
 
 -- https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals/init.lua
 ---@generic T

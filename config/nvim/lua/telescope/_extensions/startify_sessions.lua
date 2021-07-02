@@ -1,7 +1,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
+  vim.notify({
+    "[Telescope] `startify_sessions` extension requires telescope.nvim",
+    "(https://github.com/nvim-telescope/telescope.nvim)",
+  }, 4)
 end
 
 local finders = require "telescope.finders"
@@ -23,7 +26,6 @@ end
 local function load_session(prompt_bufnr)
   local selection = action_state.get_selected_entry()
   if selection.current then
-    print "[telescope] Selected session is currectly active"
     return
   end
   actions.close(prompt_bufnr)

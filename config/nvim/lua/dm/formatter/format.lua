@@ -98,6 +98,7 @@ end
 ---@field err_output string
 ---@field ran_formatter boolean
 ---@field changedtick number
+---@field tempfile_name string
 local Format = {}
 Format.__index = Format
 
@@ -156,12 +157,13 @@ function Format:run(formatter)
 
   if not handle then
     close_safely(stdin, stdout, stderr)
-    error(
+    vim.notify(
       string.format(
-        "Failed to run formatter '%s': %s",
+        "[formatter] Failed to run formatter '%s'\n%s",
         formatter.cmd,
         pid_or_err
-      )
+      ),
+      4
     )
     return
   end
@@ -186,7 +188,8 @@ function Format:on_exit(code, stdin)
     if not stdin then
       os.remove(self.tempfile_name)
     end
-    error(self.err_output)
+    vim.notify(self.err_output, 4)
+    return self:step()
   end
   if stdin then
     self.output = vim.split(self.current_output, "\n")
@@ -210,7 +213,7 @@ function Format:lsp_run(formatter)
     lsp.util.make_formatting_params(formatter.opts),
     function(err, _, result)
       if err then
-        vim.notify("[formatter]: " .. err.message, vim.log.levels.WARN)
+        vim.notify("[formatter] " .. err.message, 4)
         return
       end
       if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then

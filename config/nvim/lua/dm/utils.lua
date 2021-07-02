@@ -3,12 +3,6 @@ local api = vim.api
 local cmd = api.nvim_command
 local icons = require "dm.icons"
 
--- Emit a warning message.
----@param msg string
-function M.warn(msg)
-  api.nvim_echo({ { msg, "WarningMsg" } }, true, {})
-end
-
 -- Helper function to return the given default value if `x` is `nil`.
 function M.if_nil(x, is_nil)
   if x == nil then

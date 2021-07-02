@@ -169,10 +169,7 @@ do
   for _, name in ipairs(extensions) do
     local loaded, _ = pcall(require("telescope").load_extension, name)
     if not loaded then
-      vim.notify(
-        "[Telescope] Failed to load the extension: " .. name,
-        vim.log.levels.WARN
-      )
+      vim.notify("[Telescope] Failed to load the extension: " .. name, 3)
     end
   end
 end

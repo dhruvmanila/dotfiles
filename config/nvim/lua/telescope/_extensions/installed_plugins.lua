@@ -1,7 +1,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
+  vim.notify({
+    "[Telescope] `installed_plugins` extension requires telescope.nvim",
+    "(https://github.com/nvim-telescope/telescope.nvim)",
+  }, 4)
 end
 
 local finders = require "telescope.finders"
@@ -11,14 +14,11 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
 
-local warn = require("dm.utils").warn
-
 ---Defines the action to open the selection in the browser.
 local function open_in_browser(prompt_bufnr)
   local selection = action_state.get_selected_entry()
 
   if not selection.url then
-    error('"' .. selection.value .. '" is a local plugin.')
     return nil
   end
 
@@ -60,7 +60,7 @@ local function installed_plugins(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_PackerPluginInfo.plugins) then
-    warn "[Telescope] Plugin information was not cached"
+    vim.notify("[Telescope] Plugin information was not cached", 3)
     return nil
   end
 

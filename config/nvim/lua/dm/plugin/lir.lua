@@ -1,6 +1,5 @@
 local api = vim.api
 local lir = require "lir"
-local utils = require "lir.utils"
 local actions = require "lir.actions"
 local mark_actions = require "lir.mark.actions"
 local clipboard_actions = require "lir.clipboard.actions"
@@ -30,7 +29,7 @@ function actions.newfile()
   local ctx = lir.get_context()
   local path = Path:new(ctx.dir .. name)
   if path:exists() then
-    utils.error "[lir] File already exists"
+    vim.notify("[lir] File already exists", 4)
     cursor_jump(name)
     return
   end

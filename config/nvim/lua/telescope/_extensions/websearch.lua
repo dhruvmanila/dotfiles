@@ -7,7 +7,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
+  vim.notify({
+    "[Telescope] `websearch` extension requires telescope.nvim",
+    "(https://github.com/nvim-telescope/telescope.nvim)",
+  }, 4)
 end
 
 local finders = require "telescope.finders"
@@ -17,7 +20,6 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
 
-local warn = require("dm.utils").warn
 local Job = require "plenary.job"
 
 local state = {}
@@ -120,7 +122,8 @@ local function do_search()
 
   local function process_complete(job, code)
     if code > 0 then
-      error(job:stderr_result())
+      vim.notify({ "[Telescope]", job:stderr_result() }, 4)
+      return
     end
     local result = job:result()
     result = vim.fn.json_decode(result)
@@ -168,13 +171,15 @@ local function websearch(opts)
   local search_engine = state.search_engine
 
   if vim.fn.executable(executable[search_engine]) <= 0 then
-    error(
+    vim.notify(
       string.format(
-        "This plugin requires the `%s` executable for searching on '%s'",
+        "[Telescope] 'websearch' requires the `%s` executable for searching on '%s'",
         executable[search_engine],
         search_engine
-      )
+      ),
+      3
     )
+    return
   end
 
   state.displayer = entry_display.create {
@@ -212,7 +217,10 @@ return telescope.register_extension {
     local max_results = ext_config.max_results or 25
 
     if search_engine == "duckduckgo" and max_results > 25 then
-      warn "[telescope] duckduckgo (ddgr) supports a maximum of 25 results"
+      vim.notify(
+        "[Telescope] duckduckgo (ddgr) supports a maximum of 25 results",
+        3
+      )
       max_results = 25
     end
 

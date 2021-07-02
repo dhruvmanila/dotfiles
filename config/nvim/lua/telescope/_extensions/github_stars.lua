@@ -1,7 +1,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
+  vim.notify({
+    "[Telescope] `github_stars` extension requires telescope.nvim",
+    "(https://github.com/nvim-telescope/telescope.nvim)",
+  }, 4)
 end
 
 local Job = require "plenary.job"
@@ -11,8 +14,6 @@ local config = require("telescope.config").values
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
-
-local warn = require("dm.utils").warn
 
 -- Keep the values around between reloads
 _CachedGithubStars = _CachedGithubStars or { stars = {}, max_length = 0 }
@@ -44,7 +45,8 @@ end
 local function collect_github_stars()
   local function process_complete(job, code)
     if code > 0 then
-      error(job:stderr_result())
+      vim.notify({ "[Telescope]", job:stderr_result() }, 4)
+      return
     end
     local result = job:result()
     if result and result[1] ~= "" then
@@ -90,7 +92,7 @@ local function github_stars(opts)
 
   -- TODO: start the job again? run the job synchronously?
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    warn "[Telescope] No GitHub stars are cached yet."
+    vim.notify("[Telescope] No GitHub stars are cached yet.", 3)
     return nil
   end
 

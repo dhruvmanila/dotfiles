@@ -1,7 +1,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  error "This plugin requires telescope.nvim (https://github.com/nvim-telescope/telescope.nvim)"
+  vim.notify({
+    "[Telescope] `lir_cd` extension requires telescope.nvim",
+    "(https://github.com/nvim-telescope/telescope.nvim)",
+  }, 4)
 end
 
 local finders = require "telescope.finders"
@@ -15,7 +18,6 @@ local entry_display = require "telescope.pickers.entry_display"
 
 local lir = require "lir"
 local float = require "lir.float"
-local warn = require("dm.utils").warn
 
 -- Action to open a dirvish buffer in the currently selected directory, thus
 -- replacing the opened dirvish buffer.
@@ -66,13 +68,13 @@ local function lir_cd(opts)
   opts = opts or {}
 
   if vim.bo.filetype ~= "lir" then
-    warn "[Telescope] Not in a dirvish buffer."
+    vim.notify("[Telescope] Not in a dirvish buffer.", 3)
     return nil
   end
 
   local cwd = lir.get_context().dir
   if cwd == "/" or cwd == vim.loop.os_homedir() then
-    warn "[Telescope] Searching from root or home is expensive."
+    vim.notify("[Telescope] Searching from root or home is expensive.", 3)
     return nil
   end
 

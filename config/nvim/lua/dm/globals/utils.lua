@@ -159,12 +159,11 @@ do
     end
     if err == nil or err == true then
       local msg = string.format(
-        "expected one of '%s', got %s (%s)",
+        "expected one of '%s', got %s",
         table.concat(expected, "', '"),
-        vim.inspect(value),
-        type(value)
+        vim.inspect(value)
       )
-      error(debug.traceback(msg, 2), 2)
+      vim.notify({ "[case]", debug.traceback(msg, 2) }, 4)
     end
   end
 end
