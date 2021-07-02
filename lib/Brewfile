@@ -1,15 +1,3 @@
-# Brewfile
-#
-# Organized as:
-#
-# - Necessary taps
-# - Brew formulae
-# - Casks
-# - Mac Applications
-
-# Set argument for all `brew install --cask` commands
-cask_args appdir: "~/Applications"
-
 tap "clementtsang/bottom"
 tap "heroku/brew"
 tap "homebrew/bundle"
@@ -17,143 +5,239 @@ tap "homebrew/cask"
 tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
+tap "homebrew/services"
 tap "romkatv/gitstatus"
-
-# Shells and related
-brew "bash"
-brew "bash-completion@2"
-brew "bashdb"
-brew "zsh"
-brew "zsh-completion"
-brew "shellcheck"                    # Linter
-brew "romkatv/gitstatus/gitstatus"   # Fast git status prompt (bash/zsh)
-
-# Programming languages and related
-# Pre-requisites for pyenv Python install
-brew "openssl@1.1"
-brew "readline"
-brew "sqlite"
-brew "xz"
-brew "zlib"
-
-brew "pyenv"                 # Python version management
-brew "pyenv-virtualenv"      # Python virtual environment management
-brew "rbenv"                 # Ruby virtual environment management
-brew "node"
-brew "go"                    # Go programming language
-brew "rust"                  # Rust programming language
-
-brew "pipx"           # Global Python packages
-
-# Editors
-brew "vim"
-
-# System monitoring
-brew "htop"
-brew "lnav"
-brew "clementtsang/bottom/bottom"    # Written in Rust
-
-# File navigation, search and related
-brew "bat"        # (cat) syntax highlighting
-brew "fd"         # better find
-brew "fzf"        # fuzzy finder
-brew "ripgrep"    # better grep
-brew "tree"       # File tree viewer
-# TODO: `brew edit nnn` O_NERD=1 for adding file icons
-brew "nnn", args: ["HEAD", "build-from-source"]
-
-# CLI utilities
+# C/C++ resolver library and DNS resolver utilities
 brew "adns"
+# Source code beautifier for C, C++, C#, and Java
+brew "astyle"
+# Tool for generating GNU Standards-compliant Makefiles
+brew "automake"
+# Bourne-Again SHell, a UNIX command interpreter
+brew "bash"
+# Programmable completion for Bash 4.2+
+brew "bash-completion@2"
+# Bash shell debugger
+brew "bashdb"
+# Clone of cat(1) with syntax highlighting and Git integration
+brew "bat"
+# Garbage collector for C and C++
 brew "bdw-gc"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@1.1"
+# New way to see and navigate directory trees
+brew "broot"
+# GNU internationalization (i18n) and localization (l10n) library
+brew "gettext"
+# Library for command-line editing
+brew "readline"
+# Command-line interface for SQLite
+brew "sqlite"
+# General-purpose data compression with high compression ratio
+brew "xz"
+# Manage compile and link flags for libraries
+brew "pkg-config"
+# Tool Command Language
 brew "tcl-tk"
+# Vector graphics library with cross-device output support
+brew "cairo"
+# Cross-platform make
+brew "cmake"
+# Reimplementation of ctags(1)
 brew "ctags"
+# Tool to perform numerical, textual & statistical operations
 brew "datamash"
-brew "delta"
-brew "docker-compose"
-brew "dockutil"             # Manage Mac dock applications
-brew "ffmpeg"               # Play, record, convert, and stream audio and video
-brew "fontforge"            # Used for NERDFonts patcher script
-brew "gh"                   # GitHub CLI client
-brew "git"                  # Git
-brew "glow"                 # CLI markdown renderer
-brew "gnupg"
-brew "hyperfine"
-brew "jq"                   # JSON processor
-brew "less"                 # latest less
-brew "lz4"                  # Compression library
-brew "mackup"               # Backup files
-brew "mas"                  # Mac AppStore CLI
-brew "mlton"
-brew "ninja"                # Fast build system
-brew "pinentry-mac"
-brew "postgresql"           # Database
-brew "pup"                  # Parse HTML at commandline
-brew "pv"                   # Monitor data's progress through a pipe
-brew "rename"
-brew "speedtest-cli"
-brew "stow"
-brew "stress"
-brew "tldr"                 # Better help
-brew "tmux"                 # Terminal multiplexer
-brew "youtube-dl"           # Download videos from Youtube and others
-brew "heroku/brew/heroku"
-
-# Completions
+# DuckDuckGo from the terminal
+brew "ddgr"
+# Bash, Zsh and Fish completion for Docker
 brew "docker-completion"
+# Completion script for docker-compose
 brew "docker-compose-completion"
+# Tool for managing dock items
+brew "dockutil"
+# Maintain consistent coding style between multiple editors
+brew "editorconfig"
+# Simple, fast and user-friendly alternative to find
+brew "fd"
+# Generic library support script
+brew "libtool"
+# Play, record, convert, and stream audio and video
+brew "ffmpeg"
+# Collection of GNU find, xargs, and locate
+brew "findutils"
+# Command-line outline and bitmap font editor/converter
+brew "fontforge"
+# Command-line fuzzy finder written in Go
+brew "fzf"
+# GNU debugger
+brew "gdb"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# GNU Pretty Good Privacy (PGP) package
+brew "gnupg"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
+# Google Search and News from the command-line
+brew "googler"
+# Improved top (interactive process viewer)
+brew "htop"
+# Command-line benchmarking tool
+brew "hyperfine"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Pager program similar to more
+brew "less"
+# Extremely Fast Compression algorithm
+brew "lz4"
+# Implementation of the file(1) command
+brew "libmagic"
+# Curses-based tool for viewing and analyzing log files
+brew "lnav"
+# Rainbows and unicorns in your console!
+brew "lolcat"
+# Powerful, lightweight programming language (v5.1.5)
+brew "lua@5.1"
+# OpenResty's Branch of LuaJIT 2
+brew "luajit-openresty"
+# Keep your Mac's application settings in sync
+brew "mackup"
+# Mac App Store command-line interface
+brew "mas"
+# Whole-program, optimizing compiler for Standard ML
+brew "mlton"
+# Collection of tools that nobody wrote when UNIX was young
+brew "moreutils"
+# Download YouTube videos from the command-line
+brew "youtube-dl"
+# Media player based on MPlayer and mplayer2
+brew "mpv"
+# Small build system for use with gyp or CMake
+brew "ninja"
+# Platform built on V8 to build network applications
+brew "node"
+# Pinentry for GPG on Mac
+brew "pinentry-mac"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
+# Object-relational database system
+brew "postgresql"
+# Parse HTML at the command-line
+brew "pup"
+# Monitor data's progress through a pipe
+brew "pv"
+# Python version management
+brew "pyenv"
+# Pyenv plugin to manage virtualenv
+brew "pyenv-virtualenv"
+# Ruby version manager
+brew "rbenv"
+# Perl-powered file rename script with many helpful built-ins
+brew "rename"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Safe, concurrent, practical language
+brew "rust"
+# Static analysis and lint tool, for (ba)sh scripts
+brew "shellcheck"
+# Autoformat shell script source code
+brew "shfmt"
+# Command-line interface for https://speedtest.net bandwidth tests
+brew "speedtest-cli"
+# Organize software neatly under a single directory tree (e.g. /usr/local)
+brew "stow"
+# Tool to impose load on and stress test a computer system
+brew "stress"
+# Simplified and community-driven man pages
+brew "tldr"
+# Terminal multiplexer
+brew "tmux"
+# Program that allows you to count code, quickly
+brew "tokei"
+# Display directories as trees (with optional color/HTML output)
+brew "tree"
+# Bash completion for Vagrant
 brew "vagrant-completion"
-
-# Search engines
-brew "ddgr"        # DuckDuckGo
-brew "googler"     # Google
-
-# Browsers
+# Vi 'workalike' with many additional features
+brew "vim"
+# Process YAML documents from the CLI
+brew "yq"
+# General-purpose lossless data-compression library
+brew "zlib"
+# UNIX shell (command interpreter)
+brew "zsh"
+# Additional completion definitions for zsh
+brew "zsh-completions"
+# A cross-platform graphical process/system monitor with a customizable interface and a multitude of features.
+brew "clementtsang/bottom/bottom"
+# Everything you need to get started with Heroku
+brew "heroku/brew/heroku"
+# Git status for Bash/Zsh prompt
+brew "romkatv/gitstatus/gitstatus"
+# Compact TeX distribution as alternative to the full TeX Live / MacTeX
+cask "basictex"
+# Web browser focusing on privacy
 cask "brave-browser"
-cask "firefox"
-cask "firefox-developer-edition"
-cask "google-chrome"
-
-# GUI Editors
-cask "emacs"
-cask "mark-text"                    # Markdown editor
-cask "pycharm-ce"
-cask "racket"                       # Includes DrRacket
-cask "visual-studio-code"           # Also used for shipped JSON language server
-cask "visual-studio-code-insiders"
-
-# Chat
+# E-books management software
+cask "calibre", args: { appdir: "~/Applications" }
+# Voice and text chat software
 cask "discord"
-cask "slack"
-cask "whatsapp"
-cask "zoom"
-
-# Fonts (regular + patched manually using NERDFont patcher)
-cask "font-fira-code"
-cask "font-jetbrains-mono"
-
-# Terminals
-cask "iterm2"
-cask "kitty"
-
-# Extensions
-cask "karabiner-elements"     # Keyboard customizer for Mac
-cask "lunar"                  # Control display/monitor brightness
-cask "macs-fan-control"
-cask "rectangle"              # Move/resize windows
-
-# Virtual machine
-cask "virtualbox"
-cask "vagrant", args: { appdir: "~/Applications" }
+# App to build and share containerized applications and microservices
 cask "docker"
-
-cask "calibre"         # ebooks
+# Text editor
+cask "emacs"
+# Web browser
+cask "firefox"
+# Web browser
+cask "firefox-developer-edition"
+cask "font-fira-code"
+# Typeface made for developers
+cask "font-jetbrains-mono"
+# Web browser
+cask "google-chrome", args: { appdir: "~/Applications" }
+# Desktop automation application
+cask "hammerspoon"
+# Terminal emulator as alternative to Apple's Terminal app
+cask "iterm2"
+# Keyboard customizer
+cask "karabiner-elements"
+# GPU-based terminal emulator
+cask "kitty"
+# Adaptive brightness for external displays
+cask "lunar"
+# Controls and monitors all fans on Apple computers
+cask "macs-fan-control"
+cask "mark-text"
+# IDE for Python programming - Community Edition
+cask "pycharm-ce"
+# Peer to peer Bitorrent client
 cask "qbittorrent"
+# Modern programming language in the Lisp/Scheme family
+cask "racket"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
+# Video chat, voice call and instant messaging application
+cask "skype"
+# Team communication and collaboration software
+cask "slack"
 cask "smlnj"
+# Music streaming service
 cask "spotify"
+# Development environment
+cask "vagrant", args: { appdir: "~/Applications" }
+# Free and open-source hosted hypervisor for x86 virtualization
+cask "virtualbox"
+# Open-source code editor
+cask "visual-studio-code"
+# Code editor
+cask "visual-studio-code-insiders"
+# Multimedia player
 cask "vlc"
-# cask "wireshark"       # Network monitoring
-
-# Mac applications
+# Desktop client for WhatsApp
+cask "whatsapp"
+# Video communication and virtual meeting platform
+cask "zoom"
 mas "Developer", id: 640199958
 mas "GarageBand", id: 682658836
 mas "Hotspot Shield", id: 771076721
@@ -165,3 +249,4 @@ mas "Pocket", id: 568494494
 mas "Save to Pocket", id: 1477385213
 mas "SHAREit", id: 1040029915
 mas "Speedtest", id: 1153157709
+mas "Vimari", id: 1480933944
