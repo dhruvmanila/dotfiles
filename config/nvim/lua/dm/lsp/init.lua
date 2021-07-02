@@ -198,6 +198,8 @@ end
 for server, config in pairs(servers) do
   config = type(config) == "function" and config() or config
   config.on_attach = custom_on_attach
+  config.flags = config.flags or {}
+  config.flags.debounce_text_changes = 150
   if not config.capabilities then
     config.capabilities = vim.lsp.protocol.make_client_capabilities()
   end
