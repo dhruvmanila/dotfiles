@@ -52,6 +52,7 @@ map("n", "[t", "<Cmd>tabprev<CR>")
 for i = 1, 9 do
   map("n", "<leader>" .. i, i .. "gt")
 end
+map("n", "<leader>0", "<Cmd>tablast<CR>")
 
 -- Quicker window movement
 map("n", "<C-j>", "<C-w>j")
