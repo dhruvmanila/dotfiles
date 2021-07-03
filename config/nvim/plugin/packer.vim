@@ -7,7 +7,7 @@ let s:loader_path = s:pack_path . "loader/start/packer.nvim/plugin/"
 let s:install_path = s:pack_path . "packer/opt/packer.nvim"
 
 " Setting up the required path globals.
-let g:packer_compiled_path = s:loader_path . "packer_compiled.vim"
+let g:packer_compiled_path = s:loader_path . "packer_compiled.lua"
 let g:packer_plugin_info_path = s:loader_path . "packer_plugin_info.lua"
 
 " Install packer and all the plugins automatically on a fresh setup. The
