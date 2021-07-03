@@ -185,7 +185,7 @@ local function websearch(opts)
   state.displayer = entry_display.create {
     separator = " ",
     items = {
-      { width = math.min(65, config.layout_config.width * vim.o.columns / 2) },
+      { width = 65 },
       { remaining = true },
     },
   }
