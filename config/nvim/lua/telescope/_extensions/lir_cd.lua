@@ -1,10 +1,7 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  vim.notify({
-    "[Telescope] `lir_cd` extension requires telescope.nvim",
-    "(https://github.com/nvim-telescope/telescope.nvim)",
-  }, 4)
+  vim.notify("[Telescope] `lir_cd` extension requires telescope.nvim", 4)
 end
 
 local finders = require "telescope.finders"
