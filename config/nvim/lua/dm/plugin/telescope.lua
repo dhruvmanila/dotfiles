@@ -310,6 +310,7 @@ do
     ["<leader>fb"] = "require('dm.plugin.telescope').bookmarks()",
     ["<leader>fw"] = "require('dm.plugin.telescope').websearch()",
     ["<leader>fs"] = "require('dm.plugin.telescope').startify_sessions()",
+    ["<leader>fi"] = "require('telescope').extensions.icons.icons()",
   }
 
   for key, command in pairs(mappings) do

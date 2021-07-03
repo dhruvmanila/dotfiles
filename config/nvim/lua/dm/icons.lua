@@ -1,9 +1,5 @@
 local get_icon = require("nvim-nonicons").get
 
--- for k,v in pairs(require('nvim-nonicons.mapping')) do
---   print(k, vim.fn.nr2char(v))
--- end
-
 local icons = {
   -- Order should be maintained
   lsp_kind = {
