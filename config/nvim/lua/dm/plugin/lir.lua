@@ -4,7 +4,6 @@ local actions = require "lir.actions"
 local mark_actions = require "lir.mark.actions"
 local clipboard_actions = require "lir.clipboard.actions"
 
-local icons = require "dm.icons"
 local Path = require "plenary.path"
 local M = {}
 
@@ -88,7 +87,7 @@ local function construct_win_opts()
     height = height,
     row = row + winpos[1],
     col = col + winpos[2],
-    border = icons.border[vim.g.border_style],
+    border = dm.border[vim.g.border_style],
   }
 end
 

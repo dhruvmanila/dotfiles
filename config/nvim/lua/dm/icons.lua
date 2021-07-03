@@ -34,15 +34,6 @@ local icons = {
     { "", "TypeParameter" },
   },
   spinner_frames = { "⣷", "⣯", "⣟", "⡿", "⢿", "⣻", "⣽", "⣾" },
-  -- If the border key is custom, then return the respective table otherwise
-  -- return the string as it is.
-  border = setmetatable({
-    edge = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" },
-  }, {
-    __index = function(_, key)
-      return key
-    end,
-  }),
   tree = "侮",
   git_logo = "",
   files = "",

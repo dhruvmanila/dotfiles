@@ -34,11 +34,7 @@ require("gitsigns").setup {
     ["o ih"] = ':<C-U>lua require("gitsigns").select_hunk()<CR>',
     ["x ih"] = ':<C-U>lua require("gitsigns").select_hunk()<CR>',
   },
-  preview_config = {
-    border = require("dm.icons").border[vim.g.border_style],
-    row = 1,
-    col = 1,
-  },
+  preview_config = { border = dm.border[vim.g.border_style], row = 1, col = 1 },
   -- Attach to untracked files?
   attach_to_untracked = false,
 }

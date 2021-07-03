@@ -63,7 +63,7 @@ do
   vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
     local max_width = math.max(math.floor(vim.o.columns * 0.7), 100)
     opts = vim.tbl_deep_extend("force", opts, {
-      border = icons.border[vim.g.border_style],
+      border = dm.border[vim.g.border_style],
       max_width = max_width,
       max_height = math.max(math.floor(vim.o.lines * 0.3), 30),
       wrap_at = max_width,

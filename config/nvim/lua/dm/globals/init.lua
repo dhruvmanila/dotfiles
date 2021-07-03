@@ -1,6 +1,16 @@
 require "dm.globals.utils"
 require "dm.globals.notify"
 
+-- If the border key is custom, then return the respective table otherwise
+-- return the string as it is.
+dm.border = setmetatable({
+  edge = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" },
+}, {
+  __index = function(_, key)
+    return key
+  end,
+})
+
 -- https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals/init.lua
 ---@generic T
 ---@param v T

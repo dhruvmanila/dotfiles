@@ -2,7 +2,6 @@ local api = vim.api
 local lsp = vim.lsp
 local cmd = api.nvim_command
 local utils = require "dm.utils"
-local icons = require "dm.icons"
 
 local config = { width = 40, height = 1, border_hl = "TabLineSel" }
 
@@ -55,7 +54,7 @@ function M.rename()
   local win_opts = utils.make_floating_popup_options(
     config.width,
     config.height,
-    icons.border.rounded
+    "rounded"
   )
   local winnr = api.nvim_open_win(bufnr, true, win_opts)
 

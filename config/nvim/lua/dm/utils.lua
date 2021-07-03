@@ -1,7 +1,6 @@
 local M = {}
 local api = vim.api
 local cmd = api.nvim_command
-local icons = require "dm.icons"
 
 -- Helper function to return the given default value if `x` is `nil`.
 function M.if_nil(x, is_nil)
@@ -204,7 +203,7 @@ function M.startuptime()
     row = math.floor((vim.o.lines - height) / 2) - 1,
     col = math.floor((vim.o.columns - width) / 2),
     style = "minimal",
-    border = icons.border.edge,
+    border = dm.border[vim.g.border_style],
   })
 
   cmd "StartupTime"
