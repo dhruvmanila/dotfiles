@@ -82,7 +82,7 @@ opt.splitbelow = true -- default horizontal split on below
 opt.splitright = true -- default vertical split on right
 
 opt.swapfile = false
-opt.synmaxcol = 200
+opt.synmaxcol = 500
 opt.tabstop = 2 -- number of spaces that a TAB counts for
 opt.termguicolors = true
 opt.textwidth = 0 -- do not automatically wrap text
