@@ -88,6 +88,8 @@ local function load_plugins()
       event = { "BufRead", "BufNewFile" },
       disable = true,
     },
+    { "mfussenegger/nvim-dap" },
+    { "mfussenegger/nvim-dap-python" },
     { "mfussenegger/nvim-lint" },
     { "mhinz/vim-startify" },
     { "milisims/nvim-luaref" },
