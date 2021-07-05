@@ -20,7 +20,7 @@ handlers["textDocument/codeAction"] = code_action.handler
 -- window only if the response is a list and the count is greater than 1.
 local function location_handler(_, method, response)
   if not response or vim.tbl_isempty(response) then
-    vim.notify("[LSP] No results found for: " .. method)
+    vim.notify { "LSP (" .. method .. ")", "", "No results found" }
     return
   end
 

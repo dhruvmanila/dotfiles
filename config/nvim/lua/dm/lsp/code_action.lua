@@ -89,7 +89,7 @@ end
 -- Main handler for the code action response from the language server.
 function M.handler(_, _, response)
   if response == nil or vim.tbl_isempty(response) then
-    vim.notify "[LSP] No code actions available"
+    vim.notify { "LSP", "", "No code actions available" }
     return
   end
 

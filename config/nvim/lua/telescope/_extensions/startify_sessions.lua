@@ -2,7 +2,7 @@ local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
   vim.notify(
-    "[Telescope] `startify_sessions` extension requires telescope.nvim",
+    { "Telescope", "", "`startify_sessions` extension requires telescope.nvim" },
     4
   )
 end

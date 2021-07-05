@@ -163,7 +163,7 @@ do
         table.concat(expected, "', '"),
         vim.inspect(value)
       )
-      vim.notify({ "[case]", debug.traceback(msg, 2) }, 4)
+      vim.notify(debug.traceback(msg, 2), 4)
     end
   end
 end

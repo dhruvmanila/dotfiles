@@ -1,7 +1,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  vim.notify("[Telescope] `github_stars` extension requires telescope.nvim", 4)
+  vim.notify(
+    { "Telescope", "", "`github_stars` extension requires telescope.nvim" },
+    4
+  )
 end
 
 local Job = require "plenary.job"
@@ -42,7 +45,7 @@ end
 local function collect_github_stars()
   local function process_complete(job, code)
     if code > 0 then
-      vim.notify({ "[Telescope]", job:stderr_result() }, 4)
+      vim.notify({ "Telescope", "", job:stderr_result() }, 4)
       return
     end
     local result = job:result()
@@ -89,7 +92,7 @@ local function github_stars(opts)
 
   -- TODO: start the job again? run the job synchronously?
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    vim.notify("[Telescope] No GitHub stars are cached yet.", 3)
+    vim.notify({ "Telescope", "", "No GitHub stars are cached yet" }, 3)
     return nil
   end
 

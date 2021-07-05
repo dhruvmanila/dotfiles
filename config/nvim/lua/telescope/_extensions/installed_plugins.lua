@@ -2,7 +2,7 @@ local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
   vim.notify(
-    "[Telescope] `installed_plugins` extension requires telescope.nvim",
+    { "Telescope", "", "`installed_plugins` extension requires telescope.nvim" },
     4
   )
 end
@@ -60,7 +60,7 @@ local function installed_plugins(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_PackerPluginInfo.plugins) then
-    vim.notify("[Telescope] Plugin information was not cached", 3)
+    vim.notify({ "Telescope", "", "Plugin information was not cached" }, 3)
     return nil
   end
 

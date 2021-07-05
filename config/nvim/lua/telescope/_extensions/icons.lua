@@ -1,7 +1,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  vim.notify("[Telescope] `icons` extension requires telescope.nvim", 4)
+  vim.notify(
+    { "Telescope", "", "`icons` extension requires telescope.nvim" },
+    4
+  )
 end
 
 local nr2char = vim.fn.nr2char

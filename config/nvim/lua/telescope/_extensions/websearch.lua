@@ -7,7 +7,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  vim.notify("[Telescope] `websearch` extension requires telescope.nvim", 4)
+  vim.notify(
+    { "Telescope", "", "`websearch` extension requires telescope.nvim" },
+    4
+  )
 end
 
 local finders = require "telescope.finders"
@@ -57,8 +60,16 @@ local function set_config_state(opt_name, value, default)
   state[opt_name] = value == nil and default or value
 end
 
+local displayer = entry_display.create {
+  separator = " ",
+  items = {
+    { width = 65 },
+    { remaining = true },
+  },
+}
+
 local function make_display(entry)
-  return state.displayer {
+  return displayer {
     entry.title,
     { entry.url, "Comment" },
   }
@@ -119,7 +130,7 @@ local function do_search()
 
   local function process_complete(job, code)
     if code > 0 then
-      vim.notify({ "[Telescope]", job:stderr_result() }, 4)
+      vim.notify({ "Telescope", "", job:stderr_result() }, 4)
       return
     end
     local result = job:result()
@@ -168,24 +179,17 @@ local function websearch(opts)
   local search_engine = state.search_engine
 
   if vim.fn.executable(executable[search_engine]) <= 0 then
-    vim.notify(
+    vim.notify({
+      "Telescope",
+      "",
       string.format(
-        "[Telescope] 'websearch' requires the `%s` executable for searching on '%s'",
+        "'websearch' requires the `%s` executable for searching on '%s'",
         executable[search_engine],
         search_engine
       ),
-      3
-    )
+    }, 3)
     return
   end
-
-  state.displayer = entry_display.create {
-    separator = " ",
-    items = {
-      { width = 65 },
-      { remaining = true },
-    },
-  }
 
   state.picker = pickers.new(opts, {
     prompt_title = aliases[search_engine] .. " Search",
@@ -214,10 +218,11 @@ return telescope.register_extension {
     local max_results = ext_config.max_results or 25
 
     if search_engine == "duckduckgo" and max_results > 25 then
-      vim.notify(
-        "[Telescope] duckduckgo (ddgr) supports a maximum of 25 results",
-        3
-      )
+      vim.notify({
+        "Telescope",
+        "",
+        "duckduckgo (ddgr) supports a maximum of 25 results",
+      }, 3)
       max_results = 25
     end
 

@@ -302,7 +302,7 @@ function M.open(on_vimenter)
   end
 
   if not o.hidden and o.modified then
-    vim.notify("[Dashboard] Please save your changes first", 3)
+    vim.notify({ "Dashboard", "", "Please save your changes first" }, 3)
     return
   end
 

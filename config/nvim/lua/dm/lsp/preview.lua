@@ -99,7 +99,7 @@ end
 
 local function preview_location_callback(_, method, response)
   if not response or vim.tbl_isempty(response) then
-    vim.notify("[LSP] No results found for: " .. method)
+    vim.notify { "LSP (" .. method .. ")", "", "No results found" }
     return
   end
   local location = vim.tbl_islist(response) and response[1] or response

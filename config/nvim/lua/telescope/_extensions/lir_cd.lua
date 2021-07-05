@@ -1,7 +1,10 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  vim.notify("[Telescope] `lir_cd` extension requires telescope.nvim", 4)
+  vim.notify(
+    { "Telescope", "", "`lir_cd` extension requires telescope.nvim" },
+    4
+  )
 end
 
 local finders = require "telescope.finders"
@@ -65,13 +68,16 @@ local function lir_cd(opts)
   opts = opts or {}
 
   if vim.bo.filetype ~= "lir" then
-    vim.notify("[Telescope] Not in a dirvish buffer.", 3)
+    vim.notify({ "Telescope", "", "Not in a lir buffer" }, 3)
     return nil
   end
 
   local cwd = lir.get_context().dir
   if cwd == "/" or cwd == vim.loop.os_homedir() then
-    vim.notify("[Telescope] Searching from root or home is expensive.", 3)
+    vim.notify(
+      { "Telescope", "", "Searching from root or home is expensive" },
+      3
+    )
     return nil
   end
 
