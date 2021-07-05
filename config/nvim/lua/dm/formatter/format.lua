@@ -5,7 +5,7 @@ local fn = vim.fn
 local api = vim.api
 local lsp = vim.lsp
 local validate = vim.validate
-local server = require "dm.formatter.server"
+local if_nil = vim.F.if_nil
 
 -- Flag to signal that the BufWrite family autocmds were triggered by Format.
 -- This is done to let other commands to run for these events such as linting,
@@ -15,14 +15,11 @@ local format_write = false
 
 ---@class Formatter
 ---@field enable function? enable/disable formatter for current file
----@field use string type for formatter to run, one of 'cmd', 'lsp', 'daemon_client'
 ---@field cmd string formatter command
 ---@field args string[]|function formatter arguments to pass
 ---@field stdin boolean whether to use stdin or not
+---@field use_lsp boolean use the LSP provided formatter
 ---@field opts table LSP formatting options
----@field headers table headers to pass for the request
----@field response_handler function response handler for server requests
----@field _state table containing the current state of the daemon server
 
 ---@type table<string, Formatter[]>
 local registered_formatters = {}
@@ -246,17 +243,10 @@ function Format:step()
   -- This is because lua still have to discard the result of the call and then
   -- return nil. `f()` is similar to `f(); return` instead of `return f()`
   if self:is_enabled(formatter) then
-    dm.case(formatter.use, {
-      ["cmd"] = function()
-        return self:run(formatter)
-      end,
-      ["lsp"] = function()
-        return self:lsp_run(formatter)
-      end,
-      ["daemon_client"] = function()
-        return server.format(self, formatter)
-      end,
-    })
+    if formatter.use_lsp then
+      return self:lsp_run(formatter)
+    end
+    return self:run(formatter)
   else
     return self:step()
   end
@@ -292,20 +282,25 @@ function Format:start()
   return self:step()
 end
 
--- Validate the 'cmd' and 'args' field for the given formatter.
+-- Validate the formatter specification.
 ---@param formatter Formatter
-local function validate_cmd_and_args(formatter)
-  validate {
-    cmd = { formatter.cmd, "s" },
-    args = {
-      formatter.args,
-      function(a)
-        local atype = type(a)
-        return atype == "table" or atype == "function"
-      end,
-      "a table or function",
-    },
-  }
+local function validate_spec(formatter)
+  if formatter.use_lsp then
+    validate { opts = { formatter.opts, "t" } }
+  else
+    validate {
+      cmd = { formatter.cmd, "s" },
+      args = {
+        formatter.args,
+        function(a)
+          local atype = type(a)
+          return atype == "table" or atype == "function"
+        end,
+        "a table or function",
+      },
+      stdin = { formatter.stdin, "b" },
+    }
+  end
 end
 
 -- Register the formatters for the given filetype.
@@ -323,24 +318,9 @@ function M.register(filetype, formatters)
     formatter.enable = formatter.enable or function()
       return true
     end
-
-    dm.case(formatter.use, {
-      ["cmd"] = function()
-        validate_cmd_and_args(formatter)
-        validate { stdin = { formatter.stdin, "b" } }
-      end,
-      ["lsp"] = function()
-        validate { opts = { formatter.opts, "t", true } }
-        formatter.opts = formatter.opts or {}
-      end,
-      ["daemon_client"] = function()
-        validate_cmd_and_args(formatter)
-        validate { headers = { formatter.headers, "t", true } }
-        formatter.headers = formatter.headers or {}
-        server.register(filetype, formatter)
-      end,
-    })
-
+    formatter.use_lsp = if_nil(formatter.use_lsp, false)
+    formatter.opts = formatter.opts or {}
+    validate_spec(formatter)
     table.insert(registered_formatters[filetype], formatter)
   end
 end

@@ -1,5 +1,5 @@
 local lsp_util = vim.lsp.util
-local format = require "dm.formatter.format"
+local register = require("dm.formatter.format").register
 local root_pattern = require("lspconfig.util").root_pattern
 
 local finder = {
@@ -10,8 +10,7 @@ local finder = {
 do
   local stylua_config_dir
 
-  format.register("lua", {
-    use = "cmd",
+  register("lua", {
     cmd = "stylua",
     args = function()
       return { "--config-path", stylua_config_dir .. "/stylua.toml", "-" }
@@ -26,9 +25,8 @@ do
   })
 end
 
-format.register("python", {
+register("python", {
   {
-    use = "cmd",
     cmd = "black",
     args = { "--fast", "--quiet", "-" },
     enable = function(_, path)
@@ -39,7 +37,6 @@ format.register("python", {
     stdin = true,
   },
   {
-    use = "cmd",
     cmd = "isort",
     args = { "--profile", "black", "-" },
     enable = function(_, path)
@@ -51,8 +48,7 @@ format.register("python", {
   },
 })
 
-format.register("sh", {
-  use = "cmd",
+register("sh", {
   cmd = "shfmt",
   args = function(bufnr)
     local indent_size = vim.bo[bufnr].expandtab
@@ -63,10 +59,9 @@ format.register("sh", {
   stdin = true,
 })
 
-format.register("json", { use = "lsp" })
+register("json", { use_lsp = true })
 
-format.register("yaml", {
-  use = "cmd",
+register("yaml", {
   cmd = "prettier",
   args = function(bufnr)
     local tabwidth = lsp_util.get_effective_tabstop(bufnr)

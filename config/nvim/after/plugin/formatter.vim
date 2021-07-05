@@ -22,9 +22,9 @@ function! s:toggle_auto_formatting()
 endfunction
 
 " By default, auto formatting is turned on.
-call s:toggle_auto_formatting()
+autocmd VimEnter * ++once call <SID>toggle_auto_formatting()
 
-command! -nargs=0 AutoFormatting call <SID>toggle_auto_formatting()
+command! -nargs=0 ToggleAutoFormatting call <SID>toggle_auto_formatting()
 command! -nargs=0 Format lua require('dm.formatter.format').format()
 
 nnoremap ;f <Cmd>Format<CR>
