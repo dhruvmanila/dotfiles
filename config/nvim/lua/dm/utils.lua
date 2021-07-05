@@ -1,14 +1,9 @@
 local M = {}
+local fn = vim.fn
+local uv = vim.loop
 local api = vim.api
 local cmd = api.nvim_command
-
--- Helper function to return the given default value if `x` is `nil`.
-function M.if_nil(x, is_nil)
-  if x == nil then
-    return is_nil
-  end
-  return x
-end
+local if_nil = vim.F.if_nil
 
 -- Create key bindings for multiple modes with an optional parameters map.
 -- Defaults:
@@ -20,7 +15,7 @@ end
 ---@param opts table (optional)
 function M.map(modes, lhs, rhs, opts)
   opts = opts or {}
-  opts.noremap = M.if_nil(opts.noremap, true)
+  opts.noremap = if_nil(opts.noremap, true)
   if type(modes) == "string" then
     modes = { modes }
   end
@@ -155,7 +150,7 @@ function M.make_floating_popup_options(width, height, border)
   local anchor = ""
   local row, col
 
-  local lines_above = vim.fn.winline() - 1
+  local lines_above = fn.winline() - 1
   local lines_below = api.nvim_get_option "lines" - lines_above
 
   if lines_above < lines_below then
@@ -168,7 +163,7 @@ function M.make_floating_popup_options(width, height, border)
     row = border and -2 or 0
   end
 
-  local col_left = api.nvim_win_get_position(0)[2] + vim.fn.wincol() + width
+  local col_left = api.nvim_win_get_position(0)[2] + fn.wincol() + width
   if col_left <= api.nvim_get_option "columns" then
     anchor = anchor .. "W"
     col = 0
