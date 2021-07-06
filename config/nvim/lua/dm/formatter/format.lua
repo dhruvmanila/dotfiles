@@ -14,7 +14,7 @@ local if_nil = vim.F.if_nil
 local format_write = false
 
 ---@class Formatter
----@field enable function? enable/disable formatter for current file
+---@field enable? function enable/disable formatter for current file
 ---@field cmd string formatter command
 ---@field args string[]|function formatter arguments to pass
 ---@field stdin boolean whether to use stdin or not
@@ -301,6 +301,7 @@ local function validate_spec(formatter)
       stdin = { formatter.stdin, "b" },
     }
   end
+  validate { enable = { formatter.enable, "f" } }
 end
 
 -- Register the formatters for the given filetype.
@@ -315,9 +316,9 @@ function M.register(filetype, formatters)
 
   for _, formatter in ipairs(formatters) do
     -- By default, every formatter is enabled.
-    formatter.enable = formatter.enable or function()
+    formatter.enable = if_nil(formatter.enable, function()
       return true
-    end
+    end)
     formatter.use_lsp = if_nil(formatter.use_lsp, false)
     formatter.opts = formatter.opts or {}
     validate_spec(formatter)
