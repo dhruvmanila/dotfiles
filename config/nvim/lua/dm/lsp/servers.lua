@@ -39,6 +39,9 @@ return {
   -- Settings: https://github.com/bash-lsp/bash-language-server/blob/master/server/src/config.ts
   bashls = {},
 
+  -- https://github.com/llvm/llvm-project/tree/main/clang-tools-extra/clangd
+  clangd = {},
+
   -- https://github.com/mattn/efm-langserver
   -- Settings: https://github.com/mattn/efm-langserver/blob/master/schema.json
   -- efm = {
