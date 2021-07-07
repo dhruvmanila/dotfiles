@@ -19,6 +19,10 @@ local entry_display = require "telescope.pickers.entry_display"
 local lir = require "lir"
 local float = require "lir.float"
 
+-- This flag is used to determine whether we were in a normal buffer or in a
+-- floating lir window and take the appropriate action when pressing '<CR>'.
+local state = { lir_is_float = false }
+
 -- Action to open a dirvish buffer in the currently selected directory, thus
 -- replacing the opened dirvish buffer.
 ---@param prompt_bufnr number
@@ -27,7 +31,11 @@ local function open_dir_in_lir(prompt_bufnr)
   actions.close(prompt_bufnr)
 
   local dir = selection.cwd .. selection.value
-  float.toggle(P(dir))
+  if state.lir_is_float then
+    float.toggle(dir)
+  else
+    vim.cmd("edit " .. dir)
+  end
 end
 
 -- Telescope previewer to preview the tree for the given directory.
@@ -60,8 +68,8 @@ end
 -- The extension will emit a warning when called from the root or home directory
 -- as that can be expensive, although I might allow it :)
 --
--- Default action (<CR>) will open a lir floating window with the selected
--- directory replacing the current dirvish buffer.
+-- Default action (<CR>) will open lir buffer/floating window with the selected
+-- directory replacing the current one.
 ---@param opts table
 ---@return nil
 local function lir_cd(opts)
@@ -72,8 +80,8 @@ local function lir_cd(opts)
     return nil
   end
 
-  local cwd = lir.get_context().dir
-  if cwd == "/" or cwd == vim.loop.os_homedir() then
+  local cwd = vim.fn.fnamemodify(lir.get_context().dir, ":~")
+  if cwd == "/" or cwd == "~/" then
     vim.notify(
       { "Telescope", "", "Searching from root or home is expensive" },
       3
@@ -81,8 +89,14 @@ local function lir_cd(opts)
     return nil
   end
 
-  -- Close the current lir window
-  float.toggle()
+  -- Always reset the flag
+  state.lir_is_float = false
+
+  -- Close the current lir floating window
+  if vim.w.lir_is_float then
+    state.lir_is_float = true
+    float.toggle()
+  end
 
   local displayer = entry_display.create {
     separator = " ",
@@ -103,7 +117,7 @@ local function lir_cd(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Lir cd (" .. vim.fn.fnamemodify(cwd, ":~") .. ")",
+    prompt_title = "Lir cd (" .. cwd .. ")",
     finder = finders.new_oneshot_job({ "fd", "--type", "d" }, {
       cwd = cwd,
       entry_maker = entry_maker,
