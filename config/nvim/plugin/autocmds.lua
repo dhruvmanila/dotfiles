@@ -22,7 +22,7 @@ do
   end
 
   -- Highlight colorcolumn only in insert mode
-  dm.augroup("auto_colorcolumn", {
+  dm.augroup("dm__auto_colorcolumn", {
     {
       events = "InsertEnter",
       targets = "*",
@@ -58,7 +58,7 @@ do
     end, timeout)
   end
 
-  dm.augroup("clear_command_messages", {
+  dm.augroup("dm__clear_command_messages", {
     {
       events = { "CmdlineLeave", "CmdlineChanged" },
       targets = ":",
@@ -88,9 +88,11 @@ dm.augroup("dm__auto_reload_file", {
   },
 })
 
-dm.augroup("custom_autocmds", {
-  -- Highlight current cursorline, but only in the active window and not in
-  -- special buffers like dashboard.
+-- Highlight current cursorline
+--   - Only in the active window
+--   - Ignore special buffers like dashboard
+--   - Remove in non-insert mode
+dm.augroup("dm__auto_cursorline", {
   {
     events = { "WinEnter", "BufEnter", "InsertLeave" },
     targets = "*",
@@ -109,7 +111,27 @@ dm.augroup("custom_autocmds", {
       end
     end,
   },
+})
 
+-- Terminal autocmds
+--   - Automatically go to insert mode on entering terminal
+--   - Close the terminal window on exit (<C-d>)
+dm.augroup("dm__terminal", {
+  {
+    events = { "TermOpen", "WinEnter" },
+    targets = "term://*",
+    command = "startinsert",
+  },
+  {
+    events = "TermClose",
+    targets = "term://*",
+    command = function()
+      api.nvim_input "<CR>"
+    end,
+  },
+})
+
+dm.augroup("dm__custom_autocmds", {
   -- Equalize window dimensions when resizing vim
   {
     events = "VimResized",
@@ -135,12 +157,5 @@ dm.augroup("custom_autocmds", {
     events = "Syntax",
     targets = "*",
     command = "syntax sync minlines=1000",
-  },
-
-  -- Automatically go to insert mode on terminal buffer
-  {
-    events = { "TermOpen", "WinEnter" },
-    targets = "term://*",
-    command = "startinsert",
   },
 })
