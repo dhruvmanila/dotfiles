@@ -150,6 +150,11 @@ lir.setup {
       vim.cmd "doautocmd BufEnter"
     end,
     ["gr"] = goto_git_root,
+
+    -- Open the current directory in finder
+    ["gx"] = function()
+      vim.cmd "call external#explorer()"
+    end,
   },
 }
 

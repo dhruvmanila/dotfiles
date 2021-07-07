@@ -186,6 +186,7 @@ Paste                    P             N
 Goto home directory      ~             N
 Goto root directory      `             N
 Goto git root directory  gr            N
+Open directory in Finder gx            N
 }}}
 NvimTree Mappings {{{
 Toggle NvimTree          «C-n»         N
@@ -233,9 +234,8 @@ Current file word diffs  r             N
 All word diffs           R             N
 }}}
 Vim External Mappings {{{
-External browser         «Spc»eb       N
-External editor          «Spc»ee       N
-External explorer        «Spc»en       N
+External browser         gx            N
+External explorer        «Spc»ee       N
 GitHub notification      «Spc»eg       N
 }}}
 Packer {{{

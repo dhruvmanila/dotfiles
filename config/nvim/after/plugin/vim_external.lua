@@ -3,9 +3,11 @@ local opts = { noremap = false, silent = true }
 
 vim.g.external_search_engine = "https://duckduckgo.com/?q="
 
-map("n", "<leader>ee", "<Plug>(external-editor)", opts)
-map("n", "<leader>en", "<Plug>(external-explorer)", opts)
-map("n", "<leader>eb", "<Plug>(external-browser)", opts)
+-- Open current buffer directory in finder
+map("n", "<leader>ee", "<Plug>(external-explorer)", opts)
+
+-- Similar to netrw
+map("n", "gx", "<Plug>(external-browser)", opts)
 
 opts.noremap = true
 
