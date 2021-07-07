@@ -1,6 +1,7 @@
 -- Ref:
 -- https://github.com/akinsho/dotfiles/blob/main/.config/nvim/lua/as/statusline
 local fn = vim.fn
+local api = vim.api
 local contains = vim.tbl_contains
 local devicons = require "nvim-web-devicons"
 local icons = require "dm.icons"
@@ -110,7 +111,11 @@ local special_buffer_info = {
       local list_type = fn.getwininfo(ctx.curwin)[1].loclist == 1
           and "Location"
         or "Quickfix"
-      local title = utils.get_var("w", ctx.curwin, "quickfix_title")
+      local title = vim.F.npcall(
+        api.nvim_win_get_var,
+        ctx.curwin,
+        "quickfix_title"
+      )
       title = title and "[" .. title .. "]" or ""
       return list_type .. " List " .. title .. "  %l/%L"
     end,
@@ -166,7 +171,7 @@ end
 ---@param hl string
 ---@return string
 local function file_detail(ctx, hl)
-  if vim.api.nvim_win_get_width(ctx.curwin) < 100 then
+  if api.nvim_win_get_width(ctx.curwin) < 100 then
     return ""
   end
   local encode = vim.bo.fenc ~= "" and vim.bo.fenc or vim.o.enc
@@ -355,9 +360,9 @@ end
 function _G.nvim_statusline()
   local prefix = "▌"
   local curwin = vim.g.statusline_winid or 0
-  local curbuf = vim.api.nvim_win_get_buf(curwin)
+  local curbuf = api.nvim_win_get_buf(curwin)
   local curbo = vim.bo[curbuf]
-  local inactive = vim.api.nvim_get_current_win() ~= curwin
+  local inactive = api.nvim_get_current_win() ~= curwin
 
   local ctx = {
     curwin = curwin,

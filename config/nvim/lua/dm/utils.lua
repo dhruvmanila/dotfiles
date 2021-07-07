@@ -1,6 +1,5 @@
 local M = {}
 local fn = vim.fn
-local uv = vim.loop
 local api = vim.api
 local cmd = api.nvim_command
 local if_nil = vim.F.if_nil
@@ -62,31 +61,6 @@ function M.highlight(name, opts)
       end
       cmd(table.concat(hi_cmd, " "))
     end
-  end
-end
-
--- "Safe" version of `nvim_<|win|buf|tabpage>_get_var()` that returns `nil` if
--- the variable is not set.
----@param scope string Available: g|w|b|t (Default: g)
----@param handle integer
----@param name string
----@return nil|any
-function M.get_var(scope, handle, name)
-  local func, args
-  scope = scope or "g"
-  if scope == "g" then
-    func, args = api.nvim_get_var, { name }
-  elseif scope == "w" then
-    func, args = api.nvim_win_get_var, { handle, name }
-  elseif scope == "b" then
-    func, args = api.nvim_buf_get_var, { handle, name }
-  elseif scope == "t" then
-    func, args = api.nvim_tabpage_get_var, { handle, name }
-  end
-
-  local ok, result = pcall(func, unpack(args))
-  if ok then
-    return result
   end
 end
 
