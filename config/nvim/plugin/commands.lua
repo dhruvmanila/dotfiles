@@ -35,6 +35,6 @@ do
   dm.command { "TrimTrailingLines", trim_trailing_lines, attr = { "-bar" } }
 end
 
-dm.command { "Term", "split | wincmd J | resize -5 | term" }
-dm.command { "Vterm", "vnew | term" }
+dm.command { "Term", "new | wincmd J | resize -5 | term" }
+dm.command { "Vterm", "vnew | wincmd L | term" }
 dm.command { "Tterm", "tabnew | term" }
