@@ -1,6 +1,7 @@
 local o = vim.o
 local fn = vim.fn
 local api = vim.api
+local contains = vim.tbl_contains
 
 do
   -- 'colorcolumn' value for specific filetypes
@@ -88,30 +89,34 @@ dm.augroup("dm__auto_reload_file", {
   },
 })
 
--- Highlight current cursorline
---   - Only in the active window
---   - Ignore special buffers like dashboard
---   - Disable in insert mode
-dm.augroup("dm__auto_cursorline", {
-  {
-    events = { "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
-    targets = "*",
-    command = function()
-      if not o.cursorline and o.filetype ~= "dashboard" then
-        o.cursorline = true
-      end
-    end,
-  },
-  {
-    events = { "BufLeave", "FocusLost", "InsertEnter", "WinLeave" },
-    targets = "*",
-    command = function()
-      if o.cursorline and o.filetype ~= "dashboard" then
-        o.cursorline = false
-      end
-    end,
-  },
-})
+do
+  local ignore_ft = { "dashboard", "TelescopePrompt" }
+
+  -- Highlight current cursorline
+  --   - Only in the active window
+  --   - Ignore special buffers like dashboard
+  --   - Disable in insert mode
+  dm.augroup("dm__auto_cursorline", {
+    {
+      events = { "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
+      targets = "*",
+      command = function()
+        if not (o.cursorline or contains(ignore_ft, o.filetype)) then
+          o.cursorline = true
+        end
+      end,
+    },
+    {
+      events = { "BufLeave", "FocusLost", "InsertEnter", "WinLeave" },
+      targets = "*",
+      command = function()
+        if o.cursorline and not contains(ignore_ft, o.filetype) then
+          o.cursorline = false
+        end
+      end,
+    },
+  })
+end
 
 -- Enable/Disable relative number
 --   - Only in the active window
