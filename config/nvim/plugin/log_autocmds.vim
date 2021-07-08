@@ -1,8 +1,11 @@
 " Ref: https://github.com/lervag/dotvim/blob/master/personal/plugin/log-autocmds.vim
+"
+" For more detailed information, take a look at:
+" https://github.com/wincent/wincent/blob/main/aspects/vim/files/.config/nvim/autoload/wincent/debug.vim
 command! LogAutocmds call s:log_autocmds_toggle()
 
 function! s:log_autocmds_toggle()
-  augroup LogAutocmd
+  augroup dm__log_autocmds
     autocmd!
   augroup END
 
@@ -10,21 +13,24 @@ function! s:log_autocmds_toggle()
   let s:activate = get(s:, 'activate', 0) ? 0 : 1
   if !s:activate
     call s:log('Stopped autocmd log (' . l:date . ')')
+    echo "[DEBUG] Logging autocmds: OFF"
     return
   endif
 
   call s:log('Started autocmd log (' . l:date . ')')
-  augroup LogAutocmd
+  echo "[DEBUG] Logging autocmds: ON"
+  augroup dm__log_autocmds
     for l:au in s:aulist
-      silent execute 'autocmd' l:au '* call s:log(''' . l:au . ''')'
+      silent execute 'autocmd' l:au '* call <SID>log("' . l:au . '")'
     endfor
   augroup END
 endfunction
 
+" Add the provided message to the log file.
+" 'a': append to the file
 function! s:log(message)
-  silent execute '!echo "'
-        \ . strftime('%T', localtime()) . ' - ' . a:message . '"'
-        \ '>> /tmp/vim_log_autocommands'
+  let l:message = strftime('%T', localtime()) . ' - ' . a:message
+  call writefile([l:message], '/tmp/vim_debug.log', 'a')
 endfunction
 
 " These are deliberately left out due to side effects
@@ -124,4 +130,3 @@ let s:aulist = [
       \ 'WinEnter',
       \ 'WinLeave',
       \ ]
-
