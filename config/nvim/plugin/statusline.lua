@@ -421,7 +421,7 @@ end
 
 ---Function to start a job which sets the current Python version.
 local function set_python_version()
-  fn.jobstart("python --version", {
+  return fn.jobstart("python --version", {
     stdout_buffered = true,
     on_stdout = function(_, data, _)
       if data and data[1] ~= "" then
@@ -433,7 +433,7 @@ end
 
 ---Function to start a job which sets the number of GitHub notifications.
 local function fetch_github_notifications()
-  fn.jobstart("gh api notifications", {
+  return fn.jobstart("gh api notifications", {
     stdout_buffered = true,
     on_stdout = function(_, data, _)
       if data and data[1] ~= "" then
