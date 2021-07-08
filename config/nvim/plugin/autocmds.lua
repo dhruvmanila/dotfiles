@@ -113,6 +113,31 @@ dm.augroup("dm__auto_cursorline", {
   },
 })
 
+-- Enable/Disable relative number
+--   - Only in the active window
+--   - Ignore quickfix window
+--   - Disable in insert mode
+dm.augroup("dm__auto_relative_number", {
+  {
+    events = { "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
+    targets = "*",
+    command = function()
+      if o.number and o.filetype ~= "qf" then
+        o.relativenumber = true
+      end
+    end,
+  },
+  {
+    events = { "BufLeave", "FocusLost", "InsertEnter", "WinLeave" },
+    targets = "*",
+    command = function()
+      if o.number and o.filetype ~= "qf" then
+        o.relativenumber = false
+      end
+    end,
+  },
+})
+
 -- Terminal autocmds
 --   - Automatically go to insert mode on entering terminal
 --   - Close the terminal window on exit (<C-d>)

@@ -18,9 +18,10 @@ if getwininfo(win_getid())[0].loclist != 1
 endif
 
 " Some useful defaults
-setlocal nonumber
+setlocal number
 setlocal norelativenumber
 setlocal nowrap
+setlocal signcolumn=no
 setlocal colorcolumn=
 setlocal nobuflisted  " quickfix buffers should not pop up when doing :bn or :bp
 
