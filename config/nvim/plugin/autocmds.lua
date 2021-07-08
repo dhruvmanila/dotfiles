@@ -91,10 +91,10 @@ dm.augroup("dm__auto_reload_file", {
 -- Highlight current cursorline
 --   - Only in the active window
 --   - Ignore special buffers like dashboard
---   - Remove in non-insert mode
+--   - Disable in insert mode
 dm.augroup("dm__auto_cursorline", {
   {
-    events = { "WinEnter", "BufEnter", "InsertLeave" },
+    events = { "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
     targets = "*",
     command = function()
       if not o.cursorline and o.filetype ~= "dashboard" then
@@ -103,7 +103,7 @@ dm.augroup("dm__auto_cursorline", {
     end,
   },
   {
-    events = { "WinLeave", "BufLeave", "InsertEnter" },
+    events = { "BufLeave", "FocusLost", "InsertEnter", "WinLeave" },
     targets = "*",
     command = function()
       if o.cursorline and o.filetype ~= "dashboard" then
