@@ -76,8 +76,8 @@ set keymap vi-insert
 # NOTE: All keybindings should come at the end of the file
 # Use the text that has already been typed as the prefix for searching through
 # commands (i.e. more intelligent Up/Down behavior)
-"\C-j": history-search-forward
-"\C-k": history-search-backward
+"\C-p": history-search-backward
+"\C-n": history-search-forward
 "\C-l": clear-screen
 
 # Make Tab cycle between possible completions

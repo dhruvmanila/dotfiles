@@ -37,6 +37,14 @@ map("n", "p", "p`]")
 map("x", "p", "p`]")
 map("x", "y", "y`]")
 
+-- The direction of `n` and `N` depends on whether `/` or `?` was used for
+-- searching forward or backward respectively.
+--
+-- This will make sure that `n` will always search forward and `N` backward.
+-- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
+map("n", "n", "'Nn'[v:searchforward]", { expr = true })
+map("n", "N", "'nN'[v:searchforward]", { expr = true })
+
 -- Easy command mode if not using registers explicitly
 -- map('n', "'", ';')
 -- map('n', ';', ':')
@@ -45,6 +53,10 @@ map("x", "y", "y`]")
 map("n", "]<Leader>", "<Cmd>bnext<CR>")
 map("n", "[<Leader>", "<Cmd>bprev<CR>")
 map("n", "<Leader><BS>", "<Cmd>bdelete<CR>")
+
+-- Fast switching between last and current file
+-- Previous mapping: "<leader><leader>"
+map("n", "<Leader><TAB>", "<Cmd>buffer#<CR>")
 
 -- Quickfix list
 map("n", "]q", "<Cmd>cnext<CR>")
@@ -58,13 +70,12 @@ map("n", "[l", "<Cmd>lprev<CR>")
 map("n", "]L", "<Cmd>llast<CR>")
 map("n", "[L", "<Cmd>lfirst<CR>")
 
--- Fast switching between last and current file
-map("n", "<Leader><Leader>", "<Cmd>buffer#<CR>")
-
 -- Tabs
+-- `<leader>n` goes to nth tab
+-- `<leader>0` goes to the last tab as on a normal keyboard the numeric keys
+-- are from 1,2,...0.
 map("n", "]t", "<Cmd>tabnext<CR>")
 map("n", "[t", "<Cmd>tabprev<CR>")
--- `<leader>n` goes to nth tab
 for i = 1, 9 do
   map("n", "<leader>" .. i, i .. "gt")
 end
@@ -76,14 +87,13 @@ map("n", "<C-k>", "<C-w>k")
 map("n", "<C-h>", "<C-w>h")
 map("n", "<C-l>", "<C-w>l")
 
--- Use alt + hjkl to resize windows
-map("n", "<M-j>", "<Cmd>resize -2<CR>")
-map("n", "<M-k>", "<Cmd>resize +2<CR>")
-map("n", "<M-h>", "<Cmd>vertical resize -2<CR>")
-map("n", "<M-l>", "<Cmd>vertical resize +2<CR>")
+-- Use the arrow keys to resize windows
+map("n", "<Down>", "<Cmd>resize -2<CR>")
+map("n", "<Up>", "<Cmd>resize +2<CR>")
+map("n", "<Left>", "<Cmd>vertical resize -2<CR>")
+map("n", "<Right>", "<Cmd>vertical resize +2<CR>")
 
--- Keep the cursor at the center
--- (``) don't move the cursor to the next match
+-- Don't move the cursor to the next match
 map("n", "*", "*``")
 map("n", "#", "#``")
 
@@ -118,10 +128,20 @@ map("x", "K", [[:m '<-2<CR>gv=gv]])
 map("x", "<", "<gv")
 map("x", ">", ">gv")
 
--- Easy moving through the command history
--- <C-p>/<C-n> does the some thing, remove this?
-map("c", "<C-k>", "<Up>")
-map("c", "<C-j>", "<Down>")
+-- Make <C-p>/<C-n> as smart as <up>/<down>
+--
+-- This will recall older/recent command-line from history, whose beginning
+-- matches the current command-line and also distinguish between command-line
+-- history and wildmenu. See :h 'wildmenu'
+--
+-- Alternatively, it can be mapped to <C-k>/<C-j> respectively.
+map("c", "<C-p>", 'wildmenumode() ? "<C-p>" : "<up>"', { expr = true })
+map("c", "<C-n>", 'wildmenumode() ? "<C-n>" : "<down>"', { expr = true })
+
+-- Make <Left>/<Right> move the cursor instead of selecting a different match
+-- in the wildmenu. See :h 'wildmenu'
+map("c", "<Left>", "<Space><BS><Left>")
+map("c", "<Right>", "<Space><BS><Right>")
 
 -- Movement in insert mode
 -- map('i', '<C-h>', '<C-o>h')
