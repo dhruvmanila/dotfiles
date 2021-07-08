@@ -94,10 +94,10 @@ require("telescope").setup {
       },
     },
     live_grep = {
-      shorten_path = true,
+      path_display = { "tail" },
     },
     grep_string = {
-      shorten_path = true,
+      path_display = { "tail" },
     },
     help_tags = {
       layout_config = {
