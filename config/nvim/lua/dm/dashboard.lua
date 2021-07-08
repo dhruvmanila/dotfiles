@@ -115,9 +115,9 @@ local entries = {
     command = 'lua require("dm.plugin.telescope").find_dotfiles()',
   },
   {
-    key = "b",
-    description = { icons.directory .. "  File browser" },
-    command = 'lua require("telescope.builtin").file_browser()',
+    key = "u",
+    description = { icons.package .. "  Sync packages" },
+    command = "PackerSync",
   },
   {
     key = "p",
