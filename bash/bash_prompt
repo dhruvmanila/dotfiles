@@ -122,7 +122,7 @@ function build_prompt() {
   PS1+="\n"
 
   # Prompt character '$ '
-  PS1+="${white}❯ ${reset}"
+  PS1+="❯ ${reset}"
 
   # ---------------------------------------------
   # Continuition prompt
