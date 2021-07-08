@@ -34,4 +34,7 @@ PATH="/Library/TeX/texbin:${PATH}"
 # Neovim nightly
 PATH="${HOME}/neovim/bin:${PATH}"
 
+# For llvm family
+PATH="/usr/local/opt/llvm/bin:$PATH"
+
 export PATH

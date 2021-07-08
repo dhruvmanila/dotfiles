@@ -23,4 +23,7 @@ if [[ -r "${FZF_COMPLETION_PATH}" ]]; then
   source "${FZF_COMPLETION_PATH}"
 fi
 
+# Kitty completions
+source <(kitty + complete setup bash)
+
 unset BREW_PREFIX FZF_COMPLETION_PATH
