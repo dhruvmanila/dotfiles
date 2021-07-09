@@ -206,23 +206,6 @@ local function git_branch(hl)
   return ""
 end
 
----Return the Git diff count information (requires gitsigns.nvim)
----@param opts table
----@return string
-local function git_diff_info(opts)
-  local result = ""
-  local status_dict = vim.b.gitsigns_status_dict
-  if status_dict and not vim.tbl_isempty(status_dict) then
-    for _, o in ipairs(opts) do
-      local count = status_dict[o.field]
-      if count and count > 0 then
-        result = result .. wrap_hl(o.hl) .. o.icon .. " " .. count .. " %*"
-      end
-    end
-  end
-  return result
-end
-
 ---Return the Python virtual environment name if we are in any.
 ---@param ctx table
 ---@return string
