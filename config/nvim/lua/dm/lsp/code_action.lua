@@ -27,7 +27,7 @@ function M.code_action_listener()
       end
       -- Remove all the existing lightbulbs.
       api.nvim_buf_clear_namespace(0, LIGHTBULB_VIRTUAL_TEXT_NS, 0, -1)
-      if response then
+      if response and not vim.tbl_isempty(response) then
         local line = params.range.start.line
         api.nvim_buf_set_extmark(0, LIGHTBULB_VIRTUAL_TEXT_NS, line, 0, {
           hl_group = "YellowSign",
