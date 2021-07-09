@@ -24,12 +24,7 @@ end
 ---@param type string
 local function packer_type_handler(_, plugin, type)
   local name = type == "local" and "local/" .. plugin.short_name or plugin.name
-  local length = #name
-
-  if length > _PackerPluginInfo.max_length then
-    _PackerPluginInfo.max_length = length
-  end
-
+  _PackerPluginInfo.max_length = math.max(_PackerPluginInfo.max_length, #name)
   table.insert(_PackerPluginInfo.plugins, {
     name = name,
     path = plugin.install_path,

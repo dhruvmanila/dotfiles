@@ -26,18 +26,16 @@ local function parse_data(data)
   -- Replace the middle "][" with a "," to make it a valid JSON string.
   data = data:gsub("%]%[", ",")
   local json_data = vim.fn.json_decode(data)
-
+  local max_length = 0
   for _, repo in ipairs(json_data) do
-    local length = string.len(repo.full_name)
-    if length > _CachedGithubStars.max_length then
-      _CachedGithubStars.max_length = length
-    end
+    max_length = math.max(max_length, #repo.full_name)
     table.insert(_CachedGithubStars.stars, {
       name = repo.full_name,
       description = repo.description ~= vim.NIL and repo.description or "",
       url = repo.html_url,
     })
   end
+  _CachedGithubStars.max_length = max_length
 end
 
 --- Start a new asynchronous job to collect the user GitHub stars using
