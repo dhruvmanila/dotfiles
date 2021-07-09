@@ -179,6 +179,19 @@ local function file_detail(ctx, hl)
   return " " .. wrap_hl(hl) .. encode:upper() .. " " .. format:upper() .. " %*"
 end
 
+-- Return the indentation icon for tabs and spaces and the count.
+---@param ctx table
+---@param hl string
+---@return string
+local function indentation(ctx, hl)
+  if api.nvim_win_get_width(ctx.curwin) < 100 then
+    return ""
+  end
+  -- local prefix = ctx.expandtab and " " or " "
+  local prefix = ctx.expandtab and "Spaces:" or "Tabs:"
+  return wrap_hl(hl) .. " " .. prefix .. ctx.shiftwidth .. " %*"
+end
+
 ---Return the Git branch name (requires fugitive.vim)
 ---@param hl string
 ---@return string
@@ -232,7 +245,7 @@ end
 local function github_notifications(hl)
   local notifications = vim.g.github_notifications
   if notifications and notifications > 0 then
-    return wrap_hl(hl) .. icons.github .. " " .. notifications .. " %*"
+    return wrap_hl(hl) .. " " .. icons.github .. " " .. notifications .. " %*"
   end
   return ""
 end
@@ -370,6 +383,8 @@ function _G.nvim_statusline()
     bufname = fn.bufname(curbuf),
     filetype = curbo.filetype,
     buftype = curbo.buftype,
+    shiftwidth = curbo.shiftwidth,
+    expandtab = curbo.expandtab,
     inactive = inactive,
   }
 
@@ -391,6 +406,7 @@ function _G.nvim_statusline()
     .. python_version(ctx, "StBlueBold")
     .. lsp_clients(ctx, "StGreenBold")
     .. lsp_messages "StGrey"
+    .. indentation(ctx, "StGreyBold")
     .. file_detail(ctx, "StGreyBold")
     .. lsp_diagnostics(ctx, {
       { severity = "Information", icon = icons.info, hl = "StBlue" },
