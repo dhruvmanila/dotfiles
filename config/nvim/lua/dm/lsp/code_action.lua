@@ -8,6 +8,37 @@ local config = { show_header = true }
 
 local M = {}
 
+-- Create a namespace for the lightbulb extmark.
+local LIGHTBULB_VIRTUAL_TEXT_NS = api.nvim_create_namespace "nvim-lsp-lightbulb"
+
+-- Code action listener to set and update the lightbulb to indicate that there
+-- are code actions available on that line.
+function M.code_action_listener()
+  local params = lsp.util.make_range_params()
+  params.context = { diagnostics = vim.lsp.diagnostic.get_line_diagnostics() }
+  vim.lsp.buf_request(
+    0,
+    "textDocument/codeAction",
+    params,
+    function(err, _, response)
+      -- Don't do anything if the request returned an error.
+      if err then
+        return
+      end
+      -- Remove all the existing lightbulbs.
+      api.nvim_buf_clear_namespace(0, LIGHTBULB_VIRTUAL_TEXT_NS, 0, -1)
+      if response then
+        local line = params.range.start.line
+        api.nvim_buf_set_extmark(0, LIGHTBULB_VIRTUAL_TEXT_NS, line, 0, {
+          hl_group = "YellowSign",
+          virt_text = { { "" } },
+          virt_text_pos = "overlay",
+        })
+      end
+    end
+  )
+end
+
 -- Define the required set of mappings:
 --   - `number`: execute the respective code action at "number"
 --   - `<CR>`: execute the code action under the cursor

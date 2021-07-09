@@ -49,10 +49,6 @@ sign_define("LspDiagnosticsSignError", { text = icons.error })
 sign_define("LspDiagnosticsSignWarning", { text = icons.warning })
 sign_define("LspDiagnosticsSignInformation", { text = icons.info })
 sign_define("LspDiagnosticsSignHint", { text = icons.hint })
-sign_define("LightBulbSign", {
-  text = icons.lightbulb,
-  texthl = "LspDiagnosticsSignHint",
-})
 
 -- Set the default options for all LSP floating windows.
 --   - Default border according to `vim.g.border_style`
@@ -159,14 +155,10 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.code_action then
-    if not plugin_loaded "nvim-lightbulb" then
-      require("packer").loader "nvim-lightbulb"
-    end
-
     table.insert(lsp_autocmds, {
       events = { "CursorHold", "CursorHoldI" },
       targets = "<buffer>",
-      command = require("nvim-lightbulb").update_lightbulb,
+      command = require("dm.lsp.code_action").code_action_listener,
     })
 
     mappings["n <leader>ca"] = "vim.lsp.buf.code_action()"

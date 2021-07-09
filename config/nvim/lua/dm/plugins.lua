@@ -72,7 +72,6 @@ local function load_plugins()
     { "hrsh7th/nvim-compe", event = "InsertEnter", config = conf "completion" },
     { "itchyny/vim-external" },
     { "junegunn/vim-easy-align", keys = "<Plug>(EasyAlign)" },
-    { "kosayoda/nvim-lightbulb", opt = true },
     { "kyazdani42/nvim-tree.lua", keys = "<C-n>", config = conf "nvim_tree" },
     { "kyazdani42/nvim-web-devicons" },
     {
