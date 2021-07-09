@@ -35,7 +35,7 @@ local default_dropdown = themes.get_dropdown {
 
 require("telescope").setup {
   defaults = {
-    prompt_prefix = require("dm.icons").telescope .. " ",
+    prompt_prefix = " ",
     selection_caret = "❯ ",
     sorting_strategy = "ascending",
     winblend = vim.g.window_blend,

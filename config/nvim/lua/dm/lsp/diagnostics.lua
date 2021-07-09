@@ -1,6 +1,6 @@
 local api = vim.api
 local lsp = vim.lsp
-local icons = require "dm.icons"
+local icons = dm.icons
 local utils = require "dm.utils"
 
 local severity_icon = { icons.error, icons.warning, icons.info, icons.hint }
@@ -75,8 +75,7 @@ local function show_line_diagnostics()
   local current_row = 0
 
   if config.show_header then
-    local header = string.format(" %s Diagnostics:", icons["list-ordered"])
-    utils.append(bufnr, { header }, config.header_hl)
+    utils.append(bufnr, { "  Diagnostics:" }, config.header_hl)
     utils.append(bufnr, { string.rep("─", longest_line) }, "Grey")
     current_row = current_row + 2
   end

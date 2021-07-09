@@ -1,6 +1,5 @@
 local api = vim.api
 local lsp = vim.lsp
-local icons = require "dm.icons"
 local utils = require "dm.utils"
 
 local code_action = {}
@@ -139,8 +138,7 @@ function M.handler(_, _, response)
   local bufnr = api.nvim_create_buf(false, true)
 
   if config.show_header then
-    local header = string.format(" %s Code Actions:", icons.lightbulb)
-    utils.append(bufnr, { header }, "YellowBold")
+    utils.append(bufnr, { "  Code Actions:" }, "YellowBold")
     utils.append(bufnr, { string.rep("─", longest_line) }, "Grey")
     current_row = current_row + 2
   end

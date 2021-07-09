@@ -1,16 +1,14 @@
-local icons = require "dm.icons"
-
 require("nvim-web-devicons").setup {
   -- your personnal icons can go here (to override)
   -- DevIcon will be appended to `name`
   override = {
     ["TelescopePrompt"] = {
-      icon = icons.telescope,
+      icon = "",
       color = "#f38019",
       name = "TelescopePrompt",
     },
     ["Dashboard"] = {
-      icon = icons.gear,
+      icon = "",
       color = "#787878",
       name = "Dashboard",
     },

@@ -2,8 +2,8 @@ local api = vim.api
 local sign_define = vim.fn.sign_define
 local nvim_command = api.nvim_command
 local nvim_buf_set_keymap = api.nvim_buf_set_keymap
+local icons = dm.icons
 
-local icons = require "dm.icons"
 local lspconfig = require "lspconfig"
 local plugins = require "dm.lsp.plugins"
 local servers = require "dm.lsp.servers"

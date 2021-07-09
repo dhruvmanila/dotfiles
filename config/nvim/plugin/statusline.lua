@@ -3,8 +3,8 @@
 local fn = vim.fn
 local api = vim.api
 local contains = vim.tbl_contains
+local icons = dm.icons
 local devicons = require "nvim-web-devicons"
-local icons = require "dm.icons"
 local utils = require "dm.utils"
 
 -- Colors are taken from the current colorscheme
@@ -143,18 +143,18 @@ local special_buffer_info = {
     end,
   },
   icon = {
-    qf = { "StRed", icons.lists },
-    terminal = { "StYellow", icons.terminal },
-    help = { "StYellow", icons.info },
-    tsplayground = { "StGreen", icons.tree },
-    lir = { "StBlue", icons.directory },
-    fugitive = { "StYellow", icons.git_logo },
-    packer = { "StAqua", icons.package },
-    gitcommit = { "StYellow", icons.git_commit },
-    vista_kind = { "StBlue", icons.tag },
-    man = { "StOrange", icons.book },
-    dashboard = { "StBlue", icons.directory },
-    cheat40 = { "StAqua", icons.tools },
+    qf = { "StRed", "" },
+    terminal = { "StYellow", "" },
+    help = { "StYellow", "" },
+    tsplayground = { "StGreen", "侮" },
+    lir = { "StBlue", "" },
+    fugitive = { "StYellow", "" },
+    packer = { "StAqua", "" },
+    gitcommit = { "StYellow", "" },
+    vista_kind = { "StBlue", "" },
+    man = { "StOrange", "" },
+    dashboard = { "StBlue", "" },
+    cheat40 = { "StAqua", "" },
   },
 }
 
@@ -200,7 +200,7 @@ local function git_branch(hl)
   if FugitiveHead then
     local head = FugitiveHead()
     if head and head ~= "" then
-      return " " .. wrap_hl(hl) .. icons.git_branch .. " " .. head .. "%* "
+      return " " .. wrap_hl(hl) .. " " .. head .. "%* "
     end
   end
   return ""
@@ -228,7 +228,7 @@ end
 local function github_notifications(hl)
   local notifications = vim.g.github_notifications
   if notifications and notifications > 0 then
-    return wrap_hl(hl) .. " " .. icons.github .. " " .. notifications .. " %*"
+    return wrap_hl(hl) .. "  " .. notifications .. " %*"
   end
   return ""
 end
@@ -245,7 +245,7 @@ local function lsp_clients(ctx, hl)
 
   if not vim.tbl_isempty(result) then
     result = table.concat(result, " ")
-    return " " .. wrap_hl(hl) .. icons.rocket .. " " .. result .. "%* "
+    return " " .. wrap_hl(hl) .. " " .. result .. "%* "
   else
     return ""
   end

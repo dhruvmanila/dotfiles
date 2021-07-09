@@ -11,6 +11,40 @@ dm.border = setmetatable({
   end,
 })
 
+dm.icons = {
+  lsp_kind = {
+    { "", "Text" },
+    { "", "Method" },
+    { "", "Function" },
+    { "", "Constructor" },
+    { "", "Field" },
+    { "", "Variable" },
+    { "", "Class" },
+    { "", "Interface" },
+    { "", "Module" },
+    { "", "Property" },
+    { "", "Unit" },
+    { "", "Value" },
+    { "", "Enum" },
+    { "", "Keyword" },
+    { "", "Snippet" },
+    { "", "Color" },
+    { "", "File" },
+    { "", "Reference" },
+    { "", "Folder" },
+    { "", "EnumMember" },
+    { "", "Constant" },
+    { "", "Struct" },
+    { "", "Event" },
+    { "", "Operator" },
+    { "", "TypeParameter" },
+  },
+  error = "",
+  warning = "",
+  info = "",
+  hint = "",
+}
+
 -- https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals/init.lua
 ---@generic T
 ---@param v T

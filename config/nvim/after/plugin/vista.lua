@@ -1,5 +1,4 @@
 local g = vim.g
-local icons = require "dm.icons"
 
 g.vista_default_executive = "nvim_lsp"
 g.vista_sidebar_width = 35
@@ -25,7 +24,7 @@ g.vista_executive_for = {
 g["vista#renderer#enable_icon"] = 1
 g["vista#renderer#icons"] = (function()
   local items = {}
-  for _, info in ipairs(icons.lsp_kind) do
+  for _, info in ipairs(dm.icons.lsp_kind) do
     local icon, name = unpack(info)
     items[name:lower()] = icon
   end

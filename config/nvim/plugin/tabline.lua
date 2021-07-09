@@ -1,6 +1,5 @@
 local fn = vim.fn
 local api = vim.api
-local icons = require "dm.icons"
 local devicons = require "nvim-web-devicons"
 local utils = require "dm.utils"
 
@@ -28,10 +27,10 @@ end
 local function buf_flags(ctx)
   local icon = ""
   if ctx.readonly then
-    icon = icons.lock
+    icon = ""
   elseif ctx.modifiable and ctx.buftype ~= "prompt" then
     if ctx.modified then
-      icon = icons.modified
+      icon = "●"
     end
   end
   return icon

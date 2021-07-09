@@ -1,4 +1,3 @@
-local icons = require "dm.icons"
 local utils = require "dm.utils"
 
 -- Extract out the required namespace/function
@@ -55,7 +54,7 @@ local function last_session_description()
   end
 
   vim.g.startify_last_session_name = last_session
-  return { icons.pin .. "  Last session (" .. last_session .. ")" }
+  return { "  Last session (" .. last_session .. ")" }
 end
 
 --- Generate and return the header of the start page.
@@ -95,33 +94,33 @@ local entries = {
   },
   {
     key = "s",
-    description = { icons.globe .. "  Find sessions" },
+    description = { "  Find sessions" },
     command = 'lua require("dm.plugin.telescope").startify_sessions()',
   },
-  { key = "e", description = { icons.file .. "  New file" }, command = "enew" },
+  { key = "e", description = { "  New file" }, command = "enew" },
   {
     key = "h",
-    description = { icons.history .. "  Recently opened files" },
+    description = { "  Recently opened files" },
     command = 'lua require("telescope.builtin").oldfiles()',
   },
   {
     key = "f",
-    description = { icons.files .. "  Find files" },
+    description = { "  Find files" },
     command = 'lua require("telescope.builtin").find_files()',
   },
   {
     key = "d",
-    description = { icons.tools .. "  Find in dotfiles" },
+    description = { "  Find in dotfiles" },
     command = 'lua require("dm.plugin.telescope").find_dotfiles()',
   },
   {
     key = "u",
-    description = { icons.package .. "  Sync packages" },
+    description = { "  Sync packages" },
     command = "PackerSync",
   },
   {
     key = "p",
-    description = { icons.stopwatch .. "  Startup time" },
+    description = { "  Startup time" },
     command = utils.startuptime,
   },
 }
