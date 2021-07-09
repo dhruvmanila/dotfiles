@@ -11,6 +11,32 @@ require("dap.ext.vscode").load_launchjs()
 sign_define("DapBreakpoint", { text = "", texthl = "Orange" })
 sign_define("DapStopped", { text = "", texthl = "TabLineSel" })
 
+-- Debugger for Neovim
+-- :h osv-dap
+dap.configurations.lua = {
+  {
+    type = "nlua",
+    request = "attach",
+    name = "Attach to running Neovim instance",
+    host = function()
+      local value = vim.fn.input "Host [127.0.0.1]: "
+      if value ~= "" then
+        return value
+      end
+      return "127.0.0.1"
+    end,
+    port = function()
+      local val = tonumber(vim.fn.input "Port: ")
+      assert(val, "Please provide a port number")
+      return val
+    end,
+  },
+}
+
+dap.adapters.nlua = function(callback, config)
+  callback { type = "server", host = config.host, port = config.port }
+end
+
 dap_python.test_runner = "pytest"
 dap_python.setup(vim.loop.os_homedir() .. "/.neovim/py3/bin/python3", {
   include_configs = true,
@@ -67,3 +93,40 @@ do
     keymap_restore = {}
   end
 end
+
+require("dapui").setup {
+  icons = {
+    expanded = "▾",
+    collapsed = "▸",
+  },
+  mappings = {
+    -- Use a table to apply multiple mappings
+    expand = { "<CR>", "<2-LeftMouse>", "<Space>" },
+    open = "o",
+    remove = "d",
+    edit = "e",
+  },
+  sidebar = {
+    open_on_start = true,
+    elements = {
+      "scopes",
+      "breakpoints",
+      "stacks",
+      -- "watches",
+    },
+    width = 40,
+    position = "left", -- Can be "left" or "right"
+  },
+  tray = {
+    open_on_start = true,
+    elements = {
+      "repl",
+    },
+    height = 10,
+    position = "bottom", -- Can be "bottom" or "top"
+  },
+  floating = {
+    max_height = nil, -- These can be integers or a float between 0 and 1.
+    max_width = nil, -- Floats will be treated as percentage of your screen.
+  },
+}
