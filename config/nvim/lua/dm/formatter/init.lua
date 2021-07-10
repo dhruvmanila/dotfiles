@@ -69,3 +69,9 @@ register("yaml", {
   end,
   stdin = true,
 })
+
+register("sql", {
+  cmd = "sqlformat",
+  args = { "--reindent", "--keywords", "upper", "--wrap_after", "80", "-" },
+  stdin = true,
+})
