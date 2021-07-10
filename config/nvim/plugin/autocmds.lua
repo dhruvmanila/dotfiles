@@ -188,4 +188,18 @@ dm.augroup("dm__custom_autocmds", {
     targets = "*",
     command = "syntax sync minlines=1000",
   },
+
+  -- When editing a file, always jump to the last known cursor position.
+  -- :h last-position-jump
+  {
+    events = "BufReadPost",
+    targets = "*",
+    command = function()
+      -- Cursor position when last exiting the current buffer.
+      local pos = fn.line "'\""
+      if o.filetype ~= "gitcommit" and pos > 0 and pos < fn.line "$" then
+        vim.cmd 'keepjumps normal! g`"'
+      end
+    end,
+  },
 })
