@@ -26,11 +26,17 @@ function! s:log_autocmds_toggle()
   augroup END
 endfunction
 
-" Add the provided message to the log file.
+" Add the provided autocmd name and related information to the log file.
 " 'a': append to the file
-function! s:log(message)
-  let l:message = strftime('%T', localtime()) . ' - ' . a:message
-  call writefile([l:message], '/tmp/vim_debug.log', 'a')
+function! s:log(name)
+  let l:timestamp = strftime('%T', localtime())
+  let l:amatch = fnamemodify(expand('<amatch>'), ':t')
+  let l:amatch = l:amatch !=# '' ? ' ' . l:amatch : ''
+  call writefile([
+        \ '[' . l:timestamp . '] - ' .
+        \ a:name .
+        \ l:amatch
+        \ ], '/tmp/vim_debug.log', 'a')
 endfunction
 
 " These are deliberately left out due to side effects
