@@ -28,29 +28,15 @@ local function should_use_ts(node)
   return vim.tbl_contains(node_types, node:type())
 end
 
--- Normalize Location/LocationLink to Location.
----@param location table
----@return table
----@see https://microsoft.github.io/language-server-protocol/specifications/specification-current/#location
----@see https://microsoft.github.io/language-server-protocol/specifications/specification-current/#locationLink
-local function normalize_location(location)
-  if location.uri then
-    return location
-  end
-  if location.targetUri then
-    location.uri = location.targetUri
-    if location.targetRange then
-      location.range = location.targetRange
-    end
-  end
-  return location
-end
+-- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#location
+-- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#locationLink
 
 -- Get the range of the location node using treesitter.
 ---@param location table
 ---@return table
 local function ts_range(location)
-  location = normalize_location(location)
+  location.uri = location.targetUri or location.uri
+  location.range = location.targetRange or location.range
   local bufnr = vim.uri_to_bufnr(location.uri)
   -- Set the filetype to activate the parser for the respective buffer.
   vim.bo[bufnr].filetype = vim.bo.filetype
