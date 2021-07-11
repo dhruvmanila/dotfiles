@@ -11,6 +11,8 @@ local M = {}
 
 --- Useful defaults
 local empty_line = { "" }
+local line_length = 50
+local hl = { header = "Yellow", entry = "Red", footer = "Blue" }
 
 -- Dashboard namespace
 local dashboard = {}
@@ -54,7 +56,7 @@ local function last_session_description()
   end
 
   vim.g.startify_last_session_name = last_session
-  return { "  Last session (" .. last_session .. ")" }
+  return "  Last session (" .. last_session .. ")"
 end
 
 --- Generate and return the header of the start page.
@@ -82,8 +84,8 @@ end
 
 ---@class DashboardEntry
 ---@field key string keymap to trigger the `command`
----@field description string[]|function command description
----@field command string|function execute the `command` on `key` or `<CR>`
+---@field description string|fun():string oneline command description
+---@field command string|function execute the string/function on `key` or `<CR>`
 
 ---@type DashboardEntry[]
 local entries = {
@@ -94,33 +96,33 @@ local entries = {
   },
   {
     key = "s",
-    description = { "  Find sessions" },
+    description = "  Find sessions",
     command = 'lua require("dm.plugin.telescope").startify_sessions()',
   },
-  { key = "e", description = { "  New file" }, command = "enew" },
+  { key = "e", description = "  New file", command = "enew" },
   {
     key = "h",
-    description = { "  Recently opened files" },
+    description = "  Recently opened files",
     command = 'lua require("telescope.builtin").oldfiles()',
   },
   {
     key = "f",
-    description = { "  Find files" },
+    description = "  Find files",
     command = 'lua require("telescope.builtin").find_files()',
   },
   {
     key = "d",
-    description = { "  Find in dotfiles" },
+    description = "  Find in dotfiles",
     command = 'lua require("dm.plugin.telescope").find_dotfiles()',
   },
   {
     key = "u",
-    description = { "  Sync packages" },
+    description = "  Sync packages",
     command = "PackerSync",
   },
   {
     key = "p",
-    description = { "  Startup time" },
+    description = "  Startup time",
     command = utils.startuptime,
   },
 }
@@ -137,12 +139,11 @@ end
 
 --- Add the key value to the right end of the given line with the appropriate
 --- padding as per the `length` value.
----@param line string[]
+---@param line string
 ---@param key string
----@param length number
----@return string[]
-local function add_key(line, key, length)
-  return { line[1] .. string.rep(" ", length - #line[1]) .. key }
+---@return string
+local function add_key(line, key)
+  return line .. string.rep(" ", line_length - #line) .. key
 end
 
 --- Add paddings on the left side of every line to make it look like its in the
@@ -194,10 +195,11 @@ end
 local function set_entries()
   for _, entry in ipairs(entries) do
     local description = entry.description
-    description = type(description) == "function" and description()
-      or description
-    description = add_key(description, entry.key, 50)
-    utils.append(0, center(description), "Red")
+    if type(description) == "function" then
+      description = description()
+    end
+    description = add_key(description, entry.key)
+    utils.append(0, center { description }, hl.entry)
     register_entry(entry)
     utils.append(0, empty_line)
   end
@@ -337,9 +339,9 @@ function M.open(on_vimenter)
   local header = generate_header()
   local sub_header = generate_sub_header()
   utils.append(0, empty_line)
-  utils.append(0, center(header), "Yellow")
+  utils.append(0, center(header), hl.header)
   utils.append(0, empty_line)
-  utils.append(0, center(sub_header), "Yellow")
+  utils.append(0, center(sub_header), hl.header)
   utils.append(0, empty_line)
 
   -- Set the sections
@@ -355,7 +357,7 @@ function M.open(on_vimenter)
 
   -- Set the footer
   utils.append(0, empty_line)
-  utils.append(0, center(generate_footer()), "Blue")
+  utils.append(0, center(generate_footer()), hl.footer)
 
   -- Lock the buffer
   option_process(
