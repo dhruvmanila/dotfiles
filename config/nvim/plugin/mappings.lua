@@ -55,8 +55,7 @@ map("n", "[<Leader>", "<Cmd>bprev<CR>")
 map("n", "<Leader><BS>", "<Cmd>bdelete<CR>")
 
 -- Fast switching between last and current file
--- Previous mapping: "<leader><leader>"
-map("n", "<Leader><TAB>", "<Cmd>buffer#<CR>")
+map("n", "<Leader><Leader>", "<Cmd>buffer#<CR>")
 
 -- Quickfix list
 map("n", "]q", "<Cmd>cnext<CR>")
