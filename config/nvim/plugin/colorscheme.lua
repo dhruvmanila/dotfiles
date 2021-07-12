@@ -92,12 +92,6 @@ highlight(
   { force = true, link = "VirtualTextHint" }
 )
 
--- Compe doc window should be same as that of NormalFloat
-highlight("CompeDocumentation", {
-  guifg = palette.fg0[1],
-  guibg = palette.bg4[1],
-})
-
 -- Lir
 highlight("LirFloatBorder", { force = true, link = "FloatBorder" })
 highlight("LirFloatNormal", { force = true, link = "NormalFloat" })

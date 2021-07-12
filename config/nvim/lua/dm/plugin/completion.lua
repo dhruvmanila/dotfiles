@@ -18,7 +18,7 @@ require("compe").setup {
   preselect = "disable",
   documentation = {
     border = dm.border[vim.g.border_style],
-    winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
+    winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
     max_width = 120,
     min_width = 60,
     max_height = math.floor(vim.o.lines * 0.3),
