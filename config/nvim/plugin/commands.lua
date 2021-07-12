@@ -38,3 +38,28 @@ end
 dm.command { "Term", "new | wincmd J | resize -5 | term" }
 dm.command { "Vterm", "vnew | wincmd L | term" }
 dm.command { "Tterm", "tabnew | term" }
+
+-- :BufOnly - Delete all the buffers except the current buffer while ignoring
+-- any terminal buffers.
+dm.command { "BufOnly", function()
+  local deleted, modified = 0, 0
+  local curr_buf = api.nvim_get_current_buf()
+  for _, bufnr in ipairs(api.nvim_list_bufs()) do
+    if vim.bo[bufnr].buflisted then
+      if vim.bo[bufnr].modified then
+        modified = modified + 1
+      elseif bufnr ~= curr_buf and vim.bo[bufnr].buftype ~= "terminal" then
+        api.nvim_buf_delete(bufnr, {})
+        deleted = deleted + 1
+      end
+    end
+  end
+  if deleted > 0 or modified > 0 then
+    vim.notify {
+      "BufOnly",
+      "",
+      deleted .. " deleted buffer(s)",
+      modified .. " modified buffer(s)",
+    }
+  end
+end }
