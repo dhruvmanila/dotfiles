@@ -61,6 +61,9 @@ opt.pumheight = 20
 opt.relativenumber = true
 opt.ruler = false
 opt.scrolloff = 5 -- Keep the cursor in the middle area approx
+
+opt.sessionoptions:remove { "options" }
+
 opt.shiftround = true -- round indent to multiple of 'shiftwidth'
 opt.shiftwidth = 2 -- number of spaces of an indent
 

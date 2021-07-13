@@ -90,7 +90,6 @@ local function load_plugins()
     },
     { "mfussenegger/nvim-dap-python" },
     { "mfussenegger/nvim-lint" },
-    { "mhinz/vim-startify" },
     { "milisims/nvim-luaref" },
     { "nanotee/luv-vimdocs" },
     { "neovim/nvim-lspconfig", event = "BufReadPre", config = conf "lsp" },

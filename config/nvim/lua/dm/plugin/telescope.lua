@@ -228,18 +228,16 @@ function M.installed_plugins()
   )
 end
 
--- List out all the saved startify sessions and provide action to either open
--- them or delete them.
-function M.startify_sessions()
-  require("telescope").extensions.startify_sessions.startify_sessions(
-    themes.get_dropdown {
-      layout_config = {
-        width = 40,
-        height = 0.5,
-      },
-      previewer = false,
-    }
-  )
+-- List out all the saved sessions and provide action to either open them or
+-- delete them.
+function M.sessions()
+  require("telescope").extensions.sessions.sessions(themes.get_dropdown {
+    layout_config = {
+      width = 40,
+      height = 0.5,
+    },
+    previewer = false,
+  })
 end
 
 -- Using `ddgr/googler` search the web and fuzzy find through the results and
@@ -312,7 +310,7 @@ do
     ["<leader>fp"] = "require('dm.plugin.telescope').installed_plugins()",
     ["<leader>fb"] = "require('dm.plugin.telescope').bookmarks()",
     ["<leader>fw"] = "require('dm.plugin.telescope').websearch()",
-    ["<leader>fs"] = "require('dm.plugin.telescope').startify_sessions()",
+    ["<leader>fs"] = "require('dm.plugin.telescope').sessions()",
     ["<leader>fi"] = "require('telescope').extensions.icons.icons()",
   }
 

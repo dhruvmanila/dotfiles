@@ -2,7 +2,7 @@ local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
   vim.notify(
-    { "Telescope", "", "`startify_sessions` extension requires telescope.nvim" },
+    { "Telescope", "", "`sessions` extension requires telescope.nvim" },
     4
   )
 end
@@ -13,6 +13,8 @@ local config = require("telescope.config").values
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
+
+local session = require "dm.session"
 
 --- Return the current session name.
 local function get_current_session_name()
@@ -29,36 +31,30 @@ local function load_session(prompt_bufnr)
     return
   end
   actions.close(prompt_bufnr)
-  vim.fn["startify#session_load"](false, selection.value)
+  session.load(selection.value)
 end
 
 --- Delete the selected startify session.
 local function delete_session(prompt_bufnr)
   local current_picker = action_state.get_current_picker(prompt_bufnr)
   current_picker:delete_selection(function(selection)
-    vim.fn["startify#session_delete"](false, selection.value)
+    session.delete(selection.value)
   end)
 end
 
---- This extension will show all the startify sessions and provide actions to
+--- This extension will show all the available sessions and provide actions to
 --- either open or delete a session.
----
---- Requires: vim-startify
---- Reference: (autoload/startify.vim)
----   - `startify#session_list`
----   - `startify#session_load`
----   - `startify#session_delete`
 ---
 --- There are two actions available:
 ---   - Default action (<CR>) will load the selected session.
 ---   - <C-x> will delete the selected session.
 ---@param opts table
-local function startify_sessions(opts)
+local function sessions(opts)
   opts = opts or {}
 
   local results = {}
   local current_session = get_current_session_name()
-  for _, name in ipairs(vim.fn["startify#session_list"] "") do
+  for _, name in ipairs(session.list()) do
     table.insert(results, {
       value = name,
       name = name == current_session and name .. " (*)" or name,
@@ -76,7 +72,7 @@ local function startify_sessions(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Startify Sessions",
+    prompt_title = "Sessions",
     finder = finders.new_table {
       results = results,
       entry_maker = function(entry)
@@ -101,5 +97,5 @@ local function startify_sessions(opts)
 end
 
 return telescope.register_extension {
-  exports = { startify_sessions = startify_sessions },
+  exports = { sessions = sessions },
 }

@@ -1,4 +1,5 @@
 local utils = require "dm.utils"
+local session = require "dm.session"
 
 -- Extract out the required namespace/function
 local vim = vim
@@ -36,27 +37,20 @@ dashboard.opts = {
 }
 
 --- Last session entry description.
---- This also sets the global variable `startify_last_session_name` to be used
---- to load the session.
+--- This will save the name of the last session in the dashboard namespace to
+--- be used to load the session.
 ---@return string[]
 local function last_session_description()
-  local last_session = ""
-  local last_edited = 0
-  local session_dir = vim.g.startify_session_dir
-
-  for _, name in ipairs(fn.readdir(session_dir)) do
-    if name ~= "__LAST__" then
-      local path = session_dir .. "/" .. name
-      local time = fn.getftime(path)
-      if time > last_edited then
-        last_session = name
-        last_edited = time
-      end
-    end
-  end
-
-  vim.g.startify_last_session_name = last_session
-  return "  Last session (" .. last_session .. ")"
+  local fs_stat = vim.loop.fs_stat
+  local session_dir = vim.g.session_dir
+  local sessions = session.list()
+  table.sort(sessions, function(a, b)
+    a = session_dir .. "/" .. a
+    b = session_dir .. "/" .. b
+    return fs_stat(a).mtime.sec > fs_stat(b).mtime.sec
+  end)
+  dashboard.last_session = sessions[1]
+  return "  Last session (" .. sessions[1] .. ")"
 end
 
 --- Generate and return the header of the start page.
@@ -92,14 +86,20 @@ local entries = {
   {
     key = "l",
     description = last_session_description,
-    command = "call startify#session_load(0, g:startify_last_session_name)",
+    command = function()
+      session.load(dashboard.last_session)
+    end,
   },
   {
     key = "s",
     description = "  Find sessions",
-    command = 'lua require("dm.plugin.telescope").startify_sessions()',
+    command = 'lua require("dm.plugin.telescope").sessions()',
   },
-  { key = "e", description = "  New file", command = "enew" },
+  {
+    key = "e",
+    description = "  New file",
+    command = "enew",
+  },
   {
     key = "h",
     description = "  Recently opened files",
@@ -233,27 +233,6 @@ end
 local function reset_opts()
   option_process(dashboard.saved_opts, "set")
   dashboard.saved_opts = {}
-end
-
---- Cleanup performed before saving the session. This includes:
----   - Closing the NvimTree buffer
----   - Quitting the Dashboard buffer
----   - Stop all the active LSP clients
-function M.session_cleanup()
-  if o.filetype == "dashboard" then
-    local calling_buffer = fn.bufnr "#"
-    if calling_buffer > 0 then
-      api.nvim_set_current_buf(calling_buffer)
-    end
-  end
-
-  if plugin_loaded "nvim-tree.lua" then
-    local curtab = api.nvim_get_current_tabpage()
-    cmd "silent tabdo NvimTreeClose"
-    api.nvim_set_current_tabpage(curtab)
-  end
-
-  vim.lsp.stop_client(vim.lsp.get_active_clients())
 end
 
 --- Close the dashboard buffer and either quit neovim or move back to the
