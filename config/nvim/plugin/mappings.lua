@@ -127,6 +127,14 @@ map("x", "K", [[:m '<-2<CR>gv=gv]])
 map("x", "<", "<gv")
 map("x", ">", ">gv")
 
+-- Repeat macros across a visual range
+-- TODO: This should be moved to lua version which accepts lua functions.
+function dm.execute_macro_over_visual_range()
+  vim.cmd [[echo "@".getcmdline()]]
+  vim.cmd [[":'<,'>normal @".nr2char(getchar())]]
+end
+map("x", "@", ":lua dm.execute_macro_over_visual_range()<CR>")
+
 -- Textobjects
 --
 -- (a)round (l)ine: Includes newline
