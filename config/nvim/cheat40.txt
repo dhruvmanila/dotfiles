@@ -156,8 +156,8 @@ Node decremental         «S-Tab»       X
 @call.inner              iF            T
 @conditional.outer       ac            T
 @conditional.inner       ic            T
-@loop.outer              al            T
-@loop.inner              il            T
+@loop.outer              ao            T
+@loop.inner              io            T
 @parameter.outer         aa            T
 @parameter.inner         ip            T
 }}}

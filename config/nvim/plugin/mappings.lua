@@ -127,6 +127,20 @@ map("x", "K", [[:m '<-2<CR>gv=gv]])
 map("x", "<", "<gv")
 map("x", ">", ">gv")
 
+-- Textobjects
+--
+-- (a)round (l)ine: Includes newline
+-- (i)nside (l)ine: No Spaces or <CR>
+-- (i)nside (e)ntire: Entire object (file)
+--
+-- Credit: https://github.com/junegunn/dotfiles
+map("x", "al", "$o0")
+map("o", "al", "<Cmd>normal val<CR>")
+map("x", "il", [[<Esc>^vg_]])
+map("o", "il", [[<Cmd>normal! ^vg_<CR>]])
+map("x", "ie", "gg0oG$")
+map("o", "ie", [[:<C-U>execute "normal! m`"<Bar>keepjumps normal! ggVG<CR>]])
+
 -- Make <C-p>/<C-n> as smart as <up>/<down>
 --
 -- This will recall older/recent command-line from history, whose beginning
