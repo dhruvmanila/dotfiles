@@ -159,6 +159,24 @@ map("o", "ie", [[:<C-U>execute "normal! m`"<Bar>keepjumps normal! ggVG<CR>]])
 map("c", "<C-p>", 'wildmenumode() ? "<C-p>" : "<up>"', { expr = true })
 map("c", "<C-n>", 'wildmenumode() ? "<C-n>" : "<down>"', { expr = true })
 
+-- `<Tab>`/`<S-Tab>` to move between matches without leaving incremental search.
+-- Note dependency on `'wildcharm'` being set to `<C-z>` in order for this to
+-- work.
+--
+-- Credit: https://github.com/wincent/wincent
+map(
+  "c",
+  "<Tab>",
+  [[getcmdtype() == '/' || getcmdtype() == '?' ? '<CR>/<C-r>/' : '<C-z>']],
+  { expr = true }
+)
+map(
+  "c",
+  "<S-Tab>",
+  [[getcmdtype() == '/' || getcmdtype() == '?' ? '<CR>?<C-r>/' : '<S-Tab>']],
+  { expr = true }
+)
+
 -- Make <Left>/<Right> move the cursor instead of selecting a different match
 -- in the wildmenu. See :h 'wildmenu'
 map("c", "<Left>", "<Space><BS><Left>")

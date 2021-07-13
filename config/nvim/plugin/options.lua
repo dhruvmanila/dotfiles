@@ -91,6 +91,7 @@ opt.termguicolors = true
 opt.textwidth = 0 -- do not automatically wrap text
 opt.undofile = true
 opt.updatetime = 100
+opt.wildcharm = 26 -- ('<C-z>') substitute for 'wildchar' (<Tab>) in macros
 
 opt.wildmode = {
   "longest:full", -- complete longest common string : show the wildmenu
