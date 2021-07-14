@@ -11,6 +11,8 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local themes = require "telescope.themes"
 
+local nnoremap = dm.nnoremap
+
 -- Namespace to hold custom actions
 local custom_actions = {}
 
@@ -178,15 +180,12 @@ do
   end
 end
 
--- Entrypoints which will allow me to configure each command individually.
-local M = {}
-
 -- NOTE: This must be required after setting up telescope otherwise the result
 -- will be cached without the updates from the setup call.
 local builtin = require "telescope.builtin"
 
 -- This is mainly to avoid .gitignore patterns.
-function M.find_all_files()
+local function find_all_files()
   builtin.find_files {
     prompt_title = "Find All Files",
     find_command = {
@@ -202,14 +201,14 @@ function M.find_all_files()
   }
 end
 
-function M.grep_prompt()
+local function grep_prompt()
   builtin.grep_string {
     use_regex = true,
     search = vim.fn.input "Grep pattern > ",
   }
 end
 
-function M.find_dotfiles()
+local function find_dotfiles()
   builtin.find_files {
     prompt_title = "Find dotfiles",
     cwd = "~/dotfiles",
@@ -221,7 +220,7 @@ end
 
 -- List out all the installed plugins and provide action to either go to the
 -- GitHub page of the plugin or find files within the plugin using telescope.
-function M.installed_plugins()
+local function installed_plugins()
   telescope.extensions.installed_plugins.installed_plugins(themes.get_dropdown {
     layout_config = {
       width = _PackerPluginInfo.max_length + 10,
@@ -233,7 +232,7 @@ end
 
 -- List out all the saved sessions and provide action to either open them or
 -- delete them.
-function M.sessions()
+local function sessions()
   telescope.extensions.sessions.sessions(themes.get_dropdown {
     layout_config = {
       width = 40,
@@ -245,82 +244,54 @@ end
 
 -- Using `ddgr/googler` search the web and fuzzy find through the results and
 -- open them up in the browser.
-function M.websearch()
+local function websearch()
   telescope.extensions.websearch.websearch(default_dropdown)
 end
 
 -- Fuzzy find over your browser bookmarks.
-function M.bookmarks()
+local function bookmarks()
   telescope.extensions.bookmarks.bookmarks(default_dropdown)
 end
 
 -- Gaze the stars with the power of telescope.
-function M.github_stars()
+local function github_stars()
   telescope.extensions.github_stars.github_stars(default_dropdown)
 end
 
--- Start a telescope search to cd into any directory from the current one.
--- The keybinding is defined only for the lir buffer.
----@see `after/ftplugin/lir`
-function M.lir_cd()
-  -- Previewer is turned off by default. If it is enabled, then use the
-  -- horizontal layout with wider results window and narrow preview window.
-  telescope.extensions.lir_cd.lir_cd(themes.get_dropdown {
-    layout_config = {
-      width = function(_, editor_width, _)
-        return math.min(100, editor_width - 10)
-      end,
-      height = 0.8,
-    },
-    previewer = false,
-  })
-end
+-- Meta
+nnoremap { "<leader>te", builtin.builtin }
 
-do
-  local nvim_set_keymap = vim.api.nvim_set_keymap
-  local opts = { noremap = true, silent = true }
+-- Files
+nnoremap { "<C-p>", builtin.find_files }
+nnoremap { "<C-f>", builtin.current_buffer_fuzzy_find }
+nnoremap { "<leader>;", builtin.buffers }
+nnoremap { "<leader>fd", find_dotfiles }
+nnoremap { "<leader>fa", find_all_files }
 
-  local mappings = {
-    -- Meta
-    ["<leader>te"] = "require('telescope.builtin').builtin()",
+-- Grep
+nnoremap { "<leader>rp", grep_prompt }
+nnoremap { "<leader>rg", builtin.live_grep }
 
-    -- Files
-    ["<C-p>"] = "require('telescope.builtin').find_files()",
-    ["<C-f>"] = "require('telescope.builtin').current_buffer_fuzzy_find()",
-    ["<leader>;"] = "require('telescope.builtin').buffers()",
-    ["<leader>fd"] = "require('dm.plugin.telescope').find_dotfiles()",
-    ["<leader>fa"] = "require('dm.plugin.telescope').find_all_files()",
+-- Git
+nnoremap { "<leader>gc", builtin.git_commits }
+nnoremap { ";b", builtin.git_branches }
 
-    -- Grep
-    ["<leader>rp"] = "require('dm.plugin.telescope').grep_prompt()",
-    ["<leader>rg"] = "require('telescope.builtin').live_grep()",
+-- Neovim
+nnoremap { "<leader>fh", builtin.help_tags }
+nnoremap { "<leader>fm", builtin.keymaps }
+nnoremap { "<leader>fc", builtin.commands }
+nnoremap { "<leader>hi", builtin.highlights }
+nnoremap { "<leader>vo", builtin.vim_options }
+nnoremap { "<leader>:", builtin.command_history }
+nnoremap { "<leader>/", builtin.search_history }
 
-    -- Git
-    ["<leader>gc"] = "require('telescope.builtin').git_commits()",
-    [";b"] = "require('telescope.builtin').git_branches()",
+-- Extensions
+nnoremap { "<leader>gs", github_stars }
+nnoremap { "<leader>fp", installed_plugins }
+nnoremap { "<leader>fb", bookmarks }
+nnoremap { "<leader>fw", websearch }
+nnoremap { "<leader>fs", sessions }
+nnoremap { "<leader>fi", telescope.extensions.icons.icons }
 
-    -- Neovim
-    ["<leader>fh"] = "require('telescope.builtin').help_tags()",
-    ["<leader>fm"] = "require('telescope.builtin').keymaps()",
-    ["<leader>fc"] = "require('telescope.builtin').commands()",
-    ["<leader>hi"] = "require('telescope.builtin').highlights()",
-    ["<leader>vo"] = "require('telescope.builtin').vim_options()",
-    ["<leader>:"] = "require('telescope.builtin').command_history()",
-    ["<leader>/"] = "require('telescope.builtin').search_history()",
-
-    -- Extensions
-    ["<leader>gs"] = "require('dm.plugin.telescope').github_stars()",
-    ["<leader>fp"] = "require('dm.plugin.telescope').installed_plugins()",
-    ["<leader>fb"] = "require('dm.plugin.telescope').bookmarks()",
-    ["<leader>fw"] = "require('dm.plugin.telescope').websearch()",
-    ["<leader>fs"] = "require('dm.plugin.telescope').sessions()",
-    ["<leader>fi"] = "require('telescope').extensions.icons.icons()",
-  }
-
-  for key, command in pairs(mappings) do
-    command = "<Cmd>lua " .. command .. "<CR>"
-    nvim_set_keymap("n", key, command, opts)
-  end
-end
-
-return M
+-- Used in Dashboard
+return { sessions = sessions }
