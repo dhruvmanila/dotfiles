@@ -149,15 +149,13 @@ map("o", "il", [[<Cmd>normal! ^vg_<CR>]])
 map("x", "ie", "gg0oG$")
 map("o", "ie", [[:<C-U>execute "normal! m`"<Bar>keepjumps normal! ggVG<CR>]])
 
--- Make <C-p>/<C-n> as smart as <up>/<down>
+-- Make <C-k>/<C-j> as smart as <up>/<down>
 --
--- This will recall older/recent command-line from history, whose beginning
--- matches the current command-line and also distinguish between command-line
--- history and wildmenu. See :h 'wildmenu'
---
--- Alternatively, it can be mapped to <C-k>/<C-j> respectively.
-map("c", "<C-p>", 'wildmenumode() ? "<C-p>" : "<up>"', { expr = true })
-map("c", "<C-n>", 'wildmenumode() ? "<C-n>" : "<down>"', { expr = true })
+-- This will either recall older/recent command-line from history, whose
+-- beginning matches the current command-line or move through the wildmenu
+-- completion.
+map("c", "<C-k>", 'wildmenumode() ? "<C-p>" : "<up>"', { expr = true })
+map("c", "<C-j>", 'wildmenumode() ? "<C-n>" : "<down>"', { expr = true })
 
 -- `<Tab>`/`<S-Tab>` to move between matches without leaving incremental search.
 -- Note dependency on `'wildcharm'` being set to `<C-z>` in order for this to
