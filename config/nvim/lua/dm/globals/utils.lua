@@ -1,6 +1,5 @@
 -- Inspired by @tjdevries' astraunauta.nvim/ @TimUntersberger's config
 -- Ref: https://github.com/akinsho/dotfiles/tree/main/.config/nvim/lua/as/globals
--- TODO: remove this once upstream got the feature
 
 -- Store all callbacks in one global table so they are able to survive
 -- re-requiring this file
@@ -52,7 +51,7 @@ end
 -- arguments in the same order.
 ---@param id number
 function dm._execute(id, ...)
-  dm._store[id](...)
+  return dm._store[id](...)
 end
 
 ---@class AutocmdOpts
@@ -108,7 +107,7 @@ end
 --   - [1] (string) name of the command
 --   - [2] (string|function) rhs part of the command
 --   - `nargs` (number) (default: 0) nargs attribute value
---   - `attr` (string[]) (optional) list or command attributes
+--   - `attr` (string[]) (optional) list of command attributes
 --     (-bang, -complete, etc)
 ---@param opts table
 function dm.command(opts)
@@ -166,4 +165,71 @@ do
       vim.notify(debug.traceback(msg, 2), 4)
     end
   end
+end
+
+do
+  ---Factory function to create mapper functions.
+  ---@param mode string
+  ---@param defaults table
+  ---@return fun(opts: table): nil
+  local function make_mapper(mode, defaults)
+    return function(opts)
+      -- Separate out the normal and keyword arguments from the `opts` table.
+      local args, map_opts = {}, {}
+      for k, v in pairs(opts) do
+        if type(k) == "number" then
+          args[k] = v
+        else
+          map_opts[k] = v
+        end
+      end
+      local lhs = args[1]
+      local rhs = args[2]
+      map_opts = vim.tbl_extend("force", defaults, map_opts)
+      local rhs_type = type(rhs)
+      if rhs_type == "function" then
+        local fn_id = dm._create(rhs)
+        -- Expression mappings are 'evaluated' first, so it should not behave
+        -- like we are only passing keystrokes.
+        if map_opts.expr then
+          rhs = format("v:lua.dm._execute('%s')", fn_id)
+        else
+          rhs = format("<Cmd>lua dm._execute('%s')<CR>", fn_id)
+        end
+      elseif rhs_type ~= "string" then
+        error("[mapper] Unsupported rhs type: " .. rhs_type)
+      end
+      if map_opts.buffer then
+        local bufnr = map_opts.buffer
+        if bufnr == true then
+          bufnr = 0
+        end
+        map_opts.buffer = nil
+        vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, map_opts)
+      else
+        vim.api.nvim_set_keymap(mode, lhs, rhs, map_opts)
+      end
+    end
+  end
+
+  local map = { noremap = false }
+  local noremap = { noremap = true }
+
+  dm.nmap = make_mapper("n", map)
+  dm.imap = make_mapper("i", map)
+  dm.cmap = make_mapper("c", map)
+  dm.vmap = make_mapper("v", map)
+  dm.xmap = make_mapper("x", map)
+  dm.smap = make_mapper("s", map)
+  dm.omap = make_mapper("o", map)
+  dm.tmap = make_mapper("t", map)
+
+  dm.nnoremap = make_mapper("n", noremap)
+  dm.inoremap = make_mapper("i", noremap)
+  dm.cnoremap = make_mapper("c", noremap)
+  dm.vnoremap = make_mapper("v", noremap)
+  dm.xnoremap = make_mapper("x", noremap)
+  dm.snoremap = make_mapper("s", noremap)
+  dm.onoremap = make_mapper("o", noremap)
+  dm.tnoremap = make_mapper("t", noremap)
 end
