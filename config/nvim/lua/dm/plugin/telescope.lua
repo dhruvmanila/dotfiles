@@ -1,7 +1,3 @@
-local actions = require "telescope.actions"
-local action_state = require "telescope.actions.state"
-local themes = require "telescope.themes"
-
 local should_reload = true
 
 if should_reload then
@@ -9,6 +5,11 @@ if should_reload then
   RELOAD "popup"
   RELOAD "telescope"
 end
+
+local telescope = require "telescope"
+local actions = require "telescope.actions"
+local action_state = require "telescope.actions.state"
+local themes = require "telescope.themes"
 
 -- Namespace to hold custom actions
 local custom_actions = {}
@@ -33,7 +34,7 @@ local default_dropdown = themes.get_dropdown {
   previewer = false,
 }
 
-require("telescope").setup {
+telescope.setup {
   defaults = {
     prompt_prefix = " ",
     selection_caret = "❯ ",
@@ -167,7 +168,7 @@ do
   }
 
   for _, name in ipairs(extensions) do
-    local loaded, _ = pcall(require("telescope").load_extension, name)
+    local loaded, _ = pcall(telescope.load_extension, name)
     if not loaded then
       vim.notify(
         { "Telescope", "", "Failed to load the extension: '" .. name .. "'" },
@@ -180,9 +181,13 @@ end
 -- Entrypoints which will allow me to configure each command individually.
 local M = {}
 
+-- NOTE: This must be required after setting up telescope otherwise the result
+-- will be cached without the updates from the setup call.
+local builtin = require "telescope.builtin"
+
 -- This is mainly to avoid .gitignore patterns.
 function M.find_all_files()
-  require("telescope.builtin").find_files {
+  builtin.find_files {
     prompt_title = "Find All Files",
     find_command = {
       "fd",
@@ -198,14 +203,14 @@ function M.find_all_files()
 end
 
 function M.grep_prompt()
-  require("telescope.builtin").grep_string {
+  builtin.grep_string {
     use_regex = true,
     search = vim.fn.input "Grep pattern > ",
   }
 end
 
 function M.find_dotfiles()
-  require("telescope.builtin").find_files {
+  builtin.find_files {
     prompt_title = "Find dotfiles",
     cwd = "~/dotfiles",
     hidden = true,
@@ -217,21 +222,19 @@ end
 -- List out all the installed plugins and provide action to either go to the
 -- GitHub page of the plugin or find files within the plugin using telescope.
 function M.installed_plugins()
-  require("telescope").extensions.installed_plugins.installed_plugins(
-    themes.get_dropdown {
-      layout_config = {
-        width = _PackerPluginInfo.max_length + 10,
-        height = 0.8,
-      },
-      previewer = false,
-    }
-  )
+  telescope.extensions.installed_plugins.installed_plugins(themes.get_dropdown {
+    layout_config = {
+      width = _PackerPluginInfo.max_length + 10,
+      height = 0.8,
+    },
+    previewer = false,
+  })
 end
 
 -- List out all the saved sessions and provide action to either open them or
 -- delete them.
 function M.sessions()
-  require("telescope").extensions.sessions.sessions(themes.get_dropdown {
+  telescope.extensions.sessions.sessions(themes.get_dropdown {
     layout_config = {
       width = 40,
       height = 0.5,
@@ -243,17 +246,17 @@ end
 -- Using `ddgr/googler` search the web and fuzzy find through the results and
 -- open them up in the browser.
 function M.websearch()
-  require("telescope").extensions.websearch.websearch(default_dropdown)
+  telescope.extensions.websearch.websearch(default_dropdown)
 end
 
 -- Fuzzy find over your browser bookmarks.
 function M.bookmarks()
-  require("telescope").extensions.bookmarks.bookmarks(default_dropdown)
+  telescope.extensions.bookmarks.bookmarks(default_dropdown)
 end
 
 -- Gaze the stars with the power of telescope.
 function M.github_stars()
-  require("telescope").extensions.github_stars.github_stars(default_dropdown)
+  telescope.extensions.github_stars.github_stars(default_dropdown)
 end
 
 -- Start a telescope search to cd into any directory from the current one.
@@ -262,7 +265,7 @@ end
 function M.lir_cd()
   -- Previewer is turned off by default. If it is enabled, then use the
   -- horizontal layout with wider results window and narrow preview window.
-  require("telescope").extensions.lir_cd.lir_cd(themes.get_dropdown {
+  telescope.extensions.lir_cd.lir_cd(themes.get_dropdown {
     layout_config = {
       width = function(_, editor_width, _)
         return math.min(100, editor_width - 10)
