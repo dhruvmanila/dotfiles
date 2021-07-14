@@ -12,37 +12,13 @@ _G.dm = {
 
 local format = string.format
 
--- Create a unique identification string readable by human for the given
--- function. This create a string of the following format:
---        "<source>_<name>_<linedefined>"
----@param f function
----@return string
----@see https://www.lua.org/pil/23.1.html
-local function create_id(f)
-  local info = debug.getinfo(f, "Sn") -- Source and name related information
-  if not info then
-    return
-  end
-  local source = info.source
-    :gsub(".*/lua/(.*)", "%1") -- path from "../lua/" module
-    :gsub(".*/nvim/(.*)", "%1") -- OR path from "../nvim/"
-    :gsub("/", ".") -- replace "/" with "."
-    :gsub("%.lua$", "") -- remove the ".lua" extension
-  local name = info.name and "_" .. info.name or ""
-  local linedefined = "_" .. info.linedefined
-  return format("%s%s%s", source, name, linedefined)
-end
-
 -- Store the given function in the global callbacks table and return its
 -- unique identification string.
 ---@param f function
 ---@return string
 function dm._create(f)
   vim.validate { f = { f, "f" } }
-  local id = create_id(f)
-  if not id or id == "" then
-    id = tostring(vim.tbl_count(dm._store) + 1)
-  end
+  local id = #dm._store + 1
   dm._store[id] = f
   return id
 end
@@ -75,7 +51,7 @@ do
     local command = opts.command
     if type(command) == "function" then
       local fn_id = dm._create(command)
-      command = format("lua dm._execute('%s')", fn_id)
+      command = format("lua dm._execute(%d)", fn_id)
     end
     vim.cmd(
       format(
@@ -121,7 +97,7 @@ function dm.command(opts)
   if type(rhs) == "function" then
     local fn_id = dm._create(rhs)
     rhs = format(
-      "lua dm._execute('%s'%s)",
+      "lua dm._execute(%d%s)",
       fn_id,
       nargs > 0 and ", <f-args>" or ""
     )
@@ -192,9 +168,9 @@ do
         -- Expression mappings are 'evaluated' first, so it should not behave
         -- like we are only passing keystrokes.
         if map_opts.expr then
-          rhs = format("v:lua.dm._execute('%s')", fn_id)
+          rhs = format("v:lua.dm._execute(%d)", fn_id)
         else
-          rhs = format("<Cmd>lua dm._execute('%s')<CR>", fn_id)
+          rhs = format("<Cmd>lua dm._execute(%d)<CR>", fn_id)
         end
       elseif rhs_type ~= "string" then
         error("[mapper] Unsupported rhs type: " .. rhs_type)
