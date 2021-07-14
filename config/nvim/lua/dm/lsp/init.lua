@@ -195,9 +195,8 @@ for server, config in pairs(servers) do
   if not config.capabilities then
     config.capabilities = vim.lsp.protocol.make_client_capabilities()
   end
-  -- TODO: Update server after adding a snippet plugin
-  -- config.capabilities.textDocument.completion.completionItem.snippetSupport =
-  --   true
+  config.capabilities.textDocument.completion.completionItem.snippetSupport =
+    true
   config.capabilities.textDocument.completion.completionItem.resolveSupport = {
     properties = {
       "documentation",

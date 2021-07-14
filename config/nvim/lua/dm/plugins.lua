@@ -59,6 +59,7 @@ local function load_plugins()
   reset_plugin_info()
   packer.reset()
   packer.use {
+    { "L3MON4D3/LuaSnip", module = "luasnip", config = conf "luasnip" },
     { "airblade/vim-rooter" },
     { "antoinemadec/FixCursorHold.nvim" },
     { "cespare/vim-toml" },
