@@ -111,11 +111,6 @@ local entries = {
     command = 'lua require("telescope.builtin").find_files()',
   },
   {
-    key = "d",
-    description = "  Find in dotfiles",
-    command = 'lua require("dm.plugin.telescope").find_dotfiles()',
-  },
-  {
     key = "u",
     description = "  Sync packages",
     command = "PackerSync",
@@ -276,6 +271,7 @@ end
 
 --- Open the dashboard buffer in the current buffer if it is empty or create
 --- a new buffer for the current window.
+---@param on_vimenter? boolean
 function M.open(on_vimenter)
   if on_vimenter and (o.insertmode or not o.modifiable) then
     return
