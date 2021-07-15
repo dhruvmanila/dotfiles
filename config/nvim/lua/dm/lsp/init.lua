@@ -1,12 +1,15 @@
 local api = vim.api
-local sign_define = vim.fn.sign_define
 local nvim_command = api.nvim_command
-local nvim_buf_set_keymap = api.nvim_buf_set_keymap
+
 local icons = dm.icons
+local command = dm.command
+local nnoremap = dm.nnoremap
+local xnoremap = dm.xnoremap
 
 local lspconfig = require "lspconfig"
 local plugins = require "dm.lsp.plugins"
 local servers = require "dm.lsp.servers"
+local preview = require "dm.lsp.preview"
 
 require "dm.formatter"
 require "dm.lsp.handlers"
@@ -14,24 +17,21 @@ require "dm.lsp.handlers"
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
 vim.lsp.set_log_level "info"
 
--- Utility functions, commands and keybindings
-do
-  local opts = { noremap = true, silent = true }
+-- :LspLog - Open LSP logs for the builtin client in the bottom part of the
+-- window occupying full width.
+command { "LspLog", function()
+  nvim_command "botright split"
+  nvim_command "resize 20"
+  nvim_command("edit + " .. vim.lsp.get_log_path())
+end }
 
-  local function open_lsp_log()
-    nvim_command "botright split"
-    nvim_command "resize 20"
-    nvim_command("edit + " .. vim.lsp.get_log_path())
-    api.nvim_win_set_option(0, "wrap", false)
-  end
+-- :LspClients - Print out all the LSP client information.
+command { "LspClients", function()
+  print(vim.inspect(vim.lsp.buf_get_clients()))
+end }
 
-  dm.command { "LspLog", open_lsp_log }
-  dm.command { "LspClients", function()
-    print(vim.inspect(vim.lsp.buf_get_clients()))
-  end }
-  api.nvim_set_keymap("n", "<Leader>ll", "<Cmd>LspLog<CR>", opts)
-  api.nvim_set_keymap("n", "<Leader>lr", "<Cmd>LspRestart<CR>", opts)
-end
+nnoremap { "<Leader>ll", "<Cmd>LspLog<CR>" }
+nnoremap { "<Leader>lr", "<Cmd>LspRestart<CR>" }
 
 -- Adding VSCode like icons to the completion menu.
 -- vscode-codicons: https://github.com/microsoft/vscode-codicons
@@ -45,10 +45,12 @@ require("vim.lsp.protocol").CompletionItemKind = (function()
 end)()
 
 -- Update the default signs
-sign_define("LspDiagnosticsSignError", { text = icons.error })
-sign_define("LspDiagnosticsSignWarning", { text = icons.warning })
-sign_define("LspDiagnosticsSignInformation", { text = icons.info })
-sign_define("LspDiagnosticsSignHint", { text = icons.hint })
+vim.fn.sign_define {
+  { name = "LspDiagnosticsSignError", text = icons.error },
+  { name = "LspDiagnosticsSignWarning", text = icons.warning },
+  { name = "LspDiagnosticsSignInformation", text = icons.info },
+  { name = "LspDiagnosticsSignHint", text = icons.hint },
+}
 
 -- Set the default options for all LSP floating windows.
 --   - Default border according to `vim.g.border_style`
@@ -65,8 +67,7 @@ do
       wrap_at = max_width,
     })
     local bufnr, winnr = default(contents, syntax, opts)
-    local o = { noremap = true, nowait = true, silent = true }
-    nvim_buf_set_keymap(bufnr, "n", "q", "<Cmd>bdelete<CR>", o)
+    nnoremap { "q", "<Cmd>bdelete<CR>", buffer = bufnr, nowait = true }
     return bufnr, winnr
   end
 end
@@ -90,45 +91,64 @@ local function custom_on_attach(client, bufnr)
 
   -- Keybindings:
   -- For all types of diagnostics: [d | ]d
+  nnoremap { "[d", function()
+    vim.lsp.diagnostic.goto_prev { enable_popup = false }
+  end, buffer = bufnr }
+  nnoremap { "]d", function()
+    vim.lsp.diagnostic.goto_next { enable_popup = false }
+  end, buffer = bufnr }
+
   -- For warning and error diagnostics: [e | ]e
-  local mappings = {
-    ["n [d"] = "vim.lsp.diagnostic.goto_prev({enable_popup = false})",
-    ["n ]d"] = "vim.lsp.diagnostic.goto_next({enable_popup = false})",
-    ["n ]e"] = "vim.lsp.diagnostic.goto_prev({severity_limit = 'Warning', enable_popup = false})",
-    ["n [e"] = "vim.lsp.diagnostic.goto_next({severity_limit = 'Warning', enable_popup = false})",
-    ["n <leader>ld"] = "require('dm.lsp.diagnostics').show_line_diagnostics()",
+  nnoremap { "[e", function()
+    vim.lsp.diagnostic.goto_prev {
+      severity_limit = "Warning",
+      enable_popup = false,
+    }
+  end, buffer = bufnr }
+  nnoremap { "]e", function()
+    vim.lsp.diagnostic.goto_next {
+      severity_limit = "Warning",
+      enable_popup = false,
+    }
+  end, buffer = bufnr }
+
+  -- Custom popup to show line diagnostics with colors and source information.
+  nnoremap {
+    "<leader>ld",
+    require("dm.lsp.diagnostics").show_line_diagnostics,
+    buffer = bufnr,
   }
 
   if capabilities.hover then
-    mappings["n K"] = "vim.lsp.buf.hover()"
+    nnoremap { "K", vim.lsp.buf.hover, buffer = bufnr }
   end
 
   if capabilities.goto_definition then
-    mappings["n gd"] = "vim.lsp.buf.definition()"
-    mappings["n <leader>pd"] = "require('dm.lsp.preview').definition()"
+    nnoremap { "gd", vim.lsp.buf.definition, buffer = bufnr }
+    nnoremap { "<leader>pd", preview.definition, buffer = bufnr }
   end
 
   if capabilities.declaration then
-    mappings["n gD"] = "vim.lsp.buf.declaration()"
-    mappings["n <leader>pD"] = "require('dm.lsp.preview').declaration()"
+    nnoremap { "gD", vim.lsp.buf.declaration, buffer = bufnr }
+    nnoremap { "<leader>pD", preview.declaration, buffer = bufnr }
   end
 
   if capabilities.type_definition then
-    mappings["n gy"] = "vim.lsp.buf.type_definition()"
-    mappings["n <leader>py"] = "require('dm.lsp.preview').type_definition()"
+    nnoremap { "gy", vim.lsp.buf.type_definition, buffer = bufnr }
+    nnoremap { "<leader>py", preview.type_definition, buffer = bufnr }
   end
 
   if capabilities.implementation then
-    mappings["n gi"] = "vim.lsp.buf.implementation()"
-    mappings["n <leader>pi"] = "require('dm.lsp.preview').implementation()"
+    nnoremap { "gi", vim.lsp.buf.implementation, buffer = bufnr }
+    nnoremap { "<leader>pi", preview.implementation, buffer = bufnr }
   end
 
   if capabilities.find_references then
-    mappings["n gr"] = "vim.lsp.buf.references()"
+    nnoremap { "gr", vim.lsp.buf.references, buffer = bufnr }
   end
 
   if capabilities.rename then
-    mappings["n <leader>rn"] = "require('dm.lsp.rename').rename()"
+    nnoremap { "<leader>rn", require("dm.lsp.rename").rename, buffer = bufnr }
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
@@ -151,7 +171,7 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.signature_help then
-    mappings["n <C-s>"] = "vim.lsp.buf.signature_help()"
+    nnoremap { "<C-s>", vim.lsp.buf.signature_help, buffer = bufnr }
   end
 
   if capabilities.code_action then
@@ -161,25 +181,13 @@ local function custom_on_attach(client, bufnr)
       command = require("dm.lsp.code_action").code_action_listener,
     })
 
-    mappings["n <leader>ca"] = "vim.lsp.buf.code_action()"
-    mappings["x <leader>ca"] = "vim.lsp.buf.range_code_action()"
+    nnoremap { "<leader>ca", vim.lsp.buf.code_action, buffer = bufnr }
+    xnoremap { "<leader>ca", vim.lsp.buf.range_code_action, buffer = bufnr }
   end
 
   -- Set the LSP autocmds
   if not vim.tbl_isempty(lsp_autocmds) then
     dm.augroup("custom_lsp_autocmds", lsp_autocmds)
-  end
-
-  -- Set the LSP mappings
-  do
-    local mode
-    local opts = { noremap = true, silent = true }
-
-    for key, command in pairs(mappings) do
-      mode, key = key:match "^(.)[ ]*(.+)$"
-      command = "<Cmd>lua " .. command .. "<CR>"
-      nvim_buf_set_keymap(bufnr, mode, key, command, opts)
-    end
   end
 
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
