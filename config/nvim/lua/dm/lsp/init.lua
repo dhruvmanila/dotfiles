@@ -185,24 +185,30 @@ local function custom_on_attach(client, bufnr)
   vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
 end
 
----Setting up the servers with the provided configuration and additional
----capabilities.
-for server, config in pairs(servers) do
-  config = type(config) == "function" and config() or config
-  config.on_attach = custom_on_attach
-  config.flags = config.flags or {}
-  config.flags.debounce_text_changes = 150
-  if not config.capabilities then
-    config.capabilities = vim.lsp.protocol.make_client_capabilities()
-  end
-  config.capabilities.textDocument.completion.completionItem.snippetSupport =
-    true
-  config.capabilities.textDocument.completion.completionItem.resolveSupport = {
+do
+  -- Define default client capabilities.
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  capabilities.textDocument.completion.completionItem.resolveSupport = {
     properties = {
       "documentation",
       "detail",
       "additionalTextEdits",
     },
   }
-  lspconfig[server].setup(config)
+
+  -- Setting up the servers with the provided configuration and additional
+  -- capabilities.
+  for server, config in pairs(servers) do
+    config = type(config) == "function" and config() or config
+    config.on_attach = custom_on_attach
+    config.flags = config.flags or {}
+    config.flags.debounce_text_changes = 150
+    config.capabilities = vim.tbl_deep_extend(
+      "keep",
+      config.capabilities or {},
+      capabilities
+    )
+    lspconfig[server].setup(config)
+  end
 end
