@@ -7,6 +7,15 @@ local c = ls.choice_node
 local f = ls.function_node
 local d = ls.dynamic_node
 
+-- Wrapper function around LuaSnip parse function which accepts table as the
+-- `body` argument, and will concatenate it before passing to the original function.
+local function parse(context, body, tab_stops, brackets)
+  if type(body) == "table" then
+    body = table.concat(body, "\n")
+  end
+  return ls.parser.parse_snippet(context, body, tab_stops, brackets)
+end
+
 -- If only one argument is passed, then return that many number of tabs,
 -- otherwise return 'size' number of tabs (optional) prefixed to 'text'.
 ---@param text string
@@ -22,23 +31,46 @@ local function indent(text, size)
   return string.rep("\t", size) .. text
 end
 
+-- Save the snippets so that the snippets which have been exited can still be
+-- jumped back in.
+--
+-- They can be manually removed with `:LuasnipUnlinkCurrent`
 ls.config.set_config {
   history = true,
   updateevents = "TextChanged,TextChangedI",
 }
 
-ls.snippets.lua = {
-  -- string.format("$1", $2)$0
+ls.snippets.all = {
   s(
-    { trig = "format", dscr = "Format string" },
-    { t 'string.format("', i(1, "formatstring"), t '", ', i(2), t ")", i(0) }
+    { trig = "date" },
+    { f(function()
+      return { os.date "%Y-%m-%d" }
+    end, {}), i(0) }
+  ),
+}
+
+ls.snippets.lua = {
+  parse(
+    { trig = "fmt", dscr = "Format string" },
+    'string.format("${1:formatstring}", $2)$0'
   ),
 
-  -- require("$1")$0
-  s(
+  parse(
     { trig = "req", dscr = "require a lua module" },
-    { t 'require("', i(1, "modname: string"), t '")' }
+    'require("${1:modname: string}")'
   ),
+
+  parse({ trig = "augroup", dscr = "Define augroup using native function" }, {
+    'dm.augroup("${1:name: string}", {',
+    "\t$2",
+    "})",
+  }),
+
+  s({ trig = "stylua" }, {
+    t "-- stylua: ignore",
+    c(1, { t "", t " start", t " end" }),
+    i(0),
+  }),
 
   -- A component to be used with 'autocmd' and 'augroup' snippets.
   -- {
@@ -70,24 +102,6 @@ ls.snippets.lua = {
       }),
     }),
     t { "", "}" },
-    i(0),
-  }),
-
-  -- dm.autocmd($0)
-  s({ trig = "autocmd", dscr = "Define autocmd using native function" }, {
-    t "dm.autocmd ",
-    i(0),
-  }),
-
-  -- dm.augroup($1<string>, {
-  --   $2
-  -- }$0
-  s({ trig = "augroup", dscr = "Define augroup using native function" }, {
-    t 'dm.augroup("',
-    i(1, "name: string"),
-    t { '", {', indent(1) },
-    i(2),
-    t { "", "})" },
     i(0),
   }),
 }
