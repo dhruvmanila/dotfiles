@@ -1,5 +1,4 @@
 local g = vim.g
-local map = vim.api.nvim_set_keymap
 local tree_cb = require("nvim-tree.config").nvim_tree_callback
 
 -- On Ready Event for Lazy Loading to work
@@ -53,4 +52,4 @@ g.nvim_tree_icons = {
   },
 }
 
-map("n", "<C-n>", "<Cmd>NvimTreeToggle<CR>", { noremap = true })
+dm.nnoremap { "<C-n>", "<Cmd>NvimTreeToggle<CR>" }

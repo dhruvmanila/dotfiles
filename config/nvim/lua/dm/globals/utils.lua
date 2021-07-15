@@ -165,8 +165,8 @@ do
       local rhs_type = type(rhs)
       if rhs_type == "function" then
         local fn_id = dm._create(rhs)
-        -- Expression mappings are 'evaluated' first, so it should not behave
-        -- like we are only passing keystrokes.
+        -- <expr> are vimscript expressions, so we will use `v:lua` to access
+        -- the lua globals and execute the callback.
         if map_opts.expr then
           rhs = format("v:lua.dm._execute(%d)", fn_id)
         else

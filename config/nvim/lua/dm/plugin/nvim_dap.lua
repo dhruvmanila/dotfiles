@@ -1,6 +1,5 @@
 local api = vim.api
-local sign_define = vim.fn.sign_define
-local nvim_set_keymap = vim.api.nvim_set_keymap
+local nnoremap = dm.nnoremap
 
 local dap = require "dap"
 local dap_python = require "dap-python"
@@ -8,8 +7,10 @@ local dap_python = require "dap-python"
 -- Add configurations from `.vscode/launch.json` file
 require("dap.ext.vscode").load_launchjs()
 
-sign_define("DapBreakpoint", { text = "", texthl = "Orange" })
-sign_define("DapStopped", { text = "", texthl = "TabLineSel" })
+vim.fn.sign_define {
+  { name = "DapBreakpoint", text = "", texthl = "Orange" },
+  { name = "DapStopped", text = "", texthl = "TabLineSel" },
+}
 
 -- Debugger for Neovim
 -- :h osv-dap
@@ -42,24 +43,13 @@ dap_python.setup(vim.loop.os_homedir() .. "/.neovim/py3/bin/python3", {
   include_configs = true,
 })
 
-do
-  local opts = { noremap = true, silent = true }
-
-  local mappings = {
-    ["<leader>dl"] = "require('dap').run_last()",
-    ["<leader>dc"] = "require('dap').continue()",
-    ["<leader>ds"] = "require('dap').step_over()",
-    ["<leader>di"] = "require('dap').step_into()",
-    ["<leader>do"] = "require('dap').step_out()",
-    ["<leader>dr"] = "require('dap').repl.toggle()",
-    ["<leader>db"] = "require('dap').toggle_breakpoint()",
-  }
-
-  for key, command in pairs(mappings) do
-    command = "<Cmd>lua " .. command .. "<CR>"
-    nvim_set_keymap("n", key, command, opts)
-  end
-end
+nnoremap { "<leader>dl", dap.run_last }
+nnoremap { "<leader>dc", dap.continue }
+nnoremap { "<leader>ds", dap.step_over }
+nnoremap { "<leader>di", dap.step_into }
+nnoremap { "<leader>do", dap.step_out }
+nnoremap { "<leader>dr", dap.repl.toggle }
+nnoremap { "<leader>db", dap.toggle_breakpoint }
 
 do
   local keymap_restore = {}
@@ -75,9 +65,15 @@ do
       end
     end
 
-    local hover_func =
-      ":lua require('dap.ui.widgets').hover(nil, {border = dm.border[vim.g.border_style]})<CR>"
-    nvim_set_keymap("n", "K", hover_func, { noremap = true, silent = true })
+    nnoremap {
+      "K",
+      function()
+        require("dap.ui.widgets").hover(
+          nil,
+          { border = dm.border[vim.g.border_style] }
+        )
+      end,
+    }
   end
 
   dap.listeners.after["event_terminated"]["dm"] = function()

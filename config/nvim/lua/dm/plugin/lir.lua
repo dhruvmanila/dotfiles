@@ -180,8 +180,6 @@ lir.setup {
   },
 }
 
-vim.api.nvim_set_keymap("n", "-", [[<Cmd>lua require('lir.float').toggle()<CR>]], {
-  noremap = true,
-})
+dm.nnoremap { "-", require("lir.float").toggle }
 
 return M

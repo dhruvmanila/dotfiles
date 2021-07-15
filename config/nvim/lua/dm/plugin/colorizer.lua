@@ -1,8 +1,3 @@
-vim.api.nvim_set_keymap(
-  "n",
-  "<Leader>cc",
-  "<Cmd>ColorizerToggle<CR>",
-  { noremap = true }
-)
+dm.nnoremap { "<leader>cc", "<Cmd>ColorizerToggle<CR>" }
 
 require("colorizer").setup()
