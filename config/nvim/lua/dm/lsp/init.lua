@@ -1,8 +1,4 @@
-local api = vim.api
-local nvim_command = api.nvim_command
-
 local icons = dm.icons
-local command = dm.command
 local nnoremap = dm.nnoremap
 local xnoremap = dm.xnoremap
 
@@ -16,19 +12,6 @@ require "dm.lsp.handlers"
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
 vim.lsp.set_log_level "info"
-
--- :LspLog - Open LSP logs for the builtin client in the bottom part of the
--- window occupying full width.
-command { "LspLog", function()
-  nvim_command "botright split"
-  nvim_command "resize 20"
-  nvim_command("edit + " .. vim.lsp.get_log_path())
-end }
-
--- :LspClients - Print out all the LSP client information.
-command { "LspClients", function()
-  print(vim.inspect(vim.lsp.buf_get_clients()))
-end }
 
 nnoremap { "<Leader>ll", "<Cmd>LspLog<CR>" }
 nnoremap { "<Leader>lr", "<Cmd>LspRestart<CR>" }
