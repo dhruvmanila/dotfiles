@@ -43,7 +43,14 @@ end
 local function collect_github_stars()
   local function process_complete(job, code)
     if code > 0 then
-      vim.notify({ "Telescope", "", job:stderr_result() }, 4)
+      vim.notify(
+        {
+          "Telescope (github_stars)",
+          "",
+          table.concat(job:stderr_result(), "\n"),
+        },
+        4
+      )
       return
     end
     local result = job:result()
