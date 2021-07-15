@@ -41,6 +41,11 @@ local mode = {
   RESULT = "RESULT",
 }
 
+local prompt_prefix = {
+  query = " ",
+  result = " ",
+}
+
 -- Simple animation frames displayed as the prompt prefix.
 local anim_frames = { "- ", "\\ ", "| ", "/ " }
 
@@ -106,7 +111,10 @@ local function set_finder(new_mode, results)
 
   state.picker:refresh(new_finder, {
     reset_prompt = true,
-    new_prefix = { state.original_prompt_prefix, "TelescopePromptPrefix" },
+    new_prefix = {
+      state.mode == mode.QUERY and prompt_prefix.query or prompt_prefix.result,
+      "TelescopePromptPrefix",
+    },
   })
 end
 
@@ -128,16 +136,26 @@ local function do_search()
     )
   end
 
+  ---@param job Job
+  ---@param code number
   local function process_complete(job, code)
     if code > 0 then
-      vim.notify({ "Telescope", "", job:stderr_result() }, 4)
+      vim.api.nvim_err_writeln(
+        "Telescope (websearch)\n\n" .. table.concat(job:stderr_result(), "\n")
+      )
       return
     end
     local result = job:result()
     result = vim.fn.json_decode(result)
     vim.fn.timer_stop(state.anim_timer)
     state.anim_timer = nil
-    set_finder(mode.RESULT, result)
+    -- We will change the finder only if there are any results, otherwise reset
+    -- the finder to be in QUERY mode.
+    if vim.tbl_isempty(result) then
+      set_finder(mode.QUERY)
+    else
+      set_finder(mode.RESULT, result)
+    end
   end
 
   Job
@@ -193,6 +211,7 @@ local function websearch(opts)
 
   state.picker = pickers.new(opts, {
     prompt_title = aliases[search_engine] .. " Search",
+    prompt_prefix = prompt_prefix.query,
     finder = finders.new_table {
       results = {},
       entry_maker = entry_maker,
@@ -207,7 +226,6 @@ local function websearch(opts)
       return true
     end,
   })
-  state.original_prompt_prefix = state.picker.prompt_prefix
   state.picker:find()
   set_finder(mode.QUERY)
 end
