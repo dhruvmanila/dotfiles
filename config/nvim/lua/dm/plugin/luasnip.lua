@@ -60,6 +60,11 @@ ls.snippets.lua = {
     'require("${1:modname: string}")'
   ),
 
+  parse(
+    { trig = "lreq", dscr = "require and store a lua module" },
+    'local ${1:var} = require("${2:modname: string}")'
+  ),
+
   parse({ trig = "augroup", dscr = "Define augroup using native function" }, {
     'dm.augroup("${1:name: string}", {',
     "\t$2",
