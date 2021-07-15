@@ -2,26 +2,6 @@ local M = {}
 local fn = vim.fn
 local api = vim.api
 local cmd = api.nvim_command
-local if_nil = vim.F.if_nil
-
--- Create key bindings for multiple modes with an optional parameters map.
--- Defaults:
---   opts.noremap = true, if not defined in opts
---
----@param modes string|string[]
----@param lhs string
----@param rhs string
----@param opts table (optional)
-function M.map(modes, lhs, rhs, opts)
-  opts = opts or {}
-  opts.noremap = if_nil(opts.noremap, true)
-  if type(modes) == "string" then
-    modes = { modes }
-  end
-  for _, mode in ipairs(modes) do
-    api.nvim_set_keymap(mode, lhs, rhs, opts)
-  end
-end
 
 -- TODO: eventually move to using `nvim_set_hl` however for the time being
 -- that expects colors to be specified as rgb not hex.
