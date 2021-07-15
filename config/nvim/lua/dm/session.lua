@@ -11,10 +11,17 @@ local function delete_buffers()
 end
 
 -- Cleanup performed before saving the session. This includes:
+--   - Closing all the popup window
 --   - Closing all the 'NvimTree' window
 --   - Quitting the Dashboard buffer
 --   - Stop all the active LSP clients
 local function session_cleanup()
+  for _, winnr in ipairs(api.nvim_list_wins()) do
+    if fn.win_gettype(winnr) == "popup" then
+      api.nvim_win_close(winnr, true)
+    end
+  end
+
   if vim.o.filetype == "dashboard" then
     local calling_buffer = fn.bufnr "#"
     if calling_buffer > 0 then
