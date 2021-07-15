@@ -59,13 +59,18 @@ local function load_plugins()
   reset_plugin_info()
   packer.reset()
   packer.use {
-    { "L3MON4D3/LuaSnip", module = "luasnip", config = conf "luasnip" },
+    { "L3MON4D3/LuaSnip", opt = true, config = conf "luasnip" },
     { "airblade/vim-rooter" },
     { "antoinemadec/FixCursorHold.nvim" },
     { "cespare/vim-toml" },
     { "editorconfig/editorconfig-vim" },
     { "folke/lua-dev.nvim" },
-    { "hrsh7th/nvim-compe", event = "InsertEnter", config = conf "completion" },
+    {
+      "hrsh7th/nvim-compe",
+      event = "InsertEnter",
+      wants = "LuaSnip",
+      config = conf "completion",
+    },
     { "itchyny/vim-external" },
     { "jbyuki/one-small-step-for-vimkind" },
     { "junegunn/vim-easy-align", keys = "<Plug>(EasyAlign)" },
