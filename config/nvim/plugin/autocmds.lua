@@ -6,7 +6,7 @@ local contains = vim.tbl_contains
 do
   -- 'colorcolumn' value for specific filetypes
   ---@type table<string, string>
-  local ft_colorcolumn = { python = "88" }
+  local ft_colorcolumn = { gitcommit = "72", python = "88" }
 
   -- Set the colorcolumn value of the window appropriately.
   ---@param leaving boolean
