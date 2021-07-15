@@ -1,7 +1,7 @@
-local map = require("dm.utils").map
+local nnoremap = dm.nnoremap
 
-map("n", "<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>")
-map("n", "<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>")
+nnoremap { "<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>" }
+nnoremap { "<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>" }
 
 require("nvim-treesitter.configs").setup {
   -- one of 'all', 'language', or a list of languages
@@ -61,6 +61,29 @@ require("nvim-treesitter.configs").setup {
         ["io"] = "@loop.inner",
         ["aa"] = "@parameter.outer",
         ["ia"] = "@parameter.inner",
+      },
+    },
+
+    swap = {
+      enable = true,
+      swap_next = {
+        ["]a"] = "@parameter.inner",
+      },
+      swap_previous = {
+        ["[a"] = "@parameter.inner",
+      },
+    },
+
+    move = {
+      enable = true,
+      set_jumps = true, -- whether to set jumps in the jumplist
+      goto_next_start = {
+        ["]m"] = "@function.outer",
+        ["]]"] = "@class.outer",
+      },
+      goto_previous_start = {
+        ["[m"] = "@function.outer",
+        ["[["] = "@class.outer",
       },
     },
   },
