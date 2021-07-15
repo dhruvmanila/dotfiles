@@ -91,7 +91,7 @@ local function load_plugins()
     },
     {
       "mfussenegger/nvim-dap",
-      keys = { "<leader>db", "<leader>dc" },
+      keys = { { "n", "<leader>db" }, { "n", "<leader>dc" } },
       config = conf "nvim_dap",
     },
     { "mfussenegger/nvim-dap-python" },
