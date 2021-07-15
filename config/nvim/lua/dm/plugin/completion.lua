@@ -24,6 +24,7 @@ require("compe").setup {
     nvim_lsp = { priority = 10 },
     nvim_lua = { priority = 10 },
     luasnip = true,
+    emoji = { filetypes = { "gitcommit", "markdown" } },
   },
 }
 
