@@ -113,6 +113,18 @@ nnoremap { "<Right>", "<Cmd>vertical resize +2<CR>" }
 nnoremap { "*", "*``" }
 nnoremap { "#", "#``" }
 
+-- Multiple Cursor Replacement
+--
+-- Use `cn/cN` to change the word under cursor or visually selected text and then
+-- repeat using . (dot) n - 1 times. We can use `n/N` to skip some replacements.
+--
+-- http://www.kevinli.co/posts/2017-01-19-multiple-cursors-in-500-bytes-of-vimscript/
+vim.g.mc = dm.escape [[y/\V<C-r>=escape(@", '/')<CR><CR>]]
+nnoremap { "cn", "*``cgn" }
+nnoremap { "cN", "*``cgN" }
+xnoremap { "cn", [[g:mc . "``cgn"]], expr = true }
+xnoremap { "cN", [[g:mc . "``cgN"]], expr = true }
+
 -- Search for visually selected text using '*' and '#'
 -- https://vim.fandom.com/wiki/Search_for_visually_selected_text#Simple
 xnoremap { "*", [[y/\V<C-R>=escape(@",'/\')<CR><CR>]] }
