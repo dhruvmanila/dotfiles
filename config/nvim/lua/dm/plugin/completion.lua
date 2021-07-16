@@ -1,6 +1,7 @@
 local imap = dm.imap
 local smap = dm.smap
 local inoremap = dm.inoremap
+local escape = dm.escape
 
 local luasnip = require "luasnip"
 
@@ -28,15 +29,6 @@ require("compe").setup {
   },
 }
 
--- Convenience wrapper around `nvim_replace_termcodes()`.
---
--- Converts a string representation of a mapping's RHS (eg. "<Tab>") into an
--- internal representation (eg. "\t").
----@param str string
-local t = function(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
 -- Returns true if the cursor is in leftmost column or at a whitespace
 -- character, false otherwise.
 ---@return boolean
@@ -52,11 +44,11 @@ end
 --   - open completion menu
 local tab = function()
   if vim.fn.pumvisible() == 1 then
-    return t "<C-n>"
+    return escape "<C-n>"
   elseif luasnip.expand_or_jumpable() then
-    return t "<Plug>luasnip-expand-or-jump"
+    return escape "<Plug>luasnip-expand-or-jump"
   elseif check_back_space() then
-    return t "<Tab>"
+    return escape "<Tab>"
   else
     return vim.fn["compe#complete"]()
   end
@@ -68,11 +60,11 @@ end
 --   - pass raw <S-Tab> character
 local shift_tab = function()
   if vim.fn.pumvisible() == 1 then
-    return t "<C-p>"
+    return escape "<C-p>"
   elseif luasnip.jumpable(-1) then
-    return t "<Plug>luasnip-jump-prev"
+    return escape "<Plug>luasnip-jump-prev"
   else
-    return t "<S-Tab>"
+    return escape "<S-Tab>"
   end
 end
 
@@ -84,9 +76,9 @@ local c_e = function()
   if vim.fn.pumvisible() == 1 then
     return vim.fn["compe#close"]()
   elseif luasnip.choice_active() then
-    return t "<Plug>luasnip-next-choice"
+    return escape "<Plug>luasnip-next-choice"
   else
-    return t "<C-e>"
+    return escape "<C-e>"
   end
 end
 

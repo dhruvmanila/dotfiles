@@ -30,6 +30,16 @@ function dm._execute(id, ...)
   return dm._store[id](...)
 end
 
+-- Convenience wrapper around `nvim_replace_termcodes()`.
+--
+-- Converts a string representation of a mapping's RHS (eg. "<Tab>") into an
+-- internal representation (eg. "\t").
+---@param str string
+---@return string
+function dm.escape(str)
+  return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
 ---@class AutocmdOpts
 ---@field group string augroup name
 ---@field events string|string[] a single event or list of events
