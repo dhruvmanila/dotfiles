@@ -1,13 +1,15 @@
 -- Inspired by @tjdevries' astraunauta.nvim/ @TimUntersberger's config
--- Ref: https://github.com/akinsho/dotfiles/tree/main/.config/nvim/lua/as/globals
+-- Ref: https://github.com/akinsho/dotfiles/tree/main/.config/nvim/lua/as/globals.lua
 
 -- Store all callbacks in one global table so they are able to survive
 -- re-requiring this file
 _NvimGlobalCallbacks = _NvimGlobalCallbacks or {}
+_NvimKeymapCallbacks = _NvimKeymapCallbacks or {}
 
 -- Create a global namespace to store callbacks, global functions, etc.
 _G.dm = {
   _store = _NvimGlobalCallbacks,
+  _map_store = _NvimKeymapCallbacks,
 }
 
 local format = string.format
@@ -154,6 +156,46 @@ do
 end
 
 do
+  -- Register the callback for the given key.
+  ---@param mode string
+  ---@param key string
+  ---@param callback function
+  ---@param bufnr? number
+  ---@return string
+  function dm._create_keymap_entry(mode, key, callback, bufnr)
+    -- Prefix it with a letter so it can be used as a dictionary key.
+    local id = "k" .. mode .. key
+    if bufnr then
+      -- Initialize and establish cleanup.
+      if not dm._map_store[bufnr] then
+        dm._map_store[bufnr] = {}
+        vim.api.nvim_buf_attach(bufnr, false, {
+          on_detach = function()
+            dm._map_store[bufnr] = nil
+          end,
+        })
+      end
+      dm._map_store[bufnr][id] = callback
+    else
+      dm._map_store[id] = callback
+    end
+    -- The ID should be escaped only for creating the keymap itself and not
+    -- when using it as the key to store the callback.
+    -- The key escapement logic is taken from packer/compile.lua
+    return id:gsub("<", "<lt>"):gsub('([\\"])', "\\%1")
+  end
+
+  -- Execute the keymap callback at the provided bufnr and id.
+  ---@param bufnr? number
+  ---@param id string
+  ---@return any
+  function dm._execute_keymap(bufnr, id)
+    if bufnr and bufnr ~= vim.NIL then
+      return dm._map_store[bufnr][id]()
+    end
+    return dm._map_store[id]()
+  end
+
   ---Factory function to create mapper functions.
   ---@param mode string
   ---@param defaults table
@@ -172,25 +214,40 @@ do
       local lhs = args[1]
       local rhs = args[2]
       map_opts = vim.tbl_extend("force", defaults, map_opts)
+      local bufnr
+      if map_opts.buffer then
+        bufnr = map_opts.buffer
+        -- We are directly using the current buffer instead of passing in the
+        -- 0 because we need to store it accordingly.
+        if bufnr == true or bufnr == 0 then
+          bufnr = vim.api.nvim_get_current_buf()
+        end
+        map_opts.buffer = nil
+      end
       local rhs_type = type(rhs)
       if rhs_type == "function" then
-        local fn_id = dm._create(rhs)
+        local fn_id = dm._create_keymap_entry(mode, lhs, rhs, bufnr)
         -- <expr> are vimscript expressions, so we will use `v:lua` to access
         -- the lua globals and execute the callback.
         if map_opts.expr then
-          rhs = format("v:lua.dm._execute(%d)", fn_id)
+          -- This is going into vimscript world so it requires `v:null` instead
+          -- of the lua `null`.
+          rhs = format(
+            'v:lua.dm._execute_keymap(%s, "%s")',
+            bufnr or "v:null",
+            fn_id
+          )
         else
-          rhs = format("<Cmd>lua dm._execute(%d)<CR>", fn_id)
+          rhs = format(
+            '<Cmd>lua dm._execute_keymap(%s, "%s")<CR>',
+            bufnr,
+            fn_id
+          )
         end
       elseif rhs_type ~= "string" then
         error("[mapper] Unsupported rhs type: " .. rhs_type)
       end
-      if map_opts.buffer then
-        local bufnr = map_opts.buffer
-        if bufnr == true then
-          bufnr = 0
-        end
-        map_opts.buffer = nil
+      if bufnr then
         vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, map_opts)
       else
         vim.api.nvim_set_keymap(mode, lhs, rhs, map_opts)
@@ -199,8 +256,6 @@ do
   end
 
   local map = { noremap = false }
-  local noremap = { noremap = true }
-
   dm.nmap = make_mapper("n", map)
   dm.imap = make_mapper("i", map)
   dm.cmap = make_mapper("c", map)
@@ -210,6 +265,7 @@ do
   dm.omap = make_mapper("o", map)
   dm.tmap = make_mapper("t", map)
 
+  local noremap = { noremap = true }
   dm.nnoremap = make_mapper("n", noremap)
   dm.inoremap = make_mapper("i", noremap)
   dm.cnoremap = make_mapper("c", noremap)
