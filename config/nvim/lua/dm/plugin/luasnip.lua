@@ -79,25 +79,48 @@ ls.snippets.lua = {
 
   -- A component to be used with 'autocmd' and 'augroup' snippets.
   -- {
-  --   group = $1<string>,               TODO
+  --   group = $1<string>, -- Optional node
   --   events = $2<string|string[]>,
   --   targets = $3<string|string[]>,
-  --   modifiers = $4<string|string[]>,  TODO
+  --   modifiers = $4<string|string[]>, -- Optional node
   --   command = $5<string|function>,
   -- }$0
+  --
+  -- Optional nodes can be removed by moving to another choice.
   s({ trig = "au", dscr = "autocmd/augroup component" }, {
-    t { "{", indent "events = " },
+    t "{",
     c(1, {
+      sn(
+        nil,
+        { t { "", indent "group = " }, t '"', i(1, "group: string"), t '",' }
+      ),
+      t "",
+    }),
+    t { "", indent "events = " },
+    c(2, {
       sn(nil, { t '"', i(1, "event: string"), t '"' }),
       sn(nil, { t "{", i(1, "events: string[]"), t "}" }),
     }),
     t { ",", indent "targets = " },
-    c(2, {
+    c(3, {
       sn(nil, { t '"', i(1, "target: string"), t '"' }),
       sn(nil, { t "{", i(1, "targets: string[]"), t "}" }),
     }),
+    c(4, {
+      sn(nil, {
+        t { ",", indent 'modifiers = "' },
+        i(1, "modifier"),
+        t '"',
+      }),
+      sn(nil, {
+        t { ",", indent "modifiers = {" },
+        i(1, "modifiers: string[]"),
+        t "}",
+      }),
+      t "",
+    }),
     t { ",", indent "command = " },
-    c(3, {
+    c(5, {
       sn(nil, { t '"', i(1, "command: string"), t '",' }),
       sn(nil, { i(1, "name: function"), t "," }),
       sn(nil, {
