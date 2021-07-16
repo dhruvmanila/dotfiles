@@ -5,6 +5,8 @@ function! s:adjust_height(minheight, maxheight)
 endfunction
 
 nnoremap <silent><buffer><nowait> q :<C-u>quit<CR>
+nnoremap <silent><buffer><nowait> o <CR>
+nnoremap <silent><buffer><nowait> O <CR>:ccl<CR>
 
 " Position the (global) quickfix window at the very bottom of the window
 " (useful for making sure that it appears underneath splits).
