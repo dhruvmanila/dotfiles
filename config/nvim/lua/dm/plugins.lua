@@ -85,9 +85,7 @@ local function load_plugins()
     { "liuchengxu/vista.vim" },
     {
       "lukas-reineke/indent-blankline.nvim",
-      branch = "lua",
       event = { "BufRead", "BufNewFile" },
-      disable = true,
     },
     {
       "mfussenegger/nvim-dap",
@@ -127,7 +125,6 @@ local function load_plugins()
     { "romainl/vim-cool" },
     { "sainnhe/gruvbox-material" },
     { "tamago324/lir.nvim", keys = "-", config = conf "lir" },
-    { "tjdevries/tree-sitter-lua", opt = true },
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
     { "tpope/vim-fugitive" },
