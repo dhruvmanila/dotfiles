@@ -85,12 +85,13 @@ nnoremap { "[L", "<Cmd>lfirst<CR>" }
 -- Source: https://superuser.com/q/355325/736190
 nnoremap { "<leader>x", "<Cmd>windo lclose <bar> cclose<CR>" }
 
--- Tabs
--- `<leader>n` goes to nth tab
--- `<leader>0` goes to the last tab as on a normal keyboard the numeric keys
--- are from 1,2,...0.
-nnoremap { "]t", "<Cmd>tabnext<CR>" }
-nnoremap { "[t", "<Cmd>tabprev<CR>" }
+-- Tab navigation
+--   - `<leader>n` goes to nth tab
+--   - `<leader>0` goes to the last tab as on a normal keyboard the
+--     numeric keys are from 1,2,...0.
+--   - `[t` and `]t` are used to move the tabs left and right respectively
+nnoremap { "]t", "<Cmd>+tabmove<CR>" }
+nnoremap { "[t", "<Cmd>-tabmove<CR>" }
 for i = 1, 9 do
   nnoremap { "<leader>" .. i, i .. "gt" }
 end
@@ -117,8 +118,9 @@ nnoremap { "#", "#``" }
 xnoremap { "*", [[y/\V<C-R>=escape(@",'/\')<CR><CR>]] }
 xnoremap { "#", [[y?\V<C-R>=escape(@",'/?')<CR><CR>]] }
 
--- Substitute the word on cursor globally
+-- Substitute the word on cursor or visually selected text globally
 nnoremap { "<Leader>su", [[:%s/\<<C-r><C-w>\>//g<Left><Left>]] }
+xnoremap { "<leader>su", [["zy:%s/\<<C-r><C-o>"\>//g<Left><Left>]] }
 
 -- Source files (only for lua or vim files)
 nnoremap {
