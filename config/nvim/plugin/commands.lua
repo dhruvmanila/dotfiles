@@ -96,3 +96,7 @@ command {
     print(vim.inspect(vim.lsp.buf_get_clients()))
   end,
 }
+
+-- :Todo - List out all the location where TODOs and other related keywords
+-- are present in the current project.
+command { "Todo", [[noautocmd silent! grep! 'TODO\|FIXME\|BUG\|HACK' | copen]] }
