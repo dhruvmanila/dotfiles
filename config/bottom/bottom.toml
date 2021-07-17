@@ -149,11 +149,11 @@ mem_as_value = true
 [[row]]
   ratio=7
   [[row.child]]
-    ratio=6
+    ratio=7
     [[row.child.child]]
       type="proc"
   [[row.child]]
-    ratio=4
+    ratio=3
     [[row.child.child]]
       ratio=4
       type="mem"
