@@ -8,7 +8,7 @@ local config = { show_header = true }
 local M = {}
 
 -- Create a namespace for the lightbulb extmark.
-local LIGHTBULB_VIRTUAL_TEXT_NS = api.nvim_create_namespace "nvim-lsp-lightbulb"
+local LIGHTBULB_EXTMARK_NS = api.nvim_create_namespace "dm__lsp_lightbulb"
 
 -- Code action listener to set and update the lightbulb to indicate that there
 -- are code actions available on that line.
@@ -25,10 +25,10 @@ function M.code_action_listener()
         return
       end
       -- Remove all the existing lightbulbs.
-      api.nvim_buf_clear_namespace(0, LIGHTBULB_VIRTUAL_TEXT_NS, 0, -1)
+      api.nvim_buf_clear_namespace(0, LIGHTBULB_EXTMARK_NS, 0, -1)
       if response and not vim.tbl_isempty(response) then
         local line = params.range.start.line
-        api.nvim_buf_set_extmark(0, LIGHTBULB_VIRTUAL_TEXT_NS, line, 0, {
+        api.nvim_buf_set_extmark(0, LIGHTBULB_EXTMARK_NS, line, 0, {
           hl_group = "YellowSign",
           virt_text = { { "" } },
           virt_text_pos = "overlay",
