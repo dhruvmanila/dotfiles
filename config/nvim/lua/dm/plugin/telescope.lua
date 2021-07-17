@@ -281,7 +281,7 @@ local function github_stars()
 end
 
 -- Meta
-nnoremap { "<leader>te", builtin.builtin }
+nnoremap { ";t", builtin.builtin }
 
 -- Files
 nnoremap { "<C-p>", builtin.find_files }
