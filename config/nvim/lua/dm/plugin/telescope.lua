@@ -36,6 +36,13 @@ local default_dropdown = themes.get_dropdown {
   previewer = false,
 }
 
+-- Default ivy theme options.
+local default_ivy = themes.get_ivy {
+  layout_config = {
+    height = 0.5,
+  },
+}
+
 telescope.setup {
   defaults = {
     prompt_prefix = " ",
@@ -118,22 +125,12 @@ telescope.setup {
         },
       },
     },
-    command_history = {
-      theme = "ivy",
-      layout_config = {
-        height = 20,
-      },
-    },
-    search_history = {
-      theme = "ivy",
-      layout_config = {
-        height = 20,
-      },
-    },
     git_branches = {
       theme = "dropdown",
       previewer = false,
     },
+    command_history = default_ivy,
+    search_history = default_ivy,
     current_buffer_fuzzy_find = default_dropdown,
     vim_options = default_dropdown,
     keymaps = default_dropdown,
