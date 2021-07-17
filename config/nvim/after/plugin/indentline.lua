@@ -14,7 +14,8 @@ g.indent_blankline_filetype_exclude = {
   "startify",
   "txt",
   "dashboard",
-  "Outline",
+  "fugitive",
+  "log",
 }
 
 g.indent_blankline_buftype_exclude = { "terminal", "nofile" }

@@ -36,6 +36,9 @@ return {
     local bin = root .. "/bin/macOS/lua-language-server"
 
     return require("lua-dev").setup {
+      library = {
+        plugins = { "telescope.nvim", "plenary.nvim", "LuaSnip" },
+      },
       lspconfig = {
         cmd = { bin, "-E", root .. "/main.lua" },
         settings = {
