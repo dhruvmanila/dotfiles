@@ -35,10 +35,11 @@ local function show_line_diagnostics()
   local text = Text:new(bufnr)
 
   for _, diagnostic in ipairs(diagnostics) do
-    local sign = severity_signs[diagnostic.severity]
+    local prefix = " " .. severity_signs[diagnostic.severity] .. " "
     local hl = severity_hl[diagnostic.severity]
-    text:add(" " .. sign, hl)
-    text:add(" " .. diagnostic.message:gsub("\n", " "), hl)
+    local message_lines = vim.split(diagnostic.message, "\n", true)
+    text:add(prefix, hl)
+    text:add(message_lines[1], hl)
     if config.show_source and diagnostic.source then
       text:add(" " .. diagnostic.source, config.meta_hl)
     end
@@ -46,6 +47,12 @@ local function show_line_diagnostics()
       text:add(" (" .. diagnostic.code .. ")", config.meta_hl)
     end
     text:newline()
+    -- Adds indentation that matches the prefix length to ensure diagnostic
+    -- messages spawning multiple lines align.
+    prefix = string.rep(" ", #prefix)
+    for j = 2, #message_lines do
+      text:add(prefix .. message_lines[j], hl, true)
+    end
   end
 
   api.nvim_buf_set_option(bufnr, "modifiable", false)
