@@ -1,7 +1,6 @@
 local lsp = vim.lsp
 local api = vim.api
 local handlers = lsp.handlers
-local code_action = require "dm.lsp.code_action"
 
 -- Can use `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`
 handlers["textDocument/publishDiagnostics"] = lsp.with(
@@ -13,8 +12,6 @@ handlers["textDocument/publishDiagnostics"] = lsp.with(
     update_in_insert = false,
   }
 )
-
-handlers["textDocument/codeAction"] = code_action.handler
 
 -- Modified version of the original handler. This will open the quickfix
 -- window only if the response is a list and the count is greater than 1.
