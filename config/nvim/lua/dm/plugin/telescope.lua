@@ -53,12 +53,13 @@ telescope.setup {
     layout_strategy = "flex",
     layout_config = {
       prompt_position = "top",
-      width = { padding = 12 },
       height = { padding = 4 },
       horizontal = {
+        width = { padding = 14 },
         preview_width = 0.55,
       },
       vertical = {
+        width = { padding = 8 },
         preview_height = 0.5,
         mirror = true,
       },
