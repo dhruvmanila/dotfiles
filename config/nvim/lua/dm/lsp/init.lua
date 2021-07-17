@@ -158,14 +158,16 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.code_action then
+    local builtin = require "telescope.builtin"
+
     table.insert(lsp_autocmds, {
       events = { "CursorHold", "CursorHoldI" },
       targets = "<buffer>",
       command = require("dm.lsp.code_action").code_action_listener,
     })
 
-    nnoremap { "<leader>ca", vim.lsp.buf.code_action, buffer = bufnr }
-    xnoremap { "<leader>ca", vim.lsp.buf.range_code_action, buffer = bufnr }
+    nnoremap { "<leader>ca", builtin.lsp_code_actions, buffer = bufnr }
+    xnoremap { "<leader>ca", builtin.lsp_range_code_actions, buffer = bufnr }
   end
 
   -- Set the LSP autocmds
