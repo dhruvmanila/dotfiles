@@ -44,23 +44,6 @@ function M.highlight(name, opts)
   end
 end
 
--- Append the given lines in the provided bufnr, defaults to the current buffer.
--- If `hl` is provided then add the given highlight group to the respective lines.
----@param bufnr number
----@param lines string[]
----@param hl string
----@return nil
-function M.append(bufnr, lines, hl)
-  bufnr = bufnr or api.nvim_get_current_buf()
-  local linenr = api.nvim_buf_line_count(bufnr) - 1
-  api.nvim_buf_set_lines(bufnr, linenr, linenr, false, lines)
-  if hl then
-    for idx = linenr, linenr + #lines do
-      api.nvim_buf_add_highlight(bufnr, -1, hl, idx, 0, -1)
-    end
-  end
-end
-
 -- Fixed column cursor movements with line limits. This will skip any blank
 -- lines in between. This should only be used in autocmds with CursorHold event.
 -- `opts` table expects the followings keys to be present:
