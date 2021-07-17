@@ -97,10 +97,8 @@ telescope.setup {
         width = function(_, editor_width, _)
           return math.min(editor_width - 20, 100)
         end,
-        height = function(_, _, editor_height)
-          -- Number of listed buffers
-          local buflisted = #vim.fn.getbufinfo { buflisted = 1 }
-          return math.max(10, math.min(editor_height - 10, buflisted))
+        height = function(picker, _, editor_height)
+          return math.min(editor_height - 10, #picker.finder.results)
         end,
       },
     },
