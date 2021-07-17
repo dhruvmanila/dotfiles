@@ -308,10 +308,8 @@ end
 ---@param ctx table
 ---@return boolean
 local function special_buffer(ctx)
-  return contains(special_buffer_info.types, ctx.filetype) or contains(
-    special_buffer_info.types,
-    ctx.buftype
-  )
+  return contains(special_buffer_info.types, ctx.filetype)
+    or contains(special_buffer_info.types, ctx.buftype)
 end
 
 ---Returns the name of the special buffer as per the name table values of

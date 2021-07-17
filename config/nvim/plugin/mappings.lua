@@ -164,10 +164,13 @@ xnoremap { "<", "<gv" }
 xnoremap { ">", ">gv" }
 
 -- Repeat macros across a visual range
-xnoremap { "@", function()
-  vim.cmd [[echo "@".getcmdline()]]
-  vim.cmd [[":'<,'>normal @".nr2char(getchar())]]
-end }
+xnoremap {
+  "@",
+  function()
+    vim.cmd [[echo "@".getcmdline()]]
+    vim.cmd [[":'<,'>normal @".nr2char(getchar())]]
+  end,
+}
 
 -- Textobjects
 --

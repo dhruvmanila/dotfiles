@@ -74,26 +74,42 @@ local function custom_on_attach(client, bufnr)
 
   -- Keybindings:
   -- For all types of diagnostics: [d | ]d
-  nnoremap { "[d", function()
-    vim.lsp.diagnostic.goto_prev { enable_popup = false }
-  end, buffer = bufnr }
-  nnoremap { "]d", function()
-    vim.lsp.diagnostic.goto_next { enable_popup = false }
-  end, buffer = bufnr }
+  nnoremap {
+    "[d",
+    function()
+      vim.lsp.diagnostic.goto_prev { enable_popup = false }
+    end,
+    buffer = bufnr,
+  }
+  nnoremap {
+    "]d",
+    function()
+      vim.lsp.diagnostic.goto_next { enable_popup = false }
+    end,
+    buffer = bufnr,
+  }
 
   -- For warning and error diagnostics: [e | ]e
-  nnoremap { "[e", function()
-    vim.lsp.diagnostic.goto_prev {
-      severity_limit = "Warning",
-      enable_popup = false,
-    }
-  end, buffer = bufnr }
-  nnoremap { "]e", function()
-    vim.lsp.diagnostic.goto_next {
-      severity_limit = "Warning",
-      enable_popup = false,
-    }
-  end, buffer = bufnr }
+  nnoremap {
+    "[e",
+    function()
+      vim.lsp.diagnostic.goto_prev {
+        severity_limit = "Warning",
+        enable_popup = false,
+      }
+    end,
+    buffer = bufnr,
+  }
+  nnoremap {
+    "]e",
+    function()
+      vim.lsp.diagnostic.goto_next {
+        severity_limit = "Warning",
+        enable_popup = false,
+      }
+    end,
+    buffer = bufnr,
+  }
 
   -- Custom popup to show line diagnostics with colors and source information.
   nnoremap {
