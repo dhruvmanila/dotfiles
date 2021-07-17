@@ -1,5 +1,6 @@
 local utils = require "dm.utils"
 local session = require "dm.session"
+local Text = require "dm.text"
 
 -- Extract out the required namespace/function
 local vim = vim
@@ -11,8 +12,7 @@ local nnoremap = dm.nnoremap
 
 local M = {}
 
---- Useful defaults
-local empty_line = { "" }
+-- Useful defaults
 local line_length = 50
 local hl = { header = "Yellow", entry = "Red", footer = "Blue" }
 
@@ -58,6 +58,7 @@ end
 ---@return string[]
 local function generate_header()
   return {
+    "",
     "",
     "",
     "███╗   ██╗ ███████╗  ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗",
@@ -177,15 +178,14 @@ local function option_process(opts, process)
 end
 
 --- Set the entries in the buffer.
-local function set_entries()
+local function set_entries(text)
   for _, entry in ipairs(entries) do
     local description = entry.description
     if type(description) == "function" then
       description = description()
     end
     description = add_key(description, entry.key)
-    utils.append(0, center { description }, hl.entry)
-    utils.append(0, empty_line)
+    text:block(center { description }, hl.entry, true)
   end
 end
 
@@ -266,28 +266,26 @@ function M.open(on_vimenter)
   -- Set the dashboard buffer options
   option_process(dashboard.opts, "set")
 
+  -- Initiate the Text object which will render the text on the buffer.
+  local text = Text:new()
+
   -- Set the header
   local header = generate_header()
   local sub_header = generate_sub_header()
-  utils.append(0, empty_line)
-  utils.append(0, center(header), hl.header)
-  utils.append(0, empty_line)
-  utils.append(0, center(sub_header), hl.header)
-  utils.append(0, empty_line)
+  text:block(center(header), hl.header, true)
+  text:block(center(sub_header), hl.header, true)
 
   -- Set the sections
-  set_entries()
-  api.nvim_buf_set_lines(0, -2, -1, false, {})
+  set_entries(text)
 
   -- Compute first and last line offset
   -- Actual entry line is 1 greater and 1 less than the current line for setting
   -- the firstline and lastline offset.
-  dashboard.firstline = 1 + #header + 1 + #sub_header + 1 + 1
+  dashboard.firstline = #header + 1 + #sub_header + 1 + 1
   dashboard.lastline = api.nvim_buf_line_count(0) - 1
 
   -- Set the footer
-  utils.append(0, empty_line)
-  utils.append(0, center(generate_footer()), hl.footer)
+  text:block(center(generate_footer()), hl.footer)
 
   -- Lock the buffer
   option_process(
