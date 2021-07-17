@@ -37,4 +37,7 @@ PATH="${HOME}/neovim/bin:${PATH}"
 # For llvm family
 PATH="/usr/local/opt/llvm/bin:$PATH"
 
+# Brew installed sqlite3
+PATH="/usr/local/opt/sqlite/bin:$PATH"
+
 export PATH
