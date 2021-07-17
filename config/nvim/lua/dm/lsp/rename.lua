@@ -3,14 +3,21 @@ local lsp = vim.lsp
 local cmd = api.nvim_command
 local utils = require "dm.utils"
 
-local config = { width = 40, height = 1, border_hl = "TabLineSel" }
+local nnoremap = dm.nnoremap
+local inoremap = dm.inoremap
+
+local config = {
+  width = 40,
+  height = 1,
+  border_hl = "Normal",
+}
 
 local M = {}
 
 -- Cleanup tasks performed:
 --   - Exit from insert mode
 --   - Delete the prompt buffer
-function M.cleanup()
+local function cleanup()
   cmd "stopinsert"
   api.nvim_buf_delete(0, { force = true })
 end
@@ -20,23 +27,18 @@ end
 --   - `<C-l>`: clear the rename prompt
 ---@param bufnr number rename window buffer number
 local function set_mappings(bufnr)
-  local opts = { noremap = true, silent = true, nowait = true }
-  local cleanup_fn = "<Cmd>lua require('dm.lsp.rename').cleanup()<CR>"
-  local clear_fn = string.format(
-    "<Cmd>lua vim.api.nvim_buf_set_lines(%d, 0, -1, false, {})<CR>",
-    bufnr
-  )
-
-  api.nvim_buf_set_keymap(bufnr, "i", "<esc>", "<C-o>" .. cleanup_fn, opts)
-  api.nvim_buf_set_keymap(bufnr, "n", "<esc>", cleanup_fn, opts)
-  api.nvim_buf_set_keymap(bufnr, "i", "<C-l>", clear_fn, opts)
+  nnoremap { "<Esc>", cleanup, buffer = bufnr, nowait = true }
+  inoremap { "<Esc>", cleanup, buffer = bufnr, nowait = true }
+  inoremap { "<C-l>", function()
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
+  end, buffer = bufnr, nowait = true }
 end
 
 -- Rename prompt callback function. It receives the entered value in the prompt
 -- buffer by Neovim.
 ---@param new_name string
 local function callback(new_name)
-  M.cleanup()
+  cleanup()
   local orig_name = vim.fn.expand "<cword>"
   if not new_name or #new_name == 0 or new_name == orig_name then
     return
