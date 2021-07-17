@@ -7,6 +7,7 @@ local o = vim.o
 local api = vim.api
 local fn = vim.fn
 local cmd = vim.cmd
+local nnoremap = dm.nnoremap
 
 local M = {}
 
@@ -175,18 +176,7 @@ local function option_process(opts, process)
   end
 end
 
---- Register the entry into the dashboard table for the current line
----@param entry DashboardEntry
-local function register_entry(entry)
-  local line = api.nvim_buf_line_count(0) - 1
-  dashboard.entries[line] = {
-    line = line,
-    key = entry.key,
-    command = entry.command,
-  }
-end
-
---- Set the entries in the UI and register it in the dashboard namespace.
+--- Set the entries in the buffer.
 local function set_entries()
   for _, entry in ipairs(entries) do
     local description = entry.description
@@ -195,44 +185,13 @@ local function set_entries()
     end
     description = add_key(description, entry.key)
     utils.append(0, center { description }, hl.entry)
-    register_entry(entry)
     utils.append(0, empty_line)
   end
 end
 
---- Set the required mappings which includes:
----   - <CR>: open the entry at the current cursor position
----   - q: quit the dashboard buffer
----   - `key`: open the entry for the registered entry
-local function set_mappings()
-  local buf_map = api.nvim_buf_set_keymap
-  local opts = { noremap = true, silent = true, nowait = true }
-
-  -- Registered entries
-  for line, entry in pairs(dashboard.entries) do
-    local entry_fn = string.format(
-      "<Cmd>lua require('dm.dashboard').open_entry(%d)<CR>",
-      line
-    )
-    buf_map(0, "n", entry.key, entry_fn, opts)
-  end
-
-  -- Basic keymap
-  local entry_fn = "<Cmd>lua require('dm.dashboard').open_entry()<CR>"
-  local close_fn = "<Cmd>lua require('dm.dashboard').close()<CR>"
-  buf_map(0, "n", "<CR>", entry_fn, opts)
-  buf_map(0, "n", "q", close_fn, opts)
-end
-
---- Reset the saved options
-local function reset_opts()
-  option_process(dashboard.saved_opts, "set")
-  dashboard.saved_opts = {}
-end
-
 --- Close the dashboard buffer and either quit neovim or move back to the
 --- original buffer.
-function M.close()
+local function close()
   local curbuflisted = fn.buflisted(api.nvim_get_current_buf())
   local buflisted = vim.tbl_filter(function(bufnr)
     return fn.buflisted(bufnr) == 1
@@ -252,21 +211,18 @@ function M.close()
   end
 end
 
---- Open the entry as per the given `line`. If `line` is `nil`, then open the
---- entry at the cursor position (coming from pressing <CR>), otherwise open
---- the entry at the given line (coming from pressing `key`).
----@param line? number
-function M.open_entry(line)
-  line = line or api.nvim_win_get_cursor(0)[1]
-  local entry = dashboard.entries[line]
-  local command = entry.command
-
-  dm.case(type(command), {
-    ["function"] = command,
-    ["string"] = function()
-      cmd(command)
-    end,
-  })
+--- Set the required mappings which includes:
+---   - q: quit the dashboard buffer
+---   - `key`: open the entry for the registered entry
+local function set_mappings()
+  nnoremap { "q", close, buffer = true, nowait = true }
+  for _, entry in ipairs(entries) do
+    local command = entry.command
+    if type(command) == "string" then
+      command = "<Cmd>" .. command .. "<CR>"
+    end
+    nnoremap { entry.key, command, buffer = true, nowait = true }
+  end
 end
 
 --- Open the dashboard buffer in the current buffer if it is empty or create
@@ -320,7 +276,6 @@ function M.open(on_vimenter)
   utils.append(0, empty_line)
 
   -- Set the sections
-  dashboard.entries = {}
   set_entries()
   api.nvim_buf_set_lines(0, -2, -1, false, {})
 
@@ -364,15 +319,17 @@ function M.open(on_vimenter)
     events = "BufWipeout",
     targets = "dashboard",
     modifiers = "++once",
-    command = reset_opts,
+    command = function()
+      option_process(dashboard.saved_opts, "set")
+      dashboard.saved_opts = {}
+    end,
   }
   cmd "silent! %foldopen!"
   cmd "normal! zb"
   o.eventignore = ""
 end
 
--- For debugging purposes:
--- lua print(vim.inspect(require('dm.dashboard')._dashboard))
+-- For debugging purposes
 M._dashboard = dashboard
 
 return M
