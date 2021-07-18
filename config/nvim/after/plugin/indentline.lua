@@ -12,10 +12,11 @@ g.indent_blankline_filetype_exclude = {
   "lspinfo",
   "packer",
   "startify",
-  "txt",
+  "text",
   "dashboard",
   "fugitive",
   "log",
+  "gitcommit",
 }
 
 g.indent_blankline_buftype_exclude = { "terminal", "nofile" }
