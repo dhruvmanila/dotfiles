@@ -31,9 +31,4 @@ g["vista#renderer#icons"] = (function()
   return items
 end)()
 
-vim.api.nvim_set_keymap(
-  "n",
-  "<Leader>vv",
-  "<Cmd>Vista!!<CR>",
-  { noremap = true }
-)
+dm.nnoremap { "<Leader>vv", "<Cmd>Vista!!<CR>" }

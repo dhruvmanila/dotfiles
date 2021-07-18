@@ -1,5 +1,6 @@
 -- Personal session management for neovim based on vim-startify
 
+local command = dm.command
 local session = require "dm.session"
 
 -- Default session directory.
@@ -19,10 +20,10 @@ dm._session_list = session.list
 do
   local complete = "-complete=customlist,v:lua.dm._session_list"
 
-  dm.command { "SLoad", session.load, nargs = 1, attr = { complete } }
-  dm.command { "SSave", session.save, nargs = 1, attr = { complete } }
-  dm.command { "SDelete", session.delete, nargs = 1, attr = { complete } }
-  dm.command { "SClose", session.close }
+  command { "SLoad", session.load, nargs = 1, attr = { complete } }
+  command { "SSave", session.save, nargs = 1, attr = { complete } }
+  command { "SDelete", session.delete, nargs = 1, attr = { complete } }
+  command { "SClose", session.close }
 end
 
 dm.augroup("dm__session_persistence", {

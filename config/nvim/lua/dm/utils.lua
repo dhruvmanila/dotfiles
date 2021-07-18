@@ -141,12 +141,15 @@ function M.startuptime()
   cmd "StartupTime"
   vim.bo.bufhidden = "wipe"
   vim.wo.cursorline = true
-  local quit_fn = string.format(
-    "<Cmd>lua vim.api.nvim_win_close(%d, true)<CR>",
-    winnr
-  )
-  local opts = { noremap = true, nowait = true, silent = true }
-  api.nvim_buf_set_keymap(0, "n", "q", quit_fn, opts)
+
+  dm.nnoremap {
+    "q",
+    function()
+      api.nvim_win_close(winnr, true)
+    end,
+    buffer = bufnr,
+    nowait = true,
+  }
 end
 
 return M
