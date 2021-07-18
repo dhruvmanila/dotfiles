@@ -144,9 +144,9 @@ TSPlaygroundToggle       «Spc»tp       N
 TSHighlightCaptures...   «Spc»th       N
 # Incremental selection ------------------
 Init selection           gnn           N
-Scope incremental        grc           X
 Node incremental         «Tab»         X
 Node decremental         «S-Tab»       X
+Scope incremental        «C-s»         X
 # Textobjects ----------------------------
 @class.outer             aC            T
 @class.inner             iC            T
