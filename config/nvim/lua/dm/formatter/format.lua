@@ -3,7 +3,6 @@ local M = {}
 local uv = vim.loop
 local fn = vim.fn
 local api = vim.api
-local lsp = vim.lsp
 local validate = vim.validate
 local if_nil = vim.F.if_nil
 
@@ -201,10 +200,10 @@ end
 -- performing the request.
 ---@param formatter Formatter
 function Format:lsp_run(formatter)
-  lsp.buf_request(
+  vim.lsp.buf_request(
     self.bufnr,
     "textDocument/formatting",
-    lsp.util.make_formatting_params(formatter.opts),
+    vim.lsp.util.make_formatting_params(formatter.opts),
     function(err, _, result)
       if err then
         vim.notify({ "Formatter", "", err.message }, 4)
@@ -214,7 +213,7 @@ function Format:lsp_run(formatter)
         return
       end
       if result then
-        lsp.util.apply_text_edits(result, self.bufnr)
+        vim.lsp.util.apply_text_edits(result, self.bufnr)
         self:write()
       end
     end
