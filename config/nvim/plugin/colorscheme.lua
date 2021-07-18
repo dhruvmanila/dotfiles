@@ -54,6 +54,7 @@ end
 -- Telescope.nvim
 highlight("TelescopeSelection", { force = true, link = "Visual" })
 highlight("TelescopeMatching", { force = true, link = "Blue" })
+highlight("TelescopeBorder", { force = true, link = "Normal" })
 highlight("TelescopePromptPrefix", { force = true, link = "Yellow" })
 
 -- Treesitter
