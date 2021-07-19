@@ -84,10 +84,6 @@ local function load_plugins()
     { "lifepillar/vim-cheat40" },
     { "liuchengxu/vista.vim" },
     {
-      "lukas-reineke/indent-blankline.nvim",
-      event = { "BufRead", "BufNewFile" },
-    },
-    {
       "mfussenegger/nvim-dap",
       keys = { { "n", "<leader>db" }, { "n", "<leader>dc" } },
       config = conf "nvim_dap",
