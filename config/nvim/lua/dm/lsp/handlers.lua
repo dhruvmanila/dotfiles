@@ -17,7 +17,7 @@ handlers["textDocument/publishDiagnostics"] = lsp.with(
 -- window only if the response is a list and the count is greater than 1.
 local function location_handler(_, method, response)
   if not response or vim.tbl_isempty(response) then
-    vim.notify { "LSP (" .. method .. ")", "", "No results found" }
+    vim.notify("LSP (" .. method .. "): No results found")
     return
   end
 

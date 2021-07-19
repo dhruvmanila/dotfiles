@@ -194,15 +194,14 @@ local function websearch(opts)
   local search_engine = state.search_engine
 
   if vim.fn.executable(executable[search_engine]) <= 0 then
-    vim.notify({
-      "Telescope",
-      "",
+    vim.notify(
       string.format(
-        "'websearch' requires the `%s` executable for searching on '%s'",
+        "[telescope]: 'websearch' requires the `%s` executable for searching on '%s'",
         executable[search_engine],
         search_engine
       ),
-    }, 3)
+      3
+    )
     return
   end
 
@@ -233,11 +232,10 @@ return telescope.register_extension {
     local max_results = ext_config.max_results or 25
 
     if search_engine == "duckduckgo" and max_results > 25 then
-      vim.notify({
-        "Telescope",
-        "",
-        "duckduckgo (ddgr) supports a maximum of 25 results",
-      }, 3)
+      vim.notify(
+        "[telescope]: duckduckgo (ddgr) supports a maximum of 25 results",
+        3
+      )
       max_results = 25
     end
 

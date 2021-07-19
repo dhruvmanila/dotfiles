@@ -68,12 +68,13 @@ command {
       end
     end
     if deleted > 0 or modified > 0 then
-      vim.notify {
-        "BufOnly",
-        "",
-        deleted .. " deleted buffer(s)",
-        modified .. " modified buffer(s)",
-      }
+      vim.notify(
+        string.format(
+          "[BufOnly]: %d deleted buffer(s) %d modified buffer(s)",
+          deleted,
+          modified
+        )
+      )
     end
   end,
 }

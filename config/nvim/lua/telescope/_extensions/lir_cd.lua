@@ -73,16 +73,13 @@ local function lir_cd(opts)
   opts = opts or {}
 
   if vim.bo.filetype ~= "lir" then
-    vim.notify({ "Telescope", "", "Not in a lir buffer" }, 3)
+    vim.notify("[telescope]: Not in a lir buffer", 3)
     return nil
   end
 
   local cwd = vim.fn.fnamemodify(lir.get_context().dir, ":~")
   if cwd == "/" or cwd == "~/" then
-    vim.notify(
-      { "Telescope", "", "Searching from root or home is expensive" },
-      3
-    )
+    vim.notify("[telescope]: Searching from root or home is expensive", 3)
     return nil
   end
 

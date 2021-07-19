@@ -196,7 +196,7 @@ do
     local loaded, _ = pcall(telescope.load_extension, name)
     if not loaded then
       vim.notify(
-        { "Telescope", "", "Failed to load the extension: '" .. name .. "'" },
+        string.format("[telescope]: Failed to load the extension: '%s'", name),
         3
       )
     end

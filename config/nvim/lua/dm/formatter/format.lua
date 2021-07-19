@@ -153,11 +153,14 @@ function Format:run(formatter)
 
   if not handle then
     close_safely(stdin, stdout, stderr)
-    vim.notify({
-      "Failed to run the formatter '" .. formatter.cmd .. "'",
-      "",
-      pid_or_err,
-    }, 4)
+    vim.notify(
+      string.format(
+        "[formatter]: Failed to run the formatter '%s': %s",
+        formatter.cmd,
+        pid_or_err
+      ),
+      4
+    )
     return
   end
 
@@ -181,7 +184,7 @@ function Format:on_exit(code, stdin)
     if not stdin then
       os.remove(self.tempfile_name)
     end
-    vim.notify({ "Formatter", "", self.err_output }, 4)
+    vim.notify("[formatter]: " .. self.err_output, 4)
     return self:step()
   end
   if stdin then
@@ -206,7 +209,7 @@ function Format:lsp_run(formatter)
     vim.lsp.util.make_formatting_params(formatter.opts),
     function(err, _, result)
       if err then
-        vim.notify({ "Formatter", "", err.message }, 4)
+        vim.notify("[formatter]: " .. err.message, 4)
         return
       end
       if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then

@@ -38,13 +38,11 @@ end
 --- Start a new asynchronous job to collect the user GitHub stars using
 --- GitHub's CLI tool `gh`.
 local function collect_github_stars()
+  ---@param job Job
+  ---@param code number
   local function process_complete(job, code)
     if code > 0 then
-      vim.notify({
-        "Telescope (github_stars)",
-        "",
-        table.concat(job:stderr_result(), "\n"),
-      }, 4)
+      vim.notify("[telescope]: " .. table.concat(job:stderr_result(), "\n"), 4)
       return
     end
     local result = job:result()
@@ -91,7 +89,7 @@ local function github_stars(opts)
 
   -- TODO: start the job again? run the job synchronously?
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    vim.notify({ "Telescope", "", "No GitHub stars are cached yet" }, 3)
+    vim.notify("[telescope]: No GitHub stars are cached yet", 3)
     return nil
   end
 

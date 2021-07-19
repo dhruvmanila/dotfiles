@@ -57,7 +57,7 @@ local function installed_plugins(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_PackerPluginInfo.plugins) then
-    vim.notify({ "Telescope", "", "Plugin information was not cached" }, 3)
+    vim.notify("[telescope]: Plugin information was not cached", 3)
     return nil
   end
 
