@@ -42,7 +42,7 @@ local mode = {
 }
 
 local prompt_prefix = {
-  query = " ",
+  query = " ",
   result = " ",
 }
 
