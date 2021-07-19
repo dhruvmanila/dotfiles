@@ -6,7 +6,6 @@
 
 [core]
 	editor = nvim
-	# Use custom `.gitignore`
 	excludesfile = ~/.gitignore
 	ignorecase = false
 
@@ -18,18 +17,23 @@
 	nb = checkout -b
 	st = status -sb
 
+	# Sync with upstream HEAD branch
+	sync = !git pull upstream HEAD && git push
+
 	# View abbreviated SHA, description, and history graph of the latest 10 commits.
 	l = log --oneline -n 10 --graph
 	la = log --oneline -n 10 --graph --all
-	undo = reset --soft HEAD~1 # Undo your last commit
-	ammend = commit --ammend # ammend your last commit
+
+	# Undo/ammend the last commit
+	undo = reset --soft HEAD~1
+	ammend = commit --ammend
 
 	# Show verbose output about tags, branches or remotes
 	tags = tag -l
 	branches = branch --all
 	remotes = remote --verbose
 
-	# List aliases.
+	# List aliases
 	aliases = config --get-regexp alias
 
 	# Enhance git diff with delta
@@ -60,6 +64,9 @@
 
 [init]
 	defaultBranch = main
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
 
 [delta]
 	syntax-theme = gruvbox-dark
