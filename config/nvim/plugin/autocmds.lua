@@ -2,6 +2,7 @@ local o = vim.o
 local fn = vim.fn
 local api = vim.api
 local contains = vim.tbl_contains
+local augroup = dm.augroup
 
 do
   -- 'colorcolumn' value for specific filetypes
@@ -23,7 +24,7 @@ do
   end
 
   -- Highlight colorcolumn only in insert mode
-  dm.augroup("dm__auto_colorcolumn", {
+  augroup("dm__auto_colorcolumn", {
     {
       events = "InsertEnter",
       targets = "*",
@@ -59,7 +60,7 @@ do
     end, timeout)
   end
 
-  dm.augroup("dm__clear_command_messages", {
+  augroup("dm__clear_command_messages", {
     {
       events = { "CmdlineLeave", "CmdlineChanged" },
       targets = ":",
@@ -70,7 +71,7 @@ end
 
 -- Triger `autoread` when files changes on disk and notify after file change.
 -- Ref: https://unix.stackexchange.com/a/383044
-dm.augroup("dm__auto_reload_file", {
+augroup("dm__auto_reload_file", {
   {
     events = { "FocusGained", "BufEnter" },
     targets = "*",
@@ -96,7 +97,7 @@ do
   --   - Only in the active window
   --   - Ignore special buffers like dashboard
   --   - Disable in insert mode
-  dm.augroup("dm__auto_cursorline", {
+  augroup("dm__auto_cursorline", {
     {
       events = { "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
       targets = "*",
@@ -122,7 +123,7 @@ end
 --   - Only in the active window
 --   - Ignore quickfix window
 --   - Disable in insert mode
-dm.augroup("dm__auto_relative_number", {
+augroup("dm__auto_relative_number", {
   {
     events = { "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
     targets = "*",
@@ -146,7 +147,7 @@ dm.augroup("dm__auto_relative_number", {
 -- Terminal autocmds
 --   - Automatically go to insert mode on entering terminal
 --   - Close the terminal window on exit (<C-d>)
-dm.augroup("dm__terminal", {
+augroup("dm__terminal", {
   {
     events = { "TermOpen", "WinEnter" },
     targets = "term://*",
@@ -161,7 +162,7 @@ dm.augroup("dm__terminal", {
   },
 })
 
-dm.augroup("dm__custom_autocmds", {
+augroup("dm__custom_autocmds", {
   -- Equalize window dimensions when resizing vim
   {
     events = "VimResized",
