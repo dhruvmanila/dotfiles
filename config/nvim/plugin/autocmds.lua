@@ -81,13 +81,6 @@ augroup("dm__auto_reload_file", {
       end
     end,
   },
-  {
-    events = "FileChangedShellPost",
-    targets = "*",
-    command = function()
-      vim.notify { "Auto reload", "", "File changed on disk, buffer reloaded" }
-    end,
-  },
 })
 
 do
