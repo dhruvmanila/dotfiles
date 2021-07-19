@@ -106,6 +106,7 @@ telescope.setup {
   pickers = {
     buffers = {
       sort_lastused = true,
+      sort_mru = true,
       show_all_buffers = true,
       theme = "dropdown",
       previewer = false,
