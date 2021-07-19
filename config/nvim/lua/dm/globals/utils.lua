@@ -256,6 +256,7 @@ do
   end
 
   local map = { noremap = false }
+  dm.map = make_mapper("", map)
   dm.nmap = make_mapper("n", map)
   dm.imap = make_mapper("i", map)
   dm.cmap = make_mapper("c", map)
@@ -266,6 +267,7 @@ do
   dm.tmap = make_mapper("t", map)
 
   local noremap = { noremap = true }
+  dm.noremap = make_mapper("", noremap)
   dm.nnoremap = make_mapper("n", noremap)
   dm.inoremap = make_mapper("i", noremap)
   dm.cnoremap = make_mapper("c", noremap)
