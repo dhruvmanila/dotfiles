@@ -7,10 +7,7 @@
 local has_telescope, telescope = pcall(require, "telescope")
 
 if not has_telescope then
-  vim.notify(
-    { "Telescope", "", "`websearch` extension requires telescope.nvim" },
-    4
-  )
+  return
 end
 
 local finders = require "telescope.finders"
