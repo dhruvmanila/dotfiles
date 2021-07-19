@@ -1,3 +1,4 @@
+local escape = dm.escape
 local nnoremap = dm.nnoremap
 local xnoremap = dm.xnoremap
 local onoremap = dm.onoremap
@@ -24,13 +25,41 @@ nnoremap { "Q", "<Cmd>xall<CR>" }
 -- with the behavior of 'C', 'D'
 nnoremap { "Y", "y$" }
 
--- Move the cursor based on physical lines, not the actual lines.
-nnoremap { "j", "v:count == 0 ? 'gj' : 'j'", expr = true }
-nnoremap { "k", "v:count == 0 ? 'gk' : 'k'", expr = true }
+do
+  -- Performs either of the following tasks as per the `v:count` value:
+  --   - Move the cursor based on physical lines, not the actual lines.
+  --   - Store relative line number jumps in the jumplist if they exceed a threshold.
+  local function jump_direction(letter)
+    local jump_count = vim.v.count
+    if jump_count == 0 then
+      return "g" .. letter
+    elseif jump_count > 5 then
+      return "m'" .. jump_count .. letter
+    end
+    return letter
+  end
+
+  nnoremap {
+    "j",
+    function()
+      return jump_direction "j"
+    end,
+    expr = true,
+  }
+  nnoremap {
+    "k",
+    function()
+      return jump_direction "k"
+    end,
+    expr = true,
+  }
+  xnoremap { "j", "gj" }
+  xnoremap { "k", "gk" }
+end
+
+-- Move to either end of the line based on physical lines, not the actual lines.
 nnoremap { "^", "g^" }
 nnoremap { "0", "g0" }
-xnoremap { "j", "gj" }
-xnoremap { "k", "gk" }
 
 -- Jump to start and end of line using the home row keys
 nnoremap { "H", "^" }
@@ -50,8 +79,22 @@ xnoremap { "p", '"_dP`]' }
 --
 -- This will make sure that `n` will always search forward and `N` backward.
 -- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
-nnoremap { "n", "'Nn'[v:searchforward]", expr = true }
-nnoremap { "N", "'nN'[v:searchforward]", expr = true }
+--
+-- NOTE: The '+1' is due to the fact that lua is 1-indexed.
+nnoremap {
+  "n",
+  function()
+    return ({ "N", "n" })[vim.v.searchforward + 1]
+  end,
+  expr = true,
+}
+nnoremap {
+  "N",
+  function()
+    return ({ "n", "N" })[vim.v.searchforward + 1]
+  end,
+  expr = true,
+}
 
 -- Easy command mode if not using registers explicitly
 -- nnoremap { "'", ";" }
@@ -119,7 +162,7 @@ nnoremap { "#", "#``" }
 -- repeat using . (dot) n - 1 times. We can use `n/N` to skip some replacements.
 --
 -- http://www.kevinli.co/posts/2017-01-19-multiple-cursors-in-500-bytes-of-vimscript/
-vim.g.mc = dm.escape [[y/\V<C-r>=escape(@", '/')<CR><CR>]]
+vim.g.mc = escape [[y/\V<C-r>=escape(@", '/')<CR><CR>]]
 nnoremap { "cn", "*``cgn" }
 nnoremap { "cN", "*``cgN" }
 xnoremap { "cn", [[g:mc . "``cgn"]], expr = true }
@@ -137,8 +180,12 @@ xnoremap { "<leader>su", [["zy:%s/\<<C-r><C-o>"\>//g<Left><Left>]] }
 -- Source files (only for lua or vim files)
 nnoremap {
   "<leader>so",
-  [[&ft =~# '^\(vim\|lua\)$' ? '<Cmd>source %<CR>' : '']],
-  expr = true,
+  function()
+    local filetype = vim.bo.filetype
+    if filetype == "lua" or filetype == "vim" then
+      vim.cmd "source %"
+    end
+  end,
 }
 
 -- Delete without overriding the paste register
@@ -186,29 +233,74 @@ onoremap { "il", [[<Cmd>normal! ^vg_<CR>]] }
 xnoremap { "ie", "gg0oG$" }
 onoremap { "ie", [[:<C-U>execute "normal! m`"<Bar>keepjumps normal! ggVG<CR>]] }
 
--- Make <C-k>/<C-j> as smart as <up>/<down>
---
--- This will either recall older/recent command-line from history, whose
--- beginning matches the current command-line or move through the wildmenu
--- completion.
-cnoremap { "<C-k>", 'wildmenumode() ? "<C-p>" : "<up>"', expr = true }
-cnoremap { "<C-j>", 'wildmenumode() ? "<C-n>" : "<down>"', expr = true }
+do
+  -- Returns `true` if wildmenu is active, false otherwise.
+  ---@return boolean
+  local function is_wildmenu()
+    return vim.fn.wildmenumode() == 1
+  end
 
--- `<Tab>`/`<S-Tab>` to move between matches without leaving incremental search.
--- Note dependency on `'wildcharm'` being set to `<C-z>` in order for this to work.
---
--- Credit: https://github.com/wincent/wincent
-cnoremap {
-  "<Tab>",
-  [[getcmdtype() =~ '^\(/\|?\)' ? '<CR>/<C-r>/' : '<C-z>']],
-  expr = true,
-}
+  -- Make <C-k>/<C-j> as smart as <up>/<down>
+  --
+  -- This will either recall older/recent command-line from history, whose
+  -- beginning matches the current command-line or move through the wildmenu
+  -- completion.
+  cnoremap {
+    "<C-k>",
+    function()
+      if is_wildmenu() then
+        return escape "<C-p>"
+      end
+      return escape "<Up>"
+    end,
+    expr = true,
+  }
+  cnoremap {
+    "<C-j>",
+    function()
+      if is_wildmenu() then
+        return escape "<C-j>"
+      end
+      return escape "<Down>"
+    end,
+    expr = true,
+  }
+end
 
-cnoremap {
-  "<S-Tab>",
-  [[getcmdtype() =~ '^\(/\|?\)' ? '<CR>?<C-r>/' : '<S-Tab>']],
-  expr = true,
-}
+do
+  -- Return `true` if the current command-line type is search, `false` otherwise.
+  ---@return boolean
+  local function is_search()
+    local cmdtype = vim.fn.getcmdtype()
+    return cmdtype == "/" or cmdtype == "?"
+  end
+
+  -- `<Tab>`/`<S-Tab>` to move between matches without leaving incremental search.
+  -- Note dependency on `'wildcharm'` being set to `<C-z>` in order for this to work.
+  --
+  -- Credit: https://github.com/wincent/wincent
+  cnoremap {
+    "<Tab>",
+    function()
+      if is_search() then
+        return escape "<CR>/<C-r>/"
+      end
+      return escape "<C-z>"
+    end,
+    expr = true,
+  }
+
+  cnoremap {
+    "<S-Tab>",
+    function()
+      if is_search() then
+        return escape "<CR>?<C-r>/"
+      end
+      return escape "<S-Tab>"
+    end,
+    expr = true,
+  }
+end
 
 -- Make <Left>/<Right> move the cursor instead of selecting a different match
 -- in the wildmenu. See :h 'wildmenu'
