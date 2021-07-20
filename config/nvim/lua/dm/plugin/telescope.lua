@@ -54,8 +54,8 @@ local default_code_action = themes.get_cursor {
           max_width,
           strings.strdisplaywidth(entry.client_name)
             + strings.strdisplaywidth(entry.command_title)
-            + 2 -- idx + ':'
-            + 3 -- spaces which separates the columns
+            + 3 -- idx + ':'
+            + 3 -- space between the columns
             + 2 -- prompt prefix + padding
         )
       end
@@ -107,16 +107,12 @@ telescope.setup {
     buffers = {
       sort_lastused = true,
       sort_mru = true,
-      show_all_buffers = true,
+      ignore_current_buffer = true,
       theme = "dropdown",
       previewer = false,
       mappings = {
-        i = {
-          ["<C-x>"] = actions.delete_buffer,
-        },
-        n = {
-          ["<C-x>"] = actions.delete_buffer,
-        },
+        i = { ["<C-x>"] = actions.delete_buffer },
+        n = { ["<C-x>"] = actions.delete_buffer },
       },
       layout_config = {
         width = function(_, editor_width, _)
