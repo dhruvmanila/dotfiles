@@ -27,6 +27,11 @@ custom_actions.reset_prompt = function(prompt_bufnr)
   action_state.get_current_picker(prompt_bufnr):reset_prompt()
 end
 
+-- Simple action to go to normal mode.
+custom_actions.stop_insert = function()
+  vim.cmd "stopinsert!"
+end
+
 -- Default dropdown theme options.
 local default_dropdown = themes.get_dropdown {
   layout_config = {
@@ -102,6 +107,7 @@ telescope.setup {
         ["<C-s>"] = actions.select_horizontal,
         ["<C-y>"] = custom_actions.yank_entry,
         ["<C-l>"] = custom_actions.reset_prompt,
+        ["<C-c>"] = custom_actions.stop_insert,
       },
     },
     history = {
