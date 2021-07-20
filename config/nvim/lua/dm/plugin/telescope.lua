@@ -96,11 +96,17 @@ telescope.setup {
         ["<Esc>"] = actions.close,
         ["<C-j>"] = actions.move_selection_next,
         ["<C-k>"] = actions.move_selection_previous,
+        ["<C-n>"] = actions.cycle_history_next,
+        ["<C-p>"] = actions.cycle_history_prev,
         ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
         ["<C-s>"] = actions.select_horizontal,
         ["<C-y>"] = custom_actions.yank_entry,
         ["<C-l>"] = custom_actions.reset_prompt,
       },
+    },
+    history = {
+      path = vim.fn.stdpath "data" .. "/telescope_history.sqlite3",
+      limit = 100,
     },
   },
   pickers = {
@@ -186,6 +192,7 @@ do
   local extensions = {
     "fzf",
     "github_stars",
+    "smart_history",
   }
 
   for _, name in ipairs(extensions) do
