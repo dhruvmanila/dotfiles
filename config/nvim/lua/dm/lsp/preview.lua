@@ -1,8 +1,7 @@
 -- Ref: https://github.com/fsouza/dotfiles/blob/main/nvim/lua/fsouza/lsp/locations.lua
 local M = {}
 
-local lsp = vim.lsp
-local parsers = require "nvim-treesitter.parsers"
+local highlighter = require "nvim-treesitter.highlight"
 
 -- Table consisting of treesitter node types to use for preview.
 local node_types = {
@@ -34,17 +33,22 @@ end
 -- Get the range of the location node using treesitter.
 ---@param location table
 ---@return table
+---@return number
 local function ts_range(location)
   location.uri = location.targetUri or location.uri
   location.range = location.targetRange or location.range
-  local bufnr = vim.uri_to_bufnr(location.uri)
-  -- Set the filetype to activate the parser for the respective buffer.
-  vim.bo[bufnr].filetype = vim.bo.filetype
-
-  local parser = parsers.get_parser(bufnr)
-  if not parser then
+  if not location.uri then
     return location
   end
+
+  -- This will add the buffer to the buffer list. We don't want to attach the
+  -- language server to that buffer, so we will ignore all events when setting
+  -- the filetype and getting the parser for the buffer.
+  vim.o.eventignore = "all"
+  local bufnr = vim.uri_to_bufnr(location.uri)
+  vim.bo[bufnr].filetype = vim.bo.filetype
+  local parser = vim.treesitter.get_parser(bufnr)
+  vim.o.eventignore = ""
 
   local _, tree = next(parser:trees())
   if not tree then
@@ -80,7 +84,8 @@ local function ts_range(location)
     end
     ts_start_line, ts_start_col, ts_end_line, ts_end_col = node:range()
   end
-  return location
+
+  return location, bufnr
 end
 
 local function preview_location_callback(_, method, response)
@@ -88,17 +93,31 @@ local function preview_location_callback(_, method, response)
     vim.notify("LSP (" .. method .. "): No results found")
     return
   end
+
+  local location_bufnr
   local location = vim.tbl_islist(response) and response[1] or response
-  location = ts_range(location)
-  local bufnr, _ = lsp.util.preview_location(location)
-  -- Set the filetype for treesitter highlights.
-  vim.bo[bufnr].filetype = vim.bo.filetype
+  location, location_bufnr = ts_range(location)
+
+  local bufnr, winnr = vim.lsp.util.preview_location(location)
+  highlighter.attach(bufnr, vim.bo.filetype)
+
+  -- This will be used to avoid re-requesting and thus avoid attaching the
+  -- highlighter again to the buffer which results in an error.
+  vim.b.dm__lsp_preview_window = winnr
+
+  -- We are deleting the buffer because it was only used to get the location
+  -- using treesitter and now it is of no need to us.
+  vim.api.nvim_buf_delete(location_bufnr, { force = true })
 end
 
 local function make_lsp_preview_action(method)
   return function()
-    local params = lsp.util.make_position_params()
-    lsp.buf_request(0, method, params, preview_location_callback)
+    local existing_float = vim.b.dm__lsp_preview_window
+    if existing_float and vim.api.nvim_win_is_valid(existing_float) then
+      vim.api.nvim_set_current_win(existing_float)
+    end
+    local params = vim.lsp.util.make_position_params()
+    vim.lsp.buf_request(0, method, params, preview_location_callback)
   end
 end
 
