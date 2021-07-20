@@ -126,6 +126,7 @@ local function load_plugins()
     { "tpope/vim-fugitive" },
     { "tpope/vim-rhubarb" },
     { "tpope/vim-scriptease" },
+    { "tpope/vim-surround" },
     { "tweekmonster/startuptime.vim", cmd = "StartupTime" },
     { "vim-scripts/applescript.vim" },
     { "wbthomason/packer.nvim", opt = true },
