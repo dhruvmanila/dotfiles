@@ -225,9 +225,14 @@ local function find_all_files()
 end
 
 local function grep_prompt()
+  local pattern = vim.fn.input "Grep pattern ❯ "
+  if pattern == "" then
+    vim.notify "[telescope] No pattern was specified"
+    return
+  end
   builtin.grep_string {
     use_regex = true,
-    search = vim.fn.input "Grep pattern > ",
+    search = pattern,
   }
 end
 
