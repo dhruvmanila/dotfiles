@@ -213,35 +213,25 @@ do
   ---@param defaults table
   ---@return fun(opts: table): nil
   local function make_mapper(mode, defaults)
-    return function(opts)
-      -- Separate out the normal and keyword arguments from the `opts` table.
-      local args, map_opts = {}, {}
-      for k, v in pairs(opts) do
-        if type(k) == "number" then
-          args[k] = v
-        else
-          map_opts[k] = v
-        end
-      end
-      local lhs = args[1]
-      local rhs = args[2]
-      map_opts = vim.tbl_extend("force", defaults, map_opts)
+    return function(lhs, rhs, opts)
+      opts = opts or {}
+      opts = vim.tbl_extend("force", defaults, opts)
       local bufnr
-      if map_opts.buffer then
-        bufnr = map_opts.buffer
+      if opts.buffer then
+        bufnr = opts.buffer
         -- We are directly using the current buffer instead of passing in the
         -- 0 because we need to store it accordingly.
         if bufnr == true or bufnr == 0 then
           bufnr = vim.api.nvim_get_current_buf()
         end
-        map_opts.buffer = nil
+        opts.buffer = nil
       end
       local rhs_type = type(rhs)
       if rhs_type == "function" then
         local fn_id = create_keymap_entry(mode, lhs, rhs, bufnr)
         -- <expr> are vimscript expressions, so we will use `v:lua` to access
         -- the lua globals and execute the callback.
-        if map_opts.expr then
+        if opts.expr then
           -- This is going into vimscript world so it requires `v:null` instead
           -- of the lua `null`.
           rhs = format(
@@ -260,9 +250,9 @@ do
         error("[mapper] Unsupported rhs type: " .. rhs_type)
       end
       if bufnr then
-        vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, map_opts)
+        vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
       else
-        vim.api.nvim_set_keymap(mode, lhs, rhs, map_opts)
+        vim.api.nvim_set_keymap(mode, lhs, rhs, opts)
       end
     end
   end

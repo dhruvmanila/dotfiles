@@ -31,4 +31,4 @@ g["vista#renderer#icons"] = (function()
   return items
 end)()
 
-dm.nnoremap { "<Leader>vv", "<Cmd>Vista!!<CR>" }
+dm.nnoremap("<Leader>vv", "<Cmd>Vista!!<CR>")

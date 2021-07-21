@@ -23,7 +23,7 @@ end
 dm.command("ToggleAutoFormatting", toggle_auto_formatting)
 dm.command("Format", format)
 
-dm.nnoremap { ";f", "<Cmd>Format<CR>" }
+dm.nnoremap(";f", "<Cmd>Format<CR>")
 
 -- By default, auto formatting is ON.
 toggle_auto_formatting()

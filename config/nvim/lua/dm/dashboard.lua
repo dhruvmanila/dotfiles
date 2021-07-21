@@ -215,13 +215,13 @@ end
 ---   - q: quit the dashboard buffer
 ---   - `key`: open the entry for the registered entry
 local function set_mappings()
-  nnoremap { "q", close, buffer = true, nowait = true }
+  nnoremap("q", close, { buffer = true, nowait = true })
   for _, entry in ipairs(entries) do
     local command = entry.command
     if type(command) == "string" then
       command = "<Cmd>" .. command .. "<CR>"
     end
-    nnoremap { entry.key, command, buffer = true, nowait = true }
+    nnoremap(entry.key, command, { buffer = true, nowait = true })
   end
 end
 

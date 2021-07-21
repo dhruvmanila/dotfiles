@@ -87,22 +87,22 @@ end
 --
 -- This is a non-recursive mapping because the function might return '<Plug>'
 -- map in case of snippets.
-imap { "<Tab>", tab, expr = true }
-smap { "<Tab>", tab, expr = true }
-imap { "<S-Tab>", shift_tab, expr = true }
-smap { "<S-Tab>", shift_tab, expr = true }
+imap("<Tab>", tab, { expr = true })
+smap("<Tab>", tab, { expr = true })
+imap("<S-Tab>", shift_tab, { expr = true })
+smap("<S-Tab>", shift_tab, { expr = true })
 
 -- Similar to above where this will either close the completion menu or move
 -- to the next choice for LuaSnip choice node. (:h luasnip-choicenode)
 --
 -- This is a non-recursive mapping because the function might return '<Plug>'
 -- map in case of snippets.
-imap { "<C-e>", c_e, expr = true }
-smap { "<C-e>", c_e, expr = true }
+imap("<C-e>", c_e, { expr = true })
+smap("<C-e>", c_e, { expr = true })
 
 -- Scrolling for the documentation window: (f)orwards and (b)ackwards
 -- Alternative: `<C-f>` and `<C-d>`
-inoremap { "<C-f>", "compe#scroll({'delta': +4})", expr = true }
-inoremap { "<C-b>", "compe#scroll({'delta': -4})", expr = true }
+inoremap("<C-f>", "compe#scroll({'delta': +4})", { expr = true })
+inoremap("<C-b>", "compe#scroll({'delta': -4})", { expr = true })
 
-inoremap { "<CR>", "compe#confirm('<CR>')", expr = true }
+inoremap("<CR>", "compe#confirm('<CR>')", { expr = true })

@@ -13,8 +13,8 @@ require "dm.lsp.handlers"
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
 vim.lsp.set_log_level "info"
 
-nnoremap { "<Leader>ll", "<Cmd>LspLog<CR>" }
-nnoremap { "<Leader>lr", "<Cmd>LspRestart<CR>" }
+nnoremap("<Leader>ll", "<Cmd>LspLog<CR>")
+nnoremap("<Leader>lr", "<Cmd>LspRestart<CR>")
 
 -- Adding VSCode like icons to the completion menu.
 -- vscode-codicons: https://github.com/microsoft/vscode-codicons
@@ -50,7 +50,7 @@ do
       wrap_at = max_width,
     })
     local bufnr, winnr = default(contents, syntax, opts)
-    nnoremap { "q", "<Cmd>bdelete<CR>", buffer = bufnr, nowait = true }
+    nnoremap("q", "<Cmd>bdelete<CR>", { buffer = bufnr, nowait = true })
     return bufnr, winnr
   end
 end
@@ -74,80 +74,72 @@ local function custom_on_attach(client, bufnr)
 
   -- Keybindings:
   -- For all types of diagnostics: [d | ]d
-  nnoremap {
-    "[d",
-    function()
-      vim.lsp.diagnostic.goto_prev { enable_popup = false }
-    end,
+  nnoremap("[d", function()
+    vim.lsp.diagnostic.goto_prev { enable_popup = false }
+  end, {
     buffer = bufnr,
-  }
-  nnoremap {
-    "]d",
-    function()
-      vim.lsp.diagnostic.goto_next { enable_popup = false }
-    end,
+  })
+  nnoremap("]d", function()
+    vim.lsp.diagnostic.goto_next { enable_popup = false }
+  end, {
     buffer = bufnr,
-  }
+  })
 
   -- For warning and error diagnostics: [e | ]e
-  nnoremap {
-    "[e",
-    function()
-      vim.lsp.diagnostic.goto_prev {
-        severity_limit = "Warning",
-        enable_popup = false,
-      }
-    end,
+  nnoremap("[e", function()
+    vim.lsp.diagnostic.goto_prev {
+      severity_limit = "Warning",
+      enable_popup = false,
+    }
+  end, {
     buffer = bufnr,
-  }
-  nnoremap {
-    "]e",
-    function()
-      vim.lsp.diagnostic.goto_next {
-        severity_limit = "Warning",
-        enable_popup = false,
-      }
-    end,
+  })
+  nnoremap("]e", function()
+    vim.lsp.diagnostic.goto_next {
+      severity_limit = "Warning",
+      enable_popup = false,
+    }
+  end, {
     buffer = bufnr,
-  }
+  })
 
   -- Custom popup to show line diagnostics with colors and source information.
-  nnoremap {
+  nnoremap(
     "<leader>ld",
     require("dm.lsp.diagnostics").show_line_diagnostics,
-    buffer = bufnr,
-  }
+    { buffer = bufnr }
+  )
 
   if capabilities.hover then
-    nnoremap { "K", vim.lsp.buf.hover, buffer = bufnr }
+    nnoremap("K", vim.lsp.buf.hover, { buffer = bufnr })
   end
 
   if capabilities.goto_definition then
-    nnoremap { "gd", vim.lsp.buf.definition, buffer = bufnr }
-    nnoremap { "<leader>pd", preview.definition, buffer = bufnr }
+    nnoremap("gd", vim.lsp.buf.definition, { buffer = bufnr })
+    nnoremap("<leader>pd", preview.definition, { buffer = bufnr })
   end
 
   if capabilities.declaration then
-    nnoremap { "gD", vim.lsp.buf.declaration, buffer = bufnr }
-    nnoremap { "<leader>pD", preview.declaration, buffer = bufnr }
+    nnoremap("gD", vim.lsp.buf.declaration, { buffer = bufnr })
+    nnoremap("<leader>pD", preview.declaration, { buffer = bufnr })
   end
 
   if capabilities.type_definition then
-    nnoremap { "gy", vim.lsp.buf.type_definition, buffer = bufnr }
-    nnoremap { "<leader>py", preview.type_definition, buffer = bufnr }
+    nnoremap("gy", vim.lsp.buf.type_definition, { buffer = bufnr })
+    nnoremap("<leader>py", preview.type_definition, { buffer = bufnr })
   end
 
   if capabilities.implementation then
-    nnoremap { "gi", vim.lsp.buf.implementation, buffer = bufnr }
-    nnoremap { "<leader>pi", preview.implementation, buffer = bufnr }
+    nnoremap("gi", vim.lsp.buf.implementation, { buffer = bufnr })
+    nnoremap("<leader>pi", preview.implementation, { buffer = bufnr })
   end
 
   if capabilities.find_references then
-    nnoremap { "gr", vim.lsp.buf.references, buffer = bufnr }
+    nnoremap("gr", vim.lsp.buf.references, { buffer = bufnr })
   end
 
   if capabilities.rename then
-    nnoremap { "<leader>rn", require("dm.lsp.rename").rename, buffer = bufnr }
+    nnoremap("<leader>rn", require("dm.lsp.rename").rename, { buffer = bufnr })
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
@@ -170,7 +162,7 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.signature_help then
-    nnoremap { "<C-s>", vim.lsp.buf.signature_help, buffer = bufnr }
+    nnoremap("<C-s>", vim.lsp.buf.signature_help, { buffer = bufnr })
   end
 
   if capabilities.code_action then
@@ -182,8 +174,8 @@ local function custom_on_attach(client, bufnr)
       command = require("dm.lsp.code_action").code_action_listener,
     })
 
-    nnoremap { "<leader>ca", builtin.lsp_code_actions, buffer = bufnr }
-    xnoremap { "<leader>ca", builtin.lsp_range_code_actions, buffer = bufnr }
+    nnoremap("<leader>ca", builtin.lsp_code_actions, { buffer = bufnr })
+    xnoremap("<leader>ca", builtin.lsp_range_code_actions, { buffer = bufnr })
   end
 
   -- Set the LSP autocmds

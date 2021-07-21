@@ -180,6 +180,6 @@ lir.setup {
   },
 }
 
-dm.nnoremap { "-", require("lir.float").toggle }
+dm.nnoremap("-", require("lir.float").toggle)
 
 return M

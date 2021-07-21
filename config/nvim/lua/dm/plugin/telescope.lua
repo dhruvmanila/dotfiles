@@ -296,39 +296,39 @@ local function github_stars()
 end
 
 -- Meta
-nnoremap { ";t", builtin.builtin }
+nnoremap(";t", builtin.builtin)
 
 -- Files
-nnoremap { "<C-p>", builtin.find_files }
-nnoremap { "<C-f>", builtin.current_buffer_fuzzy_find }
-nnoremap { "<leader>;", builtin.buffers }
-nnoremap { "<leader>fd", find_dotfiles }
-nnoremap { "<leader>fa", find_all_files }
+nnoremap("<C-p>", builtin.find_files)
+nnoremap("<C-f>", builtin.current_buffer_fuzzy_find)
+nnoremap("<leader>;", builtin.buffers)
+nnoremap("<leader>fd", find_dotfiles)
+nnoremap("<leader>fa", find_all_files)
 
 -- Grep
-nnoremap { "<leader>rp", grep_prompt }
-nnoremap { "<leader>rg", builtin.live_grep }
+nnoremap("<leader>rp", grep_prompt)
+nnoremap("<leader>rg", builtin.live_grep)
 
 -- Git
-nnoremap { "<leader>gc", builtin.git_commits }
-nnoremap { ";b", builtin.git_branches }
+nnoremap("<leader>gc", builtin.git_commits)
+nnoremap(";b", builtin.git_branches)
 
 -- Neovim
-nnoremap { "<leader>fh", builtin.help_tags }
-nnoremap { "<leader>fm", builtin.keymaps }
-nnoremap { "<leader>fc", builtin.commands }
-nnoremap { "<leader>hi", builtin.highlights }
-nnoremap { "<leader>vo", builtin.vim_options }
-nnoremap { "<leader>:", builtin.command_history }
-nnoremap { "<leader>/", builtin.search_history }
+nnoremap("<leader>fh", builtin.help_tags)
+nnoremap("<leader>fm", builtin.keymaps)
+nnoremap("<leader>fc", builtin.commands)
+nnoremap("<leader>hi", builtin.highlights)
+nnoremap("<leader>vo", builtin.vim_options)
+nnoremap("<leader>:", builtin.command_history)
+nnoremap("<leader>/", builtin.search_history)
 
 -- Extensions
-nnoremap { "<leader>gs", github_stars }
-nnoremap { "<leader>fp", installed_plugins }
-nnoremap { "<leader>fb", bookmarks }
-nnoremap { "<leader>fw", websearch }
-nnoremap { "<leader>fs", sessions }
-nnoremap { "<leader>fi", telescope.extensions.icons.icons }
+nnoremap("<leader>gs", github_stars)
+nnoremap("<leader>fp", installed_plugins)
+nnoremap("<leader>fb", bookmarks)
+nnoremap("<leader>fw", websearch)
+nnoremap("<leader>fs", sessions)
+nnoremap("<leader>fi", telescope.extensions.icons.icons)
 
 -- Used in Dashboard
 return { sessions = sessions }

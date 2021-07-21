@@ -43,13 +43,13 @@ dap_python.setup(vim.loop.os_homedir() .. "/.neovim/py3/bin/python3", {
   include_configs = true,
 })
 
-nnoremap { "<leader>dl", dap.run_last }
-nnoremap { "<leader>dc", dap.continue }
-nnoremap { "<leader>ds", dap.step_over }
-nnoremap { "<leader>di", dap.step_into }
-nnoremap { "<leader>do", dap.step_out }
-nnoremap { "<leader>dr", dap.repl.toggle }
-nnoremap { "<leader>db", dap.toggle_breakpoint }
+nnoremap("<leader>dl", dap.run_last)
+nnoremap("<leader>dc", dap.continue)
+nnoremap("<leader>ds", dap.step_over)
+nnoremap("<leader>di", dap.step_into)
+nnoremap("<leader>do", dap.step_out)
+nnoremap("<leader>dr", dap.repl.toggle)
+nnoremap("<leader>db", dap.toggle_breakpoint)
 
 do
   local keymap_restore = {}
@@ -65,15 +65,12 @@ do
       end
     end
 
-    nnoremap {
-      "K",
-      function()
-        require("dap.ui.widgets").hover(
-          nil,
-          { border = dm.border[vim.g.border_style] }
-        )
-      end,
-    }
+    nnoremap("K", function()
+      require("dap.ui.widgets").hover(
+        nil,
+        { border = dm.border[vim.g.border_style] }
+      )
+    end)
   end
 
   dap.listeners.after["event_terminated"]["dm"] = function()

@@ -27,16 +27,14 @@ end
 --   - `<C-l>`: clear the rename prompt
 ---@param bufnr number rename window buffer number
 local function set_mappings(bufnr)
-  nnoremap { "<Esc>", cleanup, buffer = bufnr, nowait = true }
-  inoremap { "<Esc>", cleanup, buffer = bufnr, nowait = true }
-  inoremap {
-    "<C-l>",
-    function()
-      vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
-    end,
+  nnoremap("<Esc>", cleanup, { buffer = bufnr, nowait = true })
+  inoremap("<Esc>", cleanup, { buffer = bufnr, nowait = true })
+  inoremap("<C-l>", function()
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
+  end, {
     buffer = bufnr,
     nowait = true,
-  }
+  })
 end
 
 -- Rename prompt callback function. It receives the entered value in the prompt

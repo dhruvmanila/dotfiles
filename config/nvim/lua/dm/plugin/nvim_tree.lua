@@ -52,4 +52,4 @@ g.nvim_tree_icons = {
   },
 }
 
-dm.nnoremap { "<C-n>", "<Cmd>NvimTreeToggle<CR>" }
+dm.nnoremap("<C-n>", "<Cmd>NvimTreeToggle<CR>")

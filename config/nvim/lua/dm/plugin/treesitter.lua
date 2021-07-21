@@ -1,7 +1,7 @@
 local nnoremap = dm.nnoremap
 
-nnoremap { "<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>" }
-nnoremap { "<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>" }
+nnoremap("<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>")
+nnoremap("<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>")
 
 require("nvim-treesitter.configs").setup {
   -- one of 'all', 'language', or a list of languages

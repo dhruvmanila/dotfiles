@@ -1,3 +1,3 @@
-dm.nnoremap { "<leader>cc", "<Cmd>ColorizerToggle<CR>" }
+dm.nnoremap("<leader>cc", "<Cmd>ColorizerToggle<CR>")
 
 require("colorizer").setup()

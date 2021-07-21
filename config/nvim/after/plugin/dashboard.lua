@@ -26,4 +26,4 @@ dm.augroup("dashboard", {
 
 dm.command("Dashboard", dashboard.open, { bar = true })
 
-dm.nnoremap { "<leader>`", "<Cmd>Dashboard<CR>" }
+dm.nnoremap("<leader>`", "<Cmd>Dashboard<CR>")

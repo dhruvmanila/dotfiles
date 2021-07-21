@@ -142,14 +142,12 @@ function M.startuptime()
   vim.bo.bufhidden = "wipe"
   vim.wo.cursorline = true
 
-  dm.nnoremap {
-    "q",
-    function()
-      api.nvim_win_close(winnr, true)
-    end,
+  dm.nnoremap("q", function()
+    api.nvim_win_close(winnr, true)
+  end, {
     buffer = bufnr,
     nowait = true,
-  }
+  })
 end
 
 return M
