@@ -90,32 +90,44 @@ function dm.augroup(name, commands)
   vim.cmd "augroup END"
 end
 
+---@class CommandOpts
+---@field addr string
+---@field bang boolean
+---@field bar boolean
+---@field buffer boolean
+---@field complete string
+---@field count number|boolean
+---@field nargs number|string|boolean
+---@field range number|string|boolean
+---@field register boolean
+
+-- NOTE: For 'complete', if the user function is in lua, it should be added to
+-- the global namespace 'dm' and passed in as a viml expression using `v:lua`.
+-- An example can be found in the session (`dm.session`) module.
+
 -- Lua interface to vim command.
--- `opts` table can contain the following keys:
---   - [1] (string) name of the command
---   - [2] (string|function) rhs part of the command
---   - `nargs` (number) (default: 0) nargs attribute value
---   - `attr` (string[]) (optional) list of command attributes
---     (-bang, -complete, etc)
----@param opts table
-function dm.command(opts)
-  local nargs = opts.nargs or 0
-  local name = opts[1]
-  local rhs = opts[2]
-  local attr = (opts.attr and type(opts.attr) == "table")
-      and table.concat(opts.attr, ",")
-    or ""
-
-  if type(rhs) == "function" then
-    local fn_id = dm._create(rhs)
-    rhs = format(
-      "lua dm._execute(%d%s)",
-      fn_id,
-      nargs > 0 and ", <f-args>" or ""
-    )
+---@param name string
+---@param repl string|function
+---@param opts? CommandOpts
+function dm.command(name, repl, opts)
+  opts = opts or {}
+  local repl_type = type(repl)
+  if repl_type == "function" then
+    local fn_id = dm._create(repl)
+    local fargs = ""
+    if opts.nargs and (type(opts.nargs) == "string" or opts.nargs > 0) then
+      fargs = ", <f-args>"
+    end
+    repl = format("lua dm._execute(%d%s)", fn_id, fargs)
+  elseif repl_type ~= "string" then
+    error("[command] Unsupported repl type: " .. repl_type)
   end
-
-  vim.cmd(format("command! -nargs=%d %s %s %s", nargs, attr, name, rhs))
+  local attr = ""
+  for key, val in pairs(opts) do
+    val = type(val) == "boolean" and "" or "=" .. val
+    attr = format("%s -%s%s", attr, key, val)
+  end
+  vim.cmd(format("command! %s %s %s", attr, name, repl))
 end
 
 do
