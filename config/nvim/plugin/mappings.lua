@@ -180,13 +180,13 @@ xnoremap("<leader>d", '"_d')
 
 -- Prevent 'x/X' and 'c/C' from overriding what's in the clipboard
 nnoremap("x", '"_x')
-xnoremap { "x", '"_x' }
-nnoremap { "X", '"_X' }
-xnoremap { "X", '"_X' }
-nnoremap { "c", '"_c' }
-xnoremap { "c", '"_c' }
-nnoremap { "C", '"_C' }
-xnoremap { "C", '"_C' }
+xnoremap("x", '"_x')
+nnoremap("X", '"_X')
+xnoremap("X", '"_X')
+nnoremap("c", '"_c')
+xnoremap("c", '"_c')
+nnoremap("C", '"_C')
+xnoremap("C", '"_C')
 
 -- Capital JK move code lines/blocks up & down (only in visual mode)
 xnoremap("J", [[:m '>+1<CR>gv=gv]])
