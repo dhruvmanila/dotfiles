@@ -18,12 +18,12 @@ end
 dm._session_list = session.list
 
 do
-  local complete = "-complete=customlist,v:lua.dm._session_list"
+  local customlist = "customlist,v:lua.dm._session_list"
 
-  command { "SLoad", session.load, nargs = 1, attr = { complete } }
-  command { "SSave", session.save, nargs = 1, attr = { complete } }
-  command { "SDelete", session.delete, nargs = 1, attr = { complete } }
-  command { "SClose", session.close }
+  command("SLoad", session.load, { nargs = 1, complete = customlist })
+  command("SSave", session.save, { nargs = 1, complete = customlist })
+  command("SDelete", session.delete, { nargs = 1, complete = customlist })
+  command("SClose", session.close)
 end
 
 dm.augroup("dm__session_persistence", {

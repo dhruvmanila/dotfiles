@@ -16,4 +16,4 @@ nnoremap {
 }
 
 -- Required for fugitive + rhubarb as I have disabled netrw.
-dm.command { "Browse", "call external#browser(<f-args>)", nargs = 1 }
+dm.command("Browse", "call external#browser(<f-args>)", { nargs = 1 })
