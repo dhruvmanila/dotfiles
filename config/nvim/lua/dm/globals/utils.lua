@@ -18,7 +18,7 @@ local format = string.format
 -- unique identification string.
 ---@param f function
 ---@return string
-function dm._create(f)
+local function create(f)
   vim.validate { f = { f, "f" } }
   local id = #dm._store + 1
   dm._store[id] = f
@@ -62,7 +62,7 @@ do
   function dm.autocmd(opts)
     local command = opts.command
     if type(command) == "function" then
-      local fn_id = dm._create(command)
+      local fn_id = create(command)
       command = format("lua dm._execute(%d)", fn_id)
     end
     vim.cmd(
@@ -113,7 +113,7 @@ function dm.command(name, repl, opts)
   opts = opts or {}
   local repl_type = type(repl)
   if repl_type == "function" then
-    local fn_id = dm._create(repl)
+    local fn_id = create(repl)
     local fargs = ""
     if opts.nargs and (type(opts.nargs) == "string" or opts.nargs > 0) then
       fargs = ", <f-args>"
@@ -174,7 +174,7 @@ do
   ---@param callback function
   ---@param bufnr? number
   ---@return string
-  function dm._create_keymap_entry(mode, key, callback, bufnr)
+  local function create_keymap_entry(mode, key, callback, bufnr)
     -- Prefix it with a letter so it can be used as a dictionary key.
     local id = "k" .. mode .. key
     if bufnr then
@@ -238,7 +238,7 @@ do
       end
       local rhs_type = type(rhs)
       if rhs_type == "function" then
-        local fn_id = dm._create_keymap_entry(mode, lhs, rhs, bufnr)
+        local fn_id = create_keymap_entry(mode, lhs, rhs, bufnr)
         -- <expr> are vimscript expressions, so we will use `v:lua` to access
         -- the lua globals and execute the callback.
         if map_opts.expr then
