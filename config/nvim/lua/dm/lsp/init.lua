@@ -72,18 +72,15 @@ local function custom_on_attach(client, bufnr)
   -- Used to setup per filetype
   -- local filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
 
-  -- Keybindings:
+  local opts = { buffer = bufnr }
+
   -- For all types of diagnostics: [d | ]d
   nnoremap("[d", function()
     vim.lsp.diagnostic.goto_prev { enable_popup = false }
-  end, {
-    buffer = bufnr,
-  })
+  end, opts)
   nnoremap("]d", function()
     vim.lsp.diagnostic.goto_next { enable_popup = false }
-  end, {
-    buffer = bufnr,
-  })
+  end, opts)
 
   -- For warning and error diagnostics: [e | ]e
   nnoremap("[e", function()
@@ -91,55 +88,51 @@ local function custom_on_attach(client, bufnr)
       severity_limit = "Warning",
       enable_popup = false,
     }
-  end, {
-    buffer = bufnr,
-  })
+  end, opts)
   nnoremap("]e", function()
     vim.lsp.diagnostic.goto_next {
       severity_limit = "Warning",
       enable_popup = false,
     }
-  end, {
-    buffer = bufnr,
-  })
+  end, opts)
 
   -- Custom popup to show line diagnostics with colors and source information.
   nnoremap(
     "<leader>ld",
     require("dm.lsp.diagnostics").show_line_diagnostics,
-    { buffer = bufnr }
+    opts
   )
 
   if capabilities.hover then
-    nnoremap("K", vim.lsp.buf.hover, { buffer = bufnr })
+    nnoremap("K", vim.lsp.buf.hover, opts)
   end
 
   if capabilities.goto_definition then
-    nnoremap("gd", vim.lsp.buf.definition, { buffer = bufnr })
-    nnoremap("<leader>pd", preview.definition, { buffer = bufnr })
+    nnoremap("gd", vim.lsp.buf.definition, opts)
+    nnoremap("<leader>pd", preview.definition, opts)
   end
 
   if capabilities.declaration then
-    nnoremap("gD", vim.lsp.buf.declaration, { buffer = bufnr })
-    nnoremap("<leader>pD", preview.declaration, { buffer = bufnr })
+    nnoremap("gD", vim.lsp.buf.declaration, opts)
+    nnoremap("<leader>pD", preview.declaration, opts)
   end
 
   if capabilities.type_definition then
-    nnoremap("gy", vim.lsp.buf.type_definition, { buffer = bufnr })
-    nnoremap("<leader>py", preview.type_definition, { buffer = bufnr })
+    nnoremap("gy", vim.lsp.buf.type_definition, opts)
+    nnoremap("<leader>py", preview.type_definition, opts)
   end
 
   if capabilities.implementation then
-    nnoremap("gi", vim.lsp.buf.implementation, { buffer = bufnr })
-    nnoremap("<leader>pi", preview.implementation, { buffer = bufnr })
+    nnoremap("gi", vim.lsp.buf.implementation, opts)
+    nnoremap("<leader>pi", preview.implementation, opts)
   end
 
   if capabilities.find_references then
-    nnoremap("gr", vim.lsp.buf.references, { buffer = bufnr })
+    nnoremap("gr", vim.lsp.buf.references, opts)
   end
 
   if capabilities.rename then
-    nnoremap("<leader>rn", require("dm.lsp.rename").rename, { buffer = bufnr })
+    nnoremap("<leader>rn", require("dm.lsp.rename").rename, opts)
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
@@ -162,7 +155,7 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.signature_help then
-    nnoremap("<C-s>", vim.lsp.buf.signature_help, { buffer = bufnr })
+    nnoremap("<C-s>", vim.lsp.buf.signature_help, opts)
   end
 
   if capabilities.code_action then
@@ -174,8 +167,8 @@ local function custom_on_attach(client, bufnr)
       command = require("dm.lsp.code_action").code_action_listener,
     })
 
-    nnoremap("<leader>ca", builtin.lsp_code_actions, { buffer = bufnr })
-    xnoremap("<leader>ca", builtin.lsp_range_code_actions, { buffer = bufnr })
+    nnoremap("<leader>ca", builtin.lsp_code_actions, opts)
+    xnoremap("<leader>ca", builtin.lsp_range_code_actions, opts)
   end
 
   -- Set the LSP autocmds

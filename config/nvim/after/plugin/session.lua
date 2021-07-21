@@ -18,11 +18,11 @@ end
 dm._session_list = session.list
 
 do
-  local customlist = "customlist,v:lua.dm._session_list"
+  local opts = { nargs = 1, complete = "customlist,v:lua.dm._session_list" }
 
-  command("SLoad", session.load, { nargs = 1, complete = customlist })
-  command("SSave", session.save, { nargs = 1, complete = customlist })
-  command("SDelete", session.delete, { nargs = 1, complete = customlist })
+  command("SLoad", session.load, opts)
+  command("SSave", session.save, opts)
+  command("SDelete", session.delete, opts)
   command("SClose", session.close)
 end
 

@@ -82,27 +82,29 @@ local c_e = function()
   end
 end
 
+local opts = { expr = true }
+
 -- "Supertab" like functionality, where <Tab>/<S-Tab> auto-completes or moves
 -- between completion menu items or jumps between insertion nodes in snippets.
 --
 -- This is a non-recursive mapping because the function might return '<Plug>'
 -- map in case of snippets.
-imap("<Tab>", tab, { expr = true })
-smap("<Tab>", tab, { expr = true })
-imap("<S-Tab>", shift_tab, { expr = true })
-smap("<S-Tab>", shift_tab, { expr = true })
+imap("<Tab>", tab, opts)
+smap("<Tab>", tab, opts)
+imap("<S-Tab>", shift_tab, opts)
+smap("<S-Tab>", shift_tab, opts)
 
 -- Similar to above where this will either close the completion menu or move
 -- to the next choice for LuaSnip choice node. (:h luasnip-choicenode)
 --
 -- This is a non-recursive mapping because the function might return '<Plug>'
 -- map in case of snippets.
-imap("<C-e>", c_e, { expr = true })
-smap("<C-e>", c_e, { expr = true })
+imap("<C-e>", c_e, opts)
+smap("<C-e>", c_e, opts)
 
 -- Scrolling for the documentation window: (f)orwards and (b)ackwards
 -- Alternative: `<C-f>` and `<C-d>`
-inoremap("<C-f>", "compe#scroll({'delta': +4})", { expr = true })
-inoremap("<C-b>", "compe#scroll({'delta': -4})", { expr = true })
+inoremap("<C-f>", "compe#scroll({'delta': +4})", opts)
+inoremap("<C-b>", "compe#scroll({'delta': -4})", opts)
 
-inoremap("<CR>", "compe#confirm('<CR>')", { expr = true })
+inoremap("<CR>", "compe#confirm('<CR>')", opts)
