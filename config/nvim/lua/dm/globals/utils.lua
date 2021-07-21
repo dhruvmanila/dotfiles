@@ -239,6 +239,12 @@ do
             bufnr or "v:null",
             fn_id
           )
+        elseif mode == "v" or mode == "x" then
+          rhs = format(
+            ':<C-U>lua dm._execute_keymap(%s, "%s")<CR>',
+            bufnr,
+            fn_id
+          )
         else
           rhs = format(
             '<Cmd>lua dm._execute_keymap(%s, "%s")<CR>',
