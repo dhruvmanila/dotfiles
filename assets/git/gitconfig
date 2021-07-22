@@ -71,7 +71,6 @@
 [delta]
 	syntax-theme = gruvbox-dark
 	line-numbers = true
-	side-by-side = true
 	features = styles
 
 [delta "styles"]
