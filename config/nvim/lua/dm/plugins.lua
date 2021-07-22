@@ -126,6 +126,7 @@ local function load_plugins()
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
     { "tpope/vim-fugitive" },
+    { "tpope/vim-repeat" },
     { "tpope/vim-rhubarb" },
     { "tpope/vim-scriptease" },
     { "tpope/vim-surround" },
