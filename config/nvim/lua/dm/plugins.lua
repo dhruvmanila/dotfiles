@@ -89,7 +89,7 @@ local function load_plugins()
       config = conf "nvim_dap",
     },
     { "mfussenegger/nvim-dap-python" },
-    { "mfussenegger/nvim-lint" },
+    { "mfussenegger/nvim-lint", event = "BufWritePre", config = conf "lint" },
     { "milisims/nvim-luaref" },
     { "nanotee/luv-vimdocs" },
     { "neovim/nvim-lspconfig", event = "BufReadPre", config = conf "lsp" },
