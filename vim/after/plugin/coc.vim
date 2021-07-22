@@ -114,7 +114,7 @@ endfunction
 
 " Coc control                                               *vimrc_coc_control*
 " -----------------------------------------------------------------------------
-command! -nargs=0 -complete=command CocSetup :call <SID>coc_setup()
+command! -nargs=0 CocSetup :call <SID>coc_setup()
 
 if !g:coc_startup_manual_only
   " Only start for specific filetype
