@@ -16,10 +16,19 @@ local nnoremap = dm.nnoremap
 -- Namespace to hold custom actions
 local custom_actions = {}
 
--- Yank the selected entry into the selection register '*'
-custom_actions.yank_entry = function()
-  local entry = action_state.get_selected_entry()
-  vim.fn.setreg(vim.api.nvim_get_vvar "register", entry.value)
+-- Yank the selected entry or all the selections made using multi-selection
+-- into the register pointed by the variable 'v:register'.
+custom_actions.yank_entry = function(prompt_bufnr)
+  local value = ""
+  local picker = action_state.get_current_picker(prompt_bufnr)
+  local selections = picker:get_multi_selection()
+  if vim.tbl_isempty(selections) then
+    table.insert(selections, action_state.get_selected_entry())
+  end
+  for _, selection in ipairs(selections) do
+    value = value .. "\n" .. selection.value
+  end
+  vim.fn.setreg(vim.api.nvim_get_vvar "register", value)
 end
 
 -- Reset the prompt keeping the cursor at the current entry in the results window.
