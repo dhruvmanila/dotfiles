@@ -211,7 +211,7 @@ do
   ---Factory function to create mapper functions.
   ---@param mode string
   ---@param defaults table
-  ---@return fun(opts: table): nil
+  ---@return fun(lhs: string, rhs: string|function, opts: table): nil
   local function make_mapper(mode, defaults)
     return function(lhs, rhs, opts)
       opts = opts or {}

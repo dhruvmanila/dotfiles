@@ -37,7 +37,7 @@ return {
 
     return require("lua-dev").setup {
       library = {
-        plugins = { "telescope.nvim", "plenary.nvim", "LuaSnip" },
+        plugins = { "telescope.nvim", "plenary.nvim" },
       },
       lspconfig = {
         cmd = { bin, "-E", root .. "/main.lua" },

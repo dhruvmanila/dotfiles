@@ -27,7 +27,7 @@ end
 -- Some useful defaults
 opt_local.buflisted = false
 opt_local.colorcolumn = ""
-opt_local.number = false
+opt_local.number = true
 opt_local.relativenumber = false
 opt_local.signcolumn = "no"
 opt_local.wrap = false
