@@ -129,7 +129,7 @@ local entries = {
 local function generate_footer()
   local loaded_plugins = #vim.tbl_filter(
     plugin_loaded,
-    vim.tbl_keys(_G.packer_plugins)
+    vim.tbl_keys(packer_plugins)
   )
   return { "", "", "Neovim loaded " .. loaded_plugins .. " plugins", "" }
 end

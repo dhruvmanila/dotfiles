@@ -46,6 +46,9 @@ return {
             workspace = {
               preloadFileSize = 1000,
             },
+            diagnostics = {
+              globals = { "packer_plugins" },
+            },
           },
         },
       },
