@@ -41,6 +41,13 @@ custom_actions.stop_insert = function()
   vim.cmd "stopinsert!"
 end
 
+-- Send the entries to the qflist and open the first entry and the quickfix
+-- window in a new tab.
+custom_actions.qflist_tab_session = function(prompt_bufnr)
+  actions.smart_add_to_qflist(prompt_bufnr)
+  vim.cmd "tabnew | copen | cfirst"
+end
+
 -- Default dropdown theme options.
 local default_dropdown = themes.get_dropdown {
   layout_config = {
@@ -117,6 +124,7 @@ telescope.setup {
         ["<C-y>"] = custom_actions.yank_entry,
         ["<C-l>"] = custom_actions.reset_prompt,
         ["<C-c>"] = custom_actions.stop_insert,
+        ["<A-q>"] = custom_actions.qflist_tab_session,
       },
     },
     history = {
