@@ -101,7 +101,7 @@ local function load_plugins()
     { "nvim-lua/lsp-status.nvim" },
     { "nvim-lua/plenary.nvim" },
     { "nvim-lua/popup.nvim" },
-    { "nvim-telescope/telescope.nvim" },
+    { "nvim-telescope/telescope.nvim", config = conf "telescope" },
     { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
     {
       "nvim-treesitter/nvim-treesitter",
