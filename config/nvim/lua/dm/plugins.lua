@@ -103,7 +103,6 @@ local function load_plugins()
     { "nvim-lua/popup.nvim" },
     { "nvim-telescope/telescope.nvim" },
     { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-    { "nvim-telescope/telescope-smart-history.nvim" },
     {
       "nvim-treesitter/nvim-treesitter",
       run = ":TSUpdate",
@@ -118,7 +117,6 @@ local function load_plugins()
     { "romainl/vim-cool" },
     { "sainnhe/gruvbox-material" },
     { "tamago324/lir.nvim", keys = "-", config = conf "lir" },
-    { "tami5/sql.nvim" },
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
     { "tpope/vim-fugitive" },

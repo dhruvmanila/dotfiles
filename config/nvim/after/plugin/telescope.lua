@@ -127,10 +127,6 @@ telescope.setup {
         ["<A-q>"] = custom_actions.qflist_tab_session,
       },
     },
-    history = {
-      path = vim.fn.stdpath "data" .. "/telescope_history.sqlite3",
-      limit = 100,
-    },
   },
   pickers = {
     buffers = {
@@ -214,7 +210,6 @@ telescope.setup {
 do
   local extensions = {
     "fzf",
-    "smart_history",
   }
 
   for _, name in ipairs(extensions) do
