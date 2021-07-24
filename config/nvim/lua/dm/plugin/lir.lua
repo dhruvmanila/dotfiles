@@ -91,24 +91,6 @@ local function construct_win_opts()
   }
 end
 
--- Start a telescope search to cd into any directory from the current one.
--- The keybinding is defined only for the lir buffer.
-local function lir_cd()
-  -- Previewer is turned off by default. If it is enabled, then use the
-  -- horizontal layout with wider results window and narrow preview window.
-  require("telescope").extensions.lir_cd.lir_cd(
-    require("telescope.themes").get_dropdown {
-      layout_config = {
-        width = function(_, editor_width, _)
-          return math.min(100, editor_width - 10)
-        end,
-        height = 0.8,
-      },
-      previewer = false,
-    }
-  )
-end
-
 lir.setup {
   show_hidden_files = true,
   devicons_enable = true,
@@ -176,7 +158,7 @@ lir.setup {
 
     -- Search and open Lir in any directory from the current one using Telescope
     -- Mapping is similar to `nnn`
-    [";c"] = lir_cd,
+    [";c"] = require("dm.plugin.telescope").lir_cd,
   },
 }
 

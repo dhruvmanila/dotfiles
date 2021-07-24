@@ -325,6 +325,22 @@ nnoremap("<leader>fi", function()
   telescope.extensions.icons.icons()
 end)
 
+-- Start a telescope search to cd into any directory from the current one.
+-- The keybinding is defined only for the lir buffer.
+local function lir_cd()
+  -- Previewer is turned off by default. If it is enabled, then use the
+  -- horizontal layout with wider results window and narrow preview window.
+  telescope.extensions.lir_cd.lir_cd(themes.get_dropdown {
+    layout_config = {
+      width = function(_, editor_width, _)
+        return math.min(100, editor_width - 10)
+      end,
+      height = 0.8,
+    },
+    previewer = false,
+  })
+end
+
 -- List out all the saved sessions and provide action to either open them or
 -- delete them.
 local function sessions()
@@ -340,4 +356,7 @@ end
 nnoremap("<leader>fs", sessions)
 
 -- Used in Dashboard
-return { sessions = sessions }
+return {
+  lir_cd = lir_cd,
+  sessions = sessions,
+}
