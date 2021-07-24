@@ -228,13 +228,49 @@ do
   end
 end
 
--- NOTE: This must be required after setting up telescope otherwise the result
--- will be cached without the updates from the setup call.
-local builtin = require "telescope.builtin"
+-- NOTE:
+--
+-- The keymaps for telescope builtins are mapped using string instead of
+-- directly using the function to lazy load the module when needed.
+--
+-- Configuration for the builtin pickers should be done in the setup function.
+
+local builtin = setmetatable({}, {
+  __index = function(_, picker)
+    return "<Cmd>lua require('telescope.builtin')." .. picker .. "()<CR>"
+  end,
+})
+
+nnoremap(";t", builtin.builtin)
+nnoremap("<C-p>", builtin.find_files)
+nnoremap("<C-f>", builtin.current_buffer_fuzzy_find)
+nnoremap("<leader>;", builtin.buffers)
+nnoremap("<leader>rg", builtin.live_grep)
+nnoremap("<leader>gc", builtin.git_commits)
+nnoremap(";b", builtin.git_branches)
+nnoremap("<leader>fh", builtin.help_tags)
+nnoremap("<leader>fm", builtin.keymaps)
+nnoremap("<leader>fc", builtin.commands)
+nnoremap("<leader>hi", builtin.highlights)
+nnoremap("<leader>vo", builtin.vim_options)
+nnoremap("<leader>:", builtin.command_history)
+nnoremap("<leader>/", builtin.search_history)
+
+-- Custom pickers and extensions:
+
+nnoremap("<leader>fd", function()
+  require("telescope.builtin").find_files {
+    prompt_title = "Find dotfiles",
+    cwd = "~/dotfiles",
+    hidden = true,
+    follow = true,
+    file_ignore_patterns = { ".git/" },
+  }
+end)
 
 -- This is mainly to avoid .gitignore patterns.
-local function find_all_files()
-  builtin.find_files {
+nnoremap("<leader>fa", function()
+  require("telescope.builtin").find_files {
     prompt_title = "Find All Files",
     find_command = {
       "fd",
@@ -247,33 +283,28 @@ local function find_all_files()
       "--no-ignore",
     },
   }
-end
+end)
 
-local function grep_prompt()
+nnoremap("<leader>rp", function()
   local pattern = vim.fn.input "Grep pattern ❯ "
   if pattern == "" then
     vim.notify "[telescope] No pattern was specified"
     return
   end
-  builtin.grep_string {
+  require("telescope.builtin").grep_string {
     use_regex = true,
     search = pattern,
   }
-end
+end)
 
-local function find_dotfiles()
-  builtin.find_files {
-    prompt_title = "Find dotfiles",
-    cwd = "~/dotfiles",
-    hidden = true,
-    follow = true,
-    file_ignore_patterns = { ".git/" },
-  }
-end
+-- Gaze the stars with the power of telescope.
+nnoremap("<leader>gs", function()
+  telescope.extensions.github_stars.github_stars(default_dropdown)
+end)
 
 -- List out all the installed plugins and provide action to either go to the
 -- GitHub page of the plugin or find files within the plugin using telescope.
-local function installed_plugins()
+nnoremap("<leader>fp", function()
   telescope.extensions.installed_plugins.installed_plugins(themes.get_dropdown {
     layout_config = {
       width = _PackerPluginInfo.max_length + 10,
@@ -281,7 +312,23 @@ local function installed_plugins()
     },
     previewer = false,
   })
-end
+end)
+
+-- Fuzzy find over your browser bookmarks.
+nnoremap("<leader>fb", function()
+  telescope.extensions.bookmarks.bookmarks(default_dropdown)
+end)
+
+-- Using `ddgr/googler` search the web and fuzzy find through the results and
+-- open them up in the browser.
+nnoremap("<leader>fw", function()
+  telescope.extensions.websearch.websearch(default_dropdown)
+end)
+
+-- This is wrapped inside a function to avoid loading telescope modules.
+nnoremap("<leader>fi", function()
+  telescope.extensions.icons.icons()
+end)
 
 -- List out all the saved sessions and provide action to either open them or
 -- delete them.
@@ -295,56 +342,7 @@ local function sessions()
   })
 end
 
--- Using `ddgr/googler` search the web and fuzzy find through the results and
--- open them up in the browser.
-local function websearch()
-  telescope.extensions.websearch.websearch(default_dropdown)
-end
-
--- Fuzzy find over your browser bookmarks.
-local function bookmarks()
-  telescope.extensions.bookmarks.bookmarks(default_dropdown)
-end
-
--- Gaze the stars with the power of telescope.
-local function github_stars()
-  telescope.extensions.github_stars.github_stars(default_dropdown)
-end
-
--- Meta
-nnoremap(";t", builtin.builtin)
-
--- Files
-nnoremap("<C-p>", builtin.find_files)
-nnoremap("<C-f>", builtin.current_buffer_fuzzy_find)
-nnoremap("<leader>;", builtin.buffers)
-nnoremap("<leader>fd", find_dotfiles)
-nnoremap("<leader>fa", find_all_files)
-
--- Grep
-nnoremap("<leader>rp", grep_prompt)
-nnoremap("<leader>rg", builtin.live_grep)
-
--- Git
-nnoremap("<leader>gc", builtin.git_commits)
-nnoremap(";b", builtin.git_branches)
-
--- Neovim
-nnoremap("<leader>fh", builtin.help_tags)
-nnoremap("<leader>fm", builtin.keymaps)
-nnoremap("<leader>fc", builtin.commands)
-nnoremap("<leader>hi", builtin.highlights)
-nnoremap("<leader>vo", builtin.vim_options)
-nnoremap("<leader>:", builtin.command_history)
-nnoremap("<leader>/", builtin.search_history)
-
--- Extensions
-nnoremap("<leader>gs", github_stars)
-nnoremap("<leader>fp", installed_plugins)
-nnoremap("<leader>fb", bookmarks)
-nnoremap("<leader>fw", websearch)
 nnoremap("<leader>fs", sessions)
-nnoremap("<leader>fi", telescope.extensions.icons.icons)
 
 -- Used in Dashboard
 return { sessions = sessions }
