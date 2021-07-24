@@ -214,7 +214,6 @@ telescope.setup {
 do
   local extensions = {
     "fzf",
-    "github_stars",
     "smart_history",
   }
 

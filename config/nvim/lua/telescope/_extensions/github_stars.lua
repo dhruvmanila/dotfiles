@@ -87,9 +87,7 @@ end
 local function github_stars(opts)
   opts = opts or {}
 
-  -- TODO: start the job again? run the job synchronously?
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    vim.notify("[telescope]: No GitHub stars are cached yet", 3)
     return nil
   end
 
@@ -136,6 +134,7 @@ end
 return telescope.register_extension {
   setup = function(_)
     if vim.tbl_isempty(_CachedGithubStars.stars) then
+      vim.notify "[telescope]: Job started to collect GitHub stars"
       collect_github_stars()
     end
   end,
