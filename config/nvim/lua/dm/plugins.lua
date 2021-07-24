@@ -101,12 +101,8 @@ local function load_plugins()
     { "nvim-lua/lsp-status.nvim" },
     { "nvim-lua/plenary.nvim" },
     { "nvim-lua/popup.nvim" },
+    { "nvim-telescope/telescope.nvim" },
     { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-    {
-      "nvim-telescope/telescope.nvim",
-      event = "VimEnter",
-      config = conf "telescope",
-    },
     { "nvim-telescope/telescope-smart-history.nvim" },
     {
       "nvim-treesitter/nvim-treesitter",
