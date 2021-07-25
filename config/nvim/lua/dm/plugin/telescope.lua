@@ -64,30 +64,6 @@ local default_ivy = themes.get_ivy {
   },
 }
 
--- Default options for LSP code action picker.
-local default_code_action = themes.get_cursor {
-  layout_config = {
-    width = function(picker, editor_width, _)
-      local strings = require "plenary.strings"
-      local max_width = 0
-      for _, entry in ipairs(picker.finder.results) do
-        max_width = math.max(
-          max_width,
-          strings.strdisplaywidth(entry.client_name)
-            + strings.strdisplaywidth(entry.command_title)
-            + 3 -- idx + ':'
-            + 3 -- space between the columns
-            + 2 -- prompt prefix + padding
-        )
-      end
-      return math.min(editor_width - 4, max_width)
-    end,
-    height = function(picker, _, editor_height)
-      return math.min(editor_height - 4, #picker.finder.results)
-    end,
-  },
-}
-
 telescope.setup {
   defaults = {
     prompt_prefix = " ",
@@ -178,8 +154,12 @@ telescope.setup {
     vim_options = default_dropdown,
     keymaps = default_dropdown,
     commands = default_dropdown,
-    lsp_code_actions = default_code_action,
-    lsp_range_code_actions = default_code_action,
+    lsp_code_actions = {
+      theme = "cursor",
+    },
+    lsp_range_code_actions = {
+      theme = "cursor",
+    },
     git_branches = {
       theme = "dropdown",
       previewer = false,
