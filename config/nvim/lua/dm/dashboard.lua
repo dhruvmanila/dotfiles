@@ -1,19 +1,19 @@
+local M = {}
+
 local utils = require "dm.utils"
 local session = require "dm.session"
 local Text = require "dm.text"
 
--- Extract out the required namespace/function
 local vim = vim
 local o = vim.o
-local api = vim.api
 local fn = vim.fn
+local api = vim.api
 local cmd = vim.cmd
 local nnoremap = dm.nnoremap
 
-local M = {}
-
 -- Useful defaults
 local line_length = 50
+local hidden_cursor = "a:HiddenCursor/lCursor"
 local hl = { header = "Yellow", entry = "Red", footer = "Blue" }
 
 -- Dashboard namespace
@@ -37,9 +37,9 @@ dashboard.opts = {
   signcolumn = "no",
 }
 
---- Last session entry description.
---- This will save the name of the last session in the dashboard namespace to
---- be used to load the session.
+-- Last session entry description.
+-- This will save the name of the last session in the dashboard namespace to
+-- be used to load the session.
 ---@return string[]
 local function last_session_description()
   local fs_stat = vim.loop.fs_stat
@@ -54,7 +54,6 @@ local function last_session_description()
   return "  Last session (" .. sessions[1] .. ")"
 end
 
---- Generate and return the header of the start page.
 ---@return string[]
 local function generate_header()
   return {
@@ -72,8 +71,6 @@ end
 
 ---@return string[]
 local function generate_sub_header()
-  -- local v = vim.version()
-  -- v = "v" .. v.major .. "." .. v.minor .. "." .. v.patch
   local v = fn.split(fn.split(api.nvim_exec("version", true), "\n")[1])[2]
   return { v, "", "" }
 end
@@ -124,7 +121,6 @@ local entries = {
   },
 }
 
---- Generate and return the footer of the start page.
 ---@return string[]
 local function generate_footer()
   local loaded_plugins = #vim.tbl_filter(
@@ -134,8 +130,8 @@ local function generate_footer()
   return { "", "", "Neovim loaded " .. loaded_plugins .. " plugins", "" }
 end
 
---- Add the key value to the right end of the given line with the appropriate
---- padding as per the `length` value.
+-- Add the key value to the right end of the given line with the appropriate
+-- padding as per the `line_length` value.
 ---@param line string
 ---@param key string
 ---@return string
@@ -143,8 +139,8 @@ local function add_key(line, key)
   return line .. string.rep(" ", line_length - #line) .. key
 end
 
---- Add paddings on the left side of every line to make it look like its in the
---- center of the current window.
+-- Add paddings on the left side of every line to make it look like its in the
+-- center of the current window.
 ---@param lines string[]
 ---@return string[]
 local function center(lines)
@@ -177,8 +173,11 @@ local function option_process(opts, process)
   end
 end
 
---- Set the entries in the buffer.
-local function set_entries(text)
+-- Render the text on the buffer using the Text object.
+local function render_text()
+  local text = Text:new()
+  text:block(center(generate_header()), hl.header, true)
+  text:block(center(generate_sub_header()), hl.header, true)
   for _, entry in ipairs(entries) do
     local description = entry.description
     if type(description) == "function" then
@@ -187,10 +186,11 @@ local function set_entries(text)
     description = add_key(description, entry.key)
     text:block(center { description }, hl.entry, true)
   end
+  text:block(center(generate_footer()), hl.footer)
 end
 
---- Close the dashboard buffer and either quit neovim or move back to the
---- original buffer.
+-- Close the dashboard buffer and either quit neovim or move back to the
+-- original buffer.
 local function close()
   local curbuflisted = fn.buflisted(api.nvim_get_current_buf())
   local buflisted = vim.tbl_filter(function(bufnr)
@@ -211,10 +211,10 @@ local function close()
   end
 end
 
---- Set the required mappings which includes:
----   - q: quit the dashboard buffer
----   - `key`: open the entry for the registered entry
-local function set_mappings()
+-- Setup the required mappings which includes:
+--   - q: quit the dashboard buffer
+--   - `key`: open the entry for the registered entry
+local function setup_mappings()
   local opts = { buffer = true, nowait = true }
   nnoremap("q", close, opts)
   for _, entry in ipairs(entries) do
@@ -226,16 +226,51 @@ local function set_mappings()
   end
 end
 
+-- Functions to hide and show the cursor using the `HiddenCursor` highlight.
+-- The highlight is set in `colorscheme.lua` file.
+local cursor = {
+  hide = function()
+    vim.o.guicursor = hidden_cursor
+  end,
+  show = function()
+    vim.o.guicursor = dashboard.guicursor
+  end,
+}
+
+-- Setup the required autocmds for the dashboard buffer:
+--   - Hide the cursor when entering the dashboard buffer
+--   - Show the cursor on the commandline or leaving the dashboard buffer
+--   - Reset the options when deleting the dashboard buffer
+local function setup_autocmds()
+  dm.autocmd {
+    group = "dashboard",
+    events = { "BufEnter", "CmdlineLeave" },
+    targets = "<buffer>",
+    command = cursor.hide,
+  }
+  dm.autocmd {
+    group = "dashboard",
+    events = { "BufLeave", "CmdlineEnter" },
+    targets = "<buffer>",
+    command = cursor.show,
+  }
+  dm.autocmd {
+    group = "dashboard",
+    events = "BufWipeout",
+    targets = "<buffer>",
+    modifiers = "++once",
+    command = function()
+      option_process(dashboard.saved_opts, "set")
+      dashboard.saved_opts = {}
+    end,
+  }
+end
+
 --- Open the dashboard buffer in the current buffer if it is empty or create
 --- a new buffer for the current window.
 ---@param on_vimenter? boolean
 function M.open(on_vimenter)
   if on_vimenter and (o.insertmode or not o.modifiable) then
-    return
-  end
-
-  if not o.hidden and o.modified then
-    vim.notify("[dashboard]: Please save your changes first", 3)
     return
   end
 
@@ -249,6 +284,7 @@ function M.open(on_vimenter)
   if o.filetype ~= "dashboard" then
     dashboard.saved_opts = {}
     option_process(dashboard.opts, "save")
+    dashboard.guicursor = vim.o.guicursor
   end
 
   -- Create a new, unnamed buffer
@@ -267,64 +303,22 @@ function M.open(on_vimenter)
   -- Set the dashboard buffer options
   option_process(dashboard.opts, "set")
 
-  -- Initiate the Text object which will render the text on the buffer.
-  local text = Text:new()
+  -- Render the text and lock the buffer
+  render_text()
+  option_process({
+    modifiable = false,
+    modified = false,
+    filetype = "dashboard",
+  }, "set")
 
-  -- Set the header
-  local header = generate_header()
-  local sub_header = generate_sub_header()
-  text:block(center(header), hl.header, true)
-  text:block(center(sub_header), hl.header, true)
-
-  -- Set the sections
-  set_entries(text)
-
-  -- Compute first and last line offset
-  -- Actual entry line is 1 greater and 1 less than the current line for setting
-  -- the firstline and lastline offset.
-  dashboard.firstline = #header + 1 + #sub_header + 1 + 1
-  dashboard.lastline = api.nvim_buf_line_count(0) - 1
-
-  -- Set the footer
-  text:block(center(generate_footer()), hl.footer)
-
-  -- Lock the buffer
-  option_process(
-    { modifiable = false, modified = false, filetype = "dashboard" },
-    "set"
-  )
-
+  -- This is used for the tabline
   api.nvim_buf_set_name(0, "Dashboard")
-  set_mappings()
 
-  -- Initially, the newline will be the firstline
-  dashboard.newline = dashboard.firstline
-  api.nvim_win_set_cursor(0, { dashboard.firstline, 0 })
+  setup_mappings()
+  setup_autocmds()
 
-  -- Fix column position to the first letter of the second word (skipping the icon)
-  cmd "normal! ^ w"
-  dashboard.fixed_column = api.nvim_win_get_cursor(0)[2]
-
-  dm.autocmd {
-    group = "dashboard",
-    events = "CursorMoved",
-    targets = "<buffer>",
-    command = function()
-      require("dm.utils").fixed_column_movement(dashboard)
-    end,
-  }
-  dm.autocmd {
-    group = "dashboard",
-    events = "BufWipeout",
-    targets = "dashboard",
-    modifiers = "++once",
-    command = function()
-      option_process(dashboard.saved_opts, "set")
-      dashboard.saved_opts = {}
-    end,
-  }
-  cmd "silent! %foldopen!"
-  cmd "normal! zb"
+  -- Hide the cursor as everything is invoked through a keymap
+  cursor.hide()
   o.eventignore = ""
 end
 

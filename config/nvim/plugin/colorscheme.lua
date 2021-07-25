@@ -30,6 +30,8 @@ local palette = vim.fn["gruvbox_material#get_palette"](
   g.gruvbox_material_palette
 )
 
+highlight("HiddenCursor", { gui = "reverse", blend = 100 })
+
 highlight("PmenuSel", {
   guifg = palette.bg3[1],
   guibg = palette.blue[1],
