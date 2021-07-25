@@ -98,13 +98,14 @@ telescope.setup {
     layout_strategy = "flex",
     layout_config = {
       prompt_position = "top",
-      height = { padding = 4 },
       horizontal = {
         width = { padding = 14 },
+        height = { padding = 3 },
         preview_width = 0.55,
       },
       vertical = {
         width = { padding = 8 },
+        height = { padding = 2 },
         preview_height = 0.5,
         mirror = true,
       },
@@ -156,22 +157,23 @@ telescope.setup {
     },
     help_tags = {
       layout_config = {
-        width = 0.8,
         horizontal = {
-          preview_width = 0.65,
+          width = 0.75,
+          preview_width = 0.6,
         },
       },
     },
     highlights = {
       layout_config = {
-        width = 0.8,
         horizontal = {
-          preview_width = 0.65,
+          width = 0.75,
+          preview_width = 0.6,
         },
       },
     },
     command_history = default_ivy,
     search_history = default_ivy,
+    oldfiles = default_dropdown,
     current_buffer_fuzzy_find = default_dropdown,
     vim_options = default_dropdown,
     keymaps = default_dropdown,
