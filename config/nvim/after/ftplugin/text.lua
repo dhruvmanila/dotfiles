@@ -1,1 +1,1 @@
-vim.opt_local.cursorline = false
+vim.cmd "setlocal nocursorline"

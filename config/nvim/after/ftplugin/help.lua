@@ -1,9 +1,10 @@
-local opt_local = vim.opt_local
 local nnoremap = dm.nnoremap
 
-opt_local.list = false
-opt_local.number = false
-opt_local.relativenumber = false
+vim.cmd [[
+setlocal nonumber
+setlocal norelativenumber
+setlocal nolist
+]]
 
 local opts = { buffer = true, nowait = true }
 

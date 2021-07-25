@@ -1,11 +1,12 @@
 local api = vim.api
-local opt_local = vim.opt_local
 local nmap = dm.nmap
 local nnoremap = dm.nnoremap
 
-opt_local.number = false
-opt_local.relativenumber = false
-opt_local.list = false
+vim.cmd [[
+setlocal nonumber
+setlocal norelativenumber
+setlocal nolist
+]]
 
 -- Return the filetype for the buffer contained in the given window.
 ---@param winnr number

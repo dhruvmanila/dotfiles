@@ -25,13 +25,15 @@ if fn.getwininfo(fn.win_getid())[1].loclist ~= 1 then
 end
 
 -- Some useful defaults
-opt_local.buflisted = false
-opt_local.colorcolumn = ""
-opt_local.number = true
-opt_local.relativenumber = false
-opt_local.signcolumn = "no"
-opt_local.wrap = false
+vim.cmd [[
+setlocal nobuflisted
+setlocal colorcolumn=
+setlocal nonumber
+setlocal norelativenumber
+setlocal signcolumn=no
+setlocal nowrap
+]]
 
 -- Adjust the height of quickfix window to a minimum of 3 and maximum of 10.
 adjust_height(3, 10)
-opt_local.winfixheight = true
+vim.cmd "setlocal winfixheight"

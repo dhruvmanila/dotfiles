@@ -1,1 +1,1 @@
-vim.opt_local.wrap = false
+vim.cmd "setlocal nowrap"

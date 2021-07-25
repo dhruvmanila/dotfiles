@@ -1,10 +1,7 @@
-local opt_local = vim.opt_local
-
--- Run with :make
-opt_local.makeprg = "python3 %"
-
--- Format with 'gq'
-opt_local.formatprg = "black -q -"
+vim.cmd [[
+setlocal makeprg=python3\ %
+setlocal formatprg=black\ -q\ -
+]]
 
 -- TODO: do I really need this? If so then make it smarter about namespace using
 -- dot notation.

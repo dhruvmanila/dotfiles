@@ -1,13 +1,12 @@
 local cmd = vim.cmd
 local api = vim.api
-local opt_local = vim.opt_local
 local nnoremap = dm.nnoremap
 
 -- Set the cursor to About section
 api.nvim_win_set_cursor(0, { 7, 0 })
 
 cmd "wincmd ="
-opt_local.signcolumn = "no"
+cmd "setlocal signcolumn=no"
 
 -- Quick edit the cheat40.txt file
 local function edit_cheat40()

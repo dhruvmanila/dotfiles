@@ -1,4 +1,4 @@
-local opt_local = vim.opt_local
-
-opt_local.commentstring = "// %s"
-opt_local.formatoptions:remove "o"
+vim.cmd [[
+setlocal commentstring=//\ %s
+setlocal formatoptions-=o
+]]
