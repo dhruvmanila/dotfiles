@@ -44,38 +44,6 @@ function M.highlight(name, opts)
   end
 end
 
--- Fixed column cursor movements with line limits. This will skip any blank
--- lines in between. This should only be used in autocmds with CursorHold event.
--- `opts` table expects the followings keys to be present:
---   - firstline (number) Upper row limit
---   - lastline (number) Lower row limit
---   - fixed_column (number) Column to fix the cursor at
---   - newline (number) Current cursor line
--- Internal:
---   - oldline (number) Previous cursor line
----@param opts table<string, number>
----@return nil
-function M.fixed_column_movement(opts)
-  local oldline = opts.newline
-  local newline = api.nvim_win_get_cursor(0)[1]
-
-  -- Direction: up (-1) or down (+1) (no horizontal movements are registered)
-  local movement = 2 * (newline > oldline and 1 or 0) - 1
-
-  -- Skip blank lines between entries
-  if api.nvim_buf_get_lines(0, newline - 1, newline, false)[1] == "" then
-    newline = newline + movement
-  end
-
-  -- Don't go beyond first or last entry
-  newline = math.max(opts.firstline, math.min(opts.lastline, newline))
-
-  -- Update the numbers and the cursor position
-  opts.oldline = oldline
-  opts.newline = newline
-  api.nvim_win_set_cursor(0, { newline, opts.fixed_column })
-end
-
 -- Simplified version of `vim.lsp.util.make_floating_popup_options`
 -- This will consider the number of columns from the left end of neovim instead
 -- of the current window.
