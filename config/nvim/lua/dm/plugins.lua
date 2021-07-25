@@ -103,11 +103,7 @@ local function load_plugins()
     { "nvim-lua/popup.nvim" },
     { "nvim-telescope/telescope.nvim", config = conf "telescope" },
     { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-    {
-      "nvim-treesitter/nvim-treesitter",
-      run = ":TSUpdate",
-      config = conf "treesitter",
-    },
+    { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
     { "nvim-treesitter/nvim-treesitter-textobjects" },
     { "nvim-treesitter/playground" },
     { "raimon49/requirements.txt.vim" },
