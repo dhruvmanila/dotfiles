@@ -55,6 +55,8 @@ local function filename(ctx, is_active)
     return fn.fnamemodify(ctx.bufname, modifier)
   elseif ctx.buftype == "prompt" then
     return ctx.filetype == "TelescopePrompt" and ctx.filetype or "[Prompt]"
+  elseif ctx.filetype == "dashboard" then
+    return "Dashboard"
   else
     return "[No Name]"
   end

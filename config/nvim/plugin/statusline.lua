@@ -139,7 +139,7 @@ local special_buffer_info = {
     end,
 
     dashboard = function(ctx)
-      return fn.fnamemodify(ctx.bufname, ":~:s?Dashboard??")
+      return fn.fnamemodify(ctx.bufname, ":~")
     end,
   },
   icon = {

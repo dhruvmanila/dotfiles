@@ -311,9 +311,6 @@ function M.open(on_vimenter)
     filetype = "dashboard",
   }, "set")
 
-  -- This is used for the tabline
-  api.nvim_buf_set_name(0, "Dashboard")
-
   setup_mappings()
   setup_autocmds()
 
