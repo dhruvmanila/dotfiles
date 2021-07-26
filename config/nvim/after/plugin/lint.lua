@@ -1,8 +1,5 @@
 local lint = require "lint"
 
-lint.linters.flake8.ignore_exitcode = true
-lint.linters.mypy.ignore_exitcode = true
-
 lint.linters_by_ft = {
   sh = { "shellcheck" },
   python = { "flake8", "mypy" },
