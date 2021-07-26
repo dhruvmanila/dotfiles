@@ -22,19 +22,19 @@ local dashboard = {}
 -- Dashboard buffer/window options
 dashboard.opts = {
   bufhidden = "wipe",
+  buflisted = false,
   colorcolumn = "",
-  foldcolumn = "0",
-  matchpairs = "",
-  modifiable = true,
   cursorcolumn = false,
   cursorline = false,
+  foldcolumn = "0",
   list = false,
+  modifiable = true,
   number = false,
   readonly = false,
   relativenumber = false,
+  signcolumn = "no",
   spell = false,
   swapfile = false,
-  signcolumn = "no",
 }
 
 -- Last session entry description.
