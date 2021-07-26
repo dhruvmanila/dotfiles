@@ -19,16 +19,16 @@ local custom_actions = {}
 -- Yank the selected entry or all the selections made using multi-selection
 -- into the register pointed by the variable 'v:register'.
 custom_actions.yank_entry = function(prompt_bufnr)
-  local value = ""
+  local values = {}
   local picker = action_state.get_current_picker(prompt_bufnr)
   local selections = picker:get_multi_selection()
   if vim.tbl_isempty(selections) then
     table.insert(selections, action_state.get_selected_entry())
   end
   for _, selection in ipairs(selections) do
-    value = value .. "\n" .. selection.value
+    table.insert(values, selection.value)
   end
-  vim.fn.setreg(vim.api.nvim_get_vvar "register", value)
+  vim.fn.setreg(vim.api.nvim_get_vvar "register", table.concat(values, "\n"))
 end
 
 -- Reset the prompt keeping the cursor at the current entry in the results window.
