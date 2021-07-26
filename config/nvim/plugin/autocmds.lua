@@ -84,7 +84,7 @@ augroup("dm__auto_reload_file", {
 })
 
 do
-  local ignore_ft = { "dashboard", "TelescopePrompt" }
+  local ignore_ft = { "dashboard", "terminal", "TelescopePrompt" }
 
   -- Highlight current cursorline
   --   - Only in the active window
