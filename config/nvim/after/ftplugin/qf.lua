@@ -1,12 +1,15 @@
 local fn = vim.fn
-local opt_local = vim.opt_local
+local api = vim.api
 local nnoremap = dm.nnoremap
 
 -- Autosize quickfix to match its minimum content
 -- https://vim.fandom.com/wiki/Automatically_fitting_a_quickfix_window_height
 local function adjust_height(minheight, maxheight)
-  local height = math.max(math.min(fn.line "$", maxheight), minheight)
-  vim.cmd(height .. "wincmd _")
+  local height = math.max(
+    math.min(api.nvim_buf_line_count(0), maxheight),
+    minheight
+  )
+  api.nvim_win_set_height(0, height)
 end
 
 nnoremap("q", "<Cmd>quit<CR>", { buffer = true, nowait = true })
