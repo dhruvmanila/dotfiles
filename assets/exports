@@ -101,7 +101,7 @@ export NNN_FIFO=/tmp/nnn.fifo
 #   commands and invoke like plugins, add _ (underscore) before the command.
 #
 # shellcheck disable=SC2016 # (we don't want expansion for $nnn)
-NNN_SHELL_PLUGINS='l:-_git log;x:_chmod +x $nnn'
+NNN_SHELL_PLUGINS='l:-!git log;x:!chmod +x $nnn'
 NNN_PLUGINS='p:preview-tui-ext;c:fzcd;o:fzopen'
 export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
 unset NNN_SHELL_PLUGINS NNN_PLUGINS
