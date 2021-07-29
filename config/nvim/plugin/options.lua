@@ -22,6 +22,14 @@ opt.diffopt:append {
 opt.emoji = false -- https://www.youtube.com/watch?v=F91VWOelFNE
 opt.expandtab = true -- use spaces intead of TAB
 
+opt.fillchars = {
+  eob = " ", -- suppress '~' at EndOfBuffer
+  vert = "▕", -- Alternatives: '┃', '│'
+  foldclose = "▸",
+  foldopen = "▾",
+  foldsep = "│",
+}
+
 opt.formatoptions = {
   c = true, -- comments should respect textwidth
   q = true, -- allow formatting of comments with 'gq'
