@@ -69,15 +69,19 @@ end)
 -- :LspLog - Open LSP logs for the builtin client in the bottom part of the
 -- window occupying full width.
 command("LspLog", function()
-  vim.cmd "botright split"
-  vim.cmd "resize 20"
-  vim.cmd("edit + " .. vim.lsp.get_log_path())
+  vim.cmd("botright split | resize 20 | edit + " .. vim.lsp.get_log_path())
 end)
 
--- :LspClients - Print out all the LSP client information.
-command("LspClients", function()
-  print(vim.inspect(vim.lsp.buf_get_clients()))
-end)
+-- :LspClient [<client_id>] - Print out the information regarding the given
+-- client id or all clients if none given.
+command("LspClient", function(client_id)
+  local info = client_id and vim.lsp.get_client_by_id(client_id)
+    or vim.lsp.buf_get_clients()
+  print(vim.inspect(info))
+end, {
+  nargs = 1,
+  complete = "customlist,v:lua.lsp_get_active_client_ids",
+})
 
 -- :Todo - List out all the location where TODOs and other related keywords
 -- are present in the current project.
