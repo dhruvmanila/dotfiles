@@ -17,7 +17,6 @@ g.gruvbox_material_transparent_background = 0
 g.gruvbox_material_menu_selection_background = "blue"
 g.gruvbox_material_sign_column_background = "none"
 g.gruvbox_material_diagnostic_virtual_text = "colored"
--- g.gruvbox_material_visual = 'reverse'
 g.gruvbox_material_show_eob = 0
 
 -- Generates after/ftplugin/*.vim files for lazy loading
@@ -73,10 +72,10 @@ highlight("TSInclude", { force = true, link = "RedItalic" })
 -- Lsp
 highlight("VirtualTextInformation", { force = true, link = "Blue" })
 highlight("VirtualTextHint", { force = true, link = "Aqua" })
-highlight(
-  "LspDiagnosticsFloatingError",
-  { force = true, link = "VirtualTextError" }
-)
+highlight("LspDiagnosticsFloatingError", {
+  force = true,
+  link = "VirtualTextError",
+})
 highlight("LspDiagnosticsFloatingWarning", {
   force = true,
   link = "VirtualTextWarning",
@@ -85,10 +84,10 @@ highlight("LspDiagnosticsFloatingInformation", {
   force = true,
   link = "VirtualTextInformation",
 })
-highlight(
-  "LspDiagnosticsFloatingHint",
-  { force = true, link = "VirtualTextHint" }
-)
+highlight("LspDiagnosticsFloatingHint", {
+  force = true,
+  link = "VirtualTextHint",
+})
 
 -- Lir
 highlight("LirFloatBorder", { force = true, link = "FloatBorder" })

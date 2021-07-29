@@ -31,7 +31,7 @@ end
 vim.cmd [[
 setlocal nobuflisted
 setlocal colorcolumn=
-setlocal nonumber
+setlocal number
 setlocal norelativenumber
 setlocal signcolumn=no
 setlocal nowrap

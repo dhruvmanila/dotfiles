@@ -35,6 +35,7 @@ dashboard.opts = {
   signcolumn = "no",
   spell = false,
   swapfile = false,
+  wrap = false,
 }
 
 -- Last session entry description.

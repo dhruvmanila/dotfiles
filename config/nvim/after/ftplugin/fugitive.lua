@@ -60,7 +60,7 @@ end
 local opts = { buffer = true, nowait = true }
 
 -- Setup the keybindings to open the window in the correct split.
-if vertical_fugitive then
+if vertical_fugitive or vim.o.columns <= 140 then
   nmap("gh", "g?", opts)
 else
   nnoremap("gh", "<Cmd>vertical help fugitive-map<CR>", opts)

@@ -83,7 +83,7 @@ end
 ---@param plugin_name string
 ---@return boolean
 function _G.plugin_loaded(plugin_name)
-  local plugins = _G.packer_plugins or {}
+  local plugins = packer_plugins or {}
   return plugins[plugin_name] and plugins[plugin_name].loaded
 end
 
