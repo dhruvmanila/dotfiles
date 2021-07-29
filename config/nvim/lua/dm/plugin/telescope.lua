@@ -86,7 +86,7 @@ telescope.setup {
         mirror = true,
       },
       flex = {
-        flip_columns = 120,
+        flip_columns = 140,
       },
     },
     mappings = {
@@ -186,24 +186,9 @@ telescope.setup {
   },
 }
 
--- Load the telescope extensions without blowing up. It only emits a
--- small warning. Only the required extensions are loaded, the others
--- will be loaded lazily by telescope.
-do
-  local extensions = {
-    "fzf",
-  }
-
-  for _, name in ipairs(extensions) do
-    local loaded, _ = pcall(telescope.load_extension, name)
-    if not loaded then
-      vim.notify(
-        string.format("[telescope]: Failed to load the extension: '%s'", name),
-        3
-      )
-    end
-  end
-end
+-- Load the telescope extensions without blowing up. Only the required extensions
+-- are loaded, the others will be loaded lazily by telescope.
+pcall(telescope.load_extension, "fzf")
 
 -- NOTE:
 --
