@@ -234,16 +234,10 @@ end)
 nnoremap("<leader>fa", function()
   require("telescope.builtin").find_files {
     prompt_title = "Find All Files",
-    find_command = {
-      "fd",
-      "--type",
-      "f",
-      "--hidden",
-      "--follow",
-      "--exclude",
-      ".git",
-      "--no-ignore",
-    },
+    hidden = true,
+    follow = true,
+    no_ignore = true,
+    file_ignore_patterns = { ".git/" },
   }
 end)
 
