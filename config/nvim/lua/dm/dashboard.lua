@@ -1,6 +1,5 @@
 local M = {}
 
-local utils = require "dm.utils"
 local session = require "dm.session"
 local Text = require "dm.text"
 
@@ -118,7 +117,7 @@ local entries = {
   {
     key = "p",
     description = "  Startup time",
-    command = utils.startuptime,
+    command = "StartupTime",
   },
 }
 

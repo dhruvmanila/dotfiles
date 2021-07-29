@@ -63,6 +63,7 @@ local function load_plugins()
     { "airblade/vim-rooter" },
     { "antoinemadec/FixCursorHold.nvim" },
     { "cespare/vim-toml" },
+    { "dstein64/vim-startuptime", cmd = "StartupTime" },
     { "editorconfig/editorconfig-vim" },
     { "folke/lua-dev.nvim" },
     {
@@ -121,7 +122,6 @@ local function load_plugins()
     { "tpope/vim-rhubarb" },
     { "tpope/vim-scriptease" },
     { "tpope/vim-surround" },
-    { "tweekmonster/startuptime.vim", cmd = "StartupTime" },
     { "vim-scripts/applescript.vim" },
     { "wbthomason/packer.nvim", opt = true },
     { "yamatsum/nvim-nonicons" },
