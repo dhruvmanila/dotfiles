@@ -61,7 +61,6 @@ local function load_plugins()
   packer.use {
     { "L3MON4D3/LuaSnip", opt = true, config = conf "luasnip" },
     { "airblade/vim-rooter" },
-    { "antoinemadec/FixCursorHold.nvim" },
     { "cespare/vim-toml" },
     { "dstein64/vim-startuptime", cmd = "StartupTime" },
     { "editorconfig/editorconfig-vim" },
