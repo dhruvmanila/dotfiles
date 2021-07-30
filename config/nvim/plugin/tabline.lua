@@ -1,5 +1,4 @@
 local fn = vim.fn
-local api = vim.api
 local devicons = require "nvim-web-devicons"
 local utils = require "dm.utils"
 
@@ -10,8 +9,6 @@ local highlights = {
   TabLine = { guifg = "#928374", guibg = "#242424" },
   TabLineFill = { guifg = "#928374", guibg = "#1e1e1e" },
 }
-
-local offset_ft = { "NvimTree" }
 
 ---Setting up the highlights
 local function tabline_highlights()
@@ -123,26 +120,6 @@ local function tabline_label(tabnr, is_active)
     .. " "
 end
 
--- Provide offset padding for tabline which will be used to move the tabline
--- towards the right side when there are special buffers present.
--- NOTE: Buffers present only on the far left hand side and in the `offset_ft`
--- table will be considered.
----@return string
-local function offset_padding()
-  local left = ""
-  local hl = "%#TabLineSel#"
-  local wins = api.nvim_tabpage_list_wins(0)
-  if #wins > 1 then
-    local first_win = wins[1]
-    local first_bufnr = api.nvim_win_get_buf(first_win)
-    if vim.tbl_contains(offset_ft, vim.bo[first_bufnr].filetype) then
-      local width = api.nvim_win_get_width(first_win)
-      left = hl .. string.rep(" ", width) .. "%*"
-    end
-  end
-  return left
-end
-
 ---Provide the tabline
 ---@return string
 function _G.nvim_tabline()
@@ -152,13 +129,10 @@ function _G.nvim_tabline()
     local is_active = i == current_tabpage
     line = line .. tabline_label(i, is_active)
   end
-  local left_offset = offset_padding()
-  line = left_offset
-    .. (left_offset ~= "" and line:gsub("▌", "▐", 1) or line)
+  return line
     .. "%#TabLineFill#" -- After the last tab fill with TabLineFill
     .. "%T" -- Ends mouse click target region(s)
     .. "%="
-  return line
 end
 
 dm.augroup("custom_tabline", {

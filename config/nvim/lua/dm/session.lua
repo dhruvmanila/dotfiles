@@ -12,7 +12,6 @@ end
 
 -- Cleanup performed before saving the session. This includes:
 --   - Closing all the popup window
---   - Closing all the 'NvimTree' window
 --   - Quitting the Dashboard buffer
 --   - Stop all the active LSP clients
 local function session_cleanup()
@@ -27,12 +26,6 @@ local function session_cleanup()
     if calling_buffer > 0 then
       api.nvim_set_current_buf(calling_buffer)
     end
-  end
-
-  if plugin_loaded "nvim-tree.lua" then
-    local curtab = api.nvim_get_current_tabpage()
-    cmd "silent tabdo NvimTreeClose"
-    api.nvim_set_current_tabpage(curtab)
   end
 
   vim.lsp.stop_client(vim.lsp.get_active_clients())

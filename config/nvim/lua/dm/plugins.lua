@@ -75,7 +75,6 @@ local function load_plugins()
     { "itchyny/vim-external" },
     { "jbyuki/one-small-step-for-vimkind" },
     { "junegunn/vim-easy-align", keys = "<Plug>(EasyAlign)" },
-    { "kyazdani42/nvim-tree.lua", keys = "<C-n>", config = conf "nvim_tree" },
     { "kyazdani42/nvim-web-devicons" },
     {
       "lewis6991/gitsigns.nvim",
