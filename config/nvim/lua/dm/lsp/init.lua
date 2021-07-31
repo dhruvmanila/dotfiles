@@ -38,16 +38,11 @@ vim.fn.sign_define {
 -- Set the default options for all LSP floating windows.
 --   - Default border according to `vim.g.border_style`
 --   - 'q' to quit with `nowait = true`
---   - Max width and height of the window as per the editor width and height
 do
   local default = vim.lsp.util.open_floating_preview
   vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
-    local max_width = math.max(math.floor(vim.o.columns * 0.7), 100)
     opts = vim.tbl_deep_extend("force", opts, {
       border = dm.border[vim.g.border_style],
-      max_width = max_width,
-      max_height = math.max(math.floor(vim.o.lines * 0.3), 30),
-      wrap_at = max_width,
     })
     local bufnr, winnr = default(contents, syntax, opts)
     nnoremap("q", "<Cmd>bdelete<CR>", { buffer = bufnr, nowait = true })
