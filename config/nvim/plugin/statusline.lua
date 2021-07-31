@@ -95,7 +95,6 @@ local special_buffer_info = {
     "dashboard",
     "packer",
     "gitcommit",
-    "vista_kind",
     "man",
     "cheat40",
   },
@@ -129,10 +128,6 @@ local special_buffer_info = {
       return "%<" .. fn.fnamemodify(ctx.bufname, ":~") .. " "
     end,
 
-    vista_kind = function()
-      return "Vista" .. " [" .. vim.g.vista.provider .. "]"
-    end,
-
     man = function(ctx)
       local title = fn.fnamemodify(ctx.bufname, ":t")
       return "Man" .. " [" .. title .. "]  %l/%L"
@@ -151,7 +146,6 @@ local special_buffer_info = {
     fugitive = { "StYellow", "" },
     packer = { "StAqua", "" },
     gitcommit = { "StYellow", "" },
-    vista_kind = { "StBlue", "" },
     man = { "StOrange", "" },
     dashboard = { "StBlue", "" },
     cheat40 = { "StAqua", "" },

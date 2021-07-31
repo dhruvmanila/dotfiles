@@ -8,21 +8,12 @@ setlocal norelativenumber
 setlocal nolist
 ]]
 
--- Return the filetype for the buffer contained in the given window.
----@param winnr number
----@return string
-local function getwinft(winnr)
-  return vim.bo[api.nvim_win_get_buf(winnr)].filetype
-end
-
 -- Determine whether we have enough vertical space to move the fugitive buffer
 -- in a vertical position.
 --
 -- Heuristics:
 --   - Check if there is enough space available.
 --   - Check if there are any vertical splits.
---   - If there are vertical splits, then it should contain only two windows
---     of which the last one should be the Vista window.
 --
 -- When opening the fugitive buffer for the first time, it is opened at the
 -- bottom part of the editor with full width. This will be excluded from the
@@ -36,12 +27,7 @@ local function has_vertical_space()
   end
   local layout = vim.fn.winlayout()
   layout = layout[2][1]
-  if layout[1] == "row" then
-    local vert_wins = layout[2]
-    return #vert_wins == 2
-      and getwinft(vert_wins[#vert_wins][2]) == "vista_kind"
-  end
-  return true
+  return layout[1] ~= "row"
 end
 
 -- Determine whether we are in a vertical fugitive window. This is determined
