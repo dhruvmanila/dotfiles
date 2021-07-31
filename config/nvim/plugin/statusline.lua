@@ -260,17 +260,6 @@ local function lsp_diagnostics(ctx, opts)
   return result ~= "" and " " .. result or result
 end
 
----Return the current function value from the LSP server.
----@param hl string
----@return string
-local function lsp_current_function(hl)
-  local current_function = vim.b.lsp_current_function
-  if current_function and current_function ~= "" then
-    return wrap_hl(hl) .. " " .. current_function .. " %*"
-  end
-  return ""
-end
-
 ---Neovim LSP messages
 ---@param hl string
 ---@return string
@@ -374,7 +363,6 @@ function _G.nvim_statusline()
     .. lineinfo "StSpecialBuffer"
     .. git_branch "StGreenBold"
     .. "%<"
-    .. lsp_current_function "StGrey"
     .. "%="
     .. github_notifications "StGrey"
     .. python_version(ctx, "StBlueBold")

@@ -3,7 +3,6 @@ local nnoremap = dm.nnoremap
 local xnoremap = dm.xnoremap
 
 local lspconfig = require "lspconfig"
-local plugins = require "dm.lsp.plugins"
 local servers = require "dm.lsp.servers"
 local preview = require "dm.lsp.preview"
 
@@ -60,13 +59,6 @@ end
 local function custom_on_attach(client, bufnr)
   local lsp_autocmds = {}
   local capabilities = client.resolved_capabilities
-
-  -- For plugins with an `on_attach` callback, call them here.
-  plugins.on_attach(client)
-
-  -- Used to setup per filetype
-  -- local filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
-
   local opts = { buffer = bufnr }
 
   -- For all types of diagnostics: [d | ]d

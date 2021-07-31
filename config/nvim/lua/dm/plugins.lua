@@ -91,7 +91,6 @@ local function load_plugins()
       keys = "<leader>cc",
       config = conf "colorizer",
     },
-    { "nvim-lua/lsp-status.nvim" },
     { "nvim-lua/plenary.nvim" },
     { "nvim-lua/popup.nvim" },
     { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
