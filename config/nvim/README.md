@@ -30,7 +30,6 @@
 ├── plugin
 │   ├── *.vim ...              # First all .vim files are loaded
 │   └── *.lua ...              # And then all .lua files are loaded
-├── cheat40.txt
 ├── init.lua                   # Global vars and require globals module
 └── minimal.vim
 ```
@@ -38,6 +37,6 @@
 ### Packer related files:
 ```
 .local/share/nvim/site/pack/loader/start/packer.nvim/plugin/
-├── packer_compiled.vim
+├── packer_compiled.lua
 └── packer_plugin_info.lua
 ```
