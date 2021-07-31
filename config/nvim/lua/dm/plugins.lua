@@ -73,7 +73,7 @@ local function load_plugins()
     },
     { "itchyny/vim-external" },
     { "jbyuki/one-small-step-for-vimkind" },
-    { "junegunn/vim-easy-align", keys = "<Plug>(EasyAlign)" },
+    { "junegunn/vim-easy-align" },
     { "kyazdani42/nvim-web-devicons" },
     { "lewis6991/gitsigns.nvim", event = "BufRead", config = conf "gitsigns" },
     { "lifepillar/vim-cheat40" },
