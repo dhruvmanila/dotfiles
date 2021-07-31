@@ -16,21 +16,6 @@ local function parse(context, body, tab_stops, brackets)
   return ls.parser.parse_snippet(context, body, tab_stops, brackets)
 end
 
--- If only one argument is passed, then return that many number of tabs,
--- otherwise return 'size' number of tabs (optional) prefixed to 'text'.
----@param text string
----@param size? number
----@return string
----@overload fun(size: number): string
-local function indent(text, size)
-  size = size or 1
-  if type(text) == "number" then
-    size = text
-    text = ""
-  end
-  return string.rep("\t", size) .. text
-end
-
 -- Save the snippets so that the snippets which have been exited can still be
 -- jumped back in.
 --
@@ -74,62 +59,6 @@ ls.snippets.lua = {
   s({ trig = "stylua" }, {
     t "-- stylua: ignore",
     c(1, { t "", t " start", t " end" }),
-    i(0),
-  }),
-
-  -- A component to be used with 'autocmd' and 'augroup' snippets.
-  -- {
-  --   group = $1<string>, -- Optional node
-  --   events = $2<string|string[]>,
-  --   targets = $3<string|string[]>,
-  --   modifiers = $4<string|string[]>, -- Optional node
-  --   command = $5<string|function>,
-  -- }$0
-  --
-  -- Optional nodes can be removed by moving to another choice.
-  s({ trig = "au", dscr = "autocmd/augroup component" }, {
-    t "{",
-    c(1, {
-      sn(
-        nil,
-        { t { "", indent "group = " }, t '"', i(1, "group: string"), t '",' }
-      ),
-      t "",
-    }),
-    t { "", indent "events = " },
-    c(2, {
-      sn(nil, { t '"', i(1, "event: string"), t '"' }),
-      sn(nil, { t "{", i(1, "events: string[]"), t "}" }),
-    }),
-    t { ",", indent "targets = " },
-    c(3, {
-      sn(nil, { t '"', i(1, "target: string"), t '"' }),
-      sn(nil, { t "{", i(1, "targets: string[]"), t "}" }),
-    }),
-    c(4, {
-      sn(nil, {
-        t { ",", indent 'modifiers = "' },
-        i(1, "modifier"),
-        t '"',
-      }),
-      sn(nil, {
-        t { ",", indent "modifiers = {" },
-        i(1, "modifiers: string[]"),
-        t "}",
-      }),
-      t "",
-    }),
-    t { ",", indent "command = " },
-    c(5, {
-      sn(nil, { t '"', i(1, "command: string"), t '",' }),
-      sn(nil, { i(1, "name: function"), t "," }),
-      sn(nil, {
-        t { "function()", indent(2) },
-        i(1, "body"),
-        t { "", indent "end," },
-      }),
-    }),
-    t { "", "}" },
     i(0),
   }),
 }
