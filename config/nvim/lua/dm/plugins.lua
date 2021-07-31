@@ -77,7 +77,6 @@ local function load_plugins()
     { "kyazdani42/nvim-web-devicons" },
     { "lewis6991/gitsigns.nvim", event = "BufRead", config = conf "gitsigns" },
     { "lifepillar/vim-cheat40" },
-    { "liuchengxu/vista.vim" },
     {
       "mfussenegger/nvim-dap",
       keys = { { "n", "<leader>db" }, { "n", "<leader>dc" } },
