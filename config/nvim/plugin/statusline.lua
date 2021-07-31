@@ -88,7 +88,6 @@ local special_buffer_info = {
     "terminal",
     "help",
     "tsplayground",
-    "NvimTree",
     "lir",
     "fugitive",
     "startify",

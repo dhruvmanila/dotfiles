@@ -97,6 +97,3 @@ highlight("LirEmptyDirText", { force = true, link = "LirSymlink" })
 
 -- Cheat40
 highlight("Cheat40Descr", { force = true, link = "Fg" })
-
--- NvimTree
-highlight("NvimTreeIndentMarker", { force = true, link = "Comment" })
