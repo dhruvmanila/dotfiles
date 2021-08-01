@@ -435,7 +435,7 @@ local function github_notifications_job()
 end
 
 -- Define the necessary autocmds
-dm.augroup("custom_statusline", {
+dm.augroup("dm__statusline", {
   {
     events = { "VimEnter", "ColorScheme" },
     targets = "*",
@@ -452,48 +452,6 @@ dm.augroup("custom_statusline", {
     command = github_notifications_job,
   },
 })
-
-do
-  local timeout = 1000
-  local clear_message_timer
-
-  local function format_data(data)
-    local message
-    if data.progress then
-      message = data.title
-      if data.message then
-        message = message .. " " .. data.message
-      end
-      if data.percentage then
-        message = message .. string.format(" (%.0f%%%%)", data.percentage)
-      end
-    else
-      message = data.content
-    end
-    return message
-  end
-
-  local function on_progress_update()
-    local messages = vim.lsp.util.get_progress_messages()
-    for _, data in ipairs(messages) do
-      vim.g.lsp_progress_message = format_data(data)
-    end
-    if clear_message_timer then
-      clear_message_timer:stop()
-    end
-    -- Reset the variable to clear the statusline.
-    clear_message_timer = vim.defer_fn(function()
-      vim.g.lsp_progress_message = nil
-      clear_message_timer = nil
-    end, timeout)
-  end
-
-  dm.autocmd {
-    group = "custom_statusline",
-    events = "User LspProgressUpdate",
-    command = on_progress_update,
-  }
-end
 
 -- :h qf.vim, disable quickfix statusline
 vim.g.qf_disable_statusline = 1
