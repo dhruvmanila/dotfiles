@@ -72,7 +72,6 @@ local function load_plugins()
       config = conf "completion",
     },
     { "itchyny/vim-external" },
-    { "jbyuki/one-small-step-for-vimkind" },
     { "junegunn/vim-easy-align" },
     { "kyazdani42/nvim-web-devicons" },
     { "lewis6991/gitsigns.nvim", event = "BufRead", config = conf "gitsigns" },
