@@ -15,7 +15,7 @@ NEOVIM_INSTALL_DIRECTORY="${HOME}/neovim"
 # }}}
 # Python versions {{{
 # First version will be the global one
-PYTHON_VERSIONS=("3.9.4" "3.9.1")
+PYTHON_VERSIONS=("3.9.6" "3.9.4" "3.9.1")
 # }}}
 # Packages file {{{
 HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/lib/Brewfile"
@@ -274,6 +274,7 @@ function setup_default_shell() { # {{{
 }
 # }}}
 function setup_dotfiles_git_repository() { # {{{
+  # Setup the dotfiles git repository locally and sync it with the remote.
   header "Changing directory to $DOTFILES_DIRECTORY..."
   cd "$DOTFILES_DIRECTORY"
   if is_git_repo; then
@@ -293,6 +294,11 @@ function setup_dotfiles_git_repository() { # {{{
 }
 # }}}
 function setup_python() { # {{{
+  # Setup the mentioned Python versions in from the constant $PYTHON_VERSIONS.
+  # The first element is made the global Python version.
+  #
+  # If the version is already installed, it will be skipped. `pip` will be
+  # upgraded for every mentioned version.
   for python_version in "${PYTHON_VERSIONS[@]}"; do
     if ! pyenv versions | grep -q "${python_version}"; then
       header "Installing Python ${python_version}..."
@@ -317,6 +323,8 @@ function setup_python() { # {{{
 }
 # }}}
 function setup_python_global_packages() { # {{{
+  # Install the global Python packages using pipx. The packages are mentioned
+  # in the $PYTHON_GLOBAL_REQUIREMENTS file.
   if ! command_exists "pipx"; then
     header "Installing pipx from homebrew..."
     brew install pipx
