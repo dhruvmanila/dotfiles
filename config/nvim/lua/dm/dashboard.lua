@@ -13,7 +13,7 @@ local nnoremap = dm.nnoremap
 -- Useful defaults
 local line_length = 50
 local hidden_cursor = "a:HiddenCursor/lCursor"
-local hl = { header = "Yellow", entry = "Red", footer = "Blue" }
+local hl = { header = "Yellow", entry = "AquaBold", footer = "Blue" }
 
 -- Dashboard namespace
 local dashboard = {}

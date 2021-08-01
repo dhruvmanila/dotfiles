@@ -3,6 +3,7 @@ local vnoremap = dm.vnoremap
 
 -- 'gs' originally means goto sleep for {count} seconds which is of no use
 nnoremap("gs", "<Cmd>Git<CR>")
+nnoremap("g<Space>", ":Git<Space>")
 nnoremap("<leader>gp", "<Cmd>Git push<CR>")
 
 -- Open current file on GitHub (requires `vim-rhubarb`)

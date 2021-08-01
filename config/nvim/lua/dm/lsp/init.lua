@@ -8,6 +8,7 @@ local preview = require "dm.lsp.preview"
 
 require "dm.formatter"
 require "dm.lsp.handlers"
+require "dm.lsp.progress"
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
 vim.lsp.set_log_level "info"
