@@ -37,6 +37,7 @@ end
 
 dm.autocmd {
   group = "dm__statusline",
-  events = "User LspProgressUpdate",
+  events = "User",
+  targets = "LspProgressUpdate",
   command = on_progress_update,
 }
