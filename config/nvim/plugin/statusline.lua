@@ -206,17 +206,6 @@ local function python_version(ctx, hl)
   return ""
 end
 
--- Return the number of GitHub notifications.
----@param hl string
----@return string
-local function github_notifications(hl)
-  local notifications = vim.g.github_notifications
-  if notifications and notifications > 0 then
-    return wrap_hl(hl) .. "  " .. notifications .. " %*"
-  end
-  return ""
-end
-
 -- Return the currently active neovim LSP client(s) if any.
 ---@param ctx table
 ---@return string
@@ -340,7 +329,6 @@ function _G.nvim_statusline()
     .. git_branch "StGreenBold"
     .. "%<"
     .. "%="
-    .. github_notifications "StGrey"
     .. python_version(ctx, "StBlueBold")
     .. lsp_clients(ctx, "StGreenBold")
     .. lsp_messages "StGrey"
@@ -384,27 +372,9 @@ local function set_python_version()
   })
 end
 
-local function fetch_github_notifications()
-  return fn.jobstart("gh api notifications", {
-    stdout_buffered = true,
-    on_stdout = function(_, data, _)
-      if data and data[1] ~= "" then
-        local notifications = vim.fn.json_decode(data)
-        vim.g.github_notifications = #notifications
-      end
-    end,
-  })
-end
-
 local function python_version_job()
   if fn.executable "python" > 0 then
     job(5 * 1000, set_python_version)
-  end
-end
-
-local function github_notifications_job()
-  if fn.executable "gh" > 0 then
-    job(5 * 60 * 1000, fetch_github_notifications)
   end
 end
 
@@ -418,11 +388,6 @@ dm.augroup("dm__statusline", {
     events = "FileType",
     targets = "python",
     command = python_version_job,
-  },
-  {
-    events = "VimEnter",
-    targets = "*",
-    command = github_notifications_job,
   },
 })
 
