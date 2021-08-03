@@ -93,7 +93,11 @@ local function load_plugins()
     { "nvim-lua/plenary.nvim" },
     { "nvim-lua/popup.nvim" },
     { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
-    { "nvim-telescope/telescope.nvim", config = conf "telescope" },
+    {
+      "nvim-telescope/telescope.nvim",
+      event = "CursorHold",
+      config = conf "telescope",
+    },
     { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
     { "nvim-treesitter/nvim-treesitter-textobjects" },
     { "nvim-treesitter/playground" },
