@@ -61,7 +61,7 @@ do
   ---@param opts AutocmdOpts
   function dm.autocmd(opts)
     local command = opts.command
-    if type(command) == "function" then
+    if vim.is_callable(command) then
       local fn_id = create(command)
       command = format("lua dm._execute(%d)", fn_id)
     end
@@ -112,7 +112,7 @@ end
 function dm.command(name, repl, opts)
   opts = opts or {}
   local repl_type = type(repl)
-  if repl_type == "function" then
+  if vim.is_callable(repl) then
     local fn_id = create(repl)
     local fargs = ""
     if opts.nargs and (type(opts.nargs) == "string" or opts.nargs > 0) then
@@ -136,7 +136,7 @@ do
   ---@param x CaseT
   ---@return any
   local function resolve(x, ...)
-    return type(x) == "function" and x(...) or x
+    return vim.is_callable(x) and x(...) or x
   end
 
   -- Similar to case statement.
@@ -227,13 +227,13 @@ do
         opts.buffer = nil
       end
       local rhs_type = type(rhs)
-      if rhs_type == "function" then
+      if vim.is_callable(rhs) then
         local fn_id = create_keymap_entry(mode, lhs, rhs, bufnr)
         -- <expr> are vimscript expressions, so we will use `v:lua` to access
         -- the lua globals and execute the callback.
         if opts.expr then
           -- This is going into vimscript world so it requires `v:null` instead
-          -- of the lua `null`.
+          -- of the lua `nil`.
           rhs = format(
             'v:lua.dm._execute_keymap(%s, "%s")',
             bufnr or "v:null",
