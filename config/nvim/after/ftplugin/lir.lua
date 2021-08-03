@@ -14,8 +14,14 @@ setlocal nolist
 -- They need to be defined here as using the setup table only maps to normal mode.
 xnoremap("C", function()
   clipboard_action("copy", "v")
-end, { buffer = true })
+end, {
+  buffer = true,
+  silent = true,
+})
 
 xnoremap("X", function()
   clipboard_action("cut", "v")
-end, { buffer = true })
+end, {
+  buffer = true,
+  silent = true,
+})
