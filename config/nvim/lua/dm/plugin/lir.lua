@@ -2,10 +2,8 @@ local api = vim.api
 local lir = require "lir"
 local actions = require "lir.actions"
 local mark_actions = require "lir.mark.actions"
-local clipboard_actions = require "lir.clipboard.actions"
 
 local Path = require "plenary.path"
-local M = {}
 
 -- Helper function to jump the cursor to the given name (file/directory)
 ---@param name string
@@ -19,12 +17,11 @@ end
 -- Alternative to the builtin `new_file` function. This creates a new file
 -- in the file system and puts the cursor above the file, similar to `mkdir`.
 -- Original implementation just creates a vim buffer and opens it.
-function actions.newfile()
+local function newfile()
   local name = vim.fn.input "Create file: "
   if name == "" then
     return
   end
-
   local ctx = lir.get_context()
   local path = Path:new(ctx.dir .. name)
   if path:exists() then
@@ -32,10 +29,8 @@ function actions.newfile()
     cursor_jump(name)
     return
   end
-
   path:touch()
   actions.reload()
-
   vim.schedule(function()
     cursor_jump(name)
   end)
@@ -55,18 +50,18 @@ local function goto_git_root()
   vim.cmd("edit " .. dir)
 end
 
----@alias Action '"copy"'|'"cut"'
----@alias Mode '"n"'|'"v"'
----Enhanced clipboard actions. This will automatically mark either the
----current selection or visually selected items and call the respective
----clipboard action.
----@param action Action
----@param mode Mode
-function M.clipboard_action(action, mode)
-  mode = mode or "n"
-  mark_actions.mark(mode)
-  clipboard_actions[action]()
-end
+-- Enhanced clipboard actions. This will automatically mark either the
+-- current selection or visually selected items and call the respective
+-- clipboard action.
+local clipboard_actions = setmetatable({}, {
+  __index = function(_, action)
+    return function(mode)
+      mode = mode or "n"
+      mark_actions.mark(mode)
+      require("lir.clipboard.actions")[action]()
+    end
+  end,
+})
 
 -- Construct the Lir floating window options according to the window we are
 -- currently in. The position of the window will be centered in the current
@@ -101,46 +96,39 @@ lir.setup {
   },
   mappings = {
     ["q"] = actions.quit,
+    ["cd"] = actions.cd,
+    ["yy"] = actions.yank_path,
+    ["."] = actions.toggle_show_hidden,
+    ["R"] = actions.reload,
+
+    ["h"] = actions.up,
     ["l"] = actions.edit,
     ["<CR>"] = actions.edit,
-    ["h"] = actions.up,
-
-    -- Consistent with telescope and nvim-tree.
     ["<C-s>"] = actions.split,
     ["<C-v>"] = actions.vsplit,
     ["<C-t>"] = actions.tabedit,
 
-    -- Actions should be similar to that of nnn for consistency
-    ["@"] = actions.cd,
-    ["."] = actions.toggle_show_hidden,
-    ["nd"] = actions.mkdir,
-    ["nf"] = actions.newfile,
-    ["yy"] = actions.yank_path,
+    ["d"] = actions.mkdir,
+    ["f"] = newfile,
     ["r"] = actions.rename,
-    ["x"] = actions.delete,
+    ["x"] = actions.wipeout,
 
-    -- <Space> to toggle mark and move down
+    -- <Space>/<C-Space> to toggle mark and move down/up
     ["<Space>"] = function()
       mark_actions.toggle_mark()
       vim.cmd "normal! j"
     end,
-
-    -- <CTRL-Space> to toggle mark and move up
     ["<C-Space>"] = function()
       mark_actions.toggle_mark()
       vim.cmd "normal! k"
     end,
 
     -- Enhanced cut and copy.
-    ["C"] = function()
-      M.clipboard_action "copy"
-    end,
-    ["X"] = function()
-      M.clipboard_action "cut"
-    end,
+    ["C"] = clipboard_actions.copy,
+    ["X"] = clipboard_actions.cut,
     ["P"] = clipboard_actions.paste,
 
-    -- Easy access to home, root and git root directory
+    -- Easy access to common places.
     ["~"] = function()
       vim.cmd("edit " .. vim.loop.os_homedir())
     end,
@@ -152,9 +140,7 @@ lir.setup {
     ["gr"] = goto_git_root,
 
     -- Open the current directory in finder
-    ["gx"] = function()
-      vim.cmd "call external#explorer()"
-    end,
+    ["gx"] = vim.fn["external#explorer"],
 
     -- Search and open Lir in any directory from the current one using Telescope
     -- Mapping is similar to `nnn`
@@ -164,4 +150,5 @@ lir.setup {
 
 dm.nnoremap("-", require("lir.float").toggle)
 
-return M
+-- Used to set keymap in ftplugin/lir.lua
+return { clipboard_actions = clipboard_actions }

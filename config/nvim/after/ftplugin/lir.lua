@@ -1,5 +1,5 @@
 local xnoremap = dm.xnoremap
-local clipboard_action = require("dm.plugin.lir").clipboard_action
+local clipboard_actions = require("dm.plugin.lir").clipboard_actions
 
 vim.cmd [[
 setlocal nonumber
@@ -13,14 +13,14 @@ setlocal nolist
 --
 -- They need to be defined here as using the setup table only maps to normal mode.
 xnoremap("C", function()
-  clipboard_action("copy", "v")
+  clipboard_actions.copy "v"
 end, {
   buffer = true,
   silent = true,
 })
 
 xnoremap("X", function()
-  clipboard_action("cut", "v")
+  clipboard_actions.cut "v"
 end, {
   buffer = true,
   silent = true,
