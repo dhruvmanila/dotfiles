@@ -1,38 +1,18 @@
 #!/usr/bin/env bash
 # Readline behaviors. Refer to 'man bash' / "Readline Variables" section.
 
-# Visual
-# ------
-
-# No bell please
 set bell-style none
-
-# Briefly move the cursor to an opening parenthesis when a closing parenthesis
-# is inserted.
 set blink-matching-paren on
 
 # Disable Bash 5.1 highlighted paste feature.
 set enable-bracketed-paste off
 
 # Completion
-# ----------
-
-# Color the common prefix in the completion list
 set colored-completion-prefix on
-
-# Make Tab autocomplete regardless of filename case
 set completion-ignore-case on
-
-# List all matches in case multiple possible completions are possible
 set show-all-if-ambiguous on
-
-# Do not autocomplete hidden files unless the pattern explicitly begins with a dot
 set match-hidden-files off
-
-# Show all autocomplete results at once
 set page-completions off
-
-# If there are more than 200 possible completions for a word, ask to show them all
 set completion-query-items 200
 
 # Be more intelligent when autocompleting by also looking at the text after
@@ -42,19 +22,11 @@ set completion-query-items 200
 # Readline used by Bash 4.)
 set skip-completed-text on
 
-# Show extra file information when completing, like `ls -F` does
 set visible-stats on
-
-# Immediately add a trailing slash when autocompleting symlinks to directories
 set mark-symlinked-directories on
-
-# List possible completions before cycling through them
 set menu-complete-display-prefix on
 
 # Vi mode
-# -------
-
-# Enabling basic vim emulation
 set editing-mode vi
 
 # Show vim mode in the prompt
@@ -68,12 +40,9 @@ set output-meta on
 set convert-meta off
 
 # Keybindings
-# -----------
-
-# Map the following keys in vi-insert
+# NOTE: All keybindings should come at the end of the file
 set keymap vi-insert
 
-# NOTE: All keybindings should come at the end of the file
 # Use the text that has already been typed as the prefix for searching through
 # commands (i.e. more intelligent Up/Down behavior)
 "\C-k": history-search-backward
