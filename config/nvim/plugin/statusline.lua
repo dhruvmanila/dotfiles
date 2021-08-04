@@ -1,356 +1,233 @@
--- Ref: https://github.com/akinsho/dotfiles/blob/main/.config/nvim/lua/as/statusline
-
 local fn = vim.fn
 local api = vim.api
 local icons = dm.icons
-local devicons = require "nvim-web-devicons"
 local utils = require "dm.utils"
 
--- Colors are taken from the current colorscheme
--- TODO: Any way of taking the values directly from the common highligh groups?
 local colors = {
   active_bg = "#3a3735",
   inactive_bg = "#32302f",
-  active_fg = "#e2cca9",
+  active_fg = "#a89984",
   inactive_fg = "#7c6f64",
-}
-
-local palette = {
-  grey = "#a89984",
   yellow = "#e9b143",
-  green = "#b0b846",
-  orange = "#f28534",
   red = "#f2594b",
   aqua = "#8bba7f",
   blue = "#80aa9e",
-  purple = "#d3869b",
 }
 
--- Table to create special highlight groups.
 local highlights = {
   StatusLine = { guifg = colors.active_fg, guibg = colors.active_bg },
   StatusLineNC = { guifg = colors.inactive_fg, guibg = colors.inactive_bg },
-  StSpecialBuffer = {
-    guifg = colors.active_fg,
-    guibg = colors.active_bg,
-    gui = "bold",
-  },
+
+  -- Basic User highlight group
+  User1 = { guifg = "#282828", guibg = "#7d6f64", gui = "bold" },
+  User2 = { guifg = "#ebdbb2", guibg = "#504945" },
+
+  -- LSP diagnostics group
+  User6 = { guifg = colors.blue, guibg = colors.active_bg },
+  User7 = { guifg = colors.aqua, guibg = colors.active_bg },
+  User8 = { guifg = colors.yellow, guibg = colors.active_bg },
+  User9 = { guifg = colors.red, guibg = colors.active_bg },
 }
 
--- Create the highlight groups for the statusline from the given palette.
--- This will create groups with names as 'St<colorname><attribute>' where
--- colorname is Capitalized and attribute can be '', 'Bold' or 'Italic'
----@param prefix string (Default: 'St')
-local function statusline_highlights(prefix)
-  prefix = prefix or "St"
-  for name, hex in pairs(palette) do
-    name = name:gsub("^%l", string.upper)
-    utils.highlight(prefix .. name, { guifg = hex, guibg = colors.active_bg })
-    utils.highlight(prefix .. name .. "Bold", {
-      guifg = hex,
-      guibg = colors.active_bg,
-      gui = "bold",
-    })
-    utils.highlight(prefix .. name .. "Italic", {
-      guifg = hex,
-      guibg = colors.active_bg,
-      gui = "italic",
-    })
-  end
-
-  -- Setting the special highlight groups.
-  for hl_name, opts in pairs(highlights) do
-    utils.highlight(hl_name, opts)
-  end
+local function center(str)
+  return "%=" .. str .. "%="
 end
 
--- Wrap the highlight for statusline.
----@param hl string
----@return string
-local function wrap_hl(hl)
-  return hl and "%#" .. hl .. "#" or ""
-end
+-- Custom statusline for special builtin/plugin buffers.
+---@type table<string, string|function>
+local special_buffer_line = {
+  terminal = center " Terminal:%t",
+  tsplayground = center "侮Syntax Tree Playground",
+  packer = center " Packer",
+  gitcommit = center " Commit message",
+  fugitive = center " Fugitive",
 
--- Special buffer information table.
---
--- This includes the following components:
--- types: List containing special buffer filetype or buftype.
--- line: The line value to be displayed. It can be either a string or a
---       function where the `ctx` variable will be passed as the only argument.
--- icon: Table containing the icon color and icon for the special buffer.
---
--- Special buffers included in `types` but not in `line` means to make the line
--- invisible using 'Normal' highlight group.
-local special_buffer_info = {
-  types = {
-    "qf",
-    "terminal",
-    "help",
-    "tsplayground",
-    "lir",
-    "fugitive",
-    "startify",
-    "dashboard",
-    "packer",
-    "gitcommit",
-    "man",
-  },
-  line = {
-    terminal = "Terminal",
-    tsplayground = "TSPlayground",
-    packer = "Packer",
-    gitcommit = "Commit message",
-    fugitive = "Fugitive",
+  help = function(ctx)
+    return ctx.inactive and center "%t" or "%1* %l/%L %*%2* help %* %t"
+  end,
 
-    qf = function(ctx)
-      local list_type = fn.getwininfo(ctx.curwin)[1].loclist == 1
-          and "Location"
-        or "Quickfix"
-      local title = vim.F.npcall(
-        api.nvim_win_get_var,
-        ctx.curwin,
-        "quickfix_title"
-      )
-      title = title and "[" .. title .. "]" or ""
-      return list_type .. " List " .. title .. "  %l/%L"
-    end,
+  man = function(ctx)
+    return ctx.inactive and center "%t" or "%1* %l/%L %*%2* Man %* %t"
+  end,
 
-    help = function(ctx)
-      local name = fn.fnamemodify(ctx.bufname, ":t:r")
-      return "help [" .. name .. "]  %l/%L"
-    end,
+  lir = function(ctx)
+    return center(" %<" .. fn.fnamemodify(ctx.bufname, ":~"))
+  end,
 
-    lir = function(ctx)
-      return "%<" .. fn.fnamemodify(ctx.bufname, ":~") .. " "
-    end,
+  dashboard = function(ctx)
+    return center(" %<" .. fn.fnamemodify(ctx.bufname, ":~"))
+  end,
 
-    man = function(ctx)
-      local title = fn.fnamemodify(ctx.bufname, ":t")
-      return "Man" .. " [" .. title .. "]  %l/%L"
-    end,
-
-    dashboard = function(ctx)
-      return fn.fnamemodify(ctx.bufname, ":~")
-    end,
-  },
-  icon = {
-    qf = { "StRed", "" },
-    terminal = { "StYellow", "" },
-    help = { "StYellow", "" },
-    tsplayground = { "StGreen", "侮" },
-    lir = { "StBlue", "" },
-    fugitive = { "StYellow", "" },
-    packer = { "StAqua", "" },
-    gitcommit = { "StYellow", "" },
-    man = { "StOrange", "" },
-    dashboard = { "StBlue", "" },
-  },
+  qf = function(ctx)
+    local ok, title = pcall(api.nvim_win_get_var, ctx.winnr, "quickfix_title")
+    title = ok and title or ""
+    if ctx.inactive then
+      return "%1* %l/%L %* %q  " .. title
+    end
+    return "%1* %l/%L %*%2* %q %* " .. title
+  end,
 }
 
--- Return the line information.
--- Current format: total:col
----@param hl string
----@return string
-local function lineinfo(hl)
-  hl = wrap_hl(hl)
-  return hl .. " %L:%-2c" .. " %*" -- ℓ 𝚌
-end
-
--- Return the file encoding and file format.
----@param hl string
----@return string
-local function file_detail(ctx, hl)
-  local enc = vim.bo[ctx.curbuf].fenc
-  enc = enc ~= "" and enc or vim.o.enc
-  local format = vim.bo[ctx.curbuf].fileformat
-  return " " .. wrap_hl(hl) .. enc:upper() .. " " .. format:upper() .. " %*"
-end
-
--- Return the indentation icon for tabs and spaces and the count.
+-- Return the buffer information such as fileencoding, fileformat, indentation.
 ---@param ctx table
----@param hl string
 ---@return string
-local function indentation(ctx, hl)
-  -- local prefix = ctx.expandtab and " " or " "
-  local prefix = ctx.expandtab and "Spaces:" or "Tabs:"
-  return wrap_hl(hl) .. " " .. prefix .. ctx.shiftwidth .. " %*"
+local function buffer_info(ctx)
+  local bo = vim.bo[ctx.bufnr]
+  local enc = bo.fileencoding
+  enc = enc ~= "" and enc or vim.o.encoding
+  local format = bo.fileformat:upper()
+  local indent = (bo.expandtab and "S:" or "T:") .. bo.shiftwidth
+  return " " .. indent .. " | " .. enc:upper() .. " " .. format .. " "
 end
 
 -- Return the Git branch name (requires fugitive.vim)
----@param hl string
 ---@return string
-local function git_branch(hl)
+local function git_branch()
   local FugitiveHead = vim.fn["FugitiveHead"]
   if FugitiveHead then
     local head = FugitiveHead()
     if head and head ~= "" then
-      return " " .. wrap_hl(hl) .. " " .. head .. "%* "
+      return "  " .. head .. " "
     end
   end
   return ""
 end
 
--- Return the Python virtual environment name if we are in any.
+-- Return the Python version and virtual environment name if we are in any.
 ---@param ctx table
 ---@return string
-local function python_version(ctx, hl)
-  if ctx.filetype == "python" then
-    local env = os.getenv "VIRTUAL_ENV"
-    local version = vim.g.current_python_version
-    if env or version then
-      env = env and "(" .. fn.fnamemodify(env, ":t") .. ") " or ""
-      version = version and " " .. version .. " " or ""
-      return wrap_hl(hl) .. version .. env .. "%*"
-    end
+local function python_version(ctx)
+  local env = os.getenv "VIRTUAL_ENV"
+  local version = vim.g.current_python_version
+  env = env and "(" .. fn.fnamemodify(env, ":t") .. ") " or ""
+  version = version and " " .. version .. " " or ""
+  return version .. env
+end
+
+---@param ctx table
+---@return string
+local function filetype(ctx)
+  local ft = ctx.filetype
+  if ft == "" then
+    return ""
+  elseif ft == "python" then
+    return python_version(ctx)
   end
-  return ""
+  return " " .. ft:gsub("^%l", string.upper) .. " "
 end
 
 -- Return the currently active neovim LSP client(s) if any.
 ---@param ctx table
 ---@return string
-local function lsp_clients(ctx, hl)
+local function lsp_clients(ctx)
   local result = {}
-  local clients = vim.lsp.buf_get_clients(ctx.curbuf)
+  local clients = vim.lsp.buf_get_clients(ctx.bufnr)
   for id, client in pairs(clients) do
     table.insert(result, client.name .. ":" .. id)
   end
-
-  if not vim.tbl_isempty(result) then
-    result = table.concat(result, " ")
-    return " " .. wrap_hl(hl) .. "  " .. result .. "%* "
-  else
-    return ""
-  end
+  result = table.concat(result, " ")
+  return result ~= "" and "  " .. result .. " " or ""
 end
 
--- Return the diagnostics information for the given severity if > 0.
+-- Used for showing the LSP diagnostics information. The order is maintained.
+local diagnostics_opts = {
+  { severity = "Information", icon = icons.info, hl = "%6*" },
+  { severity = "Hint", icon = icons.hint, hl = "%7*" },
+  { severity = "Warning", icon = icons.warning, hl = "%8*" },
+  { severity = "Error", icon = icons.error, hl = "%9*" },
+}
+
+-- Return the diagnostics information if > 0.
 ---@param ctx table
----@param opts table
 ---@return string
-local function lsp_diagnostics(ctx, opts)
-  local curbuf = ctx.curbuf
-  local result = ""
-  for _, o in ipairs(opts) do
-    local count = vim.lsp.diagnostic.get_count(curbuf, o.severity)
+local function lsp_diagnostics(ctx)
+  local bufnr = ctx.bufnr
+  local result = {}
+  for _, opt in ipairs(diagnostics_opts) do
+    local count = vim.lsp.diagnostic.get_count(bufnr, opt.severity)
     if count > 0 then
-      result = result .. wrap_hl(o.hl) .. o.icon .. " " .. count .. " %*"
+      table.insert(result, opt.hl .. opt.icon .. " " .. count)
     end
   end
-  return result ~= "" and " " .. result or result
+  result = table.concat(result, " %*")
+  return result ~= "" and " " .. result or ""
 end
 
----@param hl string
+-- Return the Neovim LSP status message if any.
 ---@return string
-local function lsp_messages(hl)
+local function lsp_messages()
   local message = vim.g.lsp_progress_message
   if message and message ~= "" then
-    return wrap_hl(hl) .. message .. " %*"
+    return "| " .. message .. " "
   end
   return ""
 end
 
--- Create the statusline for the inactive buffer.
 ---@param ctx table
 ---@return string
-local function inactive_statusline(ctx)
-  local extension = fn.fnamemodify(ctx.bufname, ":e")
-  local filename = fn.fnamemodify(ctx.bufname, ":p:t")
-  local icon, _ = devicons.get_icon(filename, extension, { default = true })
-  return "%=" .. icon .. " %<" .. fn.fnamemodify(ctx.bufname, ":~:.") .. "%="
-end
-
--- Determine whether we are in a special buffer or not.
----@param ctx table
----@return boolean
-local function is_special_buffer(ctx)
-  for _, typ in ipairs(special_buffer_info.types) do
-    if typ == ctx.filetype or typ == ctx.buftype then
-      return true
-    end
-  end
-  return false
-end
-
--- Return the statusline for special builtin buffers such as Quickfix, Terminal
--- and plugin buffers such as NvimTree, TSPlayground, etc.
----@param ctx table
----@return string
-local function special_buffer_statusline(ctx, prefix)
+local function special_buffer_statusline(ctx)
   local typ = ctx.filetype ~= "" and ctx.filetype or ctx.buftype
-  local line = special_buffer_info.line[typ] or ""
-  if type(line) == "function" then
-    line = line(ctx)
+  local line = special_buffer_line[typ]
+  if not line then
+    return
+  elseif type(line) == "function" then
+    return line(ctx)
+  else
+    return line
   end
-
-  -- If there is no line registered but the buffer is considered to be special,
-  -- then we will make the line invisible.
-  if line == "" then
-    return wrap_hl "Normal"
-  end
-
-  local color, icon = unpack(special_buffer_info.icon[typ] or { "", "" })
-  local hl = ctx.inactive and "" or wrap_hl(color)
-  local name_hl = ctx.inactive and "" or wrap_hl "StSpecialBuffer"
-
-  return prefix .. " " .. hl .. icon .. "%* " .. name_hl .. line
 end
 
 -- Provide the statusline for different types of buffers including active,
 -- inactive, special buffers such as Dashboard, Terminal, quickfix, etc.
 ---@return string
 function _G.nvim_statusline()
-  local prefix = " "
-  local curwin = vim.g.statusline_winid or 0
-  local curbuf = api.nvim_win_get_buf(curwin)
-  local inactive = api.nvim_get_current_win() ~= curwin
+  local winnr = vim.g.statusline_winid or 0
+  local bufnr = api.nvim_win_get_buf(winnr)
+  local inactive = api.nvim_get_current_win() ~= winnr
 
   local ctx = {
-    curwin = curwin,
-    curbuf = curbuf,
-    bufname = fn.bufname(curbuf),
-    filetype = vim.bo[curbuf].filetype,
-    buftype = vim.bo[curbuf].buftype,
-    shiftwidth = vim.bo[curbuf].shiftwidth,
-    expandtab = vim.bo[curbuf].expandtab,
+    winnr = winnr,
+    bufnr = bufnr,
+    bufname = fn.bufname(bufnr),
+    filetype = vim.bo[bufnr].filetype,
+    buftype = vim.bo[bufnr].buftype,
     inactive = inactive,
   }
 
-  if is_special_buffer(ctx) then
-    return special_buffer_statusline(ctx, prefix)
+  local line = special_buffer_statusline(ctx)
+  if line and line ~= "" then
+    return line
   elseif inactive then
-    return inactive_statusline(ctx)
+    return center(fn.fnamemodify(ctx.bufname, ":~:."))
   end
 
-  return wrap_hl "StAqua"
-    .. prefix
+  -- The initial space is to compensate for the signcolumn.
+  return "%1*  "
+    .. "%L:%-2c " -- total:column
     .. "%*"
-    .. lineinfo "StSpecialBuffer"
-    .. git_branch "StGreenBold"
+    .. "%2*"
+    .. git_branch()
+    .. "%*"
     .. "%<"
+    .. lsp_diagnostics(ctx)
+    .. "%*"
     .. "%="
-    .. python_version(ctx, "StBlueBold")
-    .. lsp_clients(ctx, "StGreenBold")
-    .. lsp_messages "StGrey"
-    .. indentation(ctx, "StGreyBold")
-    .. file_detail(ctx, "StGreyBold")
-    .. lsp_diagnostics(ctx, {
-      { severity = "Information", icon = icons.info, hl = "StBlue" },
-      { severity = "Hint", icon = icons.hint, hl = "StAqua" },
-      { severity = "Warning", icon = icons.warning, hl = "StYellow" },
-      { severity = "Error", icon = icons.error, hl = "StRed" },
-    })
+    .. lsp_clients(ctx)
+    .. lsp_messages()
+    .. "%2*"
+    .. filetype(ctx)
+    .. "%*"
+    .. "%1*"
+    .. buffer_info(ctx)
+    .. "%*"
 end
 
--- Create a timer for the given task and interval.
+-- Create a timer for the given task to be invoked every `interval` ms.
 ---@param interval number (ms)
 ---@param task function
 local function job(interval, task)
-  -- A one-shot job to initialize the data
   vim.defer_fn(task, 100)
-  ---@type number
   local pending_job
-  -- Start the job every `interval` milliseconds ad infinitum
   fn.timer_start(interval, function()
     if pending_job then
       fn.jobstop(pending_job)
@@ -372,22 +249,24 @@ local function set_python_version()
   })
 end
 
-local function python_version_job()
-  if fn.executable "python" > 0 then
-    job(5 * 1000, set_python_version)
-  end
-end
-
 dm.augroup("dm__statusline", {
   {
     events = { "VimEnter", "ColorScheme" },
     targets = "*",
-    command = statusline_highlights,
+    command = function()
+      for hl_name, opts in pairs(highlights) do
+        utils.highlight(hl_name, opts)
+      end
+    end,
   },
   {
     events = "FileType",
     targets = "python",
-    command = python_version_job,
+    command = function()
+      if fn.executable "python" > 0 then
+        job(5 * 1000, set_python_version)
+      end
+    end,
   },
 })
 
