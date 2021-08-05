@@ -1,4 +1,24 @@
 #!/usr/bin/env bash
-if [[ -f "${HOME}/.bashrc" ]]; then
-  source "${HOME}/.bashrc"
-fi
+# shellcheck disable=SC1090
+
+# By default, when bash is started as a login shell, it reads the first of any
+# file among the 3 following ones:
+#
+#     ~/.bash_profile
+#     ~/.bash_login
+#     ~/.profile
+#
+# Also, it doesn't read `~/.bashrc` as a login shell even if it's interactive.
+# These quirks are annoying because hard to remember. We create this file to
+# never have to remember them again.
+#
+# Now, bash will always read this file as a login shell, and ignore
+# `~/.bash_login` or `~/.profile` if they exist, simply because this file has a
+# higher priority.
+#
+# https://unix.stackexchange.com/a/88266/232487
+case $- in
+  *i*)
+    source ~/.bashrc
+    ;;
+esac
