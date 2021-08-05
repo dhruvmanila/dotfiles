@@ -43,3 +43,9 @@ fi
 if [[ -f "/usr/local/opt/fzf/shell/key-bindings.bash" ]]; then
   source "/usr/local/opt/fzf/shell/key-bindings.bash"
 fi
+
+# Automatic history expansion (`!!`) when inserting a space.
+#
+# WARNING: Don't write this in `~/.inputrc`, it would prevent us from inserting
+# spaces inside various programs such as python, etc.
+bind '" ": magic-space'
