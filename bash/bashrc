@@ -6,7 +6,6 @@ function load_dotfiles() {
   local -a dotfiles=(
     "assets/paths"
     "bash/bash_prompt"
-    "assets/options"
     "assets/exports"
     "assets/aliases"
     "assets/functions"
@@ -49,3 +48,40 @@ fi
 # WARNING: Don't write this in `~/.inputrc`, it would prevent us from inserting
 # spaces inside various programs such as python, etc.
 bind '" ": magic-space'
+
+# Shell Options
+#
+# Set/unset each option using the '-s' and '-u' flag.
+# For help on each option: `man bash` and search `list.*shopt`
+
+# Typing a directory name alone is enough to cd into it
+shopt -s autocd
+
+# Autocorrect typos in path names when using `cd`
+shopt -s cdspell
+
+# Lists the status of any stopped and running jobs before exiting an interactive
+# shell. If any jobs are running, this causes the exit to be deferred until a
+# second exit is attempted without an intervening command.
+shopt -s checkjobs
+
+# Automatically expand directory globs when completing
+shopt -s direxpand
+
+# Autocorrect directory typos when completing
+shopt -s dirspell
+
+# Enable the pattern `**` to match match all files and zero or more directories
+# and subdirectories. `**/` matches any path to a folder.
+shopt -s globstar
+
+# Append to the Bash history file, rather than overwriting it.
+shopt -s histappend
+
+# After a history expansion, don't execute the resulting command immediately.
+# Instead, write the expanded command into the readline editing  buffer for
+# further modification.
+shopt -s histverify
+
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob
