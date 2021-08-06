@@ -39,9 +39,11 @@ if command -v rbenv &> /dev/null; then
   eval "$(rbenv init -)"
 fi
 
-if [[ -f "/usr/local/opt/fzf/shell/key-bindings.bash" ]]; then
-  source "/usr/local/opt/fzf/shell/key-bindings.bash"
-fi
+# Source fzf config which includes fuzzy completion and key-bindings.
+#
+# Do NOT edit this line! The installer can recognize the presence of this line
+# and avoid duplication.
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # Automatic history expansion (`!!`) when inserting a space.
 #

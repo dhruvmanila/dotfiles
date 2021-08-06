@@ -2,7 +2,6 @@
 # shellcheck disable=SC1090,SC1091
 # Bash completions
 BREW_PREFIX="$(brew --prefix)"
-FZF_COMPLETION_PATH="/usr/local/opt/fzf/shell/completion.bash"
 
 # Add tab completion for many Bash commands
 if which brew &> /dev/null && [[ -r "${BREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
@@ -18,12 +17,8 @@ ___git_complete g __git_main
 complete -o default -o nospace -F _docker_compose dc
 complete -F __youtube_dl yt
 
-# Fzf auto-complete
-if [[ -r "${FZF_COMPLETION_PATH}" ]]; then
-  source "${FZF_COMPLETION_PATH}"
-fi
 
 # Kitty completions
 source <(kitty + complete setup bash)
 
-unset BREW_PREFIX FZF_COMPLETION_PATH
+unset BREW_PREFIX
