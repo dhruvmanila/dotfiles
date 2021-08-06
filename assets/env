@@ -89,13 +89,14 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 export EDITOR='nvim'
 export VISUAL="$EDITOR"
 
+# Sane history defaults: https://www.soberkoder.com/unlimited-bash-history/
+#
 # Default bash history file
 export HISTFILE="${HOME}/.bash_history"
-
-# Increase Bash history size.
+# Increase Bash history size. For unlimited history, set this to -1.
 export HISTSIZE='99999'
 export HISTFILESIZE="${HISTSIZE}"
-
+export HISTTIMEFORMAT="[%F %T] "
 # Omit duplicates and commands that begin with a space from history.
 export HISTCONTROL='ignoreboth'
 

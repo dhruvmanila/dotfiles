@@ -4,11 +4,12 @@ alias python="python3"
 alias g="git"
 alias p="pyenv"
 alias dc="docker-compose"
+alias yt="youtube-dl"
 
 # nnn (to reset less)
 alias nnn='LESS=-R nnn'
 
-# Brew installed neovim (HEAD version)
+# Neovim
 alias v="nvim"
 alias vi="nvim"
 
@@ -19,11 +20,14 @@ alias dvr='cd ${HOME}/contributing/neovim && VIMRUNTIME=${HOME}/neovim/share/nvi
 # Fix ownership in /usr/local/ directories
 alias fixlocal='cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var Frameworks'
 
-alias yt="youtube-dl"
-
-# Easy activate/deactivate virtual environments ('p' prefix for Python)
-# alias pva='pyenv activate'
-# alias pvd='pyenv deactivate'
+# Opens the editor with vertical splits, each containing the output from the
+# below substitutions.
+#
+# 1. Names and values of shell variables
+# 2. Shell option settings (set/unset)
+# 3. Readline variables
+# 4. Readline keybindings
+alias options='${EDITOR} -O <(set -o) <(shopt) <(bind -v) <(bind -p)'
 
 # Easier navigation
 alias ..="cd .."
@@ -37,9 +41,6 @@ alias reload='exec ${SHELL} -l'
 
 # Print each PATH entry on a separate line
 alias path='echo -e ${PATH//:/\\n}'
-
-# URL-encode strings
-alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 
 # Show/hide hidden files in Finder
 alias showhidden="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
