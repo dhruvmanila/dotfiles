@@ -1,53 +1,83 @@
 #!/usr/bin/env bash
 # vim: set ft=sh:
 
+# Source: https://unix.stackexchange.com/a/26059/289772
+#
+#   > You don't need export if the variable is already in the environment: any
+#   > change of the value of the variable is reflected in the environment.¹ PATH
+#   > is pretty much always in the environment; all unix systems set it very early
+#   > on (usually in the very first process, in fact).
+
 # After all the headaches, I've decided to contruct the $PATH variable myself.
 # Let's see how far we can go :)
 
-# Start PATH from here
+# The goal of this function is to avoid duplication in the PATH environment
+# variable. By default, it will prepend to PATH but by passing "after" as the
+# second argument, it will append to PATH.
+#
+# $1 (string): full path to be added
+# $2 (string): which end of PATH to add to (use "after" to append)
+pathmunge() {
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *)
+      if [ "$2" = "after" ]; then
+        PATH=$PATH:$1
+      else
+        PATH=$1:$PATH
+      fi
+      ;;
+  esac
+}
+
+# To get the default system PATH which is set by `path_helper` script, run the
+# following command from `bash_profile`:
+#
+#   /usr/libexec/path_helper -s
+#
+# Some packages may add a file in /etc/paths.d which contains the path to be
+# added to the PATH variable.
 PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
-# Setting PATH for useful scripts
-PATH="${PATH}:${HOME}/dotfiles/bin"
+# Brew installed packages which are not symlinked into /usr/local because a
+# similar software is already provided by the system.
+#
+# In other words, these are keg-only and if we want to use the binaries from
+# these packages, their bin directory needs to be added first in the PATH.
+pathmunge "$(brew --prefix)/opt/llvm/bin"
+pathmunge "$(brew --prefix)/opt/sqlite/bin"
 
-# Setting PATH for pipx
-PATH="${PATH}:${HOME}/.local/bin"
+# https://pypa.github.io/pipx/installation/
+#
+#   > The default binary location for pipx-installed apps is `~/.local/bin`.
+#   > This can be overridden with the environment variable `PIPX_BIN_DIR`.
+#   >
+#   > pipx's default virtual environment location is `~/.local/pipx`.
+#   > This can be overridden with the environment variable `PIPX_HOME`.
+#
+# This will also be used to store custom scripts available in `dotfiles/bin`
+# directory.
+pathmunge "${HOME}/.local/bin"
 
-# Setting PATH for tcl-tk
-PATH="/usr/local/opt/tcl-tk/bin:${PATH}"
-
-# Setting PATH for go
+# https://github.com/golang/go/wiki/SettingGOPATH#bash
 export GOPATH="${HOME}/go"
-PATH="${PATH}:${GOPATH}/bin"
+pathmunge "${GOPATH}/bin"
 
-# Setting PATH for rust
-# export RUSTUP_HOME="${HOME}/.rustup"
+# https://www.rust-lang.org/tools/install
 export CARGO_HOME="${HOME}/.cargo"
-PATH="${PATH}:${CARGO_HOME}/bin"
+pathmunge "${CARGO_HOME}/bin"
 
-# Setting PATH for BasicTex
-PATH="/Library/TeX/texbin:${PATH}"
+# The path for basictex is set from `/etc/paths.d/TeX` file, but as we are
+# constructing the PATH on our own, we need to add it here.
+pathmunge "/Library/TeX/texbin" after
 
-# Neovim nightly
-PATH="${HOME}/neovim/bin:${PATH}"
+# Local build of Neovim nightly
+pathmunge "${HOME}/neovim/bin"
 
-# For llvm family
-PATH="/usr/local/opt/llvm/bin:$PATH"
-
-# Brew installed sqlite3
-PATH="/usr/local/opt/sqlite/bin:$PATH"
-
-export PATH
-
-# Defaults
-export XDG_CONFIG_HOME="${HOME}/.config"
-export XDG_CACHE_HOME="${HOME}/.cache"
+unset pathmunge
 
 # For docker-compose (internetarchive/openlibrary)
-export COMPOSE_FILE="docker-compose.yml:docker-compose.override.yml:docker-compose.infogami-local.yml"
-
-# Disale default conda base getting activated by default
-export CONDA_AUTO_ACTIVATE_BASE=false
+# export COMPOSE_FILE="docker-compose.yml:docker-compose.override.yml:docker-compose.infogami-local.yml"
 
 # Disable pyenv virtualenv prompt
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
@@ -185,20 +215,7 @@ export FZF_CTRL_T_OPTS="
   --prompt='Files ❯ '
   --preview 'bat --color=always --line-range :300 {}'"
 
-# Alt-c on Mac is <Esc c> which is pressing c after pressing the escape key
-# You can change it in settings > profile > keys > option > Esc+
-# I prefer not to change it as my Capslock is Control and escape
 export FZF_ALT_C_COMMAND='fd --type d . --hidden --exclude .git'
 export FZF_ALT_C_OPTS="
   --prompt='CD ❯ '
   --preview 'tree -C {} | head -100'"
-
-# From Homebrew:
-# ruby-build installs a non-Homebrew OpenSSL for each Ruby version installed
-# and these are never upgraded.
-#
-# Note: this may interfere with building old versions of Ruby (e.g <2.4) that use
-# OpenSSL <1.1.
-openssl_path=$(brew --prefix openssl@1.1)
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$openssl_path"
-unset openssl_path
