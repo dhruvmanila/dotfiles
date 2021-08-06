@@ -55,15 +55,29 @@ export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 # Hide the “default interactive shell is now zsh” warning on macOS.
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
-# Make vim the default editor.
+# Make Neovim the default editor.
 export EDITOR='nvim'
 export VISUAL="$EDITOR"
+
+# Default bash history file
+export HISTFILE="${HOME}/.bash_history"
 
 # Increase Bash history size.
 export HISTSIZE='99999'
 export HISTFILESIZE="${HISTSIZE}"
+
 # Omit duplicates and commands that begin with a space from history.
 export HISTCONTROL='ignoreboth'
+
+# Merge the history of all terminals and make it available for every terminal.
+#
+# -a: append history lines from this session to the history file
+# -c: clear the history list by deleting all the entries
+# -r: read the history file and append the contents to the history list
+#
+# 'history list': history lines entered since the beginning of the current
+# bash session (kind of temporary buffer)
+PROMPT_COMMAND="history -a; history -c; history -r; ${PROMPT_COMMAND}"
 
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8'
