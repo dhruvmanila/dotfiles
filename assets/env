@@ -1,6 +1,44 @@
 #!/usr/bin/env bash
 # vim: set ft=sh:
 
+# After all the headaches, I've decided to contruct the $PATH variable myself.
+# Let's see how far we can go :)
+
+# Start PATH from here
+PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+# Setting PATH for useful scripts
+PATH="${PATH}:${HOME}/dotfiles/bin"
+
+# Setting PATH for pipx
+PATH="${PATH}:${HOME}/.local/bin"
+
+# Setting PATH for tcl-tk
+PATH="/usr/local/opt/tcl-tk/bin:${PATH}"
+
+# Setting PATH for go
+export GOPATH="${HOME}/go"
+PATH="${PATH}:${GOPATH}/bin"
+
+# Setting PATH for rust
+# export RUSTUP_HOME="${HOME}/.rustup"
+export CARGO_HOME="${HOME}/.cargo"
+PATH="${PATH}:${CARGO_HOME}/bin"
+
+# Setting PATH for BasicTex
+PATH="/Library/TeX/texbin:${PATH}"
+
+# Neovim nightly
+PATH="${HOME}/neovim/bin:${PATH}"
+
+# For llvm family
+PATH="/usr/local/opt/llvm/bin:$PATH"
+
+# Brew installed sqlite3
+PATH="/usr/local/opt/sqlite/bin:$PATH"
+
+export PATH
+
 # Defaults
 export XDG_CONFIG_HOME="${HOME}/.config"
 export XDG_CACHE_HOME="${HOME}/.cache"
@@ -53,7 +91,7 @@ export LC_ALL='en_US.UTF-8'
 export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
 export LESS_TERMCAP_md=$'\e[1;36m'     # begin blink
 export LESS_TERMCAP_me=$'\e[0m'        # reset bold/blink
-export LESS_TERMCAP_so=$'\e[01;33m'    # begin reverse video
+export LESS_TERMCAP_so=$'\e[1;33m'     # begin reverse video
 export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
 export LESS_TERMCAP_us=$'\e[1;32m'     # begin underline
 export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
@@ -92,13 +130,12 @@ export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
 # -U : show user and group names in status bar
 export NNN_OPTS="dDeHuU"
 export NNN_FIFO=/tmp/nnn.fifo
-# export NNN_TRASH=1
 
 # nnn plugins
 # - To run a plugin, press ; followed by the key or Alt+key
 # - To skip directory refresh after running a plugin, prefix with -
 # - To assign keys to arbitrary non-background non-shell-interpreted cli
-#   commands and invoke like plugins, add _ (underscore) before the command.
+#   commands and invoke like plugins, add ! (bang) before the command.
 #
 # shellcheck disable=SC2016 # (we don't want expansion for $nnn)
 NNN_SHELL_PLUGINS='l:-!git log;x:!chmod +x $nnn'

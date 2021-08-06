@@ -11,8 +11,7 @@ function load_dotfiles() {
   local file
   local dotfiles_directory="${HOME}/dotfiles"
   local -a dotfiles=(
-    "assets/paths"
-    "assets/exports"
+    "assets/env"
     "assets/aliases"
     "assets/functions"
     "bash/bash_prompt"
