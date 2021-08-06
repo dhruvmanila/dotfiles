@@ -9,7 +9,6 @@ function load_dotfiles() {
     "assets/exports"
     "assets/aliases"
     "assets/functions"
-    "bash/bash_completions"
   )
 
   for file in "${dotfiles[@]}"; do
@@ -26,7 +25,6 @@ unset load_dotfiles
 if command -v pyenv &> /dev/null; then
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
-  complete -o nospace -F _pyenv p
 fi
 
 # Commenting it out as this slows down the prompt by injecting the function
@@ -44,6 +42,39 @@ fi
 # Do NOT edit this line! The installer can recognize the presence of this line
 # and avoid duplication.
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Completions
+
+# Install programmable completion functions for the most common Unix commands.
+# This requires the 'bash-completion@v2' package.
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && source "/usr/local/etc/profile.d/bash_completion.sh"
+
+# From `git-completion.bash`:
+#
+#   > If you have a command that is not part of git, but you would still
+#   > like completion, you can use __git_complete:
+#
+# Function signature:
+# 1: command or alias
+# 2: function to call (e.g. `git`, `gitk`, `git_fetch`)
+__git_complete g git
+
+# We can use `complete | grep <command>` to find the options and functions
+# used to define completion for the original command and use the same to for
+# our alias completion.
+complete -F _docker_compose dc
+complete -F __youtube_dl yt
+complete -F _pyenv p
+
+# Heroku autocomplete (this takes 1-2 seconds of the startup time)
+# if command -v heroku &> /dev/null; then
+#   source <(heroku autocomplete:script bash)
+# fi
+
+# Kitty completions
+if command -v kitty &> /dev/null; then
+  source <(kitty + complete setup bash)
+fi
 
 # Automatic history expansion (`!!`) when inserting a space.
 #
