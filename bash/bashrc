@@ -7,25 +7,14 @@ case $- in
   *) return ;;
 esac
 
-function load_dotfiles() {
-  local file
-  local dotfiles_directory="${HOME}/dotfiles"
-  local -a dotfiles=(
-    "assets/env"
-    "assets/aliases"
-    "assets/functions"
-    "bash/bash_prompt"
-  )
-
-  for file in "${dotfiles[@]}"; do
-    if [[ -r "${dotfiles_directory}/${file}" ]]; then
-      source "${dotfiles_directory}/${file}"
-    fi
-  done
-}
-
-load_dotfiles
-unset load_dotfiles
+# Source environment variables, aliases, functions and bash prompt.
+#
+# The assets file are kept so that zsh may source it as well.
+for file in "assets/env" "assets/aliases" "assets/functions" "bash/bash_prompt"; do
+  if [ -f "${HOME}/dotfiles/${file}" ]; then
+    source "${HOME}/dotfiles/${file}"
+  fi
+done
 
 if command -v pyenv &> /dev/null; then
   eval "$(pyenv init --path)"
@@ -37,10 +26,6 @@ fi
 # if command -v pyenv-virtualenv-init &> /dev/null; then
 #   eval "$(pyenv virtualenv-init -)"
 # fi
-
-if command -v rbenv &> /dev/null; then
-  eval "$(rbenv init -)"
-fi
 
 # Source fzf config which includes fuzzy completion and key-bindings.
 #
