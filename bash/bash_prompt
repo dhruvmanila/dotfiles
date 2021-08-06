@@ -133,7 +133,12 @@ function build_prompt() {
 
 }
 
+# Include previous values to maintain Apple Terminal support (window title
+# path and sessions). From /etc/bashrc_Apple_Terminal:
+#
+#   > If you customize PROMPT_COMMAND be sure to include the previous value. e.g.,
+#   >
+#   >   PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }your_code_here"
+#
 # Set the various prompt commands (PS1, PS2, PS4)
-# Include previous values to maintain Apple Terminal support (window title path and sessions)
-# This is explained in /etc/bashrc_Apple_Terminal
-PROMPT_COMMAND="build_prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+PROMPT_COMMAND="build_prompt${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
