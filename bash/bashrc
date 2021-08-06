@@ -1,19 +1,25 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1090,SC1091
+
+# If not running interactively, don't do anything.
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
 
 function load_dotfiles() {
   local file
   local dotfiles_directory="${HOME}/dotfiles"
   local -a dotfiles=(
     "assets/paths"
-    "bash/bash_prompt"
     "assets/exports"
     "assets/aliases"
     "assets/functions"
+    "bash/bash_prompt"
   )
 
   for file in "${dotfiles[@]}"; do
     if [[ -r "${dotfiles_directory}/${file}" ]]; then
-      # shellcheck source=/dev/null
       source "${dotfiles_directory}/${file}"
     fi
   done
