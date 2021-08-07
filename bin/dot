@@ -466,8 +466,17 @@ function link() { # {{{
 }
 # }}}
 function setup_symlink() { # {{{
-  # copy hushlogin as we are not going to be updating it
-  cp "${DOTFILES_DIRECTORY}/assets/hushlogin" "${HOME}/.hushlogin"
+  # From `man login`:
+  #
+  #   > Immediately after logging a user in, login displays the system copyright
+  #   > notice, the date and time the user last logged in, the message of the day
+  #   > as well as other information. If the file .hushlogin exists in the user's
+  #   > home directory, all of these messages are suppressed.
+  #
+  # Create a hushlogin file if not found.
+  if [[ ! -f "${HOME}/.hushlogin" ]]; then
+    touch ~/.hushlogin
+  fi
   # Create the necessary symbolic links between the `dotfiles` and `HOME`
   # directory. The `bashrc` sources other files directly from the
   # `dotfiles` repository.
