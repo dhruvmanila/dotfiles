@@ -107,6 +107,36 @@
                                 "type": "basic"
                             }
                         ]
+                    },
+                    {
+                        "description": "Change Control+i to F6 in Vim for Terminal and iTerm2",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "type": "frontmost_application_if",
+                                        "bundle_identifiers": [
+                                            "^com\\.apple\\.Terminal$",
+                                            "^com\\.googlecode\\.iterm2$"
+                                        ]
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "i",
+                                    "modifiers": {
+                                        "mandatory": [
+                                            "control"
+                                        ]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "f6"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
                     }
                 ]
             },
@@ -259,7 +289,7 @@
                     },
                     "to": [
                         {
-                            "apple_vendor_top_case_key_code": "illumination_down"
+                            "consumer_key_code": "dictation"
                         }
                     ]
                 },
@@ -269,7 +299,7 @@
                     },
                     "to": [
                         {
-                            "apple_vendor_top_case_key_code": "illumination_up"
+                            "key_code": "f6"
                         }
                     ]
                 },
@@ -346,12 +376,5 @@
                 "mouse_key_xy_scale": 100
             }
         }
-    ],
-    "selected": true,
-    "simple_modifications": [],
-    "virtual_hid_keyboard": {
-        "country_code": 0,
-        "indicate_sticky_modifier_keys_state": true,
-        "mouse_key_xy_scale": 100
-    }
+    ]
 }

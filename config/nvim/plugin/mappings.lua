@@ -21,6 +21,19 @@ nnoremap("<leader>w", ":update<CR>", { silent = true })
 nnoremap("<leader>q", ":x<CR>", { silent = true })
 nnoremap("Q", "<Cmd>xall<CR>")
 
+-- In the terminal, `<Tab>` and `<C-i>` is seen as the same thing by Vim. To
+-- avoid collision between the two keys, we will map any unused key (`<F6>`)
+-- to `<C-i>` and program the terminal to send `<F6>` on `<C-i>`.
+--
+-- This will allow us to use `<Tab>` for toggling folds.
+--
+-- For kitty, it is configured in `~/config/kitty/kitty.conf`.
+-- For Terminal and iTerm2, it is configured via Karabiner-elements.
+nnoremap("<F6>", "<C-i>")
+
+-- Toggle fold at current position.
+nnoremap("<Tab>", "za")
+
 -- Yank from current cursor position to the end of the line. Make it consistent
 -- with the behavior of 'C', 'D'
 nnoremap("Y", "y$")
