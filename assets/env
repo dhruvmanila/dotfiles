@@ -10,18 +10,55 @@
 
 # PATH {{{
 
-# After all the headaches, I've decided to contruct the $PATH variable myself.
-# Let's see how far we can go :)
-
 pathmunge() { # {{{
-  # The goal of this function is to avoid duplication in the PATH environment
-  # variable. By default, it will prepend to PATH but by passing "after" as the
-  # second argument, it will append to PATH.
+  # The goal of this function is to maintain order and avoid duplication in the
+  # PATH environment variable. By default, it will prepend to PATH but by
+  # passing "after" as the second argument, it will append to PATH.
+  #
+  # If the given path is present in PATH, then we will remove it and continue
+  # the execution of appending/prepending to PATH.
   #
   # $1 (string): full path to be added
   # $2 (string): which end of PATH to add to (use "after" to append)
   case ":$PATH:" in
-    *":$1:"*) ;;
+    # Why the colons? {{{
+    # We're adding colons on each side to normalize the PATH variable. This means
+    # each path in the variable will have colons on both sides including the
+    # first and last path.
+    #
+    #    /usr/local/bin:/usr/bin:/bin => :/usr/local/bin:/usr/bin:/bin:
+    #
+    # This will allow us to check if the given path is present in the PATH
+    # variable.
+    # }}}
+    # Why can't we just check "$PATH" with *"$1"* ? {{{
+    #
+    # If the given path is a substring in another path, but is actually not
+    # present in PATH, it will give us false-postive.
+    #
+    #   /usr/local/bin:/usr/bin
+    #             ^--^     ^--^
+    #
+    # `/bin` is a separate path present in PATH but is also a substring in other
+    # path values.
+    # }}}
+    *":$1:"*)
+      readarray -t -d ':' paths <<< "$PATH"
+      #          │  │
+      #          │  └ delimiter used to terminate each input line
+      #          └ remove trailing delimiter from each line read
+      local cleaned_path=()
+      for path in "${paths[@]}"; do
+        if [[ "$path" != "$1" ]]; then
+          cleaned_path+=("$path")
+        fi
+      done
+      # `${name[*]}` expands to a single word with the value of each array member
+      # separated by the first character of the IFS special variable.
+      local IFS=':'
+      PATH=${cleaned_path[*]}
+      ;&
+      #└ continue the execution with the list associated with the next set of patterns.
     *)
       if [ "$2" = "after" ]; then
         PATH=$PATH:$1
@@ -32,15 +69,6 @@ pathmunge() { # {{{
   esac
 }
 # }}}
-
-# To get the default system PATH which is set by `path_helper` script, run the
-# following command from `bash_profile`:
-#
-#   /usr/libexec/path_helper -s
-#
-# Some packages may add a file in /etc/paths.d which contains the path to be
-# added to the PATH variable.
-PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # Brew installed packages which are not symlinked into /usr/local because a
 # similar software is already provided by the system.
@@ -70,12 +98,20 @@ pathmunge "${GOPATH}/bin"
 export CARGO_HOME="${HOME}/.cargo"
 pathmunge "${CARGO_HOME}/bin"
 
-# The path for basictex is set from `/etc/paths.d/TeX` file, but as we are
-# constructing the PATH on our own, we need to add it here.
-pathmunge "/Library/TeX/texbin" after
-
 # Local build of Neovim nightly
 pathmunge "${HOME}/neovim/bin"
+
+# Add the pyenv shims directory to PATH manually. Why? {{{
+#
+# The output of `pyenv init --path` is:
+#
+#   export PATH="/Users/dhruvmanilawala/.pyenv/shims:${PATH}"
+#
+# As you can see, pyenv adds the shims directory at the start of PATH without
+# checking if it is already present. So, if we reload the shell or enter a
+# subshell, there will be duplicate entries.
+# }}}
+pathmunge "$(pyenv root)/shims"
 
 unset pathmunge
 
