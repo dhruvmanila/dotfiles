@@ -172,19 +172,26 @@ local function do_search()
     :start()
 end
 
--- Define the default action of either searching or opening the URL depending
+-- Define the default action of either searching or opening the URL(s) depending
 -- on the current mode.
 ---@param prompt_bufnr number
 local function search_or_select(prompt_bufnr)
   if state.mode == mode.QUERY then
     do_search()
   else
-    local selection = action_state.get_selected_entry()
-    if not selection then
-      return
+    local picker = action_state.get_current_picker(prompt_bufnr)
+    local selections = picker:get_multi_selection()
+    if vim.tbl_isempty(selections) then
+      table.insert(selections, action_state.get_selected_entry())
     end
+    local urls = table.concat(
+      vim.tbl_map(function(selection)
+        return string.format('"%s"', selection.value)
+      end, selections),
+      " "
+    )
     actions.close(prompt_bufnr)
-    os.execute(string.format('%s "%s"', state.open_command, selection.value))
+    os.execute(string.format("%s %s", state.open_command, urls))
   end
 end
 
