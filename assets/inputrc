@@ -1,68 +1,134 @@
 #!/usr/bin/env bash
-# Readline behaviors. Refer to 'man bash' / "Readline Variables" section.
 
+# Readline behaviors. Refer to 'man bash' -> "Readline" section.
+#
+# When a program using the readline library starts up, this file is read, and
+# the variables and key bindings are set.
+
+# Variables {{{
+
+# Never ring the bell (useful for ambiguous completions)
 set bell-style none
-set blink-matching-paren on
 
-# Disable Bash 5.1 highlighted paste feature.
-set enable-bracketed-paste off
+# When we type a closing parentheses, don't make the cursor jump to the opening one.
+set blink-matching-paren off
 
-# Completion
+# Display the common prefix of the set of possible completions using a different
+# color. The color is taken from LS_COLORS.
 set colored-completion-prefix on
+
+# Complete filenames case insensitively when hitting Tab.
 set completion-ignore-case on
-set show-all-if-ambiguous on
-set match-hidden-files off
-set page-completions off
-set completion-query-items 200
 
-# Be more intelligent when autocompleting by also looking at the text after
-# the cursor. For example, when the current line is "cd ~/src/mozil", and
-# the cursor is on the "z", pressing Tab will not autocomplete it to "cd
-# ~/src/mozillail", but to "cd ~/src/mozilla". (This is supported by the
-# Readline used by Bash 4.)
-set skip-completed-text on
+# If there are more than 300 possible completions for a word, ask to show them all.
+# TODO: This probably should not be necessary when I switched to zsh.
+set completion-query-items 300
 
-set visible-stats on
-set mark-symlinked-directories on
-set menu-complete-display-prefix on
+# Don't echo a character corresponding to a signal generated from the keyboard.
+# e.g.: ^C
+set echo-control-characters off
 
-# Vi mode
+# Begin with a set of key bindings similar to Vim.
 set editing-mode vi
 
-# Show vim mode in the prompt
+# Prevent multi-line text, pasted in the shell, from being run automatically.
+#
+#   > When you are in bracketed paste mode and you paste into your terminal the
+#   > content will be wrapped by the sequences \e[200~ and \e[201~.
+#
+# Source: https://cirw.in/blog/bracketed-paste
+set enable-bracketed-paste on
+
+# Expand tilde in a filepath when we hit Tab.
+set expand-tilde on
+
+# Menu completion displays the common prefix of the list of possible completions
+# (which may be empty) before cycling through the list.
+set menu-complete-display-prefix on
+
+# Turn off pager for completions.
+set page-completions off
+
+# Print all possible matches when we press Tab for the first time.
+set show-all-if-ambiguous on
+
+# Add a string to the beginning of the prompt indicating the editing mode.
+#
+# The string is displayed immediately before the last line of the primary prompt.
+# So, if the prompt spans two lines, it will be displayed as the first character
+# on the second line.
 set show-mode-in-prompt on
+
+# Be more intelligent when autocompleting by also looking at the text after
+# the cursor.
+#
+# For example,
+#
+#   $ cd ~/dotfiles/conf
+#                    ^
+#
+# When the cursor is on "o", pressing Tab will not autocomplete it to
+# "cd ~/dotfiles/confignf", but to "cd ~/dotfiles/config".
+set skip-completed-text on
+
+# Display a string to show the current Vim mode.
+# ':' - command mode
+# '+' - insert mode
 set vi-cmd-mode-string "\1\e[1;37m\2: \1\e[0m\2"
 set vi-ins-mode-string "\1\e[1;37m\2+ \1\e[0m\2"
 
-# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
-set input-meta on
-set output-meta on
-set convert-meta off
+# In a listing, show the type of the matches by appending a trailing character.
+set visible-stats on
 
-# Keybindings
-# NOTE: All keybindings should come at the end of the file
+# }}}
+# Key Bindings {{{
+#
+# NOTE: The following keybindings affect all the interpreters using readline.
+# Use `~/.bashrc` to define keybindings only for the shell.
+
 set keymap vi-insert
+# {{{
+
+# Bind `C-w` to delete a word (by default it deletes a WORD) {{{
+#
+# We prefer word as it's more granular and allows to delete only a node in a
+# long path, instead of the whole path (e.g., ls a/b/c/d).
+#
+# Before defining the binding, we need to unset a terminal option, otherwise it
+# will be impossible to unbind the function `unix-word-rubout` and replace it
+# with `backward-kill-word`.
+#
+# Source: http://shallowsky.com/blog/linux/bash-word-erase.html
+# }}}
+set bind-tty-special-chars off
+"\C-w": backward-kill-word
 
 # Use the text that has already been typed as the prefix for searching through
 # commands (i.e. more intelligent Up/Down behavior)
 "\C-k": history-search-backward
 "\C-j": history-search-forward
+
 "\C-l": clear-screen
 
-# Make Tab cycle between possible completions
-# Cycle forward: Tab
-# Cycle backward: Shift-Tab
+# Tab / S-Tab: cycle through matches
 TAB: menu-complete
+# The keyname `S-TAB` isn't recognized, but on my machine `S-TAB` produces the
+# keycodes `^[[Z` which is `ESC [ Z`. We can use the keycodes instead.
 "\e[Z": menu-complete-backward
-
-"\C-b": beginning-of-line
-"\C-e": end-of-line
 
 # Expand aliases with Ctrl-space
 Control-Space: alias-expand-line
 
-# Map the following keys in vi-command
+# }}}
 set keymap vi-command
+# {{{
 
+# Bindings similar to custom Vim mappings.
 "H": beginning-of-line
 "L": end-of-line
+
+# }}}
+
+# }}}
+
+# vim: foldmethod=marker
