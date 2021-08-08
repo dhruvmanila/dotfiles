@@ -8,16 +8,18 @@
 #   > is pretty much always in the environment; all unix systems set it very early
 #   > on (usually in the very first process, in fact).
 
+# PATH {{{
+
 # After all the headaches, I've decided to contruct the $PATH variable myself.
 # Let's see how far we can go :)
 
-# The goal of this function is to avoid duplication in the PATH environment
-# variable. By default, it will prepend to PATH but by passing "after" as the
-# second argument, it will append to PATH.
-#
-# $1 (string): full path to be added
-# $2 (string): which end of PATH to add to (use "after" to append)
-pathmunge() {
+pathmunge() { # {{{
+  # The goal of this function is to avoid duplication in the PATH environment
+  # variable. By default, it will prepend to PATH but by passing "after" as the
+  # second argument, it will append to PATH.
+  #
+  # $1 (string): full path to be added
+  # $2 (string): which end of PATH to add to (use "after" to append)
   case ":$PATH:" in
     *":$1:"*) ;;
     *)
@@ -29,6 +31,7 @@ pathmunge() {
       ;;
   esac
 }
+# }}}
 
 # To get the default system PATH which is set by `path_helper` script, run the
 # following command from `bash_profile`:
@@ -76,21 +79,11 @@ pathmunge "${HOME}/neovim/bin"
 
 unset pathmunge
 
-# For docker-compose (internetarchive/openlibrary)
-# export COMPOSE_FILE="docker-compose.yml:docker-compose.override.yml:docker-compose.infogami-local.yml"
-
-# Disable pyenv virtualenv prompt
-export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-
-# Hide the “default interactive shell is now zsh” warning on macOS.
-export BASH_SILENCE_DEPRECATION_WARNING=1
-
-# Make Neovim the default editor.
-export EDITOR='nvim'
-export VISUAL="$EDITOR"
-
-# Sane history defaults: https://www.soberkoder.com/unlimited-bash-history/
+# }}}
+# HISTORY {{{
 #
+# Sane history defaults: https://www.soberkoder.com/unlimited-bash-history/
+
 # Default bash history file
 export HISTFILE="${HOME}/.bash_history"
 # Increase Bash history size. For unlimited history, set this to -1.
@@ -110,9 +103,8 @@ export HISTCONTROL='ignoreboth'
 # bash session (kind of temporary buffer)
 PROMPT_COMMAND="history -a; history -c; history -r; ${PROMPT_COMMAND}"
 
-# Prefer US English and use UTF-8.
-export LANG='en_US.UTF-8'
-export LC_ALL='en_US.UTF-8'
+# }}}
+# LESS {{{
 
 # Highlight section titles in manual pages.
 # Colors for less
@@ -150,20 +142,17 @@ export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
 # J - Show status column at the left edge of the screen
 export LESS='-X -F -R -i -J -W --tabs=4 --window=4'
 
-# Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
-export PYTHONIOENCODING='UTF-8'
-
-# Avoid issues with `gpg` as installed via Homebrew.
-# https://stackoverflow.com/a/42265848/96656
-TTY=$(tty)
-export GPG_TTY=$TTY
-unset TTY
+# }}}
+# HOMEBREW {{{
 
 # Opt-out of homebrew's analytics
 export HOMEBREW_NO_ANALYTICS=1
 # Do not create the lock file on `brew bundle`
 export HOMEBREW_BUNDLE_NO_LOCK=1
 export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
+
+# }}}
+# NNN {{{
 
 # nnn options
 # -d : detail mode
@@ -187,6 +176,9 @@ NNN_SHELL_PLUGINS='l:-!git log;x:!chmod +x $nnn'
 NNN_PLUGINS='p:preview-tui-ext;c:fzcd;o:fzopen'
 export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
 unset NNN_SHELL_PLUGINS NNN_PLUGINS
+
+# }}}
+# FZF {{{
 
 # Fzf configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
@@ -220,3 +212,36 @@ export FZF_ALT_C_COMMAND='fd --type d . --hidden --exclude .git'
 export FZF_ALT_C_OPTS="
   --prompt='CD ❯ '
   --preview 'tree -C {} | head -100'"
+
+# }}}
+# MISC {{{
+
+# For docker-compose (internetarchive/openlibrary)
+# export COMPOSE_FILE="docker-compose.yml:docker-compose.override.yml:docker-compose.infogami-local.yml"
+
+# Disable pyenv virtualenv prompt
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
+# Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
+export PYTHONIOENCODING='UTF-8'
+
+# Hide the “default interactive shell is now zsh” warning on macOS.
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# Make Neovim the default editor.
+export EDITOR='nvim'
+export VISUAL="$EDITOR"
+
+# Prefer US English and use UTF-8.
+export LANG='en_US.UTF-8'
+export LC_ALL='en_US.UTF-8'
+
+# Avoid issues with `gpg` as installed via Homebrew.
+# https://stackoverflow.com/a/42265848/96656
+TTY=$(tty)
+export GPG_TTY=$TTY
+unset TTY
+
+# }}}
+
+# vim: foldmethod=marker

@@ -16,28 +16,32 @@ for file in "assets/env" "assets/aliases" "assets/functions" "bash/bash_prompt";
   fi
 done
 
+# pyenv {{{
+
 if command -v pyenv &> /dev/null; then
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
 fi
 
-# Commenting it out as this slows down the prompt by injecting the function
+# Disabling it as this slows down the prompt by injecting the function
 # _pyenv_virtualenv_hook to $PROMPT_COMMAND
+#
 # if command -v pyenv-virtualenv-init &> /dev/null; then
 #   eval "$(pyenv virtualenv-init -)"
 # fi
+
+# }}}
+# Completions {{{
+
+# Install programmable completion functions for the most common Unix commands.
+# This requires the 'bash-completion@v2' package.
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && source "/usr/local/etc/profile.d/bash_completion.sh"
 
 # Source fzf config which includes fuzzy completion and key-bindings.
 #
 # Do NOT edit this line! The installer can recognize the presence of this line
 # and avoid duplication.
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-# Completions
-
-# Install programmable completion functions for the most common Unix commands.
-# This requires the 'bash-completion@v2' package.
-[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && source "/usr/local/etc/profile.d/bash_completion.sh"
 
 # From `git-completion.bash`:
 #
@@ -65,6 +69,8 @@ complete -F _pyenv p
 if command -v kitty &> /dev/null; then
   source <(kitty + complete setup bash)
 fi
+# }}}
+# Key Bindings {{{
 
 # Automatic history expansion (`!!`) when inserting a space.
 #
@@ -72,7 +78,8 @@ fi
 # spaces inside various programs such as python, etc.
 bind '" ": magic-space'
 
-# Shell Options
+# }}}
+# Shell Options {{{
 #
 # Set/unset each option using the '-s' and '-u' flag.
 # For help on each option: `man bash` and search `list.*shopt`
@@ -108,3 +115,7 @@ shopt -s histverify
 
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob
+
+# }}}
+
+# vim: foldmethod=marker

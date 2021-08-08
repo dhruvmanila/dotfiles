@@ -2,24 +2,24 @@
 
 source /usr/local/opt/gitstatus/gitstatus.plugin.sh
 
-# Return the git status to reflect the state of the current git repository.
-# The value is empty if not in a git repository. Forwards all arguments to
-# gitstatus_query.
-#
-# Example value: master ⇣42⇡42 ⇠42⇢42 *42 merge ~42 +42 !42 ?42
-#
-#   master  current branch
-#      ⇣42  local branch is 42 commits behind the remote
-#      ⇡42  local branch is 42 commits ahead of the remote
-#      ⇠42  local branch is 42 commits behind the push remote
-#      ⇢42  local branch is 42 commits ahead of the push remote
-#      *42  42 stashes
-#    merge  merge in progress
-#      ~42  42 merge conflicts
-#      +42  42 staged changes
-#      !42  42 unstaged changes
-#      ?42  42 untracked files
-function gitstatus_prompt_update() {
+function gitstatus_prompt_update() { # {{{
+  # Return the git status to reflect the state of the current git repository.
+  # The value is empty if not in a git repository. Forwards all arguments to
+  # gitstatus_query.
+  #
+  # Example value: master ⇣42⇡42 ⇠42⇢42 *42 merge ~42 +42 !42 ?42
+  #
+  #   master  current branch
+  #      ⇣42  local branch is 42 commits behind the remote
+  #      ⇡42  local branch is 42 commits ahead of the remote
+  #      ⇠42  local branch is 42 commits behind the push remote
+  #      ⇢42  local branch is 42 commits ahead of the push remote
+  #      *42  42 stashes
+  #    merge  merge in progress
+  #      ~42  42 merge conflicts
+  #      +42  42 staged changes
+  #      !42  42 unstaged changes
+  #      ?42  42 untracked files
   gitstatus_query "$@"                  || return 1  # error
   [[ "$VCS_STATUS_RESULT" == ok-sync ]] || return 0  # not a git repo
 
@@ -70,11 +70,12 @@ function gitstatus_prompt_update() {
 
   echo -e "${p}${reset}"
 }
+# }}}
 
 # Start gitstatusd in the background.
 gitstatus_stop && gitstatus_start -s -1 -u -1 -c -1 -d -1
 
-function build_prompt() {
+function build_prompt() { # {{{
   local -i exit="$?"
   local git_prompt
 
@@ -130,8 +131,8 @@ function build_prompt() {
 
   # Debug prompt
   PS4="${white}==> ${reset}"
-
 }
+# }}}
 
 # Include previous values to maintain Apple Terminal support (window title
 # path and sessions). From /etc/bashrc_Apple_Terminal:
@@ -142,3 +143,5 @@ function build_prompt() {
 #
 # Set the various prompt commands (PS1, PS2, PS4)
 PROMPT_COMMAND="build_prompt${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+
+# vim: foldmethod=marker
