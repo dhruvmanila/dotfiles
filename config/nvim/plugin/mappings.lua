@@ -237,12 +237,12 @@ do
     return vim.fn.wildmenumode() == 1
   end
 
-  -- Make <C-k>/<C-j> as smart as <up>/<down>
+  -- Make <C-p>/<C-n> as smart as <up>/<down>
   --
   -- This will either recall older/recent command-line from history, whose
   -- beginning matches the current command-line or move through the wildmenu
   -- completion.
-  cnoremap("<C-k>", function()
+  cnoremap("<C-p>", function()
     if is_wildmenu() then
       return escape "<C-p>"
     end
@@ -250,9 +250,9 @@ do
   end, {
     expr = true,
   })
-  cnoremap("<C-j>", function()
+  cnoremap("<C-n>", function()
     if is_wildmenu() then
-      return escape "<C-j>"
+      return escape "<C-n>"
     end
     return escape "<Down>"
   end, {

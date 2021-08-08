@@ -28,9 +28,6 @@ set completion-query-items 300
 # e.g.: ^C
 set echo-control-characters off
 
-# Begin with a set of key bindings similar to Vim.
-set editing-mode vi
-
 # Prevent multi-line text, pasted in the shell, from being run automatically.
 #
 #   > When you are in bracketed paste mode and you paste into your terminal the
@@ -52,13 +49,6 @@ set page-completions off
 # Print all possible matches when we press Tab for the first time.
 set show-all-if-ambiguous on
 
-# Add a string to the beginning of the prompt indicating the editing mode.
-#
-# The string is displayed immediately before the last line of the primary prompt.
-# So, if the prompt spans two lines, it will be displayed as the first character
-# on the second line.
-set show-mode-in-prompt on
-
 # Be more intelligent when autocompleting by also looking at the text after
 # the cursor.
 #
@@ -71,12 +61,6 @@ set show-mode-in-prompt on
 # "cd ~/dotfiles/confignf", but to "cd ~/dotfiles/config".
 set skip-completed-text on
 
-# Display a string to show the current Vim mode.
-# ':' - command mode
-# '+' - insert mode
-set vi-cmd-mode-string "\1\e[1;37m\2: \1\e[0m\2"
-set vi-ins-mode-string "\1\e[1;37m\2+ \1\e[0m\2"
-
 # In a listing, show the type of the matches by appending a trailing character.
 set visible-stats on
 
@@ -85,9 +69,6 @@ set visible-stats on
 #
 # NOTE: The following keybindings affect all the interpreters using readline.
 # Use `~/.bashrc` to define keybindings only for the shell.
-
-set keymap vi-insert
-# {{{
 
 # Bind `C-w` to delete a word (by default it deletes a WORD) {{{
 #
@@ -105,10 +86,8 @@ set bind-tty-special-chars off
 
 # Use the text that has already been typed as the prefix for searching through
 # commands (i.e. more intelligent Up/Down behavior)
-"\C-k": history-search-backward
-"\C-j": history-search-forward
-
-"\C-l": clear-screen
+"\C-p": history-search-backward
+"\C-n": history-search-forward
 
 # Tab / S-Tab: cycle through matches
 TAB: menu-complete
@@ -116,18 +95,8 @@ TAB: menu-complete
 # keycodes `^[[Z` which is `ESC [ Z`. We can use the keycodes instead.
 "\e[Z": menu-complete-backward
 
-# Expand aliases with Ctrl-space
-Control-Space: alias-expand-line
-
-# }}}
-set keymap vi-command
-# {{{
-
-# Bindings similar to custom Vim mappings.
-"H": beginning-of-line
-"L": end-of-line
-
-# }}}
+# Expand aliases with C-x-space (originally bound to `possible-hostname-completions`)
+"\C-x\C-@": alias-expand-line
 
 # }}}
 
