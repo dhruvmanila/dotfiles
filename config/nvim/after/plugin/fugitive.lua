@@ -5,6 +5,7 @@ local vnoremap = dm.vnoremap
 nnoremap("gs", "<Cmd>Git<CR>")
 nnoremap("g<Space>", ":Git<Space>")
 nnoremap("<leader>gp", "<Cmd>Git push<CR>")
+nnoremap("<leader>gP", "<Cmd>Git push --force-with-lease<CR>")
 
 -- Open current file on GitHub (requires `vim-rhubarb`)
 nnoremap("<leader>gb", "<Cmd>GBrowse<CR>")

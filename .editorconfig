@@ -22,5 +22,5 @@ indent_size = 4
 indent_size = 4
 indent_style = tab
 
-[*/cs50/**.c]
+[*/cs50/**{.c,.html,.css,.js}]
 indent_size = 4
