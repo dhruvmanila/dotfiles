@@ -6,34 +6,14 @@ viw() {
   $EDITOR "$(which "$1")"
 }
 
-# Switch iterm2 profile (does not work in tmux)
-function it2prof() {
-  if [[ $# -ne 1 ]]; then
-    echo "Usage: it2prof <ProfileName>"
-    return 1
-  fi
-  echo -e "\033]50;SetProfile=$1\a"
-}
-
 # Create a new directory and enter it
-function mcd() {
+mcd() {
   mkdir -p "$@" && cd "$_" || return
 }
 
-# Normalize `open` across Linux, macOS, and Windows.
-# This is needed to make the `o` function (see below) cross-platform.
-if [ ! "$(uname -s)" = 'Darwin' ]; then
-  if grep -q Microsoft /proc/version; then
-    # Ubuntu on Windows using the Linux subsystem
-    alias open='explorer.exe'
-  else
-    alias open='xdg-open'
-  fi
-fi
-
 # `o` with no arguments opens the current directory, otherwise opens the given
-# location
-function o() {
+# location.
+o() {
   if [ $# -eq 0 ]; then
     open .
   else
@@ -41,24 +21,9 @@ function o() {
   fi
 }
 
-# To open the python source folder directly using pyc in vscode :)
-function pyc() {
-  path=$(python -c "import os;print(os.__file__.split('os.py')[0])")
-  code "$path"
-}
-
-# https://snarky.ca/why-you-should-use-python-m-pip/
-# Let's convert `pip` to `python -m pip` and add some other functionality to it
-# function pip() {
-#   if [ "$1" != "freeze" ]; then
-#     echo "Current Python interpreter: $(python -V)"
-#     echo -e "$(python -m pip -V)\n"
-#   fi
-#   python -m pip "$@"
-# }
-
 # nnn - Terminal file manager
 n() {
+  # Purpose: Avoid opening
   # Block nesting of nnn in subshells
   if [ -n "$NNNLVL" ] && [ "${NNNLVL:-0}" -ge 1 ]; then
       echo "nnn is already running"
@@ -67,15 +32,12 @@ n() {
 
   # The default behaviour is to cd on quit (nnn checks if NNN_TMPFILE is set)
   # To cd on quit only on ^G, remove the "export" as in:
-  #     NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
+  #
+  #     export NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
+  #     ^----^
+  #
   # NOTE: NNN_TMPFILE is fixed, should not be modified
   local NNN_TMPFILE="${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd"
-
-  # Unmask ^Q (, ^V etc.) (if required, see `stty -a`) to Quit nnn
-  # stty start undef
-  # stty stop undef
-  # stty lwrap undef
-  # stty lnext undef
 
   nnn "$@"
 
