@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # vim: set ft=sh:
 
-# Source: https://unix.stackexchange.com/a/26059/289772
+# NOTE:
 #
 #   > You don't need export if the variable is already in the environment: any
-#   > change of the value of the variable is reflected in the environment.¹ PATH
-#   > is pretty much always in the environment; all unix systems set it very early
-#   > on (usually in the very first process, in fact).
+#   > change of the value of the variable is reflected in the environment. PATH
+#   > is pretty much always in the environment; all unix systems set it very
+#   > early on (usually in the very first process, in fact).
+#
+# Source: https://unix.stackexchange.com/a/26059/289772
 
 # PATH {{{
 
