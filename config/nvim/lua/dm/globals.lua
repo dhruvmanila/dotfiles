@@ -14,6 +14,140 @@ _G.dm = {
 
 local format = string.format
 
+-- If the border key is custom, then return the respective table otherwise
+-- return the string as it is.
+dm.border = setmetatable({
+  edge = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" },
+}, {
+  __index = function(_, key)
+    return key
+  end,
+})
+
+dm.icons = {
+  lsp_kind = {
+    { "", "Text" },
+    { "", "Method" },
+    { "", "Function" },
+    { "", "Constructor" },
+    { "", "Field" },
+    { "", "Variable" },
+    { "", "Class" },
+    { "", "Interface" },
+    { "", "Module" },
+    { "", "Property" },
+    { "", "Unit" },
+    { "", "Value" },
+    { "", "Enum" },
+    { "", "Keyword" },
+    { "", "Snippet" },
+    { "", "Color" },
+    { "", "File" },
+    { "", "Reference" },
+    { "", "Folder" },
+    { "", "EnumMember" },
+    { "", "Constant" },
+    { "", "Struct" },
+    { "", "Event" },
+    { "", "Operator" },
+    { "", "TypeParameter" },
+  },
+  error = "",
+  warning = "",
+  info = "",
+  hint = "",
+}
+
+-- https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals/init.lua
+---@generic T
+---@param v T
+---@return T
+P = function(v)
+  print(vim.inspect(v))
+  return v
+end
+
+-- Clear the 'require' cache for the module name.
+---@param name string
+RELOAD = function(name)
+  for pack, _ in pairs(package.loaded) do
+    if string.find(pack, name, 1, true) then
+      package.loaded[name] = nil
+    end
+  end
+end
+
+-- Reload and require the givem module name.
+---@param name string
+---@return any
+R = function(name)
+  RELOAD(name)
+  return require(name)
+end
+
+-- Dump the contents of the given arguments.
+---@vararg any
+function _G.dump(...)
+  local objects = vim.tbl_map(vim.inspect, { ... })
+  print(table.concat(objects, "\n"))
+end
+
+-- Determine whether the given plugin is currently loaded or not.
+---@param plugin_name string
+---@return boolean
+function _G.plugin_loaded(plugin_name)
+  local plugins = packer_plugins or {}
+  return plugins[plugin_name] and plugins[plugin_name].loaded
+end
+
+do
+  local output = "[timer]%s: %fms"
+  local hrtime = vim.loop.hrtime
+  local start = nil
+
+  -- Simple interface for timing code chunks.
+  _G.timer = {
+    start = function()
+      start = hrtime()
+    end,
+    stop = function(info)
+      print(output:format(info and " " .. info or "", (hrtime() - start) / 1e6))
+      start = nil
+    end,
+  }
+end
+
+do
+  ---@class NotifyOpts
+  ---@field timeout number
+  ---@field title string
+  ---@field icon string
+  ---@field on_open function
+  ---@field on_close function
+
+  local levels = vim.log.levels
+  local title = {
+    [levels.DEBUG] = "Debug",
+    [levels.INFO] = "Information",
+    [levels.WARN] = "Warning",
+    [levels.ERROR] = "Error",
+  }
+
+  -- Override the default `vim.notify` to open a floating window.
+  ---@param msg string|string[]
+  ---@param log_level? number|string
+  ---@param opts? NotifyOpts
+  vim.notify = function(msg, log_level, opts)
+    assert(msg, "'msg' value should be provided")
+    log_level = log_level or 1
+    opts = opts or {}
+    opts.title = opts.title
+      or (type(log_level) == "string" and log_level)
+      or title[log_level]
+    require "notify"(msg, log_level, opts)
+  end
+end
+
 -- Store the given function in the global callbacks table and return its
 -- unique identification string.
 ---@param f function
