@@ -59,12 +59,14 @@ local special_buffer_line = {
   end,
 
   qf = function(ctx)
+    local typ = fn.win_gettype(ctx.winnr)
+    typ = typ == "loclist" and "Location" or "Quickfix"
     local ok, title = pcall(api.nvim_win_get_var, ctx.winnr, "quickfix_title")
     title = ok and title or ""
     if ctx.inactive then
-      return "%1* %l/%L %* %q  " .. title
+      return "%1* %l/%L %* " .. typ .. " List  " .. title
     end
-    return "%1* %l/%L %*%2* %q %* " .. title
+    return "%1* %l/%L %*%2* " .. typ .. " List %* " .. title
   end,
 }
 
@@ -113,7 +115,7 @@ local function filetype(ctx)
   elseif ft == "python" then
     return python_version(ctx)
   end
-  return " " .. ft:gsub("^%l", string.upper) .. " "
+  return " " .. ft .. " "
 end
 
 -- Return the currently active neovim LSP client(s) if any.
