@@ -108,7 +108,6 @@ local function load_plugins()
     { "rhysd/committia.vim" },
     { "rhysd/git-messenger.vim" },
     { "romainl/vim-cool" },
-    { "sainnhe/gruvbox-material" },
     { "tamago324/lir.nvim", keys = "-", config = conf "lir" },
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },

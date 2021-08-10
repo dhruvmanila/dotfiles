@@ -1,33 +1,6 @@
 local fn = vim.fn
 local api = vim.api
 local icons = dm.icons
-local utils = require "dm.utils"
-
-local colors = {
-  active_bg = "#3a3735",
-  inactive_bg = "#32302f",
-  active_fg = "#a89984",
-  inactive_fg = "#7c6f64",
-  yellow = "#e9b143",
-  red = "#f2594b",
-  aqua = "#8bba7f",
-  blue = "#80aa9e",
-}
-
-local highlights = {
-  StatusLine = { guifg = colors.active_fg, guibg = colors.active_bg },
-  StatusLineNC = { guifg = colors.inactive_fg, guibg = colors.inactive_bg },
-
-  -- Basic User highlight group
-  User1 = { guifg = "#282828", guibg = "#7d6f64", gui = "bold" },
-  User2 = { guifg = "#ebdbb2", guibg = "#504945" },
-
-  -- LSP diagnostics group
-  User6 = { guifg = colors.blue, guibg = colors.active_bg },
-  User7 = { guifg = colors.aqua, guibg = colors.active_bg },
-  User8 = { guifg = colors.yellow, guibg = colors.active_bg },
-  User9 = { guifg = colors.red, guibg = colors.active_bg },
-}
 
 local function center(str)
   return "%=" .. str .. "%="
@@ -252,15 +225,6 @@ local function set_python_version()
 end
 
 dm.augroup("dm__statusline", {
-  {
-    events = { "VimEnter", "ColorScheme" },
-    targets = "*",
-    command = function()
-      for hl_name, opts in pairs(highlights) do
-        utils.highlight(hl_name, opts)
-      end
-    end,
-  },
   {
     events = "FileType",
     targets = "python",

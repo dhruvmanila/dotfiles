@@ -25,7 +25,7 @@ function M.code_action_listener()
       if response and not vim.tbl_isempty(response) then
         local line = params.range.start.line
         api.nvim_buf_set_extmark(0, LIGHTBULB_EXTMARK_NS, line, 0, {
-          virt_text = { { "", "YellowSign" } },
+          virt_text = { { "", "Yellow" } },
           virt_text_pos = "overlay",
           hl_mode = "combine",
         })

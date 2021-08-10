@@ -55,3 +55,5 @@ g.loaded_tutor_mode_plugin = 1
 
 -- Globals needs to be loaded before anything else.
 require "dm.globals"
+
+vim.cmd "colorscheme gruvbox"

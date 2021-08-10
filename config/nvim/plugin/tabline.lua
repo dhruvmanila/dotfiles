@@ -1,21 +1,5 @@
 local fn = vim.fn
 local devicons = require "nvim-web-devicons"
-local utils = require "dm.utils"
-
-local M = {}
-
-local highlights = {
-  TabLineSel = { guifg = "#ebdbb2", guibg = "#282828", gui = "bold" },
-  TabLine = { guifg = "#928374", guibg = "#242424" },
-  TabLineFill = { guifg = "#928374", guibg = "#1e1e1e" },
-}
-
----Setting up the highlights
-local function tabline_highlights()
-  for hl_name, opts in pairs(highlights) do
-    utils.highlight(hl_name, opts)
-  end
-end
 
 ---File flags provider.
 ---Supported flags: Readonly, modified.
@@ -91,7 +75,7 @@ local function tabline_label(tabnr, is_active)
   local flags = buf_flags(ctx)
   local icon, icon_hl = ft_icon(ctx)
   icon_hl = is_active and icon_hl or "TabLine"
-  local flag_hl = is_active and "YellowSign" or "TabLine"
+  local flag_hl = is_active and "Yellow" or "TabLine"
   local tab_hl = is_active and "%#TabLineSel#" or "%#TabLine#"
   -- Ref: https://en.wikipedia.org/wiki/Block_Elements
   local sep = is_active and "▌" or " "
@@ -135,15 +119,5 @@ function _G.nvim_tabline()
     .. "%="
 end
 
-dm.augroup("custom_tabline", {
-  {
-    events = { "VimEnter", "ColorScheme" },
-    targets = "*",
-    command = tabline_highlights,
-  },
-})
-
 -- Set the tabline
 vim.o.tabline = "%!v:lua.nvim_tabline()"
-
-return M
