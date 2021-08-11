@@ -430,6 +430,18 @@ link("LirEmptyDirText", "LirSymlink")
 link("TelescopeMatching", "Blue")
 link("TelescopePromptPrefix", "Yellow")
 
+-- rcarriga/nvim-notify
+link("NotifyERROR", "Red")
+link("NotifyERRORTitle", "NotifyERROR")
+link("NotifyWARN", "Yellow")
+link("NotifyWARNTitle", "NotifyWARN")
+link("NotifyINFO", "Blue")
+link("NotifyINFOTitle", "NotifyINFO")
+link("NotifyDEBUG", "Aqua")
+link("NotifyDEBUGTitle", "NotifyDEBUG")
+link("NotifyTRACE", "Grey")
+link("NotifyTRACETitle", "NotifyTRACE")
+
 -- Extended File Types
 -- diff: Used in `git` filetype showing the diff, e.g., fugitive.
 link("diffAdded", "Green")
