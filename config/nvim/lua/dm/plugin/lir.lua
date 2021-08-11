@@ -25,7 +25,7 @@ local function newfile()
   local ctx = lir.get_context()
   local path = Path:new(ctx.dir .. name)
   if path:exists() then
-    vim.notify("[lir]: File already exists", 3)
+    dm.notify("Lir", { "File already exists", tostring(path) }, 3)
     cursor_jump(name)
     return
   end

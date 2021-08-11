@@ -58,11 +58,11 @@ command("BufOnly", function()
     end
   end
   if deleted > 0 then
-    local info = deleted .. " deleted buffer(s)"
+    local info = { deleted .. " deleted buffer(s)" }
     if modified > 0 then
-      info = " " .. modified .. " modified buffer(s)"
+      table.insert(info, modified .. " modified buffer(s)")
     end
-    vim.notify("[BufOnly]: " .. info)
+    dm.notify("BufOnly", info)
   end
 end)
 

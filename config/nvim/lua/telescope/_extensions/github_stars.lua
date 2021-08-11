@@ -42,7 +42,7 @@ local function collect_github_stars()
   ---@param code number
   local function process_complete(job, code)
     if code > 0 then
-      vim.notify("[telescope]: " .. table.concat(job:stderr_result(), "\n"), 4)
+      dm.notify("Telescope", table.concat(job:stderr_result(), "\n"), 4)
       return
     end
     local result = job:result()
@@ -134,7 +134,7 @@ end
 return telescope.register_extension {
   setup = function(_)
     if vim.tbl_isempty(_CachedGithubStars.stars) then
-      vim.notify "[telescope]: Job started to collect GitHub stars"
+      dm.notify("Telescope", "Job started to collect GitHub stars")
       collect_github_stars()
     end
   end,

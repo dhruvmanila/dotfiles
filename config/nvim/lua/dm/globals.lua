@@ -126,7 +126,10 @@ do
   ---@field on_close function
 
   local levels = vim.log.levels
-  local title = {
+
+  -- Default values for the notification title as per the log level.
+  local default_title = {
+    [levels.TRACE] = "Trace",
     [levels.DEBUG] = "Debug",
     [levels.INFO] = "Information",
     [levels.WARN] = "Warning",
@@ -139,12 +142,22 @@ do
   ---@param opts? NotifyOpts
   vim.notify = function(msg, log_level, opts)
     assert(msg, "'msg' value should be provided")
-    log_level = log_level or 1
+    log_level = log_level or levels.INFO
     opts = opts or {}
     opts.title = opts.title
       or (type(log_level) == "string" and log_level)
-      or title[log_level]
+      or default_title[log_level]
     require "notify"(msg, log_level, opts)
+  end
+
+  -- Wrapper around `vim.notify` to simplify passing the `title` value.
+  --
+  -- Use `vim.notify` directly to use the default `title` values.
+  ---@param title string
+  ---@param msg string|string[]
+  ---@param log_level? number|string
+  dm.notify = function(title, msg, log_level)
+    vim.notify(msg, log_level, { title = title })
   end
 end
 
