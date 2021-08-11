@@ -13,9 +13,6 @@ local g = vim.g
 
 g.mapleader = " "
 
--- Enable embedded script highlighting
-g.vimsyn_embed = "l"
-
 -- Enable syntax highlighting in markdown between triple backticks.
 g.markdown_fenced_languages = { "bash=sh", "json", "python", "lua", "sh" }
 
