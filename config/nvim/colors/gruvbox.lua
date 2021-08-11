@@ -1,3 +1,5 @@
+-- Ref: https://github.com/sainnhe/gruvbox-material/blob/master/colors/gruvbox-material.vim
+
 -- Global style settings. {{{
 --     ┌─────────┬─────────────────┐
 --     │  State  │      Value      │
@@ -164,6 +166,7 @@ for name, color in pairs(base) do
   highlight(name, { fg = color })
   highlight(name .. "Bold", { fg = color, gui = bold })
   highlight(name .. "Italic", { fg = color, gui = italic })
+  highlight(name .. "Underline", { fg = color, gui = "underline" })
 end
 
 -- Default Highlight Groups (`:h highlight-group`)
@@ -443,5 +446,15 @@ link("diffIndexLine", "Purple")
 link("gitcommitSummary", "Red")
 link("gitcommitDiscardedFile", "Grey")
 link("gitcommitUntrackedFile", "Grey")
+
+-- help
+link("helpURL", "GreenUnderline")
+link("helpHeader", "OrangeBold")
+link("helpHyperTextEntry", "YellowBold")
+link("helpHyperTextJump", "Yellow")
+link("helpExample", "Aqua")
+link("helpSectionDelim", "Grey")
+link("helpSpecial", "Blue")
+link("helpCommand", "Aqua")
 
 -- vim: foldmethod=marker
