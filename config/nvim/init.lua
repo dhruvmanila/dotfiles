@@ -19,10 +19,6 @@ g.vimsyn_embed = "l"
 -- Enable syntax highlighting in markdown between triple backticks.
 g.markdown_fenced_languages = { "bash=sh", "json", "python", "lua", "sh" }
 
--- Global window blend value.
--- TODO: kitty cuts or reduce size for double width symbol
-g.window_blend = 0
-
 -- Global border style.
 -- Available: "edge", "single", "double", "shadow", "rounded", "solid"
 g.border_style = "edge"

@@ -91,7 +91,7 @@ lir.setup {
   devicons_enable = true,
   hide_cursor = false,
   float = {
-    winblend = vim.g.window_blend,
+    winblend = 0,
     win_opts = construct_win_opts,
   },
   mappings = {

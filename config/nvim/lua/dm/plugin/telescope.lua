@@ -69,7 +69,6 @@ telescope.setup {
     prompt_prefix = " ",
     selection_caret = "❯ ",
     sorting_strategy = "ascending",
-    winblend = vim.g.window_blend,
     file_ignore_patterns = { "__pycache__", ".mypy_cache" },
     layout_strategy = "flex",
     layout_config = {
