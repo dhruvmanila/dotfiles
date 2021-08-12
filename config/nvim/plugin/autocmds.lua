@@ -69,16 +69,39 @@ do
   })
 end
 
--- Triger `autoread` when files changes on disk and notify after file change.
+-- Triger `autoread` when files change on disk {{{
+--
+-- Check whether the current file has been modified outside of Vim. If it
+-- has, Vim will automatically re-read it because we've set 'autoread'.
+--
+-- A modification does not necessarily involve the *contents* of the file.
+-- Changing its *permissions* is *also* a modification.
+--
 -- Ref: https://unix.stackexchange.com/a/383044
+-- }}}
 augroup("dm__auto_reload_file", {
   {
     events = { "FocusGained", "BufEnter" },
     targets = "*",
     command = function()
-      if fn.mode() ~= "c" and fn.getcmdwintype() == "" then
-        vim.cmd "checktime"
+      local bufnr = tonumber(fn.expand "<abuf>")
+      local name = api.nvim_buf_get_name(bufnr)
+      if
+        name == ""
+        -- Only check for normal files
+        or vim.bo[bufnr].buftype ~= ""
+        -- To avoid: E211: File "..." no longer available
+        or not fn.filereadable(name)
+      then
+        return
       end
+      -- Why `abuf`? {{{
+      --
+      -- This function will be called frequently, and if we have many buffers,
+      -- without specifiying a buffer, Vim would check *all* buffers. This could
+      -- be too time-consuming.
+      -- }}}
+      vim.cmd(bufnr .. "checktime")
     end,
   },
 })
