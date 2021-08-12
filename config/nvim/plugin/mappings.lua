@@ -130,6 +130,24 @@ nnoremap("[L", "<Cmd>lfirst<CR>")
 -- Source: https://superuser.com/q/355325/736190
 nnoremap("<leader>x", "<Cmd>windo lclose <bar> cclose<CR>")
 
+-- Toggle zoom
+--
+-- The state is stored in a *window* variable which means each window can be
+-- zoomed in and out on its own.
+nnoremap("<leader>z", function()
+  if #vim.api.nvim_tabpage_list_wins(0) == 1 then
+    return
+  end
+  if vim.w.zoom_restore then
+    vim.cmd(vim.w.zoom_restore)
+    vim.w.zoom_restore = nil
+  else
+    vim.w.zoom_restore = vim.fn.winrestcmd()
+    vim.cmd "wincmd |"
+    vim.cmd "wincmd _"
+  end
+end)
+
 -- Tab navigation
 --   - `<leader>n` goes to nth tab
 --   - `<leader>0` goes to the last tab as on a normal keyboard the

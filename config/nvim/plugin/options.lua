@@ -99,6 +99,12 @@ opt.termguicolors = true
 opt.textwidth = 0 -- do not automatically wrap text
 opt.undofile = true
 opt.updatetime = 100
+
+-- Squash an unfocused window to 0 lines/columns (useful when we zoom a window
+-- with `<leader>z`)
+opt.winminheight = 0
+opt.winminwidth = 0
+
 opt.wildcharm = 26 -- ('<C-z>') substitute for 'wildchar' (<Tab>) in macros
 
 opt.wildmode = {
