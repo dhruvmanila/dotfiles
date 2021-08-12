@@ -268,13 +268,17 @@ do
     return cmdtype == "/" or cmdtype == "?"
   end
 
-  -- `<Tab>`/`<S-Tab>` to move between matches without leaving incremental search.
-  -- Note dependency on `'wildcharm'` being set to `<C-z>` in order for this to work.
+  -- By default, when you search for a pattern, `<C-g>` and `<C-t>` allow you
+  -- to cycle through all the matches, without leaving the command-line. We remap
+  -- these commands to `<Tab>` and `<S-Tab>` on the search command-line.
   --
-  -- Credit: https://github.com/wincent/wincent
+  -- Also, pressing either of the two keys for an empty search pattern will
+  -- populate the command-line with the last searched pattern.
+  --
+  -- Note dependency on `'wildcharm'` being set to `<C-z>` in order for this to work.
   cnoremap("<Tab>", function()
     if is_search() then
-      return escape "<CR>/<C-r>/"
+      return vim.fn.getcmdline() == "" and escape "<Up>" or escape "<C-g>"
     end
     return escape "<C-z>"
   end, {
@@ -283,7 +287,7 @@ do
 
   cnoremap("<S-Tab>", function()
     if is_search() then
-      return escape "<CR>?<C-r>/"
+      return vim.fn.getcmdline() == "" and escape "<Up>" or escape "<C-t>"
     end
     return escape "<S-Tab>"
   end, {
