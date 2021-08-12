@@ -91,7 +91,6 @@ local function load_plugins()
       config = conf "colorizer",
     },
     { "nvim-lua/plenary.nvim" },
-    { "nvim-lua/popup.nvim" },
     { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
     {
       "nvim-telescope/telescope.nvim",
