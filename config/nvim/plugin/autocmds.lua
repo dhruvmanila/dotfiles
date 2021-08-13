@@ -107,30 +107,67 @@ augroup("dm__auto_reload_file", {
 })
 
 do
-  local ignore_ft = { "dashboard", "terminal", "TelescopePrompt" }
+  -- These filetypes will be ignored when setting the cursorline through the
+  -- autocmd.
+  local ignore_ft = {
+    "TelescopePrompt",
+    "dashboard",
+  }
 
-  -- Highlight current cursorline
-  --   - Only in the active window
-  --   - Ignore special buffers like dashboard
-  --   - Disable in insert mode
+  -- Automatically set/unset the cursorline
+  -- Do NOT include `FocusGained`/`FocusLost` events {{{
+  --
+  -- When getting the focus back to Neovim while in terminal mode, the cursor
+  -- disppears as it is trying to set the cursorline. If we include `terminal`
+  -- filetype in `ignore_ft`, then the cursorline won't be set while scrolling
+  -- through the output in the terminal.
+  --
+  -- It's weird that Vim exhibits a different behavior in that it does not
+  -- *display* the cursorline while in terminal mode. The cursorline is set, but
+  -- it is not displayed.
+  --
+  -- https://github.com/neovim/neovim/issues/15355
+  -- }}}
+  -- Why both `Buf*` and `Win*` events? {{{
+  --
+  -- Open a buffer (<file1>) and then open another buffer using `:split <file2>`.
+  -- You will see that the cursorline gets set in both windows. But, when you
+  -- move the cursor back and forth between windows, the original behavior is back.
+  --
+  -- Looking at the autocmd logs:
+  --
+  --   > WinLeave <file1>  <-- This is where we should set nocursorline
+  --   > WinEnter <file1>
+  --   > ...
+  --   > BufLeave <file1>  <-- This is where we are actually setting it
+  --   > BufEnter <file2>
+  --
+  -- As cursorline is a window option, we need to set the option *before* leaving
+  -- the window. If we set the option only on `BufLeave`, it won't affect the
+  -- window. The same can be explained for `*Enter` events.
+  -- }}}
   augroup("dm__auto_cursorline", {
     {
-      events = { "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
+      events = {
+        "BufEnter",
+        "InsertLeave",
+        "WinEnter",
+      },
       targets = "*",
       command = function()
-        if not (o.cursorline or contains(ignore_ft, o.filetype)) then
+        if not contains(ignore_ft, o.filetype) then
           o.cursorline = true
         end
       end,
     },
     {
-      events = { "BufLeave", "FocusLost", "InsertEnter", "WinLeave" },
+      events = {
+        "BufLeave",
+        "InsertEnter",
+        "WinLeave",
+      },
       targets = "*",
-      command = function()
-        if o.cursorline and not contains(ignore_ft, o.filetype) then
-          o.cursorline = false
-        end
-      end,
+      command = "set nocursorline",
     },
   })
 end
