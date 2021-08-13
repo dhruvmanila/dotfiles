@@ -1,87 +1,54 @@
 local o = vim.o
 local fn = vim.fn
 local api = vim.api
-local contains = vim.tbl_contains
 local augroup = dm.augroup
 
-do
-  -- 'colorcolumn' value for specific filetypes
-  ---@type table<string, string>
-  local ft_colorcolumn = { gitcommit = "72", python = "88" }
-
-  -- Set the colorcolumn value of the window appropriately.
-  ---@param leaving boolean
-  local function set_colorcolumn(leaving)
-    if o.buftype == "prompt" then
-      return
-    end
-    -- Don't set it when there isn't enough space or we're leaving insert mode.
-    if api.nvim_win_get_width(0) <= 90 or leaving then
-      o.colorcolumn = ""
-    elseif o.colorcolumn == "" then
-      o.colorcolumn = ft_colorcolumn[o.filetype] or "80"
-    end
-  end
-
-  -- Highlight colorcolumn only in insert mode
-  augroup("dm__auto_colorcolumn", {
-    {
-      events = "InsertEnter",
-      targets = "*",
-      command = function()
-        set_colorcolumn(false)
-      end,
-    },
-    {
-      events = "InsertLeave",
-      targets = "*",
-      command = function()
-        set_colorcolumn(true)
-      end,
-    },
-  })
-end
+-- Clear command-line messages {{{1
 
 do
   local timer
   local timeout = 5000
 
-  -- Automatically clear commandline messages after a few seconds delay
+  -- Automatically clear command-line messages after a few seconds delay
   -- Source: https://unix.stackexchange.com/a/613645
-  local function clear_messages()
-    if timer then
-      timer:stop()
-    end
-
-    timer = vim.defer_fn(function()
-      if fn.mode() == "n" then
-        api.nvim_echo({}, false, {})
-      end
-    end, timeout)
-  end
-
-  augroup("dm__clear_command_messages", {
+  augroup("dm__clear_cmdline_messages", {
     {
-      events = { "CmdlineLeave", "CmdlineChanged" },
+      events = "CmdlineLeave",
       targets = ":",
-      command = clear_messages,
+      command = function()
+        if timer then
+          timer:stop()
+        end
+        timer = vim.defer_fn(function()
+          if fn.mode() == "n" then
+            api.nvim_echo({}, false, {})
+          end
+        end, timeout)
+      end,
     },
   })
 end
 
--- Triger `autoread` when files change on disk {{{
---
--- Check whether the current file has been modified outside of Vim. If it
--- has, Vim will automatically re-read it because we've set 'autoread'.
---
--- A modification does not necessarily involve the *contents* of the file.
--- Changing its *permissions* is *also* a modification.
---
--- Ref: https://unix.stackexchange.com/a/383044
--- }}}
+-- Highlighted yank {{{1
+
+augroup("dm__highlighted_yank", {
+  {
+    events = "TextYankPost",
+    targets = "*",
+    command = function()
+      vim.highlight.on_yank { higroup = "Substitute", timeout = 200 }
+    end,
+  },
+})
+
+-- Reload file when modified outside Vim {{{1
+
 augroup("dm__auto_reload_file", {
   {
-    events = { "FocusGained", "BufEnter" },
+    events = {
+      "BufEnter",
+      "FocusGained",
+    },
     targets = "*",
     command = function()
       local bufnr = tonumber(fn.expand "<abuf>")
@@ -95,7 +62,17 @@ augroup("dm__auto_reload_file", {
       then
         return
       end
-      -- Why `abuf`? {{{
+      -- What does it do? {{{
+      --
+      -- Check whether the current file has been modified outside of Vim. If it
+      -- has, Vim will automatically re-read it because we've set 'autoread'.
+      --
+      -- A modification does not necessarily involve the *contents* of the file.
+      -- Changing its *permissions* is *also* a modification.
+      --
+      -- Ref: https://unix.stackexchange.com/a/383044
+      -- }}}
+      -- Why `bufnr`? {{{
       --
       -- This function will be called frequently, and if we have many buffers,
       -- without specifiying a buffer, Vim would check *all* buffers. This could
@@ -106,15 +83,77 @@ augroup("dm__auto_reload_file", {
   },
 })
 
+-- Restore cursor to last position {{{1
+
+-- When editing a file, always jump to the last known cursor position.
+-- Source: `:h last-position-jump`
+augroup("dm__restore_cursor", {
+  {
+    events = "BufReadPost",
+    targets = "*",
+    command = function()
+      -- Cursor position when last exiting the current buffer.
+      -- See :h 'quote
+      local line, col = unpack(api.nvim_buf_get_mark(0, '"'))
+      if
+        o.filetype ~= "gitcommit"
+        and line > 0
+        and line < api.nvim_buf_line_count(0)
+      then
+        api.nvim_win_set_cursor(0, { line, col })
+      end
+    end,
+  },
+})
+
+-- Set 'colorcolumn' {{{1
+
 do
-  -- These filetypes will be ignored when setting the cursorline through the
-  -- autocmd.
-  local ignore_ft = {
-    "TelescopePrompt",
-    "dashboard",
+  -- 'colorcolumn' value for specific filetypes
+  local ft_colorcolumn = {
+    gitcommit = "72",
+    python = "88",
   }
 
-  -- Automatically set/unset the cursorline
+  ---@param leaving boolean indicating whether we are leaving insert mode
+  local function set_colorcolumn(leaving)
+    if leaving or o.buftype == "prompt" then
+      o.colorcolumn = ""
+    elseif o.colorcolumn == "" then
+      o.colorcolumn = ft_colorcolumn[o.filetype] or "80"
+    end
+  end
+
+  augroup("dm__auto_colorcolumn", {
+    {
+      events = "InsertEnter",
+      targets = "*",
+      command = set_colorcolumn,
+    },
+    {
+      events = "InsertLeave",
+      targets = "*",
+      command = function()
+        set_colorcolumn(true)
+      end,
+    },
+  })
+end
+
+-- Set 'cursorline' {{{1
+
+do
+  ---@param leaving boolean indicating whether we are leaving insert mode
+  local function set_cursorline(leaving)
+    if leaving and o.buftype ~= "prompt" then
+      if o.filetype ~= "dashboard" then
+        o.cursorline = true
+      end
+    else
+      o.cursorline = false
+    end
+  end
+
   -- Do NOT include `FocusGained`/`FocusLost` events {{{
   --
   -- When getting the focus back to Neovim while in terminal mode, the cursor
@@ -155,9 +194,7 @@ do
       },
       targets = "*",
       command = function()
-        if not contains(ignore_ft, o.filetype) then
-          o.cursorline = true
-        end
+        set_cursorline(true)
       end,
     },
     {
@@ -167,18 +204,28 @@ do
         "WinLeave",
       },
       targets = "*",
-      command = "set nocursorline",
+      command = set_cursorline,
     },
   })
 end
 
--- Enable/Disable relative number
+-- Set 'relativenumber' {{{1
+
+-- What does it do? {{{
+--
+-- Enable/Disable relative number:
 --   - Only in the active window
 --   - Ignore quickfix window
 --   - Disable in insert mode
+-- }}}
 augroup("dm__auto_relative_number", {
   {
-    events = { "BufEnter", "FocusGained", "InsertLeave", "WinEnter" },
+    events = {
+      "BufEnter",
+      "FocusGained",
+      "InsertLeave",
+      "WinEnter",
+    },
     targets = "*",
     command = function()
       if o.number and o.filetype ~= "qf" then
@@ -187,7 +234,12 @@ augroup("dm__auto_relative_number", {
     end,
   },
   {
-    events = { "BufLeave", "FocusLost", "InsertEnter", "WinLeave" },
+    events = {
+      "BufLeave",
+      "FocusLost",
+      "InsertEnter",
+      "WinLeave",
+    },
     targets = "*",
     command = function()
       if o.number and o.filetype ~= "qf" then
@@ -197,12 +249,14 @@ augroup("dm__auto_relative_number", {
   },
 })
 
--- Terminal autocmds
---   - Automatically go to insert mode on entering terminal
---   - Close the terminal window on exit (<C-d>)
+-- Terminal {{{1
+
 augroup("dm__terminal", {
   {
-    events = { "TermOpen", "WinEnter" },
+    events = {
+      "TermOpen",
+      "WinEnter",
+    },
     targets = "term://*",
     command = "startinsert",
   },
@@ -210,13 +264,15 @@ augroup("dm__terminal", {
     events = "TermClose",
     targets = "term://*",
     command = function()
+      -- Avoid the annoying '[Process exited 0]' prompt
       api.nvim_input "<CR>"
     end,
   },
 })
 
-augroup("dm__custom_autocmds", {
-  -- Equalize window dimensions when resizing vim
+-- VimResized {{{1
+
+augroup("dm__vim_resized", {
   {
     events = "VimResized",
     targets = "*",
@@ -226,34 +282,14 @@ augroup("dm__custom_autocmds", {
       api.nvim_set_current_tabpage(last_tab)
     end,
   },
-
-  -- Highlighted yank
   {
-    events = "TextYankPost",
+    events = {
+      "VimEnter",
+      "VimResized",
+    },
     targets = "*",
     command = function()
-      vim.highlight.on_yank { higroup = "Substitute", timeout = 200 }
-    end,
-  },
-
-  -- Start syncing syntax highlighting N lines before the current line
-  {
-    events = "Syntax",
-    targets = "*",
-    command = "syntax sync minlines=1000",
-  },
-
-  -- When editing a file, always jump to the last known cursor position.
-  -- :h last-position-jump
-  {
-    events = "BufReadPost",
-    targets = "*",
-    command = function()
-      -- Cursor position when last exiting the current buffer.
-      local pos = fn.line "'\""
-      if o.filetype ~= "gitcommit" and pos > 0 and pos < fn.line "$" then
-        vim.cmd 'keepjumps normal! g`"'
-      end
+      o.previewheight = math.floor(o.lines / 3)
     end,
   },
 })
