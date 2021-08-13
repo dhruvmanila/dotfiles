@@ -55,3 +55,6 @@ else
 end
 
 nmap("q", "gq", opts)
+
+-- Easy toggle for inline diff
+nmap("<Tab>", "=", opts)
