@@ -137,7 +137,8 @@ end
 
 vim.g.colors_name = "gruvbox"
 
--- Predefined Highlight Groups
+-- Predefined Highlight Groups {{{1
+
 -- Why do I need these groups? {{{
 --
 -- If a plugin is defining its highlight groups, it will mostly be done through
@@ -169,7 +170,8 @@ for name, color in pairs(base) do
   highlight(name .. "Underline", { fg = color, gui = "underline" })
 end
 
--- Default Highlight Groups (`:h highlight-group`)
+-- Default Highlight Groups (`:h highlight-group`) {{{1
+
 highlight("Normal", { fg = palette.fg })
 highlight("Terminal", { fg = palette.fg })
 highlight("EndOfBuffer", { fg = palette.bg5 })
@@ -245,7 +247,7 @@ highlight("debugBreakpoint", { fg = palette.bg0, palette.red })
 highlight("ToolbarButton", { fg = palette.bg0, bg = palette.grey2 })
 highlight("Substitute", { fg = palette.bg0, bg = palette.yellow })
 
--- Statusline
+-- Statusline {{{2
 highlight("StatusLine", { fg = palette.grey2, bg = palette.bg_statusline2 })
 highlight("StatusLineTerm", { fg = palette.grey2, bg = palette.bg_statusline2 })
 highlight("StatusLineNC", { fg = palette.grey0, bg = palette.bg_statusline1 })
@@ -271,12 +273,13 @@ highlight("User7", { fg = palette.aqua, bg = palette.bg_statusline2 })
 highlight("User8", { fg = palette.yellow, bg = palette.bg_statusline2 })
 highlight("User9", { fg = palette.red, bg = palette.bg_statusline2 })
 
--- Tabline
+-- Tabline {{{2
 highlight("TabLineSel", { fg = palette.fg, bg = palette.bg0, gui = "bold" })
 highlight("TabLine", { fg = "#928374", bg = "#242424" })
 highlight("TabLineFill", { fg = "#928374", bg = "#1e1e1e" })
 
--- Syntax
+-- Syntax {{{1
+
 highlight("Boolean", { fg = palette.purple })
 highlight("Character", { fg = palette.aqua })
 highlight("Comment", { fg = palette.grey1, gui = italic_comment })
@@ -313,7 +316,8 @@ highlight("Type", { fg = palette.yellow })
 highlight("Typedef", { fg = palette.red, gui = italic })
 highlight("Underlined", { gui = "underline" })
 
--- Terminal
+-- Terminal {{{1
+
 vim.g.terminal_color_0 = palette.bg5
 vim.g.terminal_color_1 = palette.red
 vim.g.terminal_color_2 = palette.green
@@ -331,14 +335,14 @@ vim.g.terminal_color_13 = palette.purple
 vim.g.terminal_color_14 = palette.cyan
 vim.g.terminal_color_15 = palette.fg
 
--- Neovim builtin LSP
--- Default Diagnostics
+-- Neovim builtin LSP {{{1
+-- Default Diagnostics {{{2
 highlight("LspDiagnosticsDefaultError", { fg = palette.red })
 highlight("LspDiagnosticsDefaultWarning", { fg = palette.yellow })
 highlight("LspDiagnosticsDefaultInformation", { fg = palette.blue })
 highlight("LspDiagnosticsDefaultHint", { fg = palette.aqua })
 
--- Floating Diagnostics
+-- Floating Diagnostics {{{2
 highlight("LspDiagnosticsFloatingError", {
   fg = palette.red,
   bg = palette.bg_float,
@@ -356,13 +360,13 @@ highlight("LspDiagnosticsFloatingHint", {
   bg = palette.bg_float,
 })
 
--- Virtual Text Diagnostics
+-- Virtual Text Diagnostics {{{2
 link("LspDiagnosticsVirtualTextError", "LspDiagnosticsDefaultError")
 link("LspDiagnosticsVirtualTextWarning", "LspDiagnosticsDefaultWarning")
 link("LspDiagnosticsVirtualTextInformation", "LspDiagnosticsDefaultInformation")
 link("LspDiagnosticsVirtualTextHint", "LspDiagnosticsDefaultHint")
 
--- Underline Diagnostics
+-- Underline Diagnostics {{{2
 highlight("LspDiagnosticsUnderlineError", {
   gui = "undercurl",
   sp = palette.red,
@@ -380,24 +384,24 @@ highlight("LspDiagnosticsUnderlineHint", {
   sp = palette.aqua,
 })
 
--- Sign Diagnostics
+-- Sign Diagnostics {{{2
 highlight("LspDiagnosticsSignError", { fg = palette.red })
 highlight("LspDiagnosticsSignWarning", { fg = palette.yellow })
 highlight("LspDiagnosticsSignInformation", { fg = palette.blue })
 highlight("LspDiagnosticsSignHint", { fg = palette.aqua })
 
--- Reference Text
+-- Reference Text {{{2
 highlight("LspReferenceText", { bg = palette.bg_current_word })
 highlight("LspReferenceRead", { bg = palette.bg_current_word })
 highlight("LspReferenceWrite", { bg = palette.bg_current_word })
 
--- Dashboard
+-- Dashboard {{{1
 link("DashboardHeader", "Yellow")
 link("DashboardEntry", "AquaBold")
 link("DashboardFooter", "Blue")
 
--- Plugins
--- nvim-treesitter/nvim-treesitter
+-- Plugins {{{1
+-- nvim-treesitter/nvim-treesitter {{{2
 highlight("TSDanger", { fg = palette.bg0, bg = palette.red, gui = "bold" })
 highlight("TSWarning", { fg = palette.bg0, bg = palette.yellow, gui = "bold" })
 link("TSConstant", "Fg")
@@ -414,23 +418,23 @@ link("TSStringRegex", "Green") -- check
 link("TSTagDelimiter", "Green") -- check
 link("TSVariableBuiltin", "BlueItalic") -- check
 
--- lewis6991/gitsigns.nvim
+-- lewis6991/gitsigns.nvim {{{2
 link("GitSignsAdd", "Green")
 link("GitSignsChange", "Blue")
 link("GitSignsDelete", "Red")
 link("GitSignsChangeDelete", "Purple")
 
--- tamago324/lir.nvim
+-- tamago324/lir.nvim {{{2
 link("LirFloatBorder", "FloatBorder")
 link("LirFloatNormal", "NormalFloat")
 link("LirSymlink", "GreyItalic")
 link("LirEmptyDirText", "LirSymlink")
 
--- nvim-telescope/telescope.nvim
+-- nvim-telescope/telescope.nvim {{{2
 link("TelescopeMatching", "Blue")
 link("TelescopePromptPrefix", "Yellow")
 
--- rcarriga/nvim-notify
+-- rcarriga/nvim-notify {{{2
 link("NotifyERROR", "Red")
 link("NotifyERRORTitle", "NotifyERROR")
 link("NotifyWARN", "Yellow")
@@ -442,8 +446,9 @@ link("NotifyDEBUGTitle", "NotifyDEBUG")
 link("NotifyTRACE", "Grey")
 link("NotifyTRACETitle", "NotifyTRACE")
 
--- Extended File Types
--- diff: Used in `git` filetype showing the diff, e.g., fugitive.
+-- Extended File Types {{{1
+-- diff {{{2
+-- Used in `git` filetype showing the diff, e.g., fugitive.
 link("diffAdded", "Green")
 link("diffRemoved", "Red")
 link("diffChanged", "Blue")
@@ -453,13 +458,13 @@ link("diffFile", "Aqua")
 link("diffLine", "GreyBold")
 link("diffIndexLine", "Purple")
 
--- gitcommit
+-- gitcommit {{{2
 -- Remove the italics
 link("gitcommitSummary", "Red")
 link("gitcommitDiscardedFile", "Grey")
 link("gitcommitUntrackedFile", "Grey")
 
--- help
+-- help {{{2
 link("helpURL", "GreenUnderline")
 link("helpHeader", "OrangeBold")
 link("helpHyperTextEntry", "YellowBold")
@@ -468,5 +473,7 @@ link("helpExample", "Aqua")
 link("helpSectionDelim", "Grey")
 link("helpSpecial", "Blue")
 link("helpCommand", "Aqua")
+
+-- }}}1
 
 -- vim: foldmethod=marker
