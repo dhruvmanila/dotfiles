@@ -26,10 +26,8 @@ local italic_comment = nil
 local palette = {
   bg0 = "#282828",
   bg1 = "#32302f",
-  bg2 = "#32302f",
-  bg3 = "#45403d",
-  bg4 = "#45403d",
-  bg5 = "#5a524c",
+  bg2 = "#45403d",
+  bg3 = "#5a524c",
   bg_current_word = "#3c3836",
   bg_diff_blue = "#0e363e",
   bg_diff_green = "#34381b",
@@ -174,16 +172,16 @@ end
 
 highlight("Normal", { fg = palette.fg })
 highlight("Terminal", { fg = palette.fg })
-highlight("EndOfBuffer", { fg = palette.bg5 })
-highlight("FoldColumn", { fg = palette.bg5 })
-highlight("Folded", { fg = palette.grey1, bg = palette.bg2 })
+highlight("EndOfBuffer", { fg = palette.bg3 })
+highlight("FoldColumn", { fg = palette.bg3 })
+highlight("Folded", { fg = palette.grey1, bg = palette.bg1 })
 highlight("SignColumn", { fg = palette.fg })
 highlight("ToolbarLine", { fg = palette.fg })
 
 highlight("IncSearch", { fg = palette.bg0, bg = palette.bg_red })
 highlight("Search", { fg = palette.bg0, bg = palette.bg_green })
-highlight("ColorColumn", { bg = palette.bg2 })
-highlight("Conceal", { fg = palette.bg5 })
+highlight("ColorColumn", { bg = palette.bg1 })
+highlight("Conceal", { fg = palette.bg3 })
 
 highlight("Cursor", { gui = "reverse" })
 highlight("HiddenCursor", { gui = "reverse", blend = 100 })
@@ -195,7 +193,7 @@ link("TermCursor", "Cursor")
 
 highlight("CursorLine", { bg = palette.bg1 })
 highlight("CursorColumn", { bg = palette.bg1 })
-highlight("LineNr", { fg = palette.bg5 })
+highlight("LineNr", { fg = palette.bg3 })
 highlight("CursorLineNr", { fg = palette.yellow, gui = "bold" })
 
 highlight("DiffAdd", { bg = palette.bg_diff_green })
@@ -208,15 +206,15 @@ highlight("ErrorMsg", { fg = palette.red, gui = "bold,underline" })
 highlight("WarningMsg", { fg = palette.yellow, gui = "bold" })
 highlight("ModeMsg", { fg = palette.fg, gui = "bold" })
 highlight("MoreMsg", { fg = palette.yellow, gui = "bold" })
-highlight("MatchParen", { bg = palette.bg4 })
-highlight("NonText", { fg = palette.bg5 })
-highlight("Whitespace", { fg = palette.bg5 })
-highlight("SpecialKey", { fg = palette.bg5 })
+highlight("MatchParen", { bg = palette.bg2 })
+highlight("NonText", { fg = palette.bg3 })
+highlight("Whitespace", { fg = palette.bg3 })
+highlight("SpecialKey", { fg = palette.bg3 })
 
-highlight("Pmenu", { fg = palette.fg, bg = palette.bg3 })
-highlight("PmenuSbar", { bg = palette.bg3 })
+highlight("Pmenu", { fg = palette.fg, bg = palette.bg2 })
+highlight("PmenuSbar", { bg = palette.bg2 })
 highlight("PmenuSel", {
-  fg = palette.bg3,
+  fg = palette.bg2,
   bg = palette.blue,
   gui = "bold",
 })
@@ -237,9 +235,9 @@ highlight("SpellBad", { gui = "undercurl", sp = palette.red })
 highlight("SpellCap", { gui = "undercurl", sp = palette.blue })
 highlight("SpellLocal", { gui = "undercurl", sp = palette.aqua })
 highlight("SpellRare", { gui = "undercurl", sp = palette.purple })
-highlight("VertSplit", { fg = palette.bg5 })
-highlight("Visual", { bg = palette.bg3 })
-highlight("VisualNOS", { bg = palette.bg3 })
+highlight("VertSplit", { fg = palette.bg3 })
+highlight("Visual", { bg = palette.bg2 })
+highlight("VisualNOS", { bg = palette.bg2 })
 highlight("QuickFixLine", { fg = palette.purple, gui = "bold" })
 highlight("Debug", { fg = palette.orange })
 highlight("debugPC", { fg = palette.bg0, bg = palette.green })
@@ -318,7 +316,7 @@ highlight("Underlined", { gui = "underline" })
 
 -- Terminal {{{1
 
-vim.g.terminal_color_0 = palette.bg5
+vim.g.terminal_color_0 = palette.bg3
 vim.g.terminal_color_1 = palette.red
 vim.g.terminal_color_2 = palette.green
 vim.g.terminal_color_3 = palette.yellow
@@ -326,7 +324,7 @@ vim.g.terminal_color_4 = palette.blue
 vim.g.terminal_color_5 = palette.purple
 vim.g.terminal_color_6 = palette.cyan
 vim.g.terminal_color_7 = palette.fg
-vim.g.terminal_color_8 = palette.bg5
+vim.g.terminal_color_8 = palette.bg3
 vim.g.terminal_color_9 = palette.red
 vim.g.terminal_color_10 = palette.green
 vim.g.terminal_color_11 = palette.yellow
