@@ -2,48 +2,10 @@ local fn = vim.fn
 local api = vim.api
 local command = dm.command
 
--- :TrimTrailingWhitespace - Trim trailing whitespace for the current buffer,
--- restoring the cursor position.
---
--- This command can be followed by a "|" and another command.
-command("TrimTrailingWhitespace", function()
-  local pos = api.nvim_win_get_cursor(0)
-  vim.cmd [[keeppatterns keepjumps %s/\s\+$//e]]
-  api.nvim_win_set_cursor(0, pos)
-end, {
-  bar = true,
-})
+-- BufOnly {{{1
 
--- :TrimTrailingLines - Trim blank lines at the end of the current buffer,
--- restoring the cursor position.
---
--- This command can be followed by a "|" and another command.
-command("TrimTrailingLines", function()
-  local pos = api.nvim_win_get_cursor(0)
-  local last_line = api.nvim_buf_line_count(0)
-  local last_non_blank_line = fn.prevnonblank(last_line)
-
-  if last_non_blank_line > 0 and last_line ~= last_non_blank_line then
-    api.nvim_buf_set_lines(0, last_non_blank_line, last_line, false, {})
-  end
-
-  api.nvim_win_set_cursor(0, pos)
-end, {
-  bar = true,
-})
-
--- :Term - Open the terminal on the bottom occupying full width of the editor.
-command("Term", "new | wincmd J | resize -5 | term")
-
--- :Vterm - Open the terminal on the right hand side occupying full height of
--- the editor.
-command("Vterm", "vnew | wincmd L | term")
-
--- :Tterm - Open the terminal in a new tab.
-command("Tterm", "tabnew | term")
-
--- :BufOnly - Delete all the buffers except the current buffer while ignoring
--- any terminal buffers.
+-- Purpose: Delete all the buffers except the current buffer while ignoring any
+-- terminal buffers.
 command("BufOnly", function()
   local deleted, modified = 0, 0
   local curr_buf = api.nvim_get_current_buf()
@@ -66,14 +28,12 @@ command("BufOnly", function()
   end
 end)
 
--- :LspLog - Open LSP logs for the builtin client in the bottom part of the
--- window occupying full width.
-command("LspLog", function()
-  vim.cmd("botright split | resize 20 | edit + " .. vim.lsp.get_log_path())
-end)
+-- LspClient {{{1
 
--- :LspClient [<client_id>] - Print out the information regarding the given
--- client id or all clients if none given.
+-- Purpose: Print out the information regarding the given client id or all
+-- clients if none given.
+--
+-- Usage: `:LspClient [<client_id>]`
 command("LspClient", function(client_id)
   local info = client_id and vim.lsp.get_client_by_id(client_id)
     or vim.lsp.buf_get_clients()
@@ -83,6 +43,60 @@ end, {
   complete = "customlist,v:lua.lsp_get_active_client_ids",
 })
 
--- :Todo - List out all the location where TODOs and other related keywords
--- are present in the current project.
+-- LspLog {{{1
+
+-- Do NOT define the command as plain string because the module `vim.lsp` is
+-- expensive to load on startup.
+
+-- Purpose: Open LSP logs for the builtin client in the bottom part of the
+-- window occupying full width.
+command("LspLog", function()
+  vim.cmd("botright split | resize 20 | edit + " .. vim.lsp.get_log_path())
+end)
+
+-- Term / Vterm / Tterm {{{1
+
+-- Open the terminal on the bottom occupying full width of the editor.
+command("Term", "new | wincmd J | resize -5 | term")
+
+-- Open the terminal on the right hand side occupying full height of the editor.
+command("Vterm", "vnew | wincmd L | term")
+
+-- Open the terminal in a new tab.
+command("Tterm", "tabnew | term")
+
+-- Todo {{{1
+
+-- Purpose: List out all the location where todos and other related keywords are
+-- present in the current project.
 command("Todo", [[noautocmd silent! grep! 'TODO\|FIXME\|BUG\|HACK' | copen]])
+
+-- TrimLines {{{1
+
+-- Purpose: Trim blank lines at the end of the current buffer, restoring the
+-- cursor position. This command can be followed by another command.
+command("TrimLines", function()
+  local pos = api.nvim_win_get_cursor(0)
+  local last_line = api.nvim_buf_line_count(0)
+  local last_non_blank_line = fn.prevnonblank(last_line)
+
+  if last_non_blank_line > 0 and last_line ~= last_non_blank_line then
+    api.nvim_buf_set_lines(0, last_non_blank_line, last_line, false, {})
+  end
+
+  api.nvim_win_set_cursor(0, pos)
+end, {
+  bar = true,
+})
+
+-- TrimWhitespace {{{1
+
+-- Purpose: Trim trailing whitespace for the current buffer, restoring the
+-- cursor position. This command can be followed by another command.
+command("TrimWhitespace", function()
+  local pos = api.nvim_win_get_cursor(0)
+  vim.cmd [[keeppatterns keepjumps %s/\s\+$//e]]
+  api.nvim_win_set_cursor(0, pos)
+end, {
+  bar = true,
+})
