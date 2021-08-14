@@ -119,5 +119,8 @@ function _G.nvim_tabline()
     .. "%="
 end
 
+-- Show the tabline always
+vim.o.showtabline = 2
+
 -- Set the tabline
 vim.o.tabline = "%!v:lua.nvim_tabline()"

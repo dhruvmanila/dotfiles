@@ -142,15 +142,24 @@ end
 
 -- Set 'cursorline' {{{1
 
+-- `'cursorline'` only in the active window and not in insert mode.
+
 do
+  -- When the cursor is on a long soft-wrapped line, and we enable 'cursorline',
+  -- we want only the current *screen* line to be highlighted, not the whole
+  -- *text* line.
+  local cursorlineopt_save = o.cursorlineopt
+
   ---@param leaving boolean indicating whether we are leaving insert mode
   local function set_cursorline(leaving)
     if leaving and o.buftype ~= "prompt" then
       if o.filetype ~= "dashboard" then
         o.cursorline = true
+        o.cursorlineopt = "screenline,number"
       end
     else
       o.cursorline = false
+      o.cursorlineopt = cursorlineopt_save
     end
   end
 
