@@ -1,7 +1,7 @@
 local M = {}
 
-local session = require "dm.session"
 local Text = require "dm.text"
+local session = require "session"
 
 local vim = vim
 local o = vim.o
@@ -13,7 +13,6 @@ local nnoremap = dm.nnoremap
 -- Useful defaults
 local line_length = 50
 local hidden_cursor = "a:HiddenCursor/lCursor"
-local hl = { header = "Yellow", entry = "AquaBold", footer = "Blue" }
 
 -- Dashboard namespace
 local dashboard = {}
@@ -36,23 +35,6 @@ dashboard.opts = {
   swapfile = false,
   wrap = false,
 }
-
--- Last session entry description.
--- This will save the name of the last session in the dashboard namespace to
--- be used to load the session.
----@return string[]
-local function last_session_description()
-  local fs_stat = vim.loop.fs_stat
-  local session_dir = vim.g.session_dir
-  local sessions = session.list()
-  table.sort(sessions, function(a, b)
-    a = session_dir .. "/" .. a
-    b = session_dir .. "/" .. b
-    return fs_stat(a).mtime.sec > fs_stat(b).mtime.sec
-  end)
-  dashboard.last_session = sessions[1]
-  return "  Last session (" .. sessions[1] .. ")"
-end
 
 ---@return string[]
 local function generate_header()
@@ -84,7 +66,12 @@ end
 local entries = {
   {
     key = "l",
-    description = last_session_description,
+    description = function()
+      -- Save the name of the last session in the dashboard namespace to be
+      -- used to load the session.
+      dashboard.last_session = session.last()
+      return "  Last session (" .. dashboard.last_session .. ")"
+    end,
     command = function()
       session.load(dashboard.last_session)
     end,
@@ -176,17 +163,17 @@ end
 -- Render the text on the buffer using the Text object.
 local function render_text()
   local text = Text:new()
-  text:block(center(generate_header()), hl.header, true)
-  text:block(center(generate_sub_header()), hl.header, true)
+  text:block(center(generate_header()), "DashboardHeader", true)
+  text:block(center(generate_sub_header()), "DashboardHeader", true)
   for _, entry in ipairs(entries) do
     local description = entry.description
     if type(description) == "function" then
       description = description()
     end
     description = add_key(description, entry.key)
-    text:block(center { description }, hl.entry, true)
+    text:block(center { description }, "DashboardEntry", true)
   end
-  text:block(center(generate_footer()), hl.footer)
+  text:block(center(generate_footer()), "DashboardFooter")
 end
 
 -- Close the dashboard buffer and either quit neovim or move back to the

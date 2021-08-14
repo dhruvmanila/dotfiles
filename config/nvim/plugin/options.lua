@@ -262,11 +262,6 @@ opt.ignorecase = true
 -- but don't ignore the case if it contains an uppercase character
 opt.smartcase = true
 
--- session {{{1
-
--- TODO: move this to the session module once we create it
-opt.sessionoptions:remove { "options" }
-
 -- shortmess {{{1
 
 opt.shortmess:append {
