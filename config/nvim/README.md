@@ -13,8 +13,6 @@
 │       └── ...
 ├── colors                     # Custom defined colorschemes
 │   └── ...
-├── ftdetect                   # Help filetype detection
-│   └── ...
 ├── lua
 │   ├── dm                     # Lua namespace to avoid clashes
 │   │   ├── formatter          # Custom formatter setup
@@ -32,6 +30,7 @@
 │   ├── *.vim ...              # First all .vim files are loaded
 │   └── *.lua ...              # And then all .lua files are loaded
 ├── init.lua                   # Global vars and require globals module
+├── filetype.vim               # Help filetype detection
 └── minimal.vim
 ```
 
