@@ -163,8 +163,6 @@ xnoremap("L", "g_")
 -- `] (backticks) to the last character of previously changed or yanked text
 nnoremap("p", "p`]")
 xnoremap("y", "y`]")
--- Also, replace the selection without overriding the paste register
-xnoremap("p", '"_dP`]')
 
 -- Rationale: {{{
 --
@@ -364,6 +362,22 @@ tnoremap("<Esc>", [[<C-\><C-n>]])
 
 -- Visual {{{1
 
+-- Search only in Visual selection
+xnoremap("/", function()
+  -- If we've selected only 1 line, we probably don't want to look for a pattern;
+  -- instead, we just want to extend the selection.
+  if vim.fn.line "v" == vim.fn.line "." then
+    return escape "/"
+  else
+    return escape [[<C-\><C-n>/\%V]]
+  end
+end, {
+  expr = true,
+})
+
+-- Repeat last edit on all the visually selected lines with dot.
+xnoremap(".", ":normal! .<CR>")
+
 -- Search for visually selected text using '*' and '#'
 -- https://vim.fandom.com/wiki/Search_for_visually_selected_text#Simple
 xnoremap("*", [[y/\V<C-R>=escape(@",'/\')<CR><CR>]])
@@ -377,11 +391,60 @@ xnoremap("K", [[:m '<-2<CR>gv=gv]])
 xnoremap("<", "<gv")
 xnoremap(">", ">gv")
 
--- Repeat macros across a visual range
-xnoremap(
-  "@",
-  [[:<C-U>execute ":'<,'>normal @".nr2char(getchar())<CR>]],
-  { silent = true }
-)
+-- Repeat last macro on all the visually selected lines with `@{reg}`.
+xnoremap("@", [[:<C-U>execute ":* normal @".getcharstr()<CR>]], {
+  silent = true,
+})
+
+-- Make blockwise Visual mode, especially Visual-block Inserting/Appending,
+-- more useful.
+--
+-- v_b_I = Visual-block Insert (`:h v_b_I`)
+-- v_b_A = Visual-block Append (`:h v_b_A`)
+--
+--   > Make |v_b_I| and |v_b_A| available in all kinds of Visual mode.
+--   > Adjust the selected area to be intuitive before doing blockwise insertion.
+--
+-- Source: https://github.com/kana/vim-niceblock/blob/master/doc/niceblock.txt
+local niceblock_keys = {
+  -- Terminal code `^V` because that's what `nvim_get_mode` returns
+  -- for visual-block mode (`:h i_CTRL_V`) ──┐
+  --                                         │
+  ["I"] = { v = "<C-V>I", V = "<C-V>^o^I", [""] = "I" },
+  ["A"] = { v = "<C-V>A", V = "<C-V>0o$A", [""] = "A" },
+  ["gI"] = { v = "<C-V>0I", V = "<C-V>0o$I", [""] = "0I" },
+}
+
+local function niceblock(key)
+  return escape(niceblock_keys[key][vim.api.nvim_get_mode().mode])
+end
+
+-- Like |v_b_I|, but:
+--
+--   * It's available in all kinds of Visual mode.
+--   * It adjusts the selected area to get intuitive result after blockwise
+--     insertion if the current mode is not blockwise.
+--   * In linewise Visual mode, text is inserted before the first non-blank column.
+xnoremap("I", function()
+  return niceblock "I"
+end, { expr = true })
+
+-- Like |v_I|, but it's corresponding to |v_b_A| instead of |v_b_I|.
+xnoremap("A", function()
+  return niceblock "A"
+end, { expr = true })
+
+-- Like |v_I|, but it behaves like |gI| in Normal mode. Text is always inserted
+-- before the first column.
+xnoremap("gI", function()
+  return niceblock "gI"
+end, { expr = true })
+
+-- Replace the selection without overriding the paste register and jump to the
+-- end of text.
+--
+-- By default, `v_p` and `v_P` do the same thing, so we can remap this to `P`
+-- and keep the original behavior on `p`.
+xnoremap("p", '"_dP`]')
 
 -- }}}1
