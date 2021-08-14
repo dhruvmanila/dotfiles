@@ -30,6 +30,8 @@ opt.fillchars = {
   foldsep = "│",
 }
 
+opt.foldmethod = "marker"
+
 opt.formatoptions = {
   c = true, -- comments should respect textwidth
   q = true, -- allow formatting of comments with 'gq'
@@ -63,7 +65,7 @@ opt.listchars = {
 opt.mouse = "a" -- enable mouse in all modes
 opt.number = true
 
-opt.pumblend = vim.g.window_blend
+opt.pumblend = 0
 opt.pumheight = 20
 
 opt.relativenumber = true
