@@ -87,8 +87,4 @@ g.border_style = "edge"
 -- }}}
 require "dm.globals"
 
--- Custom colorscheme providing only the required highlight groups and thus
--- reducing the startup time.
-vim.cmd "colorscheme gruvbox"
-
 -- vim: foldmethod=marker
