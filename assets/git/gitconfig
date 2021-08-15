@@ -59,6 +59,11 @@
 	gpgsign = true
 	template = ~/.gitmessage
 
+[diff]
+	# Enable experimental heuristics that shift diff hunk boundaries to make
+	# patches easier to read
+	indentHeuristic = true
+
 [gpg]
 	program = gpg
 
