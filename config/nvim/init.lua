@@ -96,6 +96,7 @@ require "dm.globals"
 -- Also, if the bang is present, the plugin will not be loaded if Vim was
 -- started with `--no-plugin`.
 -- }}}
+vim.cmd "packadd! dashboard"
 vim.cmd "packadd! session"
 
 -- Warning: Do *not* write any `:packadd!` after enabling the filetype detection! {{{

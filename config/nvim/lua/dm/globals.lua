@@ -17,6 +17,7 @@ local format = string.format
 -- If the border key is custom, then return the respective table otherwise
 -- return the string as it is.
 dm.border = setmetatable({
+  -- https://en.wikipedia.org/wiki/Box-drawing_character
   edge = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" },
 }, {
   __index = function(_, key)
@@ -90,14 +91,6 @@ end
 function _G.dump(...)
   local objects = vim.tbl_map(vim.inspect, { ... })
   print(table.concat(objects, "\n"))
-end
-
--- Determine whether the given plugin is currently loaded or not.
----@param plugin_name string
----@return boolean
-function _G.plugin_loaded(plugin_name)
-  local plugins = packer_plugins or {}
-  return plugins[plugin_name] and plugins[plugin_name].loaded
 end
 
 do
