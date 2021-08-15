@@ -13,60 +13,45 @@ local tnoremap = dm.tnoremap
 
 -- Command-Line {{{1
 
+---@param key string
+---@param fallback string
+---@return string
+local function smart_up_down(key, fallback)
+  if vim.fn.wildmenumode() == 1 then
+    return escape(key)
+  end
+  return escape(fallback)
+end
+
 -- Make <C-p>/<C-n> as smart as <up>/<down>
 --
 -- This will either recall older/recent command-line from history, whose
 -- beginning matches the current command-line or move through the wildmenu
 -- completion.
-cnoremap("<C-p>", function()
-  if vim.fn.wildmenumode() == 1 then
-    return escape "<C-p>"
-  end
-  return escape "<Up>"
-end, {
-  expr = true,
-})
-cnoremap("<C-n>", function()
-  if vim.fn.wildmenumode() == 1 then
-    return escape "<C-n>"
-  end
-  return escape "<Down>"
-end, {
-  expr = true,
-})
+cnoremap("<C-p>", wrap(smart_up_down, "<C-p>", "<Up>"), { expr = true })
+cnoremap("<C-n>", wrap(smart_up_down, "<C-n>", "<Down>"), { expr = true })
 
--- Return `true` if the current command-line type is search, `false` otherwise.
----@return boolean
-local function is_search()
+---@param key string
+---@param fallback string
+---@return string
+local function navigate_search(key, fallback)
   local cmdtype = vim.fn.getcmdtype()
-  return cmdtype == "/" or cmdtype == "?"
+  if cmdtype == "/" or cmdtype == "?" then
+    return vim.fn.getcmdline() == "" and escape "<Up>" or escape(key)
+  end
+  return escape(fallback)
 end
 
 -- By default, when you search for a pattern, `<C-g>` and `<C-t>` allow you
 -- to cycle through all the matches, without leaving the command-line. We remap
--- these commands to `<Tab>` and `<S-Tab>` on the search command-line.
+-- these commands to `<Tab>` and `<S-Tab>`.
 --
--- Also, pressing either of the two keys for an empty search pattern will
--- populate the command-line with the last searched pattern.
+-- For an empty command-line, pressing either of the two keys will populate the
+-- command-line with the last searched pattern.
 --
 -- Note dependency on `'wildcharm'` being set to `<C-z>` in order for this to work.
-cnoremap("<Tab>", function()
-  if is_search() then
-    return vim.fn.getcmdline() == "" and escape "<Up>" or escape "<C-g>"
-  end
-  return escape "<C-z>"
-end, {
-  expr = true,
-})
-
-cnoremap("<S-Tab>", function()
-  if is_search() then
-    return vim.fn.getcmdline() == "" and escape "<Up>" or escape "<C-t>"
-  end
-  return escape "<S-Tab>"
-end, {
-  expr = true,
-})
+cnoremap("<Tab>", wrap(navigate_search, "<C-g>", "<C-z>"), { expr = true })
+cnoremap("<S-Tab>", wrap(navigate_search, "<C-t>", "<S-Tab>"), { expr = true })
 
 -- cnoremap("<C-a>", "<Home>")
 -- cnoremap("<C-e>", "<End>")
@@ -140,9 +125,8 @@ nnoremap("<leader>bd", "<Cmd>bprevious <bar> bdelete #<CR>")
 
 -- Jumps {{{2
 
--- Performs either of the following tasks as per the `v:count` value:
---   - Move the cursor based on physical lines, not the actual lines.
---   - Store relative line number jumps in the jumplist if they exceed a threshold.
+---@param letter string
+---@return string
 local function jump_direction(letter)
   local jump_count = vim.v.count
   if jump_count == 0 then
@@ -153,14 +137,11 @@ local function jump_direction(letter)
   return letter
 end
 
-nnoremap("j", function()
-  return jump_direction "j"
-end, { expr = true })
-
-nnoremap("k", function()
-  return jump_direction "k"
-end, { expr = true })
-
+-- Performs either of the following tasks as per the `v:count` value:
+--   - Move the cursor based on physical lines, not the actual lines.
+--   - Store relative line number jumps in the jumplist if they exceed a threshold.
+nnoremap("j", wrap(jump_direction, "j"), { expr = true })
+nnoremap("k", wrap(jump_direction, "k"), { expr = true })
 xnoremap("j", "gj")
 xnoremap("k", "gk")
 
@@ -179,11 +160,26 @@ xnoremap("L", "g_")
 
 -- Quickfix List {{{2
 
-nnoremap("]q", "<Cmd>execute v:count .. 'cnext'<CR>")
-nnoremap("[q", "<Cmd>execute v:count .. 'cprev'<CR>")
+local function quickfix_navigation(cmd, reset)
+  -- `v:count1` because we don't want lua to complain.
+  for _ = 1, vim.v.count1 do
+    local ok, err = pcall(vim.cmd, cmd)
+    if not ok then
+      -- No more items in the quickfix list; wrap around the edge
+      --
+      -- Reference: "Vim(cnext):E553: No more items"
+      if err:match "^Vim%(%a+%):E553:" then
+        vim.cmd(reset)
+      end
+    end
+  end
+end
 
-nnoremap("]l", "<Cmd>execute v:count .. 'lnext'<CR>")
-nnoremap("[l", "<Cmd>execute v:count .. 'lprev'<CR>")
+nnoremap("]q", wrap(quickfix_navigation, "cnext", "cfirst"))
+nnoremap("[q", wrap(quickfix_navigation, "cprev", "clast"))
+
+nnoremap("]l", wrap(quickfix_navigation, "lnext", "lfirst"))
+nnoremap("[l", wrap(quickfix_navigation, "lprev", "llast"))
 
 nnoremap("]Q", "<Cmd>clast<CR>")
 nnoremap("[Q", "<Cmd>cfirst<CR>")
@@ -191,11 +187,11 @@ nnoremap("[Q", "<Cmd>cfirst<CR>")
 nnoremap("]L", "<Cmd>llast<CR>")
 nnoremap("[L", "<Cmd>lfirst<CR>")
 
-nnoremap("]<C-q>", "<Cmd>execute v:count .. 'cnfile'<CR>")
-nnoremap("[<C-q>", "<Cmd>execute v:count .. 'cpfile'<CR>")
+nnoremap("]<C-q>", wrap(quickfix_navigation, "cnfile", "cfirst"))
+nnoremap("[<C-q>", wrap(quickfix_navigation, "cpfile", "clast"))
 
-nnoremap("]<C-l>", "<Cmd>execute v:count .. 'lnfile'<CR>")
-nnoremap("[<C-l>", "<Cmd>execute v:count .. 'lpfile'<CR>")
+nnoremap("]<C-l>", wrap(quickfix_navigation, "lnfile", "lfirst"))
+nnoremap("[<C-l>", wrap(quickfix_navigation, "lpfile", "llast"))
 
 -- Close location list or quickfix list if they are present,
 -- Source: https://superuser.com/q/355325/736190
@@ -234,20 +230,10 @@ xnoremap("C", '"_C')
 -- searching forward or backward respectively.
 --
 -- This will make sure that `n` will always search forward and `N` backward.
--- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
---
--- NOTE: The '+1' is due to the fact that lua is 1-indexed.
+-- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-N
 -- }}}
-nnoremap("n", function()
-  return ({ "N", "n" })[vim.v.searchforward + 1]
-end, {
-  expr = true,
-})
-nnoremap("N", function()
-  return ({ "n", "N" })[vim.v.searchforward + 1]
-end, {
-  expr = true,
-})
+nnoremap("n", "'Nn'[v:searchforward]", { expr = true })
+nnoremap("N", "'nN'[v:searchforward]", { expr = true })
 
 -- Don't move the cursor to the next match
 -- FIXME: if the cursor is not at the start of the word, it is not highlighted
@@ -284,9 +270,7 @@ xnoremap("<leader>su", [["zy:%s/\<<C-r><C-o>"\>//g<Left><Left>]])
 
 -- Tabs {{{2
 
--- Move the current tabpage in the forward or backward direction. This will
--- wrap around at the ends.
----@param forward? boolean
+---@param forward boolean
 local function move_tabpage(forward)
   local tabpagenr = vim.api.nvim_tabpage_get_number(0)
   if forward and tabpagenr == #vim.api.nvim_list_tabpages() then
@@ -300,10 +284,10 @@ local function move_tabpage(forward)
   end
 end
 
-nnoremap("]t", function()
-  move_tabpage(true)
-end)
-nnoremap("[t", move_tabpage)
+-- Move the current tabpage in the forward or backward direction wrapping
+-- around at the ends.
+nnoremap("]t", wrap(move_tabpage, true))
+nnoremap("[t", wrap(move_tabpage, false))
 
 -- Tab navigation
 --   - `<leader>n` goes to nth tab
@@ -439,6 +423,8 @@ local niceblock_keys = {
   ["gI"] = { v = "<C-V>0I", V = "<C-V>0o$I", [""] = "0I" },
 }
 
+---@param key string
+---@return string
 local function niceblock(key)
   return escape(niceblock_keys[key][vim.api.nvim_get_mode().mode])
 end
@@ -449,20 +435,14 @@ end
 --   * It adjusts the selected area to get intuitive result after blockwise
 --     insertion if the current mode is not blockwise.
 --   * In linewise Visual mode, text is inserted before the first non-blank column.
-xnoremap("I", function()
-  return niceblock "I"
-end, { expr = true })
+xnoremap("I", wrap(niceblock, "I"), { expr = true })
 
 -- Like |v_I|, but it's corresponding to |v_b_A| instead of |v_b_I|.
-xnoremap("A", function()
-  return niceblock "A"
-end, { expr = true })
+xnoremap("A", wrap(niceblock, "A"), { expr = true })
 
 -- Like |v_I|, but it behaves like |gI| in Normal mode. Text is always inserted
 -- before the first column.
-xnoremap("gI", function()
-  return niceblock "gI"
-end, { expr = true })
+xnoremap("gI", wrap(niceblock, "gI"), { expr = true })
 
 -- Replace the selection without overriding the paste register and jump to the
 -- end of text.

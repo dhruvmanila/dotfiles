@@ -117,6 +117,22 @@ do
   }
 end
 
+-- Returns a function which when called will call the function `f` with the
+-- given arguments.
+--
+-- This is just a wrapper around the provided function to be called at a later
+-- point. Its main purpose is to be used in mappings where multiple keys are
+-- bound to the same function with a slight modification.
+---@param f function
+---@return function
+function _G.wrap(f, ...)
+  assert(type(f) == "function", "Argument 'f' should be a function")
+  local args = { ... }
+  return function()
+    return f(unpack(args))
+  end
+end
+
 do
   ---@class NotifyOpts
   ---@field timeout number
