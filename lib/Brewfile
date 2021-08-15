@@ -25,8 +25,6 @@ brew "bat"
 brew "bdw-gc"
 # Cryptography and SSL/TLS Toolkit
 brew "openssl@1.1"
-# New way to see and navigate directory trees
-brew "broot"
 # GNU internationalization (i18n) and localization (l10n) library
 brew "gettext"
 # Library for command-line editing
@@ -43,8 +41,6 @@ brew "tcl-tk"
 brew "cairo"
 # Cross-platform make
 brew "cmake"
-# Reimplementation of ctags(1)
-brew "ctags"
 # Tool to perform numerical, textual & statistical operations
 brew "datamash"
 # DuckDuckGo from the terminal
@@ -65,6 +61,8 @@ brew "libtool"
 brew "ffmpeg"
 # Collection of GNU find, xargs, and locate
 brew "findutils"
+# Framework for layout and rendering of i18n text
+brew "pango"
 # Command-line outline and bitmap font editor/converter
 brew "fontforge"
 # Command-line fuzzy finder written in Go
@@ -81,6 +79,8 @@ brew "gnupg"
 brew "go"
 # Google Search and News from the command-line
 brew "googler"
+# CLI email client written in Rust
+brew "himalaya"
 # Improved top (interactive process viewer)
 brew "htop"
 # Command-line benchmarking tool
@@ -93,6 +93,8 @@ brew "less"
 brew "lz4"
 # Implementation of the file(1) command
 brew "libmagic"
+# Next-gen compiler infrastructure
+brew "llvm"
 # Curses-based tool for viewing and analyzing log files
 brew "lnav"
 # Rainbows and unicorns in your console!
@@ -109,10 +111,6 @@ brew "mas"
 brew "mlton"
 # Collection of tools that nobody wrote when UNIX was young
 brew "moreutils"
-# Download YouTube videos from the command-line
-brew "youtube-dl"
-# Media player based on MPlayer and mplayer2
-brew "mpv"
 # Small build system for use with gyp or CMake
 brew "ninja"
 # Platform built on V8 to build network applications
@@ -131,8 +129,6 @@ brew "pv"
 brew "pyenv"
 # Pyenv plugin to manage virtualenv
 brew "pyenv-virtualenv"
-# Ruby version manager
-brew "rbenv"
 # Perl-powered file rename script with many helpful built-ins
 brew "rename"
 # Search tool like grep and The Silver Searcher
@@ -157,10 +153,14 @@ brew "tmux"
 brew "tokei"
 # Display directories as trees (with optional color/HTML output)
 brew "tree"
+# Maintained ctags implementation
+brew "universal-ctags"
 # Bash completion for Vagrant
 brew "vagrant-completion"
 # Vi 'workalike' with many additional features
 brew "vim"
+# Download YouTube videos from the command-line
+brew "youtube-dl"
 # Process YAML documents from the CLI
 brew "yq"
 # General-purpose lossless data-compression library
@@ -179,14 +179,10 @@ brew "romkatv/gitstatus/gitstatus"
 cask "basictex"
 # Web browser focusing on privacy
 cask "brave-browser"
-# E-books management software
-cask "calibre", args: { appdir: "~/Applications" }
 # Voice and text chat software
 cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
-# Text editor
-cask "emacs"
 # Web browser
 cask "firefox"
 # Web browser
@@ -209,19 +205,20 @@ cask "lunar"
 # Controls and monitors all fans on Apple computers
 cask "macs-fan-control"
 cask "mark-text"
+# Media player based on MPlayer and mplayer2
+cask "mpv"
+# Collaboration platform for API development
+cask "postman"
 # IDE for Python programming - Community Edition
 cask "pycharm-ce"
 # Peer to peer Bitorrent client
 cask "qbittorrent"
-# Modern programming language in the Lisp/Scheme family
-cask "racket"
 # Move and resize windows using keyboard shortcuts or snap areas
 cask "rectangle"
 # Video chat, voice call and instant messaging application
 cask "skype"
 # Team communication and collaboration software
 cask "slack"
-cask "smlnj"
 # Music streaming service
 cask "spotify"
 # Development environment
@@ -230,8 +227,6 @@ cask "vagrant", args: { appdir: "~/Applications" }
 cask "virtualbox"
 # Open-source code editor
 cask "visual-studio-code"
-# Code editor
-cask "visual-studio-code-insiders"
 # Multimedia player
 cask "vlc"
 # Desktop client for WhatsApp
@@ -240,13 +235,10 @@ cask "whatsapp"
 cask "zoom"
 mas "Developer", id: 640199958
 mas "GarageBand", id: 682658836
-mas "Hotspot Shield", id: 771076721
 mas "iMovie", id: 408981434
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
 mas "Pocket", id: 568494494
-mas "Save to Pocket", id: 1477385213
-mas "SHAREit", id: 1040029915
 mas "Speedtest", id: 1153157709
 mas "Vimari", id: 1480933944
