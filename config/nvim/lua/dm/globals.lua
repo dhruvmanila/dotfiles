@@ -119,7 +119,7 @@ end
 ---@param f function
 ---@return function
 function _G.wrap(f, ...)
-  assert(type(f) == "function", "Argument 'f' should be a function")
+  vim.validate { f = { f, "f" } }
   local args = { ... }
   return function()
     return f(unpack(args))
