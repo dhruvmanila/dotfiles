@@ -118,9 +118,27 @@ nnoremap("<F6>", "<C-i>")
 -- Toggle fold at current position.
 nnoremap("<Tab>", "za")
 
--- Yank from current cursor position to the end of the line. Make it consistent
--- with the behavior of 'C', 'D'
-nnoremap("Y", "y$")
+-- Source files (only for lua or vim files)
+nnoremap("<leader>so", function()
+  local filetype = vim.bo.filetype
+  if filetype == "lua" or filetype == "vim" then
+    vim.cmd "source %"
+  end
+end)
+
+-- Buffers {{{2
+nnoremap("]<Leader>", "<Cmd>execute v:count .. 'bnext'<CR>")
+nnoremap("[<Leader>", "<Cmd>execute v:count .. 'bprev'<CR>")
+nnoremap("<Leader><BS>", "<Cmd>bdelete<CR>")
+
+-- Fast switching between last and current file
+nnoremap("<Leader><Leader>", "<Cmd>buffer#<CR>")
+
+-- Close a buffer without closing the window
+-- See: https://stackoverflow.com/q/4465095/6064933
+nnoremap("<leader>bd", "<Cmd>bprevious <bar> bdelete #<CR>")
+
+-- Jumps {{{2
 
 -- Performs either of the following tasks as per the `v:count` value:
 --   - Move the cursor based on physical lines, not the actual lines.
@@ -159,10 +177,56 @@ xmap("H", "^")
 nnoremap("L", "g_")
 xnoremap("L", "g_")
 
+-- Quickfix List {{{2
+
+nnoremap("]q", "<Cmd>execute v:count .. 'cnext'<CR>")
+nnoremap("[q", "<Cmd>execute v:count .. 'cprev'<CR>")
+
+nnoremap("]l", "<Cmd>execute v:count .. 'lnext'<CR>")
+nnoremap("[l", "<Cmd>execute v:count .. 'lprev'<CR>")
+
+nnoremap("]Q", "<Cmd>clast<CR>")
+nnoremap("[Q", "<Cmd>cfirst<CR>")
+
+nnoremap("]L", "<Cmd>llast<CR>")
+nnoremap("[L", "<Cmd>lfirst<CR>")
+
+nnoremap("]<C-q>", "<Cmd>execute v:count .. 'cnfile'<CR>")
+nnoremap("[<C-q>", "<Cmd>execute v:count .. 'cpfile'<CR>")
+
+nnoremap("]<C-l>", "<Cmd>execute v:count .. 'lnfile'<CR>")
+nnoremap("[<C-l>", "<Cmd>execute v:count .. 'lpfile'<CR>")
+
+-- Close location list or quickfix list if they are present,
+-- Source: https://superuser.com/q/355325/736190
+nnoremap("<leader>x", "<Cmd>windo lclose <bar> cclose<CR>")
+
+-- Registers {{{2
+
+-- Yank from current cursor position to the end of the line. Make it consistent
+-- with the behavior of 'C', 'D'
+nnoremap("Y", "y$")
+
 -- Automatically jump to the end of text on yank and paste
 -- `] (backticks) to the last character of previously changed or yanked text
 nnoremap("p", "p`]")
 xnoremap("y", "y`]")
+
+-- Delete without overriding the paste register
+nnoremap("<leader>d", '"_d')
+xnoremap("<leader>d", '"_d')
+
+-- Prevent 'x/X' and 'c/C' from overriding what's in the clipboard
+nnoremap("x", '"_x')
+xnoremap("x", '"_x')
+nnoremap("X", '"_X')
+xnoremap("X", '"_X')
+nnoremap("c", '"_c')
+xnoremap("c", '"_c')
+nnoremap("C", '"_C')
+xnoremap("C", '"_C')
+
+-- Search {{{2
 
 -- Rationale: {{{
 --
@@ -185,52 +249,40 @@ end, {
   expr = true,
 })
 
--- Buffer management
-nnoremap("]<Leader>", "<Cmd>bnext<CR>")
-nnoremap("[<Leader>", "<Cmd>bprev<CR>")
-nnoremap("<Leader><BS>", "<Cmd>bdelete<CR>")
+-- Don't move the cursor to the next match
+-- FIXME: if the cursor is not at the start of the word, it is not highlighted
+nnoremap("*", "*``")
+nnoremap("#", "#``")
 
--- Fast switching between last and current file
-nnoremap("<Leader><Leader>", "<Cmd>buffer#<CR>")
+-- Substitute {{{2
 
--- Close a buffer and switching to another buffer, do not close the
--- window, see https://stackoverflow.com/q/4465095/6064933
--- nnoremap("<leader>bd", "<Cmd>bprevious <bar> bdelete #<CR>")
-
--- Quickfix list
-nnoremap("]q", "<Cmd>cnext<CR>")
-nnoremap("[q", "<Cmd>cprev<CR>")
-nnoremap("]Q", "<Cmd>clast<CR>")
-nnoremap("[Q", "<Cmd>cfirst<CR>")
-
--- Location list
-nnoremap("]l", "<Cmd>lnext<CR>")
-nnoremap("[l", "<Cmd>lprev<CR>")
-nnoremap("]L", "<Cmd>llast<CR>")
-nnoremap("[L", "<Cmd>lfirst<CR>")
-
--- Close location list or quickfix list if they are present,
--- Source: https://superuser.com/q/355325/736190
-nnoremap("<leader>x", "<Cmd>windo lclose <bar> cclose<CR>")
-
--- Toggle zoom {{{
+-- Multiple Cursor Replacement {{{
 --
--- The state is stored in a *window* variable which means each window can be
--- zoomed in and out on its own.
+-- Use `cn/cN` to change the word under cursor or visually selected text and then
+-- repeat using . (dot) n - 1 times. We can use `n/N` to skip some replacements.
+--
+-- Source: http://www.kevinli.co/posts/2017-01-19-multiple-cursors-in-500-bytes-of-vimscript/
 -- }}}
-nnoremap("<leader>z", function()
-  if #vim.api.nvim_tabpage_list_wins(0) == 1 then
-    return
-  end
-  if vim.w.zoom_restore then
-    vim.cmd(vim.w.zoom_restore)
-    vim.w.zoom_restore = nil
-  else
-    vim.w.zoom_restore = vim.fn.winrestcmd()
-    vim.cmd "wincmd |"
-    vim.cmd "wincmd _"
-  end
-end)
+--
+--              ┌ populate search register with word under cursor
+--              │
+--              │┌ get back to where we were
+--              ││
+--              ││ ┌ change next occurrence of last used search pattern
+--              │├┐├─┐
+nnoremap("cn", "*``cgn")
+nnoremap("cN", "*``cgN")
+
+-- Similarly in Visual mode
+vim.g.mc = escape [[y/\V<C-r>=escape(@", '/')<CR><CR>]]
+xnoremap("cn", [[g:mc . "``cgn"]], { expr = true })
+xnoremap("cN", [[g:mc . "``cgN"]], { expr = true })
+
+-- Substitute the word on cursor or visually selected text globally
+nnoremap("<Leader>su", [[:%s/\<<C-r><C-w>\>//g<Left><Left>]])
+xnoremap("<leader>su", [["zy:%s/\<<C-r><C-o>"\>//g<Left><Left>]])
+
+-- Tabs {{{2
 
 -- Move the current tabpage in the forward or backward direction. This will
 -- wrap around at the ends.
@@ -262,6 +314,27 @@ for i = 1, 9 do
 end
 nnoremap("<leader>0", "<Cmd>tablast<CR>")
 
+-- Windows {{{2
+
+-- Toggle zoom {{{
+--
+-- The state is stored in a *window* variable which means each window can be
+-- zoomed in and out on its own.
+-- }}}
+nnoremap("<leader>z", function()
+  if #vim.api.nvim_tabpage_list_wins(0) == 1 then
+    return
+  end
+  if vim.w.zoom_restore then
+    vim.cmd(vim.w.zoom_restore)
+    vim.w.zoom_restore = nil
+  else
+    vim.w.zoom_restore = vim.fn.winrestcmd()
+    vim.cmd "wincmd |"
+    vim.cmd "wincmd _"
+  end
+end)
+
 -- Quicker window movement
 nnoremap("<C-j>", "<C-w>j")
 nnoremap("<C-k>", "<C-w>k")
@@ -274,56 +347,7 @@ nnoremap("<Up>", "<Cmd>resize +2<CR>")
 nnoremap("<Left>", "<Cmd>vertical resize -2<CR>")
 nnoremap("<Right>", "<Cmd>vertical resize +2<CR>")
 
--- Don't move the cursor to the next match
--- FIXME: if the cursor is not at the start of the word, it is not highlighted
-nnoremap("*", "*``")
-nnoremap("#", "#``")
-
--- Multiple Cursor Replacement {{{
---
--- Use `cn/cN` to change the word under cursor or visually selected text and then
--- repeat using . (dot) n - 1 times. We can use `n/N` to skip some replacements.
---
--- Source: http://www.kevinli.co/posts/2017-01-19-multiple-cursors-in-500-bytes-of-vimscript/
--- }}}
---              ┌ populate search register with word under cursor
---              │
---              │┌ get back to where we were
---              ││
---              ││ ┌ change next occurrence of last used search pattern
---              │├┐├─┐
-nnoremap("cn", "*``cgn")
-nnoremap("cN", "*``cgN")
--- Similarly in Visual mode
-vim.g.mc = escape [[y/\V<C-r>=escape(@", '/')<CR><CR>]]
-xnoremap("cn", [[g:mc . "``cgn"]], { expr = true })
-xnoremap("cN", [[g:mc . "``cgN"]], { expr = true })
-
--- Source files (only for lua or vim files)
-nnoremap("<leader>so", function()
-  local filetype = vim.bo.filetype
-  if filetype == "lua" or filetype == "vim" then
-    vim.cmd "source %"
-  end
-end)
-
--- Substitute the word on cursor or visually selected text globally
-nnoremap("<Leader>su", [[:%s/\<<C-r><C-w>\>//g<Left><Left>]])
-xnoremap("<leader>su", [["zy:%s/\<<C-r><C-o>"\>//g<Left><Left>]])
-
--- Delete without overriding the paste register
-nnoremap("<leader>d", '"_d')
-xnoremap("<leader>d", '"_d')
-
--- Prevent 'x/X' and 'c/C' from overriding what's in the clipboard
-nnoremap("x", '"_x')
-xnoremap("x", '"_x')
-nnoremap("X", '"_X')
-xnoremap("X", '"_X')
-nnoremap("c", '"_c')
-xnoremap("c", '"_c')
-nnoremap("C", '"_C')
-xnoremap("C", '"_C')
+-- }}}2
 
 -- Objects {{{1
 
