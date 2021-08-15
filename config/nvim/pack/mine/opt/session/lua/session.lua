@@ -100,6 +100,9 @@ function session.delete(name)
   elseif fn.confirm("Really delete " .. name .. "?", "&Yes\n&No") == 1 then
     local ok, err = uv.fs_unlink(session_file)
     if ok then
+      if session_file == vim.v.this_session then
+        vim.v.this_session = ""
+      end
       dm.notify(TITLE, "Deleted session " .. name)
       return true
     else
