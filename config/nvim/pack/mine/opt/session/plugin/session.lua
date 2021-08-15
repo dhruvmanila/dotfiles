@@ -1,3 +1,8 @@
+if vim.g.loaded_session then
+  return
+end
+vim.g.loaded_session = true
+
 local fn = vim.fn
 local command = dm.command
 
