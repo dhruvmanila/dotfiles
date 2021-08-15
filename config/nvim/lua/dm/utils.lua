@@ -1,48 +1,6 @@
 local M = {}
 local fn = vim.fn
 local api = vim.api
-local cmd = api.nvim_command
-
--- TODO: eventually move to using `nvim_set_hl` however for the time being
--- that expects colors to be specified as rgb not hex.
----@param name string
----@param opts table<string, boolean|string>
-function M.highlight(name, opts)
-  local force = opts.force or false
-  if name and vim.tbl_count(opts) > 0 then
-    if opts.link and opts.link ~= "" then
-      cmd(
-        "highlight"
-          .. (force and "!" or "")
-          .. " link "
-          .. name
-          .. " "
-          .. opts.link
-      )
-    else
-      local hi_cmd = { "highlight", name }
-      if opts.guifg and opts.guifg ~= "" then
-        table.insert(hi_cmd, "guifg=" .. opts.guifg)
-      end
-      if opts.guibg and opts.guibg ~= "" then
-        table.insert(hi_cmd, "guibg=" .. opts.guibg)
-      end
-      if opts.gui and opts.gui ~= "" then
-        table.insert(hi_cmd, "gui=" .. opts.gui)
-      end
-      if opts.guisp and opts.guisp ~= "" then
-        table.insert(hi_cmd, "guisp=" .. opts.guisp)
-      end
-      if opts.cterm and opts.cterm ~= "" then
-        table.insert(hi_cmd, "cterm=" .. opts.cterm)
-      end
-      if opts.blend then
-        table.insert(hi_cmd, "blend=" .. opts.blend)
-      end
-      cmd(table.concat(hi_cmd, " "))
-    end
-  end
-end
 
 -- Simplified version of `vim.lsp.util.make_floating_popup_options`
 -- This will consider the number of columns from the left end of neovim instead
