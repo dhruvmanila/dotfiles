@@ -43,11 +43,23 @@ augroup("dm__highlighted_yank", {
 
 -- Reload file when modified outside Vim {{{1
 
+-- When does Vim check whether a file has been changed outside the current instance? {{{
+--
+-- In the terminal, when you:
+--
+--    - try to write the buffer
+--    - execute a shell command
+--    - execute `:checktime`
+--
+-- Also when you give the focus to a Vim instance where the file is loaded; but
+-- only in the GUI, or in a terminal which supports the focus event tracking
+-- feature. For `tmux`, the `focus-events` option needs to be turned on.
+-- }}}
 augroup("dm__auto_reload_file", {
   {
     events = {
       "BufEnter",
-      "FocusGained",
+      "CursorHold",
     },
     targets = "*",
     command = function()
