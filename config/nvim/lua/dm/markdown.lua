@@ -4,29 +4,40 @@
 --     $ npm -g install instant-markdown-d
 -- }}}
 
-local uv = vim.loop
 local curl = require "plenary.curl"
 
 -- Variables {{{1
 
 local DEBUG = false
 
--- Notification title
-local TITLE = "Instant Markdown Previewer"
-
 -- Path to the executable
 local SERVER_EXEC = "instant-markdown-d"
 
--- The markdown preview server can be configured via several environment variables.
+-- The server can be configured via several environment variables.
 -- Source: https://github.com/suan/instant-markdown-d#environment-variables
-local SERVER_ENV = { "INSTANT_MARKDOWN_ALLOW_UNSAFE_CONTENT=1" }
+local SERVER_ENV = "INSTANT_MARKDOWN_ALLOW_UNSAFE_CONTENT=1"
+
+-- `stdout` and `stderr` of the server will be redirected to this file.
+local SERVER_LOG_FILE = DEBUG and "/tmp/instant_markdown_d.log" or "/dev/null"
+
+-- Command to start the server.
+local START_SERVER_CMD = string.format(
+  --       ┌─ do not open the browser window by default
+  --       │            ┌─ redirect stdout and stderr to `SERVER_LOG_FILE`
+  --       │            │ ┌─ start the process in the background
+  --       │     ┌──────┤ │
+  "%s %s --debug >%s 2>&1 &",
+  SERVER_ENV,
+  SERVER_EXEC,
+  SERVER_LOG_FILE
+)
 
 -- This basically creates a split like view of the screen where the left half
 -- is the terminal and right half is the browser window where the file will be
 -- previewed. Look at the mentioned file for more info.
 local HS_ACTIVATE_BROWSER_CMD = "cat ~/.hammerspoon/preview.lua | hs"
 
--- The browser will automatically closed by the server so the only task
+-- The browser will be automatically closed by the server so the only task
 -- remaining is to resize the terminal window.
 --
 -- This requires the `allow_remote_control` and `listen_on` option to be set
@@ -39,31 +50,18 @@ local state = { active = false }
 
 -- Functions {{{1
 
----@param initial_lines string
-local function start_server(initial_lines)
-  local stdin = uv.new_pipe()
-  local handle, pid_or_err = uv.spawn(SERVER_EXEC, {
-    -- The main purpose of passing this flag is to not open the browser window
-    -- by default.
-    args = { "--debug" },
-    cwd = uv.cwd(),
-    stdio = { stdin, nil, nil },
-  }, function(code)
-    -- The process is closed by sending a `DELETE` request to the server. So, we
-    -- don't need to handle it ourselves.
-    if DEBUG then
-      dm.notify(TITLE, "Server exited with code " .. code, 1)
-    end
-  end)
-  if not handle then
-    dm.notify(TITLE, { "Failed to spawn the server:", pid_or_err }, 4)
-  else
-    if DEBUG then
-      dm.notify(TITLE, "Server started with PID: " .. pid_or_err, 1)
-    end
-    stdin:write(initial_lines)
-    stdin:shutdown()
-  end
+-- Perform the necessary tasks to restore the state.
+local function cleanup()
+  -- What's the meaning of the `DELETE` method? {{{
+  --
+  --   > The DELETE method requests that the origin server delete the resource
+  --   > identified by the Request-URI.
+  --
+  -- Source: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
+  -- }}}
+  curl.delete "http://localhost:8090"
+  state.active = false
+  os.execute(RESIZE_KITTY_WINDOW_CMD)
 end
 
 -- Return the buffer lines after injecting an anchor tag at the cursor line.
@@ -89,15 +87,11 @@ end
 
 local function toggle_preview()
   -- If there are splits in the current tab, then open the buffer in a new tab
-  -- Resize the terminal to half and the other half should be used to preview
-  -- in the browser.
   local autocmds = {}
   if state.active then
-    curl.delete "http://localhost:8090"
-    state.active = false
-    os.execute(RESIZE_KITTY_WINDOW_CMD)
+    cleanup()
   else
-    start_server(get_lines())
+    os.execute(START_SERVER_CMD)
     vim.list_extend(autocmds, {
       {
         events = {
@@ -109,8 +103,7 @@ local function toggle_preview()
         command = function()
           curl.put("http://localhost:8090", {
             raw_body = get_lines(),
-            -- This empty function is so that the curl request is made
-            -- asynchronously.
+            -- Dummy function to make the curl request asynchronous.
             callback = function() end,
           })
         end,
@@ -118,16 +111,7 @@ local function toggle_preview()
       {
         events = "BufUnload",
         targets = "<buffer>",
-        command = function()
-          -- What's the meaning of the `DELETE` method? {{{
-          --
-          --   > The DELETE method requests that the origin server delete the resource
-          --   > identified by the Request-URI.
-          --
-          -- Source: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
-          -- }}}
-          curl.delete "http://localhost:8090"
-        end,
+        command = cleanup,
       },
     })
     state.active = true
