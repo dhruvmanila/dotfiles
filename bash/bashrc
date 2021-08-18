@@ -189,6 +189,23 @@ function __build_prompt() { # {{{
   # }}}
 }
 # }}}
+function __refresh_env_in_tmux() { # {{{
+  if [[ -n "$TMUX" ]]; then
+    # NOTE: Only include the variables which needs to be udpated.
+    for var in "KITTY_LISTEN_ON" "KITTY_WINDOW_ID"; do
+      # Do NOT include the `-g` flag {{{
+      #
+      # In tmux, the global environment is different than the sesion
+      # environment. These variables are updated in the session environment
+      # through the `update-environment` option in `~/.tmux.conf`.
+      #
+      # See: `man tmux /global and session environment`
+      # }}}
+      source <(tmux show-environment -s $var)
+    done
+  fi
+}
+# }}}
 
 # Starts gitstatusd in the background. {{{
 #
@@ -217,7 +234,7 @@ gitstatus_stop && gitstatus_start -s -1 -u -1 -c -1 -d -1
 #
 # Source: /etc/bashrc_Apple_Terminal:80 (Press 'gF' to go to the specified line)
 # }}}
-PROMPT_COMMAND="__build_prompt${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+PROMPT_COMMAND="__build_prompt;__refresh_env_in_tmux${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
 
 # }}}
 # Completions {{{
