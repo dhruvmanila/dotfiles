@@ -96,16 +96,20 @@ end
 do
   local output = "[timer]%s: %fms"
   local hrtime = vim.loop.hrtime
-  local start = nil
+  local start = {}
 
   -- Simple interface for timing code chunks.
   _G.timer = {
     start = function()
-      start = hrtime()
+      table.insert(start, hrtime())
     end,
     stop = function(info)
-      print(output:format(info and " " .. info or "", (hrtime() - start) / 1e6))
-      start = nil
+      print(
+        output:format(
+          info and " " .. info or "",
+          (hrtime() - table.remove(start)) / 1e6
+        )
+      )
     end,
   }
 end
