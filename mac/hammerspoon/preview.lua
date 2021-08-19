@@ -12,20 +12,34 @@
 -- FIXME: This does not work when: {{{
 --
 --   1. Brave browser is closed.
---   2. Kitty is full-screen (not maximized)
 --
 -- For (1), Brave will reopen the tabs which were already opened when I closed
 -- it. Maybe there is some check regarding that or maybe wait a bit more? Also,
 -- this will open brave in the current space.
---
--- For (2), maybe we could check whether kitty is full-screen and update the
--- size accordingly.
 -- }}}
 
 local kitty = hs.window.focusedWindow()
 
 if kitty:application():name() ~= "kitty" then
   return
+end
+
+-- This is only for the non-traditional fullscreen mode {{{
+--
+-- If you set the `macos_traditional_fullscreen` option to `yes` in `kitty.conf`,
+-- this will not work as that is not considered as fullscreen.
+--
+-- You can check if we are in a traditional fullscreen mode by:
+--
+--     hs.screen.mainScreen():fullFrame() == kitty:frame()
+-- }}}
+if kitty:isFullScreen() then
+  kitty:setFullScreen(false)
+  -- A sleep is required to let the window manager register the new state,
+  -- otherwise the follow-up call to create a new brave window doesn't work.
+  --
+  -- The unit for the argument is `microseconds`.
+  hs.timer.usleep(1 * 1e6)
 end
 
 kitty:move(hs.layout.left50)
