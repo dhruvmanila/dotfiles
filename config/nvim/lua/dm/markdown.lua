@@ -1,7 +1,8 @@
 -- To install the web server: {{{
 --
---     $ brew install npm
---     $ npm -g install instant-markdown-d
+--     $ brew install nodejs npm
+--     $ git clone https://github.com/dhruvmanila/instant-markdown-d
+--     $ npm -g install
 -- }}}
 
 local curl = require "plenary.curl"
@@ -32,10 +33,14 @@ local START_SERVER_CMD = string.format(
   SERVER_LOG_FILE
 )
 
--- This basically creates a split like view of the screen where the left half
+-- This script creates a split like view of the _screen_ where the left half
 -- is the terminal and right half is the browser window where the file will be
 -- previewed. Look at the mentioned file for more info.
-local HS_ACTIVATE_BROWSER_CMD = "cat ~/.hammerspoon/preview.lua | hs"
+--
+--                                   ┌─ enable print mirroring from this instance
+--                                   │  to the hammerspoon console
+--                                   │
+local HS_ACTIVATE_BROWSER_CMD = "hs -P ~/.hammerspoon/preview.lua"
 
 -- The browser will be automatically closed by the server so the only task
 -- remaining is to resize the terminal window.
