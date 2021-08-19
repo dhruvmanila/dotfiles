@@ -3,7 +3,7 @@
 " setup.
 
 let s:pack_path = stdpath("data") . "/site/pack/"
-let s:loader_path = s:pack_path . "loader/start/packer.nvim/plugin/"
+let s:loader_path = s:pack_path . "loader/start/meta/plugin/"
 let s:install_path = s:pack_path . "packer/opt/packer.nvim"
 
 " Setting up the required path globals.

@@ -36,7 +36,7 @@
 
 ### Packer related files:
 ```
-.local/share/nvim/site/pack/loader/start/packer.nvim/plugin/
+.local/share/nvim/site/pack/loader/start/meta/plugin/
 ├── packer_compiled.lua
 └── packer_plugin_info.lua
 ```
