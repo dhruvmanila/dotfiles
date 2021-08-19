@@ -20,7 +20,16 @@ local g = vim.g
 g.mapleader = " "
 
 -- Enable syntax highlighting in markdown code fences.
-g.markdown_fenced_languages = { "bash=sh", "json", "python", "lua", "sh" }
+g.markdown_fenced_languages = {
+  "applescript",
+  "bash=sh",
+  "json",
+  "lua",
+  "python",
+  "sh",
+  "vim",
+  "viml=vim",
+}
 
 -- Setup neovim providers (`:h provider`) {{{
 --
