@@ -45,31 +45,31 @@ end
 kitty:move(hs.layout.left50)
 
 local brave = hs.application.get "Brave Browser"
-if brave then
-  -- If the application is already opened, then we will create a new window. {{{
-  --
-  -- This window is opened in the *current* space. If it was not, we would
-  -- have to move the new window to the current space.
-  --
-  --     win = brave:getWindow "New Tab - Brave"
-  --     spaces.moveWindowToSpace(win:id(), spaces.activeSpace())
-  --
-  -- `spaces` is a third party library and remains undocumented for now.
-  -- Source: https://github.com/asmagill/hs._asm.undocumented.spaces
-  -- }}}
-  brave:selectMenuItem { "File", "New Window" }
-else
+if not brave then
   --     maximum number of seconds to wait
   --     for the application to be launched ───┐
   --                                           │
   --                                           │
-  brave = hs.application.open("Brave Browser", 1, true)
+  brave = hs.application.open("Brave Browser", 2, true)
   --                                              │
   --                                              │
   --    additionally wait until the app has       │
   --    spawned its first window (which usually ──┘
   --    takes a bit longer)
 end
+
+-- If the application is already opened, then we will create a new window. {{{
+--
+-- This window is opened in the *current* space. If it was not, we would
+-- have to move the new window to the current space.
+--
+--     win = brave:getWindow "New Tab - Brave"
+--     spaces.moveWindowToSpace(win:id(), spaces.activeSpace())
+--
+-- `spaces` is a third party library and remains undocumented for now.
+-- Source: https://github.com/asmagill/hs._asm.undocumented.spaces
+-- }}}
+brave:selectMenuItem { "File", "New Window" }
 
 -- Is there any other way to get the window object? {{{
 --
