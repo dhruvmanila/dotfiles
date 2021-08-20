@@ -23,6 +23,11 @@ local config = {
 }
 
 local function show_line_diagnostics()
+  local existing_float = vim.b.lsp_floating_preview
+  if existing_float and api.nvim_win_is_valid(existing_float) then
+    return
+  end
+
   local current_bufnr = api.nvim_get_current_buf()
   local linenr = api.nvim_win_get_cursor(0)[1] - 1
   local diagnostics = lsp.diagnostic.get_line_diagnostics(current_bufnr, linenr)
