@@ -37,10 +37,13 @@ local START_SERVER_CMD = string.format(
 -- is the terminal and right half is the browser window where the file will be
 -- previewed. Look at the mentioned file for more info.
 --
---                                   ┌─ enable print mirroring from this instance
---                                   │  to the hammerspoon console
+--                                   ┌─ auto launch hammerspoon if it is not
+--                                   │  currently running
 --                                   │
-local HS_ACTIVATE_BROWSER_CMD = "hs -P ~/.hammerspoon/preview.lua"
+--                                   │  ┌─ enable print mirroring from this
+--                                   │  │  instance to the hammerspoon console
+--                                   │  │
+local HS_ACTIVATE_BROWSER_CMD = "hs -A -P ~/.hammerspoon/preview.lua"
 
 -- The browser will be automatically closed by the server so the only task
 -- remaining is to resize the terminal window.
