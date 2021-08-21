@@ -12,6 +12,9 @@ if not hs.ipc.cliStatus() then
   hs.ipc.cliInstall()
 end
 
+-- Disable animations
+hs.window.animationDuration = 0
+
 -- `vim.inspect` for the hammerspoon console {{{
 --
 -- This requires the `inspect` library to be installed via `luarocks` in the
