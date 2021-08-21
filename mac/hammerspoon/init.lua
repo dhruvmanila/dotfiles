@@ -28,16 +28,19 @@ local ok, inspect = pcall(require, "inspect")
 --
 -- The library cannot inspect a 'userdata' but hammerspoon has provided a
 -- string representation for all the objects which we can get using `tostring`.
-print = function(...)
-  local output = {}
-  for _, value in ipairs { ... } do
-    if ok and type(value) ~= "userdata" then
-      table.insert(output, inspect(value))
-    else
-      table.insert(output, tostring(value))
-    end
-  end
-  return table.concat(output, "\n")
+dump = function(...)
+  return table.concat(
+    hs.fnutils.imap({ ... }, function(value)
+      if type(value) == "table" then
+        return inspect(hs.fnutils.imap(value, dump))
+      elseif ok and type(value) ~= "userdata" then
+        return inspect(value)
+      else
+        return tostring(value)
+      end
+    end),
+    "\n"
+  )
 end
 
 -- Console style changes {{{
