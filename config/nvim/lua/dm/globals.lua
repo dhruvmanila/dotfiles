@@ -14,6 +14,14 @@ _G.dm = {
 
 local format = string.format
 
+-- Logging handler. To turn on debug mode:
+--
+--     $ DEBUG=1 nvim
+dm.log = require("plenary.log").new {
+  plugin = "dm",
+  level = vim.env.DEBUG and "debug" or "warn",
+}
+
 -- If the border key is custom, then return the respective table otherwise
 -- return the string as it is.
 dm.border = setmetatable({
