@@ -24,15 +24,13 @@ local format_write = false
 local registered_formatters = {}
 
 -- Create a temporary file with the `lines` content and return the filename.
----@param filepath string
 ---@param lines string[]
 ---@return string
-local function create_temp_file(filepath, lines)
+local function create_temp_file(lines)
   local tempfile_name = os.tmpname()
-  tempfile_name = tempfile_name
-    .. "_formatting_"
-    .. fn.fnamemodify(filepath, ":t")
-  local file = io.open(tempfile_name, "w+")
+  local file, err = io.open(tempfile_name, "w+")
+  assert(not err, err)
+
   for _, line in ipairs(lines) do
     file:write(line .. "\n")
   end
@@ -45,11 +43,10 @@ end
 ---@param tempfile_name string
 ---@return string[]
 local function read_temp_file(tempfile_name)
-  local file = io.open(tempfile_name, "r")
-  if file == nil then
-    return
-  end
   local lines = {}
+  local file, err = io.open(tempfile_name, "r")
+  assert(not err, err)
+
   for line in file:lines() do
     lines[#lines + 1] = line
   end
@@ -75,10 +72,12 @@ end
 local function reader(self, key)
   local buffer = ""
   return function(err, chunk)
-    assert(not err, err)
-    if chunk then
+    if err then
+      dm.log.fmt_error("Error while reading for %s: %s", key, err)
+    elseif chunk then
       buffer = buffer .. chunk
     else
+      dm.log.fmt_debug("Buffer size for %s: %s", key, #buffer)
       self[key] = buffer:gsub("\n$", "")
     end
   end
@@ -122,28 +121,30 @@ end
 -- Run the given formatter asynchronously.
 ---@param formatter Formatter
 function Format:run(formatter)
-  local args = type(formatter.args) == "function"
-      and formatter.args(self.bufnr, self.filepath)
-    or formatter.args
-  local stdin = formatter.stdin and uv.new_pipe(false) or nil
-  local stdout = uv.new_pipe(false)
-  local stderr = uv.new_pipe(false)
+  local cmd = formatter.cmd
+  local args = formatter.args
+  if type(args) == "function" then
+    args = args()
+  end
+
+  local stdin = formatter.stdin and uv.new_pipe() or nil
+  local stdout = uv.new_pipe()
+  local stderr = uv.new_pipe()
 
   local opts = {
     args = args,
     stdio = { stdin, stdout, stderr },
     cwd = vim.loop.cwd(),
-    detached = true,
   }
 
   if not formatter.stdin then
-    self.tempfile_name = create_temp_file(self.filepath, self.output)
+    self.tempfile_name = create_temp_file(self.output)
     table.insert(opts.args, self.tempfile_name)
   end
 
   local handle, pid_or_err
   handle, pid_or_err = uv.spawn(
-    formatter.cmd,
+    cmd,
     opts,
     vim.schedule_wrap(function(code)
       close_safely(stdin, stdout, stderr, handle)
@@ -153,10 +154,7 @@ function Format:run(formatter)
 
   if not handle then
     close_safely(stdin, stdout, stderr)
-    dm.notify("Formatter", {
-      string.format("Failed to run the formatter '%s'", formatter.cmd),
-      pid_or_err,
-    }, 4)
+    dm.log.fmt_error("Failed to run the formatter '%s'\n%s", cmd, pid_or_err)
     return
   end
 
@@ -164,8 +162,16 @@ function Format:run(formatter)
   stderr:read_start(reader(self, "err_output"))
 
   if formatter.stdin then
-    stdin:write(table.concat(self.output, "\n"))
-    stdin:shutdown()
+    stdin:write(table.concat(self.output, "\n"), function(err)
+      if err then
+        dm.log.fmt_error("Failed to write to stdin for '%s'\n%s", cmd, err)
+      end
+    end)
+    stdin:shutdown(function(err)
+      if err then
+        dm.log.fmt_error("Failed to close stdin for '%s'\n%s", cmd, err)
+      end
+    end)
   end
 end
 
@@ -177,10 +183,11 @@ end
 ---@param stdin boolean
 function Format:on_exit(code, stdin)
   if code > 0 then
+    -- Make sure to remove the tempfile if we were not using stdin.
     if not stdin then
       os.remove(self.tempfile_name)
     end
-    dm.notify("Formatter", self.err_output, 4)
+    dm.log.error(self.err_output)
     return self:step()
   end
   if stdin then
@@ -190,7 +197,7 @@ function Format:on_exit(code, stdin)
     os.remove(self.tempfile_name)
   end
   self.ran_formatter = true
-  self:step()
+  return self:step()
 end
 
 -- Run the formatter from the LSP client.
@@ -205,7 +212,7 @@ function Format:lsp_run(formatter)
     vim.lsp.util.make_formatting_params(formatter.opts),
     function(err, _, result)
       if err then
-        dm.notify("Formatter", err.message, 4)
+        dm.log.error(err.message)
         return
       end
       if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
@@ -217,13 +224,6 @@ function Format:lsp_run(formatter)
       end
     end
   )
-end
-
--- Check whether the given formatter is enabled for the current buffer.
----@param formatter Formatter
----@return boolean
-function Format:is_enabled(formatter)
-  return formatter.enable(self.bufnr, self.filepath) ~= false
 end
 
 -- A helper function to bridge the gap between running multiple formatters
@@ -240,7 +240,7 @@ function Format:step()
   -- Just `f()` is not a tail call, not that it makes a difference here.
   -- This is because lua still have to discard the result of the call and then
   -- return nil. `f()` is similar to `f(); return` instead of `return f()`
-  if self:is_enabled(formatter) then
+  if formatter.enable() ~= false then
     if formatter.use_lsp then
       return self:lsp_run(formatter)
     end
@@ -252,7 +252,7 @@ end
 
 -- The final callback in the formatting chain which will write the final
 -- output to the current buffer only if:
---   - Buffer was not changed
+--   - Buffer was changed
 --   - One of the formatter did run
 --   - Output differs from the input
 function Format:done()
@@ -263,8 +263,12 @@ function Format:done()
     return
   end
   local view = fn.winsaveview()
-  api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self.output)
-  self:write()
+  if vim.tbl_isempty(self.output) then
+    dm.log.warn("Skipping, received empty output:", self.output)
+  else
+    api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self.output)
+    self:write()
+  end
   fn.winrestview(view)
 end
 
@@ -273,11 +277,6 @@ function Format:write()
   format_write = true
   api.nvim_command(string.format("update %s", self.filepath))
   format_write = false
-end
-
--- Start the formatting chain.
-function Format:start()
-  return self:step()
 end
 
 -- Validate the formatter specification.
@@ -337,7 +336,7 @@ function M.format()
   if not formatters then
     return
   end
-  Format:new(formatters):start()
+  return Format:new(formatters):step()
 end
 
 -- For debugging purposes.
