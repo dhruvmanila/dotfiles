@@ -1,0 +1,6 @@
+# `rg(1)` reads this file because we've set this variable in `./assets/env` file
+#
+#     export RIPGREP_CONFIG_PATH="$HOME/dotfiles/config/ripgreprc"
+#
+# For more info, see:
+# https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file

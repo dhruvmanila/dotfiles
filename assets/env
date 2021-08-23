@@ -280,6 +280,9 @@ TTY=$(tty)
 export GPG_TTY=$TTY
 unset TTY
 
+# https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+export RIPGREP_CONFIG_PATH="${HOME}/dotfiles/config/ripgreprc"
+
 # }}}
 
 # vim: foldmethod=marker
