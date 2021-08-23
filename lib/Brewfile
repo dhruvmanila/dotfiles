@@ -113,6 +113,8 @@ brew "moreutils"
 brew "ninja"
 # Platform built on V8 to build network applications
 brew "node"
+# Paragraph reflow for email
+brew "par"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Execute binaries from Python packages in isolated environments
@@ -189,7 +191,7 @@ cask "font-fira-code"
 # Typeface made for developers
 cask "font-jetbrains-mono"
 # Web browser
-cask "google-chrome", args: { appdir: "~/Applications" }
+cask "google-chrome"
 # Desktop automation application
 cask "hammerspoon"
 # Terminal emulator as alternative to Apple's Terminal app
@@ -220,7 +222,7 @@ cask "slack"
 # Music streaming service
 cask "spotify"
 # Development environment
-cask "vagrant", args: { appdir: "~/Applications" }
+cask "vagrant"
 # Free and open-source hosted hypervisor for x86 virtualization
 cask "virtualbox"
 # Open-source code editor

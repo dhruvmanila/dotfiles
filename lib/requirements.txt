@@ -1,3 +1,4 @@
+asciinema
 black
 bpytop
 codespell
@@ -5,8 +6,10 @@ flake8
 ipdb
 ipython
 isort
+jupyterthemes
 line-profiler
 mypy
 neovim-remote
+notebook
 poetry
 pre-commit
