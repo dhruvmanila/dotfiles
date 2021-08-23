@@ -31,7 +31,7 @@
 │   └── *.lua ...              # And then all .lua files are loaded
 ├── init.lua                   # Global vars and require globals module
 ├── filetype.vim               # Help filetype detection
-└── minimal.vim
+└── minimal.lua
 ```
 
 ### Packer related files:
