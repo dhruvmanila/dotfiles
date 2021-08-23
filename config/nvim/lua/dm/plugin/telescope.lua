@@ -9,9 +9,12 @@ end
 local telescope = require "telescope"
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
+local builtin = require "telescope.builtin"
 local themes = require "telescope.themes"
 
 local nnoremap = dm.nnoremap
+
+-- Custom actions {{{1
 
 -- Namespace to hold custom actions
 local custom_actions = {}
@@ -28,7 +31,7 @@ custom_actions.yank_entry = function(prompt_bufnr)
   for _, selection in ipairs(selections) do
     table.insert(values, selection.value)
   end
-  vim.fn.setreg(vim.api.nvim_get_vvar "register", table.concat(values, "\n"))
+  vim.fn.setreg(vim.v.register, table.concat(values, "\n"))
 end
 
 -- Reset the prompt keeping the cursor at the current entry in the results window.
@@ -48,7 +51,8 @@ custom_actions.qflist_tab_session = function(prompt_bufnr)
   vim.cmd "tabnew | copen | cfirst"
 end
 
--- Default dropdown theme options.
+-- Default theme options {{{1
+
 local default_dropdown = themes.get_dropdown {
   layout_config = {
     width = 0.8,
@@ -57,15 +61,16 @@ local default_dropdown = themes.get_dropdown {
   previewer = false,
 }
 
--- Default ivy theme options.
 local default_ivy = themes.get_ivy {
   layout_config = {
     height = 0.5,
   },
 }
 
+-- Setup {{{1
+
 telescope.setup {
-  defaults = {
+  defaults = { -- {{{2
     prompt_prefix = " ",
     selection_caret = "❯ ",
     sorting_strategy = "ascending",
@@ -104,7 +109,15 @@ telescope.setup {
       },
     },
   },
-  pickers = {
+  pickers = { -- {{{2
+    builtin = {
+      theme = "dropdown",
+      previewer = false,
+      layout_config = {
+        width = 45,
+        height = 0.85,
+      },
+    },
     buffers = {
       sort_lastused = true,
       sort_mru = true,
@@ -164,7 +177,7 @@ telescope.setup {
       previewer = false,
     },
   },
-  extensions = {
+  extensions = { -- {{{2
     fzf = {
       override_generic_sorter = true,
       override_file_sorter = true,
@@ -183,52 +196,66 @@ telescope.setup {
       max_results = 0,
     },
   },
-}
+} -- }}}2
+
+-- Extensions {{{1
 
 -- Load the telescope extensions without blowing up. Only the required extensions
 -- are loaded, the others will be loaded lazily by telescope.
 pcall(telescope.load_extension, "fzf")
 
--- NOTE:
---
--- The keymaps for telescope builtins are mapped using string instead of
--- directly using the function to lazy load the module when needed.
---
--- Configuration for the builtin pickers should be done in the setup function.
+-- Key Bindings {{{1
+-- Builtin Pickers {{{2
 
-local builtin = setmetatable({}, {
-  __index = function(_, picker)
-    return "<Cmd>lua require('telescope.builtin')." .. picker .. "()<CR>"
-  end,
-})
-
+-- We cannot bind every builtin picker to a keymap and so this will help us
+-- when we are in need of a rarely used picker.
 nnoremap(";t", builtin.builtin)
-nnoremap("<C-p>", builtin.find_files)
-nnoremap("<C-f>", builtin.current_buffer_fuzzy_find)
+
+-- What's the difference between `git_files` and `find_files`? {{{
+--
+-- `find_files` uses the `find(1)` command and without any options, it will
+-- ignore hidden files (.*), not follow any symlinks, etc.
+--
+-- `git_files` uses the `git ls-files` command along with other flags to list
+-- all the files tracked by `git(1)` which can include hidden files such as
+-- `.editorconfig`, `.gitignore`, etc.
+--
+-- So, we will use `git_files` if we're in a directory tracked by `git(1)` and
+-- `find_files` otherwise.
+-- }}}
+nnoremap("<C-p>", function()
+  if vim.fn.isdirectory ".git" == 1 then
+    builtin.git_files()
+  else
+    builtin.find_files()
+  end
+end)
+
 nnoremap("<leader>;", builtin.buffers)
+nnoremap("<leader>fl", builtin.current_buffer_fuzzy_find)
+
 nnoremap("<leader>rg", builtin.live_grep)
-nnoremap("<leader>gc", builtin.git_commits)
+
 nnoremap(";b", builtin.git_branches)
+nnoremap("<leader>gc", builtin.git_commits)
+
 nnoremap("<leader>fh", builtin.help_tags)
 nnoremap("<leader>fc", builtin.commands)
 nnoremap("<leader>:", builtin.command_history)
 nnoremap("<leader>/", builtin.search_history)
 
--- Custom pickers and extensions:
+-- Custom pickers {{{2
 
 nnoremap("<leader>fd", function()
-  require("telescope.builtin").find_files {
+  builtin.git_files {
     prompt_title = "Find dotfiles",
     cwd = "~/dotfiles",
-    hidden = true,
-    follow = true,
-    file_ignore_patterns = { ".git/" },
   }
 end)
 
 -- This is mainly to avoid .gitignore patterns.
 nnoremap("<leader>fa", function()
-  require("telescope.builtin").find_files {
+  builtin.find_files {
     prompt_title = "Find All Files",
     hidden = true,
     follow = true,
@@ -240,14 +267,32 @@ end)
 nnoremap("<leader>rp", function()
   local pattern = vim.fn.input "Grep pattern ❯ "
   if pattern == "" then
-    vim.notify "[telescope] No pattern was specified"
     return
   end
-  require("telescope.builtin").grep_string {
+  builtin.grep_string {
+    prompt_title = ("Find Pattern (%s)"):format(pattern),
     use_regex = true,
     search = pattern,
   }
 end)
+
+nnoremap("<leader>rw", function()
+  local word = vim.fn.expand "<cword>"
+  builtin.grep_string {
+    prompt_title = ("Find word (%s)"):format(word),
+    search = word,
+  }
+end)
+
+nnoremap("<leader>rW", function()
+  local word = vim.fn.expand "<cWORD>"
+  builtin.grep_string {
+    prompt_title = ("Find WORD (%s)"):format(word),
+    search = word,
+  }
+end)
+
+-- Extensions {{{2
 
 -- Gaze the stars with the power of telescope.
 nnoremap("<leader>gs", function()
@@ -312,7 +357,10 @@ end
 
 nnoremap("<leader>fs", sessions)
 
--- Used in Dashboard
+-- }}}2
+-- }}}1
+
+-- Used in Lir and Dashboard
 return {
   lir_cd = lir_cd,
   sessions = sessions,
