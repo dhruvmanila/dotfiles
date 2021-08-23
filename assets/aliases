@@ -12,6 +12,7 @@ alias nnn='LESS=-R nnn'
 # Neovim
 alias v="nvim"
 alias vi="nvim"
+alias vm='nvim -nu ${HOME}/dotfiles/config/nvim/minimal.lua'
 
 # Neovim development
 alias dv='cd ${HOME}/contributing/neovim && VIMRUNTIME=runtime ./build/bin/nvim && cd -'
@@ -27,7 +28,7 @@ alias fixlocal='cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbi
 # 2. Shell option settings (set/unset)
 # 3. Readline variables
 # 4. Readline keybindings
-alias options='${EDITOR} -O <(set -o) <(shopt) <(bind -v) <(bind -p)'
+alias options='nvim -O <(set -o) <(shopt) <(bind -v) <(bind -p)'
 
 # Easier navigation
 alias ..="cd .."
