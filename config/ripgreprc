@@ -4,3 +4,6 @@
 #
 # For more info, see:
 # https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+
+# Search in hidden (.*) files and directories
+--hidden
