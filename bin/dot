@@ -644,38 +644,6 @@ function upgrade_lua_language_server() { # {{{
 }
 # }}}
 
-# Mackup
-function perform_mackup_backup() { # {{{
-  header "Performing mackup backup..."
-  local mackup_test
-  mackup_test="$(mackup -n backup)"
-  echo "$mackup_test"
-  if [[ -n $mackup_test ]]; then
-    seek_confirmation "Above files will be backed up with mackup"
-    if is_confirmed; then
-      mackup backup
-    fi
-  else
-    echo "==> No files to backup."
-  fi
-}
-# }}}
-function perform_mackup_restore() { # {{{
-  header "Performing mackup restore..."
-  local mackup_test
-  mackup_test="$(mackup -n restore)"
-  echo "$mackup_test"
-  if [[ -n $mackup_test ]]; then
-    seek_confirmation "Above files will be restored with mackup"
-    if is_confirmed; then
-      mackup restore
-    fi
-  else
-    echo "==> No files to restore."
-  fi
-}
-# }}}
-
 # Main
 function perform_all_functions() { # {{{
   setup_required_directories
@@ -695,7 +663,6 @@ function perform_all_functions() { # {{{
   setup_github_ssh
   update_macos_settings
   update_macos_dock
-  perform_mackup_restore
 }
 # }}}
 function usage() { # {{{
@@ -704,7 +671,6 @@ function usage() { # {{{
   echo "COMMANDS:"
   echo ""
   echo "  all            perform all setup functions"
-  echo "  backup         perform backup with mackup"
   echo "  brew           setup homebrew and install required packages"
   echo "  dir            setup required directories"
   echo "  dock           update macOS dock applications"
@@ -712,7 +678,6 @@ function usage() { # {{{
   echo "  link           backup and symlink dotfiles"
   echo "  package        setup global packages"
   echo "  python         setup python and global packages"
-  echo "  restore        perform restore with mackup"
   echo "  shell          update default shell"
   echo "  sync           sync lib files with global packages"
   echo "  upgrade        perform upgrades"
@@ -743,9 +708,6 @@ case "$1" in
     if is_confirmed; then
       perform_all_functions
     fi
-    ;;
-  backup)
-    perform_mackup_backup
     ;;
   brew)
     setup_homebrew
@@ -778,9 +740,6 @@ case "$1" in
   python)
     setup_python
     setup_python_global_packages
-    ;;
-  restore)
-    perform_mackup_restore
     ;;
   shell)
     setup_default_shell

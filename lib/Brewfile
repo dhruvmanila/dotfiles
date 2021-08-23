@@ -103,8 +103,6 @@ brew "lolcat"
 brew "lua@5.1"
 # OpenResty's Branch of LuaJIT 2
 brew "luajit-openresty"
-# Keep your Mac's application settings in sync
-brew "mackup"
 # Mac App Store command-line interface
 brew "mas"
 # Whole-program, optimizing compiler for Standard ML
