@@ -77,7 +77,7 @@ local entries = {
   {
     key = "f",
     description = "  Find files",
-    command = 'lua require("telescope.builtin").find_files()',
+    command = 'lua require("dm.plugin.telescope").find_files()',
   },
   {
     key = "u",

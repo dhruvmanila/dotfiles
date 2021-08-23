@@ -223,14 +223,15 @@ nnoremap(";t", builtin.builtin)
 -- So, we will use `git_files` if we're in a directory tracked by `git(1)` and
 -- `find_files` otherwise.
 -- }}}
-nnoremap("<C-p>", function()
+local function find_files()
   if vim.fn.isdirectory ".git" == 1 then
     builtin.git_files()
   else
     builtin.find_files()
   end
-end)
+end
 
+nnoremap("<C-p>", find_files)
 nnoremap("<leader>;", builtin.buffers)
 nnoremap("<leader>fl", builtin.current_buffer_fuzzy_find)
 
@@ -362,6 +363,7 @@ nnoremap("<leader>fs", sessions)
 
 -- Used in Lir and Dashboard
 return {
+  find_files = find_files,
   lir_cd = lir_cd,
   sessions = sessions,
 }
