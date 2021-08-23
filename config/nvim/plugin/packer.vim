@@ -63,5 +63,3 @@ augroup dm__packer_dump
   autocmd!
   autocmd User PackerComplete lua require('dm.plugins').dump()
 augroup END
-
-nnoremap <leader>ps <Cmd>PackerSync<CR>
