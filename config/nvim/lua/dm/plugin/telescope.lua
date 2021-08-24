@@ -12,6 +12,8 @@ local action_state = require "telescope.actions.state"
 local builtin = require "telescope.builtin"
 local themes = require "telescope.themes"
 
+local parsers = require "nvim-treesitter.parsers"
+
 local nnoremap = dm.nnoremap
 
 -- Custom actions {{{1
@@ -166,6 +168,8 @@ telescope.setup {
     vim_options = default_dropdown,
     keymaps = default_dropdown,
     commands = default_dropdown,
+    reloader = default_dropdown,
+    man_pages = default_dropdown,
     lsp_code_actions = {
       theme = "cursor",
     },
@@ -236,6 +240,18 @@ nnoremap("<leader>;", builtin.buffers)
 nnoremap("<leader>fl", builtin.current_buffer_fuzzy_find)
 
 nnoremap("<leader>rg", builtin.live_grep)
+
+-- Smart tags picker which uses either the LSP symbols, treesitter symbols or
+-- buffer tags, whichever is available first.
+nnoremap("<leader>ft", function()
+  if #vim.lsp.buf_get_clients(0) > 0 then
+    builtin.lsp_document_symbols()
+  elseif parsers.has_parser() then
+    builtin.treesitter()
+  else
+    builtin.current_buffer_tags()
+  end
+end)
 
 nnoremap(";b", builtin.git_branches)
 nnoremap("<leader>gc", builtin.git_commits)
