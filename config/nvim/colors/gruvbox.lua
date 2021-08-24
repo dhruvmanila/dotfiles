@@ -472,6 +472,23 @@ link("helpSectionDelim", "Grey")
 link("helpSpecial", "Blue")
 link("helpCommand", "Aqua")
 
--- }}}1
+-- markdown {{{2
+highlight("markdownH1", { fg = palette.red, gui = "bold" })
+highlight("markdownH2", { fg = palette.orange, gui = "bold" })
+highlight("markdownH3", { fg = palette.yellow, gui = "bold" })
+highlight("markdownH4", { fg = palette.green, gui = "bold" })
+highlight("markdownH5", { fg = palette.blue, gui = "bold" })
+highlight("markdownH6", { fg = palette.purple, gui = "bold" })
+link("markdownCode", "Aqua")
+link("markdownCodeBlock", "Aqua")
+link("markdownUrl", "BlueUnderline")
+link("markdownLinkText", "Purple")
+link("markdownHeadingRule", "Grey")
+link("markdownLinkDelimiter", "Grey")
+link("markdownLinkTextDelimiter", "Grey")
+link("markdownHeadingDelimiter", "Grey")
+link("markdownBoldDelimiter", "Grey")
+link("markdownItalicDelimiter", "Grey")
+link("markdownBoldItalicDelimiter", "Grey")
 
--- vim: foldmethod=marker
+-- }}}1
