@@ -376,7 +376,7 @@ do
     return dm._map_store[id]()
   end
 
-  ---Factory function to create mapper functions.
+  -- Factory function to create mapper functions.
   ---@param mode string
   ---@param defaults table
   ---@return fun(lhs: string, rhs: string|function, opts: table): nil
@@ -431,6 +431,29 @@ do
     end
   end
 
+  -- Factory function to create unmap functions.
+  ---@param mode string
+  ---@return fun(lhs: string, buffer: "true"|number): nil
+  local function make_delete_mapper(mode)
+    return function(lhs, buffer)
+      local id = "k" .. mode .. lhs
+      if buffer then
+        -- We are directly using the current buffer instead of passing in the
+        -- 0 because we need to clear the functions accordingly.
+        if buffer == true or buffer == 0 then
+          buffer = vim.api.nvim_get_current_buf()
+        end
+        vim.api.nvim_buf_del_keymap(buffer, mode, lhs)
+        if dm._map_store[buffer] then
+          dm._map_store[buffer][id] = nil
+        end
+      else
+        vim.api.nvim_del_keymap(mode, lhs)
+        dm._map_store[id] = nil
+      end
+    end
+  end
+
   local map = { noremap = false }
   dm.map = make_mapper("", map)
   dm.nmap = make_mapper("n", map)
@@ -452,4 +475,14 @@ do
   dm.snoremap = make_mapper("s", noremap)
   dm.onoremap = make_mapper("o", noremap)
   dm.tnoremap = make_mapper("t", noremap)
+
+  dm.unmap = make_delete_mapper ""
+  dm.nunmap = make_delete_mapper "n"
+  dm.iunmap = make_delete_mapper "i"
+  dm.cunmap = make_delete_mapper "c"
+  dm.vunmap = make_delete_mapper "v"
+  dm.xunmap = make_delete_mapper "x"
+  dm.sunmap = make_delete_mapper "s"
+  dm.ounmap = make_delete_mapper "o"
+  dm.tunmap = make_delete_mapper "t"
 end
