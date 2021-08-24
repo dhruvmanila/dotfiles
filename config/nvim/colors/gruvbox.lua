@@ -157,6 +157,7 @@ highlight("Fg", { fg = palette.fg })
 highlight("Grey", { fg = palette.grey1 })
 highlight("GreyBold", { fg = palette.grey1, gui = bold })
 highlight("GreyItalic", { fg = palette.grey1, gui = italic })
+highlight("GreyUnderline", { fg = palette.grey1, gui = "underline" })
 
 for name, color in pairs(base) do
   -- Uppercase the first letter of the given string.
@@ -399,7 +400,31 @@ link("DashboardEntry", "AquaBold")
 link("DashboardFooter", "Blue")
 
 -- Plugins {{{1
--- nvim-treesitter/nvim-treesitter {{{2
+-- gitsigns.nvim {{{2
+link("GitSignsAdd", "Green")
+link("GitSignsChange", "Blue")
+link("GitSignsDelete", "Red")
+link("GitSignsChangeDelete", "Purple")
+
+-- lir.nvim {{{2
+link("LirFloatBorder", "FloatBorder")
+link("LirFloatNormal", "NormalFloat")
+link("LirSymlink", "GreyItalic")
+link("LirEmptyDirText", "LirSymlink")
+
+-- nvim-notify {{{2
+link("NotifyERROR", "Red")
+link("NotifyERRORTitle", "NotifyERROR")
+link("NotifyWARN", "Yellow")
+link("NotifyWARNTitle", "NotifyWARN")
+link("NotifyINFO", "Blue")
+link("NotifyINFOTitle", "NotifyINFO")
+link("NotifyDEBUG", "Aqua")
+link("NotifyDEBUGTitle", "NotifyDEBUG")
+link("NotifyTRACE", "Grey")
+link("NotifyTRACETitle", "NotifyTRACE")
+
+-- nvim-treesitter {{{2
 highlight("TSDanger", { fg = palette.bg0, bg = palette.red, gui = "bold" })
 highlight("TSWarning", { fg = palette.bg0, bg = palette.yellow, gui = "bold" })
 link("TSConstant", "Fg")
@@ -416,33 +441,9 @@ link("TSStringRegex", "Green") -- check
 link("TSTagDelimiter", "Green") -- check
 link("TSVariableBuiltin", "BlueItalic") -- check
 
--- lewis6991/gitsigns.nvim {{{2
-link("GitSignsAdd", "Green")
-link("GitSignsChange", "Blue")
-link("GitSignsDelete", "Red")
-link("GitSignsChangeDelete", "Purple")
-
--- tamago324/lir.nvim {{{2
-link("LirFloatBorder", "FloatBorder")
-link("LirFloatNormal", "NormalFloat")
-link("LirSymlink", "GreyItalic")
-link("LirEmptyDirText", "LirSymlink")
-
--- nvim-telescope/telescope.nvim {{{2
+-- telescope.nvim {{{2
 link("TelescopeMatching", "Blue")
 link("TelescopePromptPrefix", "Yellow")
-
--- rcarriga/nvim-notify {{{2
-link("NotifyERROR", "Red")
-link("NotifyERRORTitle", "NotifyERROR")
-link("NotifyWARN", "Yellow")
-link("NotifyWARNTitle", "NotifyWARN")
-link("NotifyINFO", "Blue")
-link("NotifyINFOTitle", "NotifyINFO")
-link("NotifyDEBUG", "Aqua")
-link("NotifyDEBUGTitle", "NotifyDEBUG")
-link("NotifyTRACE", "Grey")
-link("NotifyTRACETitle", "NotifyTRACE")
 
 -- Extended File Types {{{1
 -- diff {{{2
