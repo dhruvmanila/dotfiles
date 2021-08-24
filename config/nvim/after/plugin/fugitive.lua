@@ -8,5 +8,6 @@ nnoremap("<leader>gp", "<Cmd>Git push<CR>")
 nnoremap("<leader>gP", "<Cmd>Git push --force-with-lease<CR>")
 
 -- Open current file on GitHub (requires `vim-rhubarb`)
-nnoremap("<leader>gb", "<Cmd>GBrowse<CR>")
-vnoremap("<leader>gb", ":GBrowse<CR>", { silent = true })
+-- Alternative: https://github.com/ruifm/gitlinker.nvim
+nnoremap("<leader>gh", "<Cmd>GBrowse<CR>")
+vnoremap("<leader>gh", ":GBrowse<CR>", { silent = true })
