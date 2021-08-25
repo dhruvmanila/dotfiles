@@ -6,8 +6,6 @@ local lsp_kind = dm.icons.lsp_kind
 local cmp = require "cmp"
 local luasnip = require "luasnip"
 
-require("cmp_nvim_lsp").setup()
-
 local source_name = {
   nvim_lsp = "[LSP]",
   path = "[Path]",
