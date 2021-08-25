@@ -103,7 +103,6 @@ local function load_plugins()
     { "raimon49/requirements.txt.vim" },
     { "rcarriga/nvim-dap-ui" },
     { "rcarriga/nvim-notify" },
-    { "rhysd/clever-f.vim" },
     { "rhysd/committia.vim" },
     { "rhysd/git-messenger.vim" },
     { "romainl/vim-cool" },
