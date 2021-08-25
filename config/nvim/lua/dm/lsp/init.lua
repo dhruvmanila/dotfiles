@@ -11,21 +11,10 @@ require "dm.lsp.handlers"
 require "dm.lsp.progress"
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-vim.lsp.set_log_level "info"
+vim.lsp.set_log_level(vim.env.DEBUG and "debug" or "info")
 
 nnoremap("<Leader>ll", "<Cmd>LspLog<CR>")
 nnoremap("<Leader>lr", "<Cmd>LspRestart<CR>")
-
--- Adding VSCode like icons to the completion menu.
--- vscode-codicons: https://github.com/microsoft/vscode-codicons
-require("vim.lsp.protocol").CompletionItemKind = (function()
-  local items = {}
-  for i, info in ipairs(icons.lsp_kind) do
-    local icon, name = unpack(info)
-    items[i] = icon .. "  " .. name
-  end
-  return items
-end)()
 
 -- Update the default signs
 vim.fn.sign_define {

@@ -59,14 +59,23 @@ local function load_plugins()
   reset_plugin_info()
   packer.reset()
   packer.use {
-    { "L3MON4D3/LuaSnip", event = "InsertEnter", config = conf "luasnip" },
+    { "L3MON4D3/LuaSnip", config = conf "luasnip" },
     { "airblade/vim-rooter" },
     { "cespare/vim-toml" },
     { "dstein64/vim-startuptime", cmd = "StartupTime" },
     { "editorconfig/editorconfig-vim" },
     { "folke/lua-dev.nvim" },
     { "ggandor/lightspeed.nvim" },
-    { "hrsh7th/nvim-compe", event = "InsertEnter", config = conf "completion" },
+    {
+      "hrsh7th/nvim-cmp",
+      config = conf "completion",
+      requires = {
+        "hrsh7th/cmp-buffer",
+        "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-path",
+        "saadparwaiz1/cmp_luasnip",
+      },
+    },
     { "itchyny/vim-external" },
     { "junegunn/vim-easy-align" },
     { "kyazdani42/nvim-web-devicons" },

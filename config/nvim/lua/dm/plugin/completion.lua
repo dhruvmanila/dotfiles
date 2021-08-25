@@ -1,110 +1,107 @@
-local imap = dm.imap
-local smap = dm.smap
-local inoremap = dm.inoremap
+local fn = vim.fn
+local feedkeys = vim.api.nvim_feedkeys
 local escape = dm.escape
+local lsp_kind = dm.icons.lsp_kind
 
+local cmp = require "cmp"
 local luasnip = require "luasnip"
 
-require("compe").setup {
-  enabled = true,
-  autocomplete = true,
-  debug = false,
-  min_length = 1,
-  preselect = "disable",
-  documentation = {
-    border = dm.border[vim.g.border_style],
-    winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
-    max_width = 120,
-    min_width = 60,
-    max_height = math.floor(vim.o.lines * 0.3),
-    min_height = 1,
-  },
-  source = {
-    path = { priority = 9 },
-    buffer = { menu = "[Buf]", priority = 8 },
-    nvim_lsp = { priority = 10 },
-    nvim_lua = { priority = 10 },
-    luasnip = true,
-    emoji = { filetypes = { "gitcommit", "markdown" } },
-  },
+require("cmp_nvim_lsp").setup()
+
+local source_name = {
+  nvim_lsp = "[LSP]",
+  path = "[Path]",
+  luasnip = "[Snip]",
+  buffer = "[Buf]",
 }
 
 -- Returns true if the cursor is in leftmost column or at a whitespace
 -- character, false otherwise.
 ---@return boolean
-local check_back_space = function()
-  local col = vim.fn.col "." - 1
-  return col == 0 or vim.fn.getline("."):sub(col, col):match "%s" ~= nil
+local function check_back_space()
+  local col = fn.col "." - 1
+  return col == 0 or fn.getline("."):sub(col, col):match "%s" ~= nil
 end
 
--- Use <Tab> to either:
+-- Use `<Tab>` to either:
 --   - move to next item in the completion menu
 --   - jump to the next insertion node in snippets
 --   - pass raw <Tab> character
---   - open completion menu
-local tab = function()
-  if vim.fn.pumvisible() == 1 then
-    return escape "<C-n>"
+---@param fallback function
+local function tab(fallback)
+  if fn.pumvisible() == 1 then
+    return feedkeys(escape "<C-n>", "n", true)
   elseif luasnip.expand_or_jumpable() then
-    return escape "<Plug>luasnip-expand-or-jump"
+    return feedkeys(escape "<Plug>luasnip-expand-or-jump", "", true)
   elseif check_back_space() then
-    return escape "<Tab>"
+    return feedkeys(escape "<Tab>", "n", true)
   else
-    return vim.fn["compe#complete"]()
+    return fallback()
   end
 end
 
--- Use <S-Tab> to either:
+-- Use `<S-Tab>` to either:
 --   - move to previous item in the completion menu
 --   - jump to the previous insertion node in snippets
---   - pass raw <S-Tab> character
-local shift_tab = function()
-  if vim.fn.pumvisible() == 1 then
-    return escape "<C-p>"
+---@param fallback function
+local function shift_tab(fallback)
+  if fn.pumvisible() == 1 then
+    return feedkeys(escape "<C-p>", "n", true)
   elseif luasnip.jumpable(-1) then
-    return escape "<Plug>luasnip-jump-prev"
+    return feedkeys(escape "<Plug>luasnip-jump-prev", "", true)
   else
-    return escape "<S-Tab>"
+    return fallback()
   end
 end
 
--- Use <C-e> to either:
---   - close the completion menu
---   - move to next choice for luasnip
---   - pass raw <C-e> character
-local c_e = function()
-  if vim.fn.pumvisible() == 1 then
-    return vim.fn["compe#close"]()
+-- Use `<C-e>` to either:
+--   - close the completion menu and go back to the originally typed text
+--   - move to the next node of a ChoiceNode in luasnip
+---@param fallback function
+local function c_e(fallback)
+  if cmp.abort() then
+    return
   elseif luasnip.choice_active() then
-    return escape "<Plug>luasnip-next-choice"
+    return feedkeys(escape "<Plug>luasnip-next-choice", "", true)
   else
-    return escape "<C-e>"
+    return fallback()
   end
 end
 
-local opts = { expr = true }
-
--- "Supertab" like functionality, where <Tab>/<S-Tab> auto-completes or moves
--- between completion menu items or jumps between insertion nodes in snippets.
---
--- This is a non-recursive mapping because the function might return '<Plug>'
--- map in case of snippets.
-imap("<Tab>", tab, opts)
-smap("<Tab>", tab, opts)
-imap("<S-Tab>", shift_tab, opts)
-smap("<S-Tab>", shift_tab, opts)
-
--- Similar to above where this will either close the completion menu or move
--- to the next choice for LuaSnip choice node. (:h luasnip-choicenode)
---
--- This is a non-recursive mapping because the function might return '<Plug>'
--- map in case of snippets.
-imap("<C-e>", c_e, opts)
-smap("<C-e>", c_e, opts)
-
--- Scrolling for the documentation window: (f)orwards and (b)ackwards
--- Alternative: `<C-f>` and `<C-d>`
-inoremap("<C-f>", "compe#scroll({'delta': +4})", opts)
-inoremap("<C-b>", "compe#scroll({'delta': -4})", opts)
-
-inoremap("<CR>", "compe#confirm('<CR>')", opts)
+cmp.setup {
+  confirmation = {
+    default_behavior = cmp.ConfirmBehavior.Replace,
+  },
+  documentation = {
+    border = dm.border[vim.g.border_style],
+    winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
+  },
+  formatting = {
+    --                        ┌ `:help complete-items`
+    --                        │
+    format = function(entry, item)
+      item.kind = ("%s %s"):format(lsp_kind[item.kind], item.kind)
+      item.menu = source_name[entry.source.name]
+      return item
+    end,
+  },
+  mapping = {
+    ["<Tab>"] = cmp.mapping(tab, { "i", "s" }),
+    ["<S-Tab>"] = cmp.mapping(shift_tab, { "i", "s" }),
+    ["<C-e>"] = cmp.mapping(c_e, { "i", "s" }),
+    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+    ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+    ["<CR>"] = cmp.mapping.confirm(),
+  },
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  sources = {
+    { name = "buffer" },
+    { name = "luasnip" },
+    { name = "nvim_lsp" },
+    { name = "path" },
+  },
+}
