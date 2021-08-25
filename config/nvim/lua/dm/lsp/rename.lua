@@ -67,7 +67,7 @@ function M.rename()
   api.nvim_win_set_option(
     winnr,
     "winhl",
-    string.format("FloatBorder:%s,NormalFloat:Normal", config.border_hl)
+    ("FloatBorder:%s,NormalFloat:Normal"):format(config.border_hl)
   )
 
   -- To line it up with the title

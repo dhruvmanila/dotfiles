@@ -21,13 +21,15 @@ local SERVER_ENV = "INSTANT_MARKDOWN_ALLOW_UNSAFE_CONTENT=1"
 -- `stdout` and `stderr` of the server will be redirected to this file.
 local SERVER_LOG_FILE = DEBUG and "/tmp/instant_markdown_d.log" or "/dev/null"
 
--- Command to start the server.
-local START_SERVER_CMD = string.format(
-  --       ┌─ do not open the browser window by default
-  --       │            ┌─ redirect stdout and stderr to `SERVER_LOG_FILE`
-  --       │            │ ┌─ start the process in the background
-  --       │     ┌──────┤ │
-  "%s %s --debug >%s 2>&1 &",
+-- Command to start the server {{{
+--                                 ┌─ do not open the browser window by default
+--                                 │
+--                                 │            ┌─ redirect stdout and stderr
+--                                 │            │  to `SERVER_LOG_FILE`
+--                                 │            │
+--                                 │            │ ┌─ start the process in the background
+--                                 │     ┌──────┤ │ }}}
+local START_SERVER_CMD = ("%s %s --debug >%s 2>&1 &"):format(
   SERVER_ENV,
   SERVER_EXEC,
   SERVER_LOG_FILE

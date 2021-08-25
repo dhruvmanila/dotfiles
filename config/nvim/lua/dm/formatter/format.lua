@@ -275,7 +275,7 @@ end
 -- Write the formatted buffer without triggering the format autocmd again.
 function Format:write()
   format_write = true
-  api.nvim_command(string.format("update %s", self.filepath))
+  api.nvim_command(("update %s"):format(self.filepath))
   format_write = false
 end
 

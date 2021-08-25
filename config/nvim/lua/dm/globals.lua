@@ -12,8 +12,6 @@ _G.dm = {
   _map_store = _NvimKeymapCallbacks,
 }
 
-local format = string.format
-
 -- Logging handler. To turn on debug mode:
 --
 --     $ DEBUG=1 nvim
@@ -231,11 +229,10 @@ do
     local command = opts.command
     if vim.is_callable(command) then
       local fn_id = create(command)
-      command = format("lua dm._execute(%d)", fn_id)
+      command = ("lua dm._execute(%d)"):format(fn_id)
     end
     vim.cmd(
-      format(
-        "autocmd %s %s %s %s %s",
+      ("autocmd %s %s %s %s %s"):format(
         opts.group or "",
         table.concat(resolve(opts.events), ","),
         table.concat(resolve(opts.targets), ","),
@@ -286,16 +283,16 @@ function dm.command(name, repl, opts)
     if opts.nargs and (type(opts.nargs) == "string" or opts.nargs > 0) then
       fargs = ", <f-args>"
     end
-    repl = format("lua dm._execute(%d%s)", fn_id, fargs)
+    repl = ("lua dm._execute(%d%s)"):format(fn_id, fargs)
   elseif repl_type ~= "string" then
     error("[command] Unsupported repl type: " .. repl_type)
   end
   local attr = ""
   for key, val in pairs(opts) do
     val = type(val) == "boolean" and "" or "=" .. val
-    attr = format("%s -%s%s", attr, key, val)
+    attr = ("%s -%s%s"):format(attr, key, val)
   end
-  vim.cmd(format("command! %s %s %s", attr, name, repl))
+  vim.cmd(("command! %s %s %s"):format(attr, name, repl))
 end
 
 do
@@ -325,8 +322,7 @@ do
       end
     end
     if err == nil or err == true then
-      local msg = string.format(
-        "expected one of '%s', got %s",
+      local msg = ("expected one of '%s', got %s"):format(
         table.concat(expected, "', '"),
         vim.inspect(value)
       )
@@ -402,20 +398,17 @@ do
         if opts.expr then
           -- This is going into vimscript world so it requires `v:null` instead
           -- of the lua `nil`.
-          rhs = format(
-            'v:lua.dm._execute_keymap(%s, "%s")',
+          rhs = ('v:lua.dm._execute_keymap(%s, "%s")'):format(
             bufnr or "v:null",
             fn_id
           )
         elseif mode == "v" or mode == "x" then
-          rhs = format(
-            ':<C-U>lua dm._execute_keymap(%s, "%s")<CR>',
+          rhs = (':<C-U>lua dm._execute_keymap(%s, "%s")<CR>'):format(
             bufnr,
             fn_id
           )
         else
-          rhs = format(
-            '<Cmd>lua dm._execute_keymap(%s, "%s")<CR>',
+          rhs = ('<Cmd>lua dm._execute_keymap(%s, "%s")<CR>'):format(
             bufnr,
             fn_id
           )

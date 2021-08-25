@@ -1,6 +1,5 @@
 local g = vim.g
 local cmd = vim.cmd
-local format = string.format
 local packer = nil
 
 -- Reset the global plugin info variable.
@@ -13,9 +12,9 @@ end
 ---@return string
 local function conf(config_name)
   if config_name == "lsp" then
-    return format("require('dm.%s')", config_name)
+    return ("require('dm.%s')"):format(config_name)
   end
-  return format("require('dm.plugin.%s')", config_name)
+  return ("R('dm.plugin.%s')"):format(config_name)
 end
 
 -- Extending packer with a custom handler to store plugin information to be
@@ -130,8 +129,7 @@ end
 -- across Neovim sessions. This will then be loaded automatically by Neovim
 -- on startup as the file is in runtime path.
 local function dump_plugin_info()
-  local lines = format(
-    "_G._PackerPluginInfo = %s\n",
+  local lines = ("_G._PackerPluginInfo = %s\n"):format(
     vim.inspect(_PackerPluginInfo)
   )
   local file = io.open(g.packer_plugin_info_path, "w")

@@ -67,8 +67,7 @@ palette = vim.tbl_extend("error", base, palette)
 ---@param default? boolean
 local function highlight(group_name, args, default)
   vim.cmd(
-    string.format(
-      "highlight %s %s guifg=%s guibg=%s gui=%s guisp=%s blend=%s",
+    ("highlight %s %s guifg=%s guibg=%s gui=%s guisp=%s blend=%s"):format(
       default and "default" or "",
       group_name,
       args.fg or "NONE",
@@ -110,7 +109,7 @@ local function link(from_group, to_group, force)
   if force == nil or force == true then
     vim.cmd("highlight clear " .. from_group)
   end
-  vim.cmd(string.format("highlight default link %s %s", from_group, to_group))
+  vim.cmd(("highlight default link %s %s"):format(from_group, to_group))
 end
 
 -- `background` needs to be set *before* `:highlight clear` {{{

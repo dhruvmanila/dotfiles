@@ -296,7 +296,7 @@ local function open(on_vimenter)
     -- should keep the alternate buffer which is the one we go to when we
     -- quit the dashboard buffer.
     if vim.bo.filetype == "dashboard" then
-      vim.cmd(string.format("keepalt call nvim_win_set_buf(0, %d)", bufnr))
+      vim.cmd(("keepalt call nvim_win_set_buf(0, %d)"):format(bufnr))
     else
       api.nvim_win_set_buf(0, bufnr)
     end

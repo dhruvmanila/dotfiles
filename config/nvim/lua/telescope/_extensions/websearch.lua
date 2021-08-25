@@ -186,12 +186,12 @@ local function search_or_select(prompt_bufnr)
     end
     local urls = table.concat(
       vim.tbl_map(function(selection)
-        return string.format('"%s"', selection.value)
+        return ('"%s"'):format(selection.value)
       end, selections),
       " "
     )
     actions.close(prompt_bufnr)
-    os.execute(string.format("%s %s", state.open_command, urls))
+    os.execute(("%s %s"):format(state.open_command, urls))
   end
 end
 
@@ -203,8 +203,7 @@ local function websearch(opts)
   if vim.fn.executable(executable[search_engine]) <= 0 then
     dm.notify(
       "Telescope",
-      string.format(
-        "'websearch' requires the `%s` executable for searching on '%s'",
+      ("'websearch' requires the `%s` executable for searching on '%s'"):format(
         executable[search_engine],
         search_engine
       ),

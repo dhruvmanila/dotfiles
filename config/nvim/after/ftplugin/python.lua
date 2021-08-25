@@ -7,8 +7,7 @@ setlocal formatprg=black\ -q\ -
 -- dot notation.
 dm.nnoremap("gk", function()
   vim.fn["external#browser"](
-    string.format(
-      "https://docs.python.org/3.9/search.html?q=%s",
+    ("https://docs.python.org/3.9/search.html?q=%s"):format(
       vim.fn.expand "<cWORD>"
     )
   )

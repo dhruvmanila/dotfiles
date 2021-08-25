@@ -12,7 +12,7 @@ local function format_data(data)
       message = message .. " " .. data.message
     end
     if data.percentage then
-      message = message .. string.format(" (%.0f%%%%)", data.percentage)
+      message = message .. (" (%.0f%%%%)"):format(data.percentage)
     end
   else
     message = data.content
