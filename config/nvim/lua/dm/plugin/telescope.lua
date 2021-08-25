@@ -287,7 +287,7 @@ nnoremap("<leader>rp", function()
     return
   end
   builtin.grep_string {
-    prompt_title = ("Find Pattern (%s)"):format(pattern),
+    prompt_title = ("Find Pattern » %s «"):format(pattern),
     use_regex = true,
     search = pattern,
   }
@@ -296,7 +296,7 @@ end)
 nnoremap("<leader>rw", function()
   local word = vim.fn.expand "<cword>"
   builtin.grep_string {
-    prompt_title = ("Find word (%s)"):format(word),
+    prompt_title = ("Find word » %s «"):format(word),
     search = word,
   }
 end)
@@ -304,7 +304,7 @@ end)
 nnoremap("<leader>rW", function()
   local word = vim.fn.expand "<cWORD>"
   builtin.grep_string {
-    prompt_title = ("Find WORD (%s)"):format(word),
+    prompt_title = ("Find WORD » %s «"):format(word),
     search = word,
   }
 end)
