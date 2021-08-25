@@ -158,15 +158,32 @@ end
 
 do
   -- Define default client capabilities.
+  ---@see https://github.com/hrsh7th/cmp-nvim-lsp#setup
+  ---@see https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#completionClientCapabilities
   local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
-  capabilities.textDocument.completion.completionItem.resolveSupport = {
-    properties = {
-      "documentation",
-      "detail",
-      "additionalTextEdits",
-    },
-  }
+
+  capabilities.textDocument.completion.completionItem = vim.tbl_deep_extend(
+    "force",
+    capabilities.textDocument.completion.completionItem,
+    {
+      commitCharactersSupport = true,
+      deprecatedSupport = true,
+      insertReplaceSupport = true,
+      labelDetailsSupport = true,
+      preselectSupport = true,
+      resolveSupport = {
+        properties = {
+          "documentation",
+          "detail",
+          "additionalTextEdits",
+        },
+      },
+      snippetSupport = true,
+      tagSupport = {
+        valueSet = { 1 },
+      },
+    }
+  )
 
   -- Setting up the servers with the provided configuration and additional
   -- capabilities.
