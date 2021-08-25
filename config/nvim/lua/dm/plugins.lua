@@ -65,6 +65,7 @@ local function load_plugins()
     { "dstein64/vim-startuptime", cmd = "StartupTime" },
     { "editorconfig/editorconfig-vim" },
     { "folke/lua-dev.nvim" },
+    { "ggandor/lightspeed.nvim" },
     {
       "hrsh7th/nvim-compe",
       event = "InsertEnter",

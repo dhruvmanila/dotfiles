@@ -406,6 +406,12 @@ link("GitSignsChange", "Blue")
 link("GitSignsDelete", "Red")
 link("GitSignsChangeDelete", "Purple")
 
+-- lightspeed.nvim {{{2
+highlight("LightspeedOneCharMatch", {
+  fg = "White",
+  gui = "bold,italic,underline",
+})
+
 -- lir.nvim {{{2
 link("LirFloatBorder", "FloatBorder")
 link("LirFloatNormal", "NormalFloat")
