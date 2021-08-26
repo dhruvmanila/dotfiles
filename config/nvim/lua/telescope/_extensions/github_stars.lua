@@ -15,7 +15,9 @@ local entry_display = require "telescope.pickers.entry_display"
 -- Keep the values around between reloads
 _CachedGithubStars = _CachedGithubStars or { stars = {}, max_length = 0 }
 
---- Parse the data received from running the GitHub stars job.
+local github_stars
+
+-- Parse the data received from running the GitHub stars job.
 ---@data string
 local function parse_data(data)
   -- As we're paginating the results, GitHub will separate the page results as:
@@ -35,9 +37,10 @@ local function parse_data(data)
   _CachedGithubStars.max_length = max_length
 end
 
---- Start a new asynchronous job to collect the user GitHub stars using
---- GitHub's CLI tool `gh`.
-local function collect_github_stars()
+-- Start a new asynchronous job to collect the user GitHub stars using
+-- GitHub's CLI tool `gh`.
+---@param opts table picker opts table
+local function collect_github_stars(opts)
   ---@param job Job
   ---@param code number
   local function process_complete(job, code)
@@ -49,6 +52,7 @@ local function collect_github_stars()
     if result and result[1] ~= "" then
       parse_data(result[1])
     end
+    github_stars(opts)
   end
 
   Job
@@ -61,7 +65,7 @@ local function collect_github_stars()
     :start()
 end
 
---- Defines the action to open the selection in the browser.
+-- Defines the action to open the selection in the browser.
 local function open_in_browser(prompt_bufnr)
   local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
@@ -69,26 +73,27 @@ local function open_in_browser(prompt_bufnr)
   os.execute("open" .. ' "' .. selection.url .. '" &> /dev/null')
 end
 
---- This extension will show the users GitHub stars with the repository
---- description and provide an action to open it in the default browser.
----
---- The information is cached using an asynchronous job which is started when
---- this plugin is loaded. It is stored in a global variable
---- (`_CachedGithubStars`) which contains the following two fields:
----   - `stars`: List of tables each containing respository information:
----     - `name`: Full repository name (user/repo)
----     - `url`: GitHub url
----     - `description`: Repository description
----   - `max_length`: Maximum length of the `name` field from above
----
---- Default action (<CR>) will open the GitHub URL in the default browser.
+-- This extension will show the users GitHub stars with the repository
+-- description and provide an action to open it in the default browser.
+--
+-- The information is cached using an asynchronous job which is started when
+-- this plugin is loaded. It is stored in a global variable
+-- (`_CachedGithubStars`) which contains the following two fields:
+--   - `stars`: List of tables each containing respository information:
+--     - `name`: Full repository name (user/repo)
+--     - `url`: GitHub url
+--     - `description`: Repository description
+--   - `max_length`: Maximum length of the `name` field from above
+--
+-- Default action (<CR>) will open the GitHub URL in the default browser.
 ---@opts table
 ---@return nil
-local function github_stars(opts)
+github_stars = function(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    return nil
+    dm.notify("Telescope", "Job started to collect GitHub stars")
+    return collect_github_stars(opts)
   end
 
   local displayer = entry_display.create {
@@ -124,19 +129,11 @@ local function github_stars(opts)
     sorter = config.generic_sorter(opts),
     attach_mappings = function()
       actions.select_default:replace(open_in_browser)
-      -- TODO: refresh the telescope window
-      -- map('i', '<C-l>', collect_github_stars)
       return true
     end,
   }):find()
 end
 
 return telescope.register_extension {
-  setup = function(_)
-    if vim.tbl_isempty(_CachedGithubStars.stars) then
-      dm.notify("Telescope", "Job started to collect GitHub stars")
-      collect_github_stars()
-    end
-  end,
   exports = { github_stars = github_stars },
 }
