@@ -137,6 +137,22 @@ function _G.wrap(f, ...)
 end
 
 do
+  local notify
+
+  local function setup()
+    notify = require "notify"
+    notify.setup {
+      stages = "fade",
+      background_colour = "#282828",
+      icons = {
+        ERROR = dm.icons.error,
+        WARN = dm.icons.warning,
+        INFO = dm.icons.info,
+        DEBUG = "",
+      },
+    }
+  end
+
   ---@class NotifyOpts
   ---@field timeout number
   ---@field title string
@@ -161,12 +177,17 @@ do
   ---@param opts? NotifyOpts
   vim.notify = function(msg, log_level, opts)
     assert(msg, "'msg' value should be provided")
+    -- Defer the plugin setup until the first notification call because
+    -- it takes around 12ms to load.
+    if not notify then
+      setup()
+    end
     log_level = log_level or levels.INFO
     opts = opts or {}
     opts.title = opts.title
       or (type(log_level) == "string" and log_level)
       or default_title[log_level]
-    require "notify"(msg, log_level, opts)
+    notify(msg, log_level, opts)
   end
 
   -- Wrapper around `vim.notify` to simplify passing the `title` value.
