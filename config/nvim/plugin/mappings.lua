@@ -1,6 +1,5 @@
 local escape = dm.escape
-local nmap = dm.nmap
-local xmap = dm.xmap
+local cmap = dm.cmap
 local nnoremap = dm.nnoremap
 local xnoremap = dm.xnoremap
 local onoremap = dm.onoremap
@@ -23,11 +22,12 @@ local function smart_up_down(key, fallback)
   return escape(fallback)
 end
 
--- Make <C-p>/<C-n> as smart as <up>/<down>
+-- Make <C-p>/<C-n> as smart as <Up>/<Down> {{{
 --
 -- This will either recall older/recent command-line from history, whose
 -- beginning matches the current command-line or move through the wildmenu
 -- completion.
+-- }}}
 cnoremap("<C-p>", wrap(smart_up_down, "<C-p>", "<Up>"), { expr = true })
 cnoremap("<C-n>", wrap(smart_up_down, "<C-n>", "<Down>"), { expr = true })
 
@@ -42,6 +42,8 @@ local function navigate_search(key, fallback)
   return escape(fallback)
 end
 
+-- Move between matches without leaving incremental search {{{
+--
 -- By default, when you search for a pattern, `<C-g>` and `<C-t>` allow you
 -- to cycle through all the matches, without leaving the command-line. We remap
 -- these commands to `<Tab>` and `<S-Tab>`.
@@ -50,11 +52,15 @@ end
 -- command-line with the last searched pattern.
 --
 -- Note dependency on `'wildcharm'` being set to `<C-z>` in order for this to work.
+-- }}}
 cnoremap("<Tab>", wrap(navigate_search, "<C-g>", "<C-z>"), { expr = true })
 cnoremap("<S-Tab>", wrap(navigate_search, "<C-t>", "<S-Tab>"), { expr = true })
 
 -- cnoremap("<C-a>", "<Home>")
 -- cnoremap("<C-e>", "<End>")
+
+cmap("<C-f>", "<Right>")
+cmap("<C-b>", "<Left>")
 
 -- Make <Left>/<Right> move the cursor instead of selecting a different match
 -- in the wildmenu. See :h 'wildmenu'
@@ -147,6 +153,9 @@ xnoremap("k", "gk")
 
 -- If we're inside a long wrapped line, `^` and `0` should go the beginning
 -- of the line of the screen (not the beginning of the long line of the file).
+--
+-- If `wrap` is not set, then this will jump to the beginning/end of the visible
+-- line of the screen.
 nnoremap("^", "g^")
 xnoremap("^", "g^")
 nnoremap("0", "g0")
@@ -392,8 +401,8 @@ xnoremap("*", [[y/\V<C-R>=escape(@",'/\')<CR><CR>]])
 xnoremap("#", [[y?\V<C-R>=escape(@",'/?')<CR><CR>]])
 
 -- Capital JK move code lines/blocks up & down (only in visual mode)
-xnoremap("J", [[:m '>+1<CR>gv=gv]])
-xnoremap("K", [[:m '<-2<CR>gv=gv]])
+xnoremap("J", [[:move '>+1<CR>gv=gv]])
+xnoremap("K", [[:move '<-2<CR>gv=gv]])
 
 -- Visual indentation goes back to same selection
 xnoremap("<", "<gv")
