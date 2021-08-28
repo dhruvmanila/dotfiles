@@ -1,0 +1,74 @@
+name: dot
+help: Personal tool for managing dotfiles and packages
+version: 0.1.0
+
+commands:
+  - name: mac
+    help: update macOS related stuff
+
+    flags:
+      - long: --dock
+        short: -d
+        help: update macOS dock applications
+        dependencies:
+          - dockutil
+
+      - long: --settings
+        short: -s
+        help: update macOS settings
+
+  - name: link
+    help: symlink dotfiles after backing up the existing ones
+
+    flags:
+      - long: --force
+        short: -f
+        help: skip backup for the existing dotfiles
+
+  - name: setup
+    help: setup a new mac machine the way I like it
+
+  - name: sync
+    help: sync lib files with global package list
+
+    flags:
+      - long: --brew
+        short: -b
+        help: sync only homebrew packages (Brewfile)
+
+      - long: --node
+        short: -n
+        help: sync only node packages (node_modules.txt)
+
+      - long: --python
+        short: -p
+        help: sync only Python packages (requirements.txt)
+
+  - name: upgrade
+    help: upgrade packages
+    # catch_all:
+    #   label: additional packages
+    #   help: addtional packages to upgrade from the 'Allowed' list mentioned above
+
+    args:
+      - name: package
+        help: package to upgrade
+        default: all
+        allowed: &upgrade_package_list
+          - all
+          - brew
+          - lua_lsp
+          - neovim
+          - packages
+          - plugins
+
+    completions: *upgrade_package_list
+
+    flags:
+      - long: --ref
+        short: -r
+        arg: ref
+        help: |
+          Upgrade to a specific ref (commit/branch/tag). This flag is applicable only when 'PACKAGE' is:
+            - neovim
+            - lua_lsp
