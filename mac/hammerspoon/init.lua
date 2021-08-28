@@ -43,7 +43,7 @@ dump = function(...)
   )
 end
 
--- Console style changes {{{
+-- Console style changes {{{1
 hs.console.consoleFont { name = "JetBrains Mono", size = 14.0 }
 hs.console.darkMode(true)
 
@@ -61,4 +61,26 @@ hs.console.consoleResultColor(hs.drawing.color.asRGB { hex = "#8ec07c" })
 -- Remove the space occupying toolbar.
 hs.console.toolbar(nil)
 
--- }}}
+-- Keybindings {{{1
+
+-- Toggle hammerspoon console.
+hs.hotkey.bind({ "cmd", "ctrl", "alt" }, "h", function()
+  hs.toggleConsole()
+end)
+
+-- macOS has provided a shortcut to minimize a window but not to unminimize them.
+--
+-- This only unminimizes the first window in the *current* space. Repeated
+-- presses will unminimize all the remaining windows.
+--
+-- Also, if you have multiple windows for an application, minimize/unminimize
+-- works on a specific window and not on the whole application. Use hide/unhide
+-- for all windows of an application.
+hs.hotkey.bind({ "cmd", "ctrl" }, "m", function()
+  for _, win in ipairs(hs.window.allWindows()) do
+    if win:isMinimized() then
+      win:unminimize()
+      break
+    end
+  end
+end)
