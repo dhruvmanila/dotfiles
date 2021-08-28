@@ -200,11 +200,11 @@ cask "iterm2"
 cask "karabiner-elements"
 # GPU-based terminal emulator
 cask "kitty"
-# Adaptive brightness for external displays
-cask "lunar"
 # Controls and monitors all fans on Apple computers
 cask "macs-fan-control"
 cask "mark-text"
+# Tool to control external monitor brightness & volume
+cask "monitorcontrol"
 # Media player based on MPlayer and mplayer2
 cask "mpv"
 # Collaboration platform for API development

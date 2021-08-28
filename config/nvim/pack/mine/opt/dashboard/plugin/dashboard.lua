@@ -346,4 +346,4 @@ dm.augroup("dm__dashboard", {
 
 dm.command("Dashboard", open, { bar = true })
 
-dm.nnoremap("<leader>`", "<Cmd>Dashboard<CR>")
+dm.nnoremap(";d", "<Cmd>Dashboard<CR>")
