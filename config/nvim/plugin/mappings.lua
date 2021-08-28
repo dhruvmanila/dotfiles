@@ -162,8 +162,8 @@ nnoremap("0", "g0")
 xnoremap("0", "g0")
 
 -- Jump to start (`^`) and end (`$`) of line using the home row keys.
-nmap("H", "^")
-xmap("H", "^")
+nnoremap("H", "^")
+xnoremap("H", "^")
 nnoremap("L", "g_")
 xnoremap("L", "g_")
 
