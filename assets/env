@@ -77,8 +77,16 @@ pathmunge() { # {{{
 #
 # In other words, these are keg-only and if we want to use the binaries from
 # these packages, their bin directory needs to be added first in the PATH.
-pathmunge "$(brew --prefix)/opt/llvm/bin"
-pathmunge "$(brew --prefix)/opt/sqlite/bin"
+brew_prefix=$(brew --prefix)
+
+pathmunge "${brew_prefix}/opt/llvm/bin"
+pathmunge "${brew_prefix}/opt/sqlite/bin"
+pathmunge "${brew_prefix}/opt/ruby/bin"
+
+# Source: `brew info ruby`
+pathmunge "${brew_prefix}/lib/ruby/gems/3.0.0/bin"
+
+unset brew_prefix
 
 # https://pypa.github.io/pipx/installation/
 #
