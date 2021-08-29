@@ -8,6 +8,13 @@ cnoreabbrev <expr> pi getcmdtype() == ':' && getcmdpos() == 3 ? 'PackerInstall' 
 cnoreabbrev <expr> ps getcmdtype() == ':' && getcmdpos() == 3 ? 'PackerSync' : 'ps'
 cnoreabbrev <expr> pu getcmdtype() == ':' && getcmdpos() == 3 ? 'PackerUpdate' : 'pu'
 
+" Session commands
+cnoreabbrev <expr> sc getcmdtype() == ':' && getcmdpos() == 3 ? 'SClose' : 'sc'
+cnoreabbrev <expr> sd getcmdtype() == ':' && getcmdpos() == 3 ? 'SDelete' : 'sd'
+cnoreabbrev <expr> sl getcmdtype() == ':' && getcmdpos() == 3 ? 'SLoad' : 'sl'
+cnoreabbrev <expr> sr getcmdtype() == ':' && getcmdpos() == 3 ? 'SRename' : 'sr'
+cnoreabbrev <expr> ss getcmdtype() == ':' && getcmdpos() == 3 ? 'SSave' : 'ss'
+
 " :so -> :source %
 cnoreabbrev <expr> so getcmdtype() == ':' && getcmdpos() == 3 ? 'source %' : 'so'
 

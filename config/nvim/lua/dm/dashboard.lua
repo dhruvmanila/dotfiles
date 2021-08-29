@@ -1,13 +1,8 @@
-if vim.g.loaded_dashboard then
-  return
-end
-vim.g.loaded_dashboard = true
-
 local fn = vim.fn
 local api = vim.api
 
 local Text = require "dm.text"
-local session = require "session"
+local session = require "dm.session"
 
 -- Variables {{{1
 
@@ -321,29 +316,6 @@ local function open(on_vimenter)
   vim.o.eventignore = ""
 end
 
--- Setup {{{1
+-- }}}1
 
-dm.augroup("dm__dashboard", {
-  {
-    events = "VimEnter",
-    targets = "*",
-    command = function()
-      if fn.argc() == 0 and fn.line2byte "$" == -1 then
-        open(true)
-      end
-    end,
-  },
-  {
-    events = "VimResized",
-    targets = "*",
-    command = function()
-      if vim.bo.filetype == "dashboard" then
-        open()
-      end
-    end,
-  },
-})
-
-dm.command("Dashboard", open, { bar = true })
-
-dm.nnoremap(";d", "<Cmd>Dashboard<CR>")
+return { open = open }

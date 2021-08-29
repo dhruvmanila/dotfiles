@@ -6,7 +6,7 @@ vim.g.loaded_session = true
 local fn = vim.fn
 local command = dm.command
 
-local session = require "session"
+local session = require "dm.session"
 
 -- By default, every session we open will be saved automatically when Vim exits.
 --

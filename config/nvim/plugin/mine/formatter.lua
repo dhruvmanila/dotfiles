@@ -1,6 +1,11 @@
 -- Custom formatting setup using libUV
 -- TODO: setup auto formatting per buffer using a buffer variable
 
+if vim.g.loaded_formatter then
+  return
+end
+vim.g.loaded_formatter = true
+
 local format = require("dm.formatter.format").format
 
 -- Flag to denote the current state of auto formatting.

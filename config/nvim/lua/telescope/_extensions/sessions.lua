@@ -11,7 +11,7 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
 
-local session = require "session"
+local session = require "dm.session"
 
 --- Return the current session name.
 local function get_current_session_name()
