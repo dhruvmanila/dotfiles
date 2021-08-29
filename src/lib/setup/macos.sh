@@ -1,6 +1,6 @@
 update_macos_settings() {
   header "Updating macOS settings..."
-  bash "${DOTFILES_DIRECTORY}/lib/osxdefaults"
+  bash "${DOTFILES_DIRECTORY}/mac/osxdefaults"
 }
 
 update_macos_dock() {
