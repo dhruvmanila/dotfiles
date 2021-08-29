@@ -58,10 +58,16 @@ local function load_plugins()
   reset_plugin_info()
   packer.reset()
   packer.use {
-    { "L3MON4D3/LuaSnip", config = conf "luasnip" },
+    {
+      "L3MON4D3/LuaSnip",
+      config = conf "luasnip",
+    },
     { "airblade/vim-rooter" },
     { "cespare/vim-toml" },
-    { "dstein64/vim-startuptime", cmd = "StartupTime" },
+    {
+      "dstein64/vim-startuptime",
+      cmd = "StartupTime",
+    },
     { "editorconfig/editorconfig-vim" },
     { "folke/lua-dev.nvim" },
     { "ggandor/lightspeed.nvim" },
@@ -78,30 +84,47 @@ local function load_plugins()
     { "itchyny/vim-external" },
     { "junegunn/vim-easy-align" },
     { "kyazdani42/nvim-web-devicons" },
-    { "lewis6991/gitsigns.nvim", event = "BufRead", config = conf "gitsigns" },
+    {
+      "lewis6991/gitsigns.nvim",
+      event = "BufRead",
+      config = conf "gitsigns",
+    },
     {
       "mfussenegger/nvim-dap",
-      keys = { { "n", "<leader>db" }, { "n", "<leader>dc" } },
+      keys = {
+        { "n", "<leader>db" },
+        { "n", "<leader>dc" },
+      },
       config = conf "nvim_dap",
     },
     { "mfussenegger/nvim-dap-python" },
     { "mfussenegger/nvim-lint" },
     { "milisims/nvim-luaref" },
     { "nanotee/luv-vimdocs" },
-    { "neovim/nvim-lspconfig", event = "BufReadPre", config = conf "lsp" },
+    {
+      "neovim/nvim-lspconfig",
+      event = "BufReadPre",
+      config = conf "lsp",
+    },
     {
       "norcalli/nvim-colorizer.lua",
       keys = "<leader>cc",
       config = conf "colorizer",
     },
     { "nvim-lua/plenary.nvim" },
-    { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
+    {
+      "nvim-telescope/telescope-fzf-native.nvim",
+      run = "make",
+    },
     {
       "nvim-telescope/telescope.nvim",
       event = "CursorHold",
       config = conf "telescope",
     },
-    { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
+    {
+      "nvim-treesitter/nvim-treesitter",
+      run = ":TSUpdate",
+    },
     { "nvim-treesitter/nvim-treesitter-textobjects" },
     { "nvim-treesitter/playground" },
     { "raimon49/requirements.txt.vim" },
@@ -110,7 +133,11 @@ local function load_plugins()
     { "rhysd/committia.vim" },
     { "rhysd/git-messenger.vim" },
     { "romainl/vim-cool" },
-    { "tamago324/lir.nvim", keys = "-", config = conf "lir" },
+    {
+      "tamago324/lir.nvim",
+      keys = "-",
+      config = conf "lir",
+    },
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
     { "tpope/vim-fugitive" },
@@ -119,7 +146,10 @@ local function load_plugins()
     { "tpope/vim-scriptease" },
     { "tpope/vim-surround" },
     { "vim-scripts/applescript.vim" },
-    { "wbthomason/packer.nvim", opt = true },
+    {
+      "wbthomason/packer.nvim",
+      opt = true,
+    },
     { "yamatsum/nvim-nonicons" },
     { "~/projects/telescope-bookmarks.nvim" },
   }
