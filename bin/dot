@@ -158,17 +158,17 @@ dot_sync_usage() {
     # :command.usage_flags
     # :flag.usage
     echo "  --brew, -b"
-    printf "    sync only homebrew packages (Brewfile)\n"
+    printf "    sync only homebrew packages\n    File: $HOMEBREW_BUNDLE_FILE\n"
     echo
 
     # :flag.usage
     echo "  --node, -n"
-    printf "    sync only node packages (node_modules.txt)\n"
+    printf "    sync only node packages\n    File: $NPM_GLOBAL_PACKAGES\n"
     echo
 
     # :flag.usage
     echo "  --python, -p"
-    printf "    sync only Python packages (requirements.txt)\n"
+    printf "    sync only Python packages\n    File: $PYTHON_GLOBAL_REQUIREMENTS\n"
     echo
 
   fi

@@ -34,15 +34,21 @@ commands:
     flags:
       - long: --brew
         short: -b
-        help: sync only homebrew packages (Brewfile)
+        help: |
+          sync only homebrew packages
+          File: $HOMEBREW_BUNDLE_FILE
 
       - long: --node
         short: -n
-        help: sync only node packages (node_modules.txt)
+        help: |
+          sync only node packages
+          File: $NPM_GLOBAL_PACKAGES
 
       - long: --python
         short: -p
-        help: sync only Python packages (requirements.txt)
+        help: |
+          sync only Python packages
+          File: $PYTHON_GLOBAL_REQUIREMENTS
 
   - name: upgrade
     help: upgrade packages
