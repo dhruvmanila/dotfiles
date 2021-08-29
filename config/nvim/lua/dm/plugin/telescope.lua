@@ -283,14 +283,13 @@ end)
 
 nnoremap("<leader>rp", function()
   local pattern = vim.fn.input "Grep pattern ❯ "
-  if pattern == "" then
-    return
+  if pattern ~= "" then
+    builtin.grep_string {
+      prompt_title = ("Find Pattern » %s «"):format(pattern),
+      use_regex = true,
+      search = pattern,
+    }
   end
-  builtin.grep_string {
-    prompt_title = ("Find Pattern » %s «"):format(pattern),
-    use_regex = true,
-    search = pattern,
-  }
 end)
 
 nnoremap("<leader>rw", function()
