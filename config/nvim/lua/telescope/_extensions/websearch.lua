@@ -15,6 +15,7 @@ local pickers = require "telescope.pickers"
 local config = require("telescope.config").values
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
+local action_utils = require "telescope.actions.utils"
 local entry_display = require "telescope.pickers.entry_display"
 
 local Job = require "plenary.job"
@@ -179,17 +180,13 @@ local function search_or_select(prompt_bufnr)
   if state.mode == mode.QUERY then
     do_search()
   else
-    local picker = action_state.get_current_picker(prompt_bufnr)
-    local selections = picker:get_multi_selection()
-    if vim.tbl_isempty(selections) then
-      table.insert(selections, action_state.get_selected_entry())
+    local urls = ""
+    action_utils.map_selections(prompt_bufnr, function(selection)
+      urls = ('%s "%s"'):format(urls, selection.value)
+    end)
+    if urls == "" then
+      urls = action_state.get_selected_entry().value
     end
-    local urls = table.concat(
-      vim.tbl_map(function(selection)
-        return ('"%s"'):format(selection.value)
-      end, selections),
-      " "
-    )
     actions.close(prompt_bufnr)
     os.execute(("%s %s"):format(state.open_command, urls))
   end
