@@ -78,7 +78,7 @@ cnoremap("<Right>", "<Space><BS><Right>")
 -- Change the case for the word under cursor in insert mode
 -- '<C-u>': (u)ppercase
 -- '<C-t>': (t)itlecase
-inoremap("<C-u>", "<esc>viwUea")
+-- inoremap("<C-u>", "<esc>viwUea")
 inoremap("<C-t>", "<esc>b~lea")
 
 -- Normal {{{1

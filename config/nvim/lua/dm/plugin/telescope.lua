@@ -36,11 +36,6 @@ custom_actions.yank_entry = function(prompt_bufnr)
   end
 end
 
--- Reset the prompt keeping the cursor at the current entry in the results window.
-custom_actions.reset_prompt = function(prompt_bufnr)
-  action_state.get_current_picker(prompt_bufnr):reset_prompt()
-end
-
 -- Simple action to go to normal mode.
 custom_actions.stop_insert = function()
   vim.cmd "stopinsert!"
@@ -97,15 +92,19 @@ telescope.setup {
     },
     mappings = {
       i = {
+        ["<C-x>"] = false,
+        ["<C-u>"] = false,
+        ["<C-d>"] = false,
         ["<Esc>"] = actions.close,
         ["<C-j>"] = actions.move_selection_next,
         ["<C-k>"] = actions.move_selection_previous,
         ["<C-n>"] = actions.cycle_history_next,
         ["<C-p>"] = actions.cycle_history_prev,
+        ["<C-f>"] = actions.preview_scrolling_down,
+        ["<C-b>"] = actions.preview_scrolling_up,
         ["<C-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
         ["<C-s>"] = actions.select_horizontal,
         ["<C-y>"] = custom_actions.yank_entry,
-        ["<C-l>"] = custom_actions.reset_prompt,
         ["<C-c>"] = custom_actions.stop_insert,
         ["<A-q>"] = custom_actions.qflist_tab_session,
       },

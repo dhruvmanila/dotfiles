@@ -69,8 +69,7 @@ end
 local function open_in_browser(prompt_bufnr)
   local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
-
-  os.execute("open" .. ' "' .. selection.url .. '" &> /dev/null')
+  os.execute(('open "%s"'):format(selection.url))
 end
 
 -- This extension will show the users GitHub stars with the repository
