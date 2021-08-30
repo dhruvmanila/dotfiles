@@ -309,7 +309,7 @@ download_dotfiles() {
 # :src/lib/setup/github_ssh.sh
 setup_github_ssh() {
   # NOTE: This function should be called after symlinking the dotfiles
-  ssh -T git@github.com &>/dev/null
+  ssh -T git@github.com &> /dev/null
   if [[ $? -eq 1 ]]; then
     return
   fi
@@ -327,10 +327,10 @@ setup_github_ssh() {
   ssh-add -K "${HOME}/.ssh/${ssh_filename}"
 
   header "Copied public SSH key to clipboard. Please add it to GitHub.com..."
-  pbcopy <"${HOME}/.ssh/${ssh_filename}.pub"
+  pbcopy < "${HOME}/.ssh/${ssh_filename}.pub"
   open "https://github.com/settings/ssh"
   for i in {1..6}; do
-    ssh -T git@github.com &>/dev/null
+    ssh -T git@github.com &> /dev/null
     if [[ $? -eq 1 ]]; then
       header "Authentication successful."
       break
@@ -433,7 +433,7 @@ install_npm_global_packages() {
   header "Installing global npm packages from ${NPM_GLOBAL_PACKAGES}..."
   while IFS= read -r package; do
     npm --global install "$package"
-  done <"${NPM_GLOBAL_PACKAGES}"
+  done < "${NPM_GLOBAL_PACKAGES}"
 }
 
 # :src/lib/setup/python.sh
@@ -470,7 +470,7 @@ function install_global_python_packages() {
   header "Installing global Python packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
   while IFS= read -r package; do
     pipx install "$package"
-  done <"${PYTHON_GLOBAL_REQUIREMENTS}"
+  done < "${PYTHON_GLOBAL_REQUIREMENTS}"
 }
 
 # :src/lib/setup/symlinks.sh
@@ -555,7 +555,7 @@ install_xcode_command_line_tools() {
   header "Installing xcode command line tools..."
   xcode-select --install
   # wait until the tools are installed...
-  until xcode-select -p &>/dev/null; do
+  until xcode-select -p &> /dev/null; do
     sleep 5
   done
 }
@@ -685,11 +685,11 @@ is_confirmed() {
 }
 
 is_git_repo() {
-  git rev-parse --is-inside-work-tree &>/dev/null
+  git rev-parse --is-inside-work-tree &> /dev/null
 }
 
 command_exists() {
-  command -v "$1" &>/dev/null
+  command -v "$1" &> /dev/null
 }
 
 function_exists() {
@@ -798,7 +798,7 @@ dot_setup_command() {
   header "Changing directory to $DOTFILES_DIRECTORY..."
   cd "$DOTFILES_DIRECTORY" || exit 1
 
-  if ! xcode-select -p &>/dev/null; then
+  if ! xcode-select -p &> /dev/null; then
     install_xcode_command_line_tools
   fi
 
@@ -848,18 +848,18 @@ dot_sync_command() {
 
   if [[ $sync_all || $sync_python ]]; then
     header "Syncing requirements.txt with the global Python packages..."
-    pipx list --json |
-      jq -r '.venvs | keys | join("\n")' |
-      tee "${PYTHON_GLOBAL_REQUIREMENTS}" |
-      xargs -I{} echo "    {}"
+    pipx list --json \
+      | jq -r '.venvs | keys | join("\n")' \
+      | tee "${PYTHON_GLOBAL_REQUIREMENTS}" \
+      | xargs -I{} echo "    {}"
   fi
 
   if [[ $sync_all || $sync_node ]]; then
     header "Syncing node_modules.txt with the global Node packages..."
-    npm --global --json list |
-      jq -r '.dependencies | keys | join("\n")' |
-      tee "${NPM_GLOBAL_PACKAGES}" |
-      xargs -I{} echo "    {}"
+    npm --global --json list \
+      | jq -r '.dependencies | keys | join("\n")' \
+      | tee "${NPM_GLOBAL_PACKAGES}" \
+      | xargs -I{} echo "    {}"
   fi
 }
 
@@ -883,16 +883,16 @@ dot_upgrade_command() {
 parse_requirements() {
   # :command.fixed_flag_filter
   case "$1" in
-  --version | -v)
-    version_command
-    exit
-    ;;
+    --version | -v)
+      version_command
+      exit
+      ;;
 
-  --help | -h)
-    long_usage=yes
-    dot_usage
-    exit
-    ;;
+    --help | -h)
+      long_usage=yes
+      dot_usage
+      exit
+      ;;
 
   esac
   # :command.environment_variables_filter
@@ -901,49 +901,49 @@ parse_requirements() {
   action=$1
 
   case $action in
-  -*) ;;
+    -*) ;;
 
-  \
-    mac)
-    action="mac"
-    shift
-    dot_mac_parse_requirements "$@"
-    shift $#
-    ;;
+    \
+      mac)
+      action="mac"
+      shift
+      dot_mac_parse_requirements "$@"
+      shift $#
+      ;;
 
-  link)
-    action="link"
-    shift
-    dot_link_parse_requirements "$@"
-    shift $#
-    ;;
+    link)
+      action="link"
+      shift
+      dot_link_parse_requirements "$@"
+      shift $#
+      ;;
 
-  setup)
-    action="setup"
-    shift
-    dot_setup_parse_requirements "$@"
-    shift $#
-    ;;
+    setup)
+      action="setup"
+      shift
+      dot_setup_parse_requirements "$@"
+      shift $#
+      ;;
 
-  sync)
-    action="sync"
-    shift
-    dot_sync_parse_requirements "$@"
-    shift $#
-    ;;
+    sync)
+      action="sync"
+      shift
+      dot_sync_parse_requirements "$@"
+      shift $#
+      ;;
 
-  upgrade)
-    action="upgrade"
-    shift
-    dot_upgrade_parse_requirements "$@"
-    shift $#
-    ;;
+    upgrade)
+      action="upgrade"
+      shift
+      dot_upgrade_parse_requirements "$@"
+      shift $#
+      ;;
 
-  # :command.command_fallback
-  *)
-    dot_usage
-    exit 1
-    ;;
+    # :command.command_fallback
+    *)
+      dot_usage
+      exit 1
+      ;;
 
   esac
   # :command.required_args_filter
@@ -953,16 +953,16 @@ parse_requirements() {
     key="$1"
     case "$key" in
 
-    -*)
-      printf "invalid option: %s\n" "$key"
-      exit 1
-      ;;
+      -*)
+        printf "invalid option: %s\n" "$key"
+        exit 1
+        ;;
 
-    *)
-      # :command.parse_requirements_case
-      printf "invalid argument: %s\n" "$key"
-      exit 1
-      ;;
+      *)
+        # :command.parse_requirements_case
+        printf "invalid argument: %s\n" "$key"
+        exit 1
+        ;;
 
     esac
   done
@@ -975,16 +975,16 @@ parse_requirements() {
 dot_mac_parse_requirements() {
   # :command.fixed_flag_filter
   case "$1" in
-  --version | -v)
-    version_command
-    exit
-    ;;
+    --version | -v)
+      version_command
+      exit
+      ;;
 
-  --help | -h)
-    long_usage=yes
-    dot_mac_usage
-    exit
-    ;;
+    --help | -h)
+      long_usage=yes
+      dot_mac_usage
+      exit
+      ;;
 
   esac
   # :command.environment_variables_filter
@@ -997,29 +997,29 @@ dot_mac_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
-    # :flag.case
-    --dock | -d)
-      args[--dock]=1
-      shift
-      ;;
+      # :flag.case
+      --dock | -d)
+        args[--dock]=1
+        shift
+        ;;
 
-    # :flag.case
-    --settings | -s)
-      args[--settings]=1
-      shift
-      ;;
+      # :flag.case
+      --settings | -s)
+        args[--settings]=1
+        shift
+        ;;
 
-    \
-      -*)
-      printf "invalid option: %s\n" "$key"
-      exit 1
-      ;;
+      \
+        -*)
+        printf "invalid option: %s\n" "$key"
+        exit 1
+        ;;
 
-    *)
-      # :command.parse_requirements_case
-      printf "invalid argument: %s\n" "$key"
-      exit 1
-      ;;
+      *)
+        # :command.parse_requirements_case
+        printf "invalid argument: %s\n" "$key"
+        exit 1
+        ;;
 
     esac
   done
@@ -1032,16 +1032,16 @@ dot_mac_parse_requirements() {
 dot_link_parse_requirements() {
   # :command.fixed_flag_filter
   case "$1" in
-  --version | -v)
-    version_command
-    exit
-    ;;
+    --version | -v)
+      version_command
+      exit
+      ;;
 
-  --help | -h)
-    long_usage=yes
-    dot_link_usage
-    exit
-    ;;
+    --help | -h)
+      long_usage=yes
+      dot_link_usage
+      exit
+      ;;
 
   esac
   # :command.environment_variables_filter
@@ -1054,23 +1054,23 @@ dot_link_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
-    # :flag.case
-    --force | -f)
-      args[--force]=1
-      shift
-      ;;
+      # :flag.case
+      --force | -f)
+        args[--force]=1
+        shift
+        ;;
 
-    \
-      -*)
-      printf "invalid option: %s\n" "$key"
-      exit 1
-      ;;
+      \
+        -*)
+        printf "invalid option: %s\n" "$key"
+        exit 1
+        ;;
 
-    *)
-      # :command.parse_requirements_case
-      printf "invalid argument: %s\n" "$key"
-      exit 1
-      ;;
+      *)
+        # :command.parse_requirements_case
+        printf "invalid argument: %s\n" "$key"
+        exit 1
+        ;;
 
     esac
   done
@@ -1083,16 +1083,16 @@ dot_link_parse_requirements() {
 dot_setup_parse_requirements() {
   # :command.fixed_flag_filter
   case "$1" in
-  --version | -v)
-    version_command
-    exit
-    ;;
+    --version | -v)
+      version_command
+      exit
+      ;;
 
-  --help | -h)
-    long_usage=yes
-    dot_setup_usage
-    exit
-    ;;
+    --help | -h)
+      long_usage=yes
+      dot_setup_usage
+      exit
+      ;;
 
   esac
   # :command.environment_variables_filter
@@ -1106,16 +1106,16 @@ dot_setup_parse_requirements() {
     key="$1"
     case "$key" in
 
-    -*)
-      printf "invalid option: %s\n" "$key"
-      exit 1
-      ;;
+      -*)
+        printf "invalid option: %s\n" "$key"
+        exit 1
+        ;;
 
-    *)
-      # :command.parse_requirements_case
-      printf "invalid argument: %s\n" "$key"
-      exit 1
-      ;;
+      *)
+        # :command.parse_requirements_case
+        printf "invalid argument: %s\n" "$key"
+        exit 1
+        ;;
 
     esac
   done
@@ -1128,16 +1128,16 @@ dot_setup_parse_requirements() {
 dot_sync_parse_requirements() {
   # :command.fixed_flag_filter
   case "$1" in
-  --version | -v)
-    version_command
-    exit
-    ;;
+    --version | -v)
+      version_command
+      exit
+      ;;
 
-  --help | -h)
-    long_usage=yes
-    dot_sync_usage
-    exit
-    ;;
+    --help | -h)
+      long_usage=yes
+      dot_sync_usage
+      exit
+      ;;
 
   esac
   # :command.environment_variables_filter
@@ -1150,35 +1150,35 @@ dot_sync_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
-    # :flag.case
-    --brew | -b)
-      args[--brew]=1
-      shift
-      ;;
+      # :flag.case
+      --brew | -b)
+        args[--brew]=1
+        shift
+        ;;
 
-    # :flag.case
-    --node | -n)
-      args[--node]=1
-      shift
-      ;;
+      # :flag.case
+      --node | -n)
+        args[--node]=1
+        shift
+        ;;
 
-    # :flag.case
-    --python | -p)
-      args[--python]=1
-      shift
-      ;;
+      # :flag.case
+      --python | -p)
+        args[--python]=1
+        shift
+        ;;
 
-    \
-      -*)
-      printf "invalid option: %s\n" "$key"
-      exit 1
-      ;;
+      \
+        -*)
+        printf "invalid option: %s\n" "$key"
+        exit 1
+        ;;
 
-    *)
-      # :command.parse_requirements_case
-      printf "invalid argument: %s\n" "$key"
-      exit 1
-      ;;
+      *)
+        # :command.parse_requirements_case
+        printf "invalid argument: %s\n" "$key"
+        exit 1
+        ;;
 
     esac
   done
@@ -1191,16 +1191,16 @@ dot_sync_parse_requirements() {
 dot_upgrade_parse_requirements() {
   # :command.fixed_flag_filter
   case "$1" in
-  --version | -v)
-    version_command
-    exit
-    ;;
+    --version | -v)
+      version_command
+      exit
+      ;;
 
-  --help | -h)
-    long_usage=yes
-    dot_upgrade_usage
-    exit
-    ;;
+    --help | -h)
+      long_usage=yes
+      dot_upgrade_usage
+      exit
+      ;;
 
   esac
   # :command.environment_variables_filter
@@ -1213,34 +1213,34 @@ dot_upgrade_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
-    # :flag.case
-    --ref | -r)
-      if [[ $2 ]]; then
-        args[--ref]="$2"
-        shift
-        shift
-      else
-        printf "%s\n" "--ref requires an argument: --ref, -r REF"
-        exit 1
-      fi
-      ;;
+      # :flag.case
+      --ref | -r)
+        if [[ $2 ]]; then
+          args[--ref]="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--ref requires an argument: --ref, -r REF"
+          exit 1
+        fi
+        ;;
 
-    \
-      -*)
-      printf "invalid option: %s\n" "$key"
-      exit 1
-      ;;
-
-    *)
-      # :command.parse_requirements_case
-      if [[ ! ${args[package]} ]]; then
-        args[package]=$1
-        shift
-      else
-        printf "invalid argument: %s\n" "$key"
+      \
+        -*)
+        printf "invalid option: %s\n" "$key"
         exit 1
-      fi
-      ;;
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        if [[ ! ${args[package]} ]]; then
+          args[package]=$1
+          shift
+        else
+          printf "invalid argument: %s\n" "$key"
+          exit 1
+        fi
+        ;;
 
     esac
   done
@@ -1278,11 +1278,11 @@ initialize() {
   # Feel free to empty (but not delete) this file.
 
   case "$(uname)" in
-  Darwin) ;;
-  *)
-    error "'dot' command is only supported on a mac machine"
-    exit 1
-    ;;
+    Darwin) ;;
+    *)
+      error "'dot' command is only supported on a mac machine"
+      exit 1
+      ;;
   esac
 
   DEFAULT_SHELL="bash"

@@ -6,4 +6,4 @@ BASH_COMPLETION := /usr/local/etc/bash_completion.d/$(BIN)-completion.bash
 gen:
 	BASHLY_TARGET_DIR=$(BIN_DIR) bashly generate
 	bashly add comp script $(BASH_COMPLETION)
-	shfmt -w -i 2 $(BIN_DIR)/$(BIN)
+	shfmt -w -i 2 -bn -ci -sr $(BIN_DIR)/$(BIN)
