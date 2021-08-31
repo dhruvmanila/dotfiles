@@ -84,7 +84,7 @@ pathmunge "${brew_prefix}/opt/sqlite/bin"
 pathmunge "${brew_prefix}/opt/ruby/bin"
 
 # Source: `brew info ruby`
-pathmunge "${brew_prefix}/lib/ruby/gems/3.0.0/bin"
+pathmunge "${brew_prefix}"/lib/ruby/gems/*/bin
 
 unset brew_prefix
 
@@ -171,13 +171,13 @@ PROMPT_COMMAND="history -a; history -c; history -r; ${PROMPT_COMMAND}"
 # Light Purple     \e[1;35m
 # Yellow           \e[1;33m
 # White            \e[1;37m
-export LESS_TERMCAP_mb=$'\e[1;31m'     # begin bold
-export LESS_TERMCAP_md=$'\e[1;36m'     # begin blink
-export LESS_TERMCAP_me=$'\e[0m'        # reset bold/blink
-export LESS_TERMCAP_so=$'\e[1;33m'     # begin reverse video
-export LESS_TERMCAP_se=$'\e[0m'        # reset reverse video
-export LESS_TERMCAP_us=$'\e[1;32m'     # begin underline
-export LESS_TERMCAP_ue=$'\e[0m'        # reset underline
+export LESS_TERMCAP_mb=$'\e[1;31m' # begin bold
+export LESS_TERMCAP_md=$'\e[1;36m' # begin blink
+export LESS_TERMCAP_me=$'\e[0m'    # reset bold/blink
+export LESS_TERMCAP_so=$'\e[1;33m' # begin reverse video
+export LESS_TERMCAP_se=$'\e[0m'    # reset reverse video
+export LESS_TERMCAP_us=$'\e[1;32m' # begin underline
+export LESS_TERMCAP_ue=$'\e[0m'    # reset underline
 
 # LESS defaults
 # X - leave content on-screen
