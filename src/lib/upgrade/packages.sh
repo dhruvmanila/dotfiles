@@ -7,6 +7,7 @@ upgrade_packages() {
   header "Upgrading all pipx packages..."
   pipx upgrade-all
 
-  header "Upgrading all npm packages..."
+  header "Upgrading npm and packages..."
+  npm --global install npm@latest
   npm --global upgrade
 }
