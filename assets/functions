@@ -18,6 +18,14 @@ pipup() {
     | xargs pip install --upgrade
 }
 
+# Uninstall all the Python packages for the current environment except for the
+# ones already included when the environment was created.
+pipun() {
+  pip list \
+    | awk 'NR>2 {if ($1 != "pip" && $1 != "setuptools") print $1}' \
+    | xargs pip uninstall --yes
+}
+
 # `o` with no arguments opens the current directory, otherwise opens the given
 # location.
 o() {
