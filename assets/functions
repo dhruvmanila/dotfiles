@@ -11,6 +11,13 @@ mcd() {
   mkdir -p "$@" && cd "$_" || return
 }
 
+# Upgrade the outdated Python packages for the current environment.
+pipup() {
+  pip list --outdated \
+    | awk 'NR>2 {print $1}' \
+    | xargs pip install --upgrade
+}
+
 # `o` with no arguments opens the current directory, otherwise opens the given
 # location.
 o() {
@@ -26,8 +33,8 @@ n() {
   # Purpose: Avoid opening
   # Block nesting of nnn in subshells
   if [ -n "$NNNLVL" ] && [ "${NNNLVL:-0}" -ge 1 ]; then
-      echo "nnn is already running"
-      return
+    echo "nnn is already running"
+    return
   fi
 
   # The default behaviour is to cd on quit (nnn checks if NNN_TMPFILE is set)
