@@ -1,11 +1,3 @@
-local should_reload = true
-
-if should_reload then
-  RELOAD "plenary"
-  RELOAD "popup"
-  RELOAD "telescope"
-end
-
 local telescope = require "telescope"
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
@@ -16,6 +8,7 @@ local themes = require "telescope.themes"
 local parsers = require "nvim-treesitter.parsers"
 
 local nnoremap = dm.nnoremap
+local xnoremap = dm.xnoremap
 
 -- Custom actions {{{1
 
@@ -30,10 +23,15 @@ custom_actions.yank_entry = function(prompt_bufnr)
     values[#values + 1] = selection.value
   end)
   if vim.tbl_isempty(values) then
-    vim.fn.setreg(vim.v.register, action_state.get_selected_entry().value)
-  else
-    vim.fn.setreg(vim.v.register, table.concat(values, "\n"))
+    table.insert(values, action_state.get_selected_entry().value)
   end
+  values = vim.tbl_map(function(value)
+    if type(value) == "table" and value.text then
+      value = value.text
+    end
+    return value
+  end, values)
+  vim.fn.setreg(vim.v.register, table.concat(values, "\n"))
 end
 
 -- Simple action to go to normal mode.
@@ -50,19 +48,18 @@ end
 
 -- Default theme options {{{1
 
-local default_dropdown = themes.get_dropdown {
-  layout_config = {
-    width = 0.8,
-    height = 0.8,
-  },
-  previewer = false,
-}
+local function dropdown_opts(width, height)
+  return themes.get_dropdown {
+    layout_config = {
+      width = width or 0.7,
+      height = height or 0.75,
+    },
+    previewer = false,
+  }
+end
 
-local default_ivy = themes.get_ivy {
-  layout_config = {
-    height = 0.5,
-  },
-}
+local default_dropdown = dropdown_opts()
+local dropdown_list = dropdown_opts(50, 0.5)
 
 -- Setup {{{1
 
@@ -71,7 +68,6 @@ telescope.setup {
     prompt_prefix = " ",
     selection_caret = "❯ ",
     sorting_strategy = "ascending",
-    file_ignore_patterns = { "__pycache__", ".mypy_cache" },
     layout_strategy = "flex",
     layout_config = {
       prompt_position = "top",
@@ -111,14 +107,6 @@ telescope.setup {
     },
   },
   pickers = { -- {{{2
-    builtin = {
-      theme = "dropdown",
-      previewer = false,
-      layout_config = {
-        width = 45,
-        height = 0.85,
-      },
-    },
     buffers = {
       sort_lastused = true,
       sort_mru = true,
@@ -134,51 +122,43 @@ telescope.setup {
           return math.min(editor_width - 20, 100)
         end,
         height = function(picker, _, editor_height)
-          return math.min(editor_height - 10, #picker.finder.results)
+          return math.max(
+            5,
+            math.min(editor_height - 10, #picker.finder.results)
+          )
         end,
       },
     },
-    live_grep = {
-      path_display = { "tail" },
-    },
+    builtin = dropdown_list,
+    command_history = default_dropdown,
+    commands = default_dropdown,
+    current_buffer_fuzzy_find = default_dropdown,
+    find_files = default_dropdown,
+    git_branches = default_dropdown,
+    git_files = default_dropdown,
     grep_string = {
       path_display = { "tail" },
     },
-    help_tags = {
-      layout_config = {
-        horizontal = {
-          width = 0.75,
-          preview_width = 0.6,
-        },
-      },
-    },
-    highlights = {
-      layout_config = {
-        horizontal = {
-          width = 0.75,
-          preview_width = 0.6,
-        },
-      },
-    },
-    command_history = default_ivy,
-    search_history = default_ivy,
-    oldfiles = default_dropdown,
-    current_buffer_fuzzy_find = default_dropdown,
-    vim_options = default_dropdown,
+    help_tags = default_dropdown,
+    highlights = dropdown_list,
     keymaps = default_dropdown,
-    commands = default_dropdown,
-    reloader = default_dropdown,
-    man_pages = default_dropdown,
+    live_grep = {
+      path_display = { "tail" },
+    },
     lsp_code_actions = {
       theme = "cursor",
     },
+    lsp_document_symbols = default_dropdown,
     lsp_range_code_actions = {
       theme = "cursor",
     },
-    git_branches = {
-      theme = "dropdown",
-      previewer = false,
-    },
+    lsp_workspace_symbols = default_dropdown,
+    man_pages = default_dropdown,
+    oldfiles = default_dropdown,
+    reloader = default_dropdown,
+    search_history = default_dropdown,
+    vim_options = default_dropdown,
+    treesitter = default_dropdown,
   },
   extensions = { -- {{{2
     fzf = {
@@ -254,6 +234,7 @@ end)
 
 nnoremap(";b", builtin.git_branches)
 nnoremap("<leader>gc", builtin.git_commits)
+nnoremap("<leader>bc", builtin.git_bcommits)
 
 nnoremap("<leader>fh", builtin.help_tags)
 nnoremap("<leader>fc", builtin.commands)
@@ -299,6 +280,10 @@ nnoremap("<leader>rw", function()
   }
 end)
 
+xnoremap("<leader>rw", function()
+  -- TODO: grep for visual selection
+end)
+
 nnoremap("<leader>rW", function()
   local word = vim.fn.expand "<cWORD>"
   builtin.grep_string {
@@ -317,13 +302,7 @@ end)
 -- List out all the installed plugins and provide action to either go to the
 -- GitHub page of the plugin or find files within the plugin using telescope.
 nnoremap("<leader>fp", function()
-  telescope.extensions.installed_plugins.installed_plugins(themes.get_dropdown {
-    layout_config = {
-      width = _PackerPluginInfo.max_length + 10,
-      height = 0.8,
-    },
-    previewer = false,
-  })
+  telescope.extensions.installed_plugins.installed_plugins(dropdown_list)
 end)
 
 -- Fuzzy find over your browser bookmarks.
@@ -347,27 +326,13 @@ end)
 local function lir_cd()
   -- Previewer is turned off by default. If it is enabled, then use the
   -- horizontal layout with wider results window and narrow preview window.
-  telescope.extensions.lir_cd.lir_cd(themes.get_dropdown {
-    layout_config = {
-      width = function(_, editor_width, _)
-        return math.min(100, editor_width - 10)
-      end,
-      height = 0.8,
-    },
-    previewer = false,
-  })
+  telescope.extensions.lir_cd.lir_cd(default_dropdown)
 end
 
 -- List out all the saved sessions and provide action to either open them or
 -- delete them.
 local function sessions()
-  telescope.extensions.sessions.sessions(themes.get_dropdown {
-    layout_config = {
-      width = 40,
-      height = 0.5,
-    },
-    previewer = false,
-  })
+  telescope.extensions.sessions.sessions(dropdown_list)
 end
 
 nnoremap("<leader>fs", sessions)
