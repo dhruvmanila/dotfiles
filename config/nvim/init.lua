@@ -11,7 +11,7 @@
 -------------------------------------------------------------------------------
 local g = vim.g
 
-require "impatient"
+require("impatient").enable_profile()
 
 -- Leader {{{
 --
