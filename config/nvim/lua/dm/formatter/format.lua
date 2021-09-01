@@ -262,14 +262,16 @@ function Format:done()
   if not self.ran_formatter or vim.deep_equal(self.input, self.output) then
     return
   end
-  local view = fn.winsaveview()
   if vim.tbl_isempty(self.output) then
     dm.log.warn("Skipping, received empty output:", self.output)
   else
+    -- Folds are removed when formatting is done, so we save the current state
+    -- of the view and re-apply it manually after formatting the buffer.
+    vim.cmd "mkview!"
     api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self.output)
     self:write()
+    vim.cmd "loadview"
   end
-  fn.winrestview(view)
 end
 
 -- Write the formatted buffer without triggering the format autocmd again.
