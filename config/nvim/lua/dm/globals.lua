@@ -1,5 +1,5 @@
--- Inspired by @tjdevries' astraunauta.nvim/ @TimUntersberger's config
--- Ref: https://github.com/akinsho/dotfiles/tree/main/.config/nvim/lua/as/globals.lua
+---@see https://github.com/akinsho/dotfiles/tree/main/.config/nvim/lua/as/globals.lua
+---@see https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals.lua
 
 -- Store all callbacks in one global table so they are able to survive
 -- re-requiring this file
@@ -65,7 +65,6 @@ dm.icons = {
   hint = "",
 }
 
--- https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals/init.lua
 ---@generic T
 ---@param v T
 ---@return T
@@ -74,17 +73,12 @@ P = function(v)
   return v
 end
 
--- Clear the 'require' cache for the module name.
----@param name string
-RELOAD = function(name)
-  for pack, _ in pairs(package.loaded) do
-    if string.find(pack, name, 1, true) then
-      package.loaded[name] = nil
-    end
-  end
+-- Clear the 'require' cache and 'luacache' for the module name.
+RELOAD = function(...)
+  require("plenary.reload").reload_module(...)
 end
 
--- Reload and require the givem module name.
+-- Reload and require the given module name.
 ---@param name string
 ---@return any
 R = function(name)
