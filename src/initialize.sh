@@ -30,9 +30,9 @@ LUA_LANGUAGE_SERVER_DIRECTORY="${HOME}/git/lua-language-server"
 PYTHON_VERSIONS=("3.9.6")
 
 # Packages file
-HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/lib/Brewfile"
-PYTHON_GLOBAL_REQUIREMENTS="${DOTFILES_DIRECTORY}/lib/requirements.txt"
-NPM_GLOBAL_PACKAGES="${DOTFILES_DIRECTORY}/lib/node_modules.txt"
+HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/src/package/Brewfile"
+PYTHON_GLOBAL_REQUIREMENTS="${DOTFILES_DIRECTORY}/src/package/requirements.txt"
+NPM_GLOBAL_PACKAGES="${DOTFILES_DIRECTORY}/src/package/node_modules.txt"
 
 # On initialization of the script, if these directories does not exist, then
 # they will be created.
