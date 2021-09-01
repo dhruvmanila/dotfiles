@@ -49,8 +49,5 @@ end
 --
 --   * blank: no point in saving empty windows
 --   * buffers: we don't want to restore hidden and unloaded buffers
---   * folds: we don't want local fold options to be saved, because if we make
---     some experiments and change some options/mappings during a session, we
---     don't want those to be restored
 -- }}}
-vim.opt.sessionoptions = { "curdir", "help", "tabpages", "winsize" }
+vim.opt.sessionoptions = { "curdir", "folds", "help", "tabpages", "winsize" }
