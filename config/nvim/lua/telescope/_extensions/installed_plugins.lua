@@ -56,7 +56,7 @@ end
 local function installed_plugins(opts)
   opts = opts or {}
 
-  if vim.tbl_isempty(_PackerPluginInfo.plugins) then
+  if vim.tbl_isempty(_PackerPluginInfo) then
     dm.notify("Telescope", "Plugin information was not cached", 3)
     return nil
   end
@@ -77,7 +77,7 @@ local function installed_plugins(opts)
   pickers.new(opts, {
     prompt_title = "Installed Plugins",
     finder = finders.new_table {
-      results = _PackerPluginInfo.plugins,
+      results = _PackerPluginInfo,
       entry_maker = function(entry)
         return {
           display = make_display,

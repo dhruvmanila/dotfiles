@@ -4,7 +4,7 @@ local packer = nil
 
 -- Reset the global plugin info variable.
 local function reset_plugin_info()
-  _PackerPluginInfo = { plugins = {}, max_length = 0 }
+  _PackerPluginInfo = {}
 end
 
 -- Helper function to create the 'config' string value for packer.
@@ -18,13 +18,12 @@ local function conf(config_name)
 end
 
 -- Extending packer with a custom handler to store plugin information to be
--- used by `:Telescope packer_plugins`
+-- used by `:Telescope installed_plugins`
 ---@param plugin table
 ---@param type string
 local function packer_type_handler(_, plugin, type)
   local name = type == "local" and "local/" .. plugin.short_name or plugin.name
-  _PackerPluginInfo.max_length = math.max(_PackerPluginInfo.max_length, #name)
-  table.insert(_PackerPluginInfo.plugins, {
+  table.insert(_PackerPluginInfo, {
     name = name,
     path = plugin.install_path,
     url = type == "git" and plugin.url or nil,
