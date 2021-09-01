@@ -109,6 +109,10 @@ nnoremap("<F6>", "<C-i>")
 -- Toggle fold at current position.
 nnoremap("<Tab>", "za")
 
+-- Easy way to do `:make`
+nnoremap("m<CR>", "<Cmd>make<CR>")
+nnoremap("m<Space>", ":make ")
+
 -- Source files (only for lua or vim files)
 nnoremap("<leader>so", function()
   local filetype = vim.bo.filetype
@@ -241,8 +245,10 @@ xnoremap("C", '"_C')
 -- This will make sure that `n` will always search forward and `N` backward.
 -- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-N
 -- }}}
-nnoremap("n", "'Nn'[v:searchforward]", { expr = true })
-nnoremap("N", "'nN'[v:searchforward]", { expr = true })
+-- FIXME: this does not open the folds by default as explained in `:h 'foldopen'`
+-- adding 'zv' at the end causes the highlighting to lose
+nnoremap("n", "'Nn'[v:searchforward] . 'zv'", { expr = true })
+nnoremap("N", "'nN'[v:searchforward] . 'zv'", { expr = true })
 
 -- Don't move the cursor to the next match
 -- FIXME: if the cursor is not at the start of the word, it is not highlighted
