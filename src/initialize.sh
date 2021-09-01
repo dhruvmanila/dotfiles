@@ -27,7 +27,7 @@ LUA_LANGUAGE_SERVER_DIRECTORY="${HOME}/git/lua-language-server"
 
 # Python versions to be installed on the system.
 # First version will be the global one
-PYTHON_VERSIONS=("3.9.6" "3.9.4" "3.9.1")
+PYTHON_VERSIONS=("3.9.6")
 
 # Packages file
 HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/lib/Brewfile"
