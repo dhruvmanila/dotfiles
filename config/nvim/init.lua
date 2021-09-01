@@ -11,6 +11,8 @@
 -------------------------------------------------------------------------------
 local g = vim.g
 
+require "impatient"
+
 -- Leader {{{
 --
 -- In general, it's a good idea to set this early in your config, because

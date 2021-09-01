@@ -84,6 +84,7 @@ local function load_plugins()
     { "itchyny/vim-external" },
     { "junegunn/vim-easy-align" },
     { "kyazdani42/nvim-web-devicons" },
+    { "lewis6991/impatient.nvim" },
     {
       "lewis6991/gitsigns.nvim",
       event = "BufRead",
