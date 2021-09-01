@@ -118,7 +118,6 @@ local function load_plugins()
     },
     {
       "nvim-telescope/telescope.nvim",
-      event = "CursorHold",
       config = conf "telescope",
     },
     {
@@ -138,6 +137,7 @@ local function load_plugins()
       keys = "-",
       config = conf "lir",
     },
+    { "tjdevries/lazy.nvim" },
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
     { "tpope/vim-fugitive" },

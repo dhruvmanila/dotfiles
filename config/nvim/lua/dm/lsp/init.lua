@@ -136,7 +136,7 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.code_action then
-    local builtin = require "telescope.builtin"
+    local builtin = require("lazy").require_on_exported_call "telescope.builtin"
 
     table.insert(lsp_autocmds, {
       events = { "CursorHold", "CursorHoldI" },

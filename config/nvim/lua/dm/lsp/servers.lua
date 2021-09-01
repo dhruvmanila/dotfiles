@@ -37,7 +37,7 @@ return {
 
     return require("lua-dev").setup {
       library = {
-        plugins = { "plenary.nvim" },
+        plugins = { "lazy.nvim", "plenary.nvim" },
       },
       lspconfig = {
         cmd = { bin, "-E", root .. "/main.lua" },
