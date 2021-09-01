@@ -14,6 +14,7 @@ local special_buffer_line = {
   packer = center " Packer",
   gitcommit = center " Commit message",
   fugitive = center " Fugitive",
+  startuptime = center " Startup time",
 
   help = function(ctx)
     return ctx.inactive and center "%t" or "%1* %l/%L %*%2* help %* %t"

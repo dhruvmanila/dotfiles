@@ -21,6 +21,7 @@ require("nvim-treesitter.configs").setup {
     "regex",
     "ruby",
     "toml",
+    "yaml",
   },
 
   highlight = {
