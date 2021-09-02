@@ -24,15 +24,11 @@ end
 
 -- Define the required set of mappings:
 --   - `<ESC>`: exit the rename prompt
---   - `<C-l>`: clear the rename prompt
 ---@param bufnr number rename window buffer number
 local function set_mappings(bufnr)
   local opts = { buffer = bufnr, nowait = true }
   nnoremap("<Esc>", cleanup, opts)
   inoremap("<Esc>", cleanup, opts)
-  inoremap("<C-l>", function()
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {})
-  end, opts)
 end
 
 -- Rename prompt callback function. It receives the entered value in the prompt
