@@ -130,8 +130,8 @@ telescope.setup {
       theme = "dropdown",
       previewer = false,
       mappings = {
-        i = { ["<C-x>"] = actions.delete_buffer },
-        n = { ["<C-x>"] = actions.delete_buffer },
+        i = { ["<C-d>"] = actions.delete_buffer },
+        n = { ["<C-d>"] = actions.delete_buffer },
       },
       layout_config = {
         width = function(_, editor_width, _)
