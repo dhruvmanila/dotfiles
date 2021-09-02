@@ -31,20 +31,6 @@ local function set_mappings(bufnr)
   inoremap("<Esc>", cleanup, opts)
 end
 
--- Rename prompt callback function. It receives the entered value in the prompt
--- buffer by Neovim.
----@param new_name string
-local function callback(new_name)
-  cleanup()
-  local orig_name = vim.fn.expand "<cword>"
-  if not new_name or #new_name == 0 or new_name == orig_name then
-    return
-  end
-  local params = lsp.util.make_position_params()
-  params.newName = new_name
-  lsp.buf_request(0, "textDocument/rename", params)
-end
-
 -- Entrypoint to rename the current word at cursor. The current word will be set
 -- in the prompt buffer.
 function M.rename()
@@ -66,9 +52,15 @@ function M.rename()
     ("FloatBorder:%s,NormalFloat:Normal"):format(config.border_hl)
   )
 
-  -- To line it up with the title
+  -- To provide a padding between the border and text.
   vim.fn.prompt_setprompt(bufnr, " ")
-  vim.fn.prompt_setcallback(bufnr, callback)
+  vim.fn.prompt_setcallback(bufnr, function(new_name)
+    cleanup()
+    if orig_name == new_name then
+      return
+    end
+    lsp.buf.rename(new_name)
+  end)
 
   set_mappings(bufnr)
   cmd "startinsert!"
