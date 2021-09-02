@@ -50,14 +50,28 @@ end
 
 -- Default theme options {{{1
 
+---@param width? number
+---@param height? number
+---@return table
 local function dropdown_opts(width, height)
-  return themes.get_dropdown {
-    layout_config = {
-      width = width or 0.7,
-      height = height or 0.75,
+  return setmetatable(
+    themes.get_dropdown {
+      layout_config = {
+        width = width or 0.7,
+        height = height or 0.75,
+      },
+      previewer = false,
     },
-    previewer = false,
-  }
+    {
+      __add = function(lhs, rhs)
+        assert(not vim.tbl_islist(rhs), "'rhs' cannot be a list like table")
+        return setmetatable(
+          vim.tbl_deep_extend("force", lhs, rhs),
+          getmetatable(lhs)
+        )
+      end,
+    }
+  )
 end
 
 local default_dropdown = dropdown_opts()
@@ -131,7 +145,9 @@ telescope.setup {
         end,
       },
     },
-    builtin = dropdown_list,
+    builtin = dropdown_list + {
+      include_extensions = true,
+    },
     command_history = default_dropdown,
     commands = default_dropdown,
     current_buffer_fuzzy_find = default_dropdown,
