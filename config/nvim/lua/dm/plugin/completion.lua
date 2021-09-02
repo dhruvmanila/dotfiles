@@ -97,7 +97,17 @@ cmp.setup {
     end,
   },
   sources = {
-    { name = "buffer" },
+    {
+      name = "buffer",
+      opts = {
+        -- Provide suggestions from all the visible buffers.
+        get_bufnrs = function()
+          return vim.tbl_map(function(winid)
+            return vim.api.nvim_win_get_buf(winid)
+          end, vim.api.nvim_list_wins())
+        end,
+      },
+    },
     { name = "luasnip" },
     { name = "nvim_lsp" },
     { name = "path" },
