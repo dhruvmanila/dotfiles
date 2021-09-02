@@ -145,9 +145,7 @@ do
     {
       events = "InsertLeave",
       targets = "*",
-      command = function()
-        set_colorcolumn(true)
-      end,
+      command = wrap(set_colorcolumn, true),
     },
   })
 end
@@ -214,9 +212,7 @@ do
         "WinEnter",
       },
       targets = "*",
-      command = function()
-        set_cursorline(true)
-      end,
+      command = wrap(set_cursorline, true),
     },
     {
       events = {
