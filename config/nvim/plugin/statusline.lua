@@ -92,17 +92,24 @@ local function filetype(ctx)
   return " " .. ft .. " "
 end
 
--- Return the currently active neovim LSP client(s) if any.
+-- Return the currently active neovim LSP client(s) and the status message.
 ---@param ctx table
 ---@return string
-local function lsp_clients(ctx)
+local function lsp_clients_and_messages(ctx)
   local result = {}
   local clients = vim.lsp.buf_get_clients(ctx.bufnr)
   for id, client in pairs(clients) do
     table.insert(result, client.name .. ":" .. id)
   end
-  result = table.concat(result, " ")
-  return result ~= "" and "  " .. result .. " " or ""
+  if not vim.tbl_isempty(result) then
+    result = "  " .. table.concat(result, " ") .. " "
+    local message = vim.g.lsp_progress_message
+    if message and message ~= "" then
+      result = result .. "| " .. message .. " "
+    end
+    return result
+  end
+  return ""
 end
 
 -- Used for showing the LSP diagnostics information. The order is maintained.
@@ -127,16 +134,6 @@ local function lsp_diagnostics(ctx)
   end
   result = table.concat(result, " %*")
   return result ~= "" and " " .. result or ""
-end
-
--- Return the Neovim LSP status message if any.
----@return string
-local function lsp_messages()
-  local message = vim.g.lsp_progress_message
-  if message and message ~= "" then
-    return "| " .. message .. " "
-  end
-  return ""
 end
 
 ---@param ctx table
@@ -188,8 +185,7 @@ function _G.nvim_statusline()
     .. lsp_diagnostics(ctx)
     .. "%*"
     .. "%="
-    .. lsp_clients(ctx)
-    .. lsp_messages()
+    .. lsp_clients_and_messages(ctx)
     .. "%2*"
     .. filetype(ctx)
     .. "%*"
