@@ -418,16 +418,15 @@ link("LirSymlink", "GreyItalic")
 link("LirEmptyDirText", "LirSymlink")
 
 -- nvim-notify {{{2
-link("NotifyERROR", "Red")
-link("NotifyERRORTitle", "NotifyERROR")
-link("NotifyWARN", "Yellow")
-link("NotifyWARNTitle", "NotifyWARN")
-link("NotifyINFO", "Blue")
-link("NotifyINFOTitle", "NotifyINFO")
-link("NotifyDEBUG", "Aqua")
-link("NotifyDEBUGTitle", "NotifyDEBUG")
-link("NotifyTRACE", "Grey")
-link("NotifyTRACETitle", "NotifyTRACE")
+
+---@see https://github.com/rcarriga/nvim-notify#highlights
+for _, section in ipairs { "Border", "Icon", "Title" } do
+  link("NotifyERROR" .. section, "Red")
+  link("NotifyWARN" .. section, "Yellow")
+  link("NotifyINFO" .. section, "Blue")
+  link("NotifyDEBUG" .. section, "Aqua")
+  link("NotifyTRACE" .. section, "Grey")
+end
 
 -- nvim-treesitter {{{2
 highlight("TSDanger", { fg = palette.bg0, bg = palette.red, gui = "bold" })
