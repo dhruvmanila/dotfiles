@@ -88,14 +88,14 @@ local function ts_range(location)
   return location, bufnr
 end
 
-local function preview_location_callback(_, method, response)
-  if not response or vim.tbl_isempty(response) then
-    dm.notify("LSP (" .. method .. ")", "No results found")
+local function preview_location_callback(_, result, ctx)
+  if not result or vim.tbl_isempty(result) then
+    dm.notify("LSP (" .. ctx.method .. ")", "No results found")
     return
   end
 
   local location_bufnr
-  local location = vim.tbl_islist(response) and response[1] or response
+  local location = vim.tbl_islist(result) and result[1] or result
   location, location_bufnr = ts_range(location)
 
   local bufnr, winnr = vim.lsp.util.preview_location(location)

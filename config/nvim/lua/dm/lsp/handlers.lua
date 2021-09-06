@@ -15,23 +15,23 @@ handlers["textDocument/publishDiagnostics"] = lsp.with(
 
 -- Modified version of the original handler. This will open the quickfix
 -- window only if the response is a list and the count is greater than 1.
-local function location_handler(_, method, response)
-  if not response or vim.tbl_isempty(response) then
-    dm.notify("LSP (" .. method .. ")", "No results found")
+local function location_handler(_, result, ctx)
+  if not result or vim.tbl_isempty(result) then
+    dm.notify("LSP (" .. ctx.method .. ")", "No results found")
     return
   end
 
   -- Response: Location | Location[] | LocationLink[] | null
   -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
-  if vim.tbl_islist(response) then
-    if vim.tbl_count(response) > 1 then
-      lsp.util.set_qflist(lsp.util.locations_to_items(response))
+  if vim.tbl_islist(result) then
+    if vim.tbl_count(result) > 1 then
+      lsp.util.set_qflist(lsp.util.locations_to_items(result))
       api.nvim_command "copen"
       api.nvim_command "wincmd p"
     end
-    lsp.util.jump_to_location(response[1])
+    lsp.util.jump_to_location(result[1])
   else
-    lsp.util.jump_to_location(response)
+    lsp.util.jump_to_location(result)
   end
 end
 
