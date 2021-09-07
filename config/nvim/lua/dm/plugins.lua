@@ -62,7 +62,6 @@ local function load_plugins()
       config = conf "luasnip",
     },
     { "airblade/vim-rooter" },
-    { "cespare/vim-toml" },
     {
       "dstein64/vim-startuptime",
       cmd = "StartupTime",
