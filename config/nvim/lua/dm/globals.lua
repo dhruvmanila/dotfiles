@@ -170,7 +170,6 @@ do
   ---@param log_level? number|string
   ---@param opts? NotifyOpts
   vim.notify = function(msg, log_level, opts)
-    assert(msg, "'msg' value should be provided")
     -- Defer the plugin setup until the first notification call because
     -- it takes around 12ms to load.
     if not notify then

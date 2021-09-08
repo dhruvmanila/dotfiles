@@ -9,8 +9,6 @@ local curl = require "plenary.curl"
 
 -- Variables {{{1
 
-local DEBUG = false
-
 -- Path to the executable
 local SERVER_EXEC = "instant-markdown-d"
 
@@ -19,7 +17,8 @@ local SERVER_EXEC = "instant-markdown-d"
 local SERVER_ENV = "INSTANT_MARKDOWN_ALLOW_UNSAFE_CONTENT=1"
 
 -- `stdout` and `stderr` of the server will be redirected to this file.
-local SERVER_LOG_FILE = DEBUG and "/tmp/instant_markdown_d.log" or "/dev/null"
+local SERVER_LOG_FILE = vim.env.DEBUG and "/tmp/instant_markdown_d.log"
+  or "/dev/null"
 
 -- Command to start the server {{{
 --                                 ┌─ do not open the browser window by default

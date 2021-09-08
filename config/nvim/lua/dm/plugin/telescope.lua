@@ -211,6 +211,7 @@ pcall(telescope.load_extension, "fzf")
 -- We cannot bind every builtin picker to a keymap and so this will help us
 -- when we are in need of a rarely used picker.
 nnoremap(";t", builtin.builtin)
+nnoremap("<leader>fr", builtin.resume)
 
 -- What's the difference between `git_files` and `find_files`? {{{
 --

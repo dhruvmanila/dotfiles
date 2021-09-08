@@ -12,7 +12,7 @@ end
 ---@return string
 local function conf(config_name)
   if config_name == "lsp" then
-    return ("require('dm.%s')"):format(config_name)
+    return "require('dm.lsp')"
   end
   return ("R('dm.plugin.%s')"):format(config_name)
 end
