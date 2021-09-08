@@ -9,28 +9,27 @@ end
 -- Custom statusline for special builtin/plugin buffers.
 ---@type table<string, string|function>
 local special_buffer_line = {
-  terminal = center " Terminal:%t",
-  tsplayground = center "侮Syntax Tree Playground",
-  packer = center " Packer",
-  gitcommit = center " Commit message",
+  dashboard = function(ctx)
+    return center(" %<" .. fn.fnamemodify(ctx.bufname, ":~"))
+  end,
+
   fugitive = center " Fugitive",
-  startuptime = center " Startup time",
+
+  gitcommit = center " Commit message",
 
   help = function(ctx)
     return ctx.inactive and center "%t" or "%1* %l/%L %*%2* help %* %t"
-  end,
-
-  man = function(ctx)
-    return ctx.inactive and center "%t" or "%1* %l/%L %*%2* Man %* %t"
   end,
 
   lir = function(ctx)
     return center(" %<" .. fn.fnamemodify(ctx.bufname, ":~"))
   end,
 
-  dashboard = function(ctx)
-    return center(" %<" .. fn.fnamemodify(ctx.bufname, ":~"))
+  man = function(ctx)
+    return ctx.inactive and center "%t" or "%1* %l/%L %*%2* Man %* %t"
   end,
+
+  packer = center " Packer",
 
   qf = function(ctx)
     local typ = fn.win_gettype(ctx.winnr)
@@ -42,6 +41,12 @@ local special_buffer_line = {
     end
     return "%1* %l/%L %*%2* " .. typ .. " List %* " .. title
   end,
+
+  startuptime = center " Startup time",
+
+  terminal = center " %{b:term_title}",
+
+  tsplayground = center "侮Syntax Tree Playground",
 }
 
 -- Return the buffer information such as fileencoding, fileformat, indentation.
@@ -56,15 +61,12 @@ local function buffer_info(ctx)
   return " " .. indent .. " | " .. enc:upper() .. " " .. format .. " "
 end
 
--- Return the Git branch name (requires fugitive.vim)
+---@see b:gitsigns_head g:gitsigns_head
 ---@return string
 local function git_branch()
-  local FugitiveHead = vim.fn["FugitiveHead"]
-  if FugitiveHead then
-    local head = FugitiveHead()
-    if head and head ~= "" then
-      return "  " .. head .. " "
-    end
+  local head = vim.b.gitsigns_head
+  if head and head ~= "" then
+    return "  " .. head .. " "
   end
   return ""
 end
