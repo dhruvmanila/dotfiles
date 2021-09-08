@@ -498,6 +498,42 @@ function install_global_python_packages() {
 }
 
 # :src/lib/setup/symlinks.sh
+declare -A symlinks
+
+symlinks=(
+  [".editorconfig"]=".editorconfig"
+  ["assets/git/gitconfig"]=".gitconfig"
+  ["assets/git/gitignore"]=".gitignore"
+  ["assets/git/gitmessage"]=".gitmessage"
+  ["assets/gpg/gpg-agent.conf"]=".gnupg/gpg-agent.conf"
+  ["assets/gpg/gpg.conf"]=".gnupg/gpg.conf"
+  ["assets/inputrc"]=".inputrc"
+  ["assets/ssh/config"]=".ssh/config"
+  ["bash/bash_profile"]=".bash_profile"
+  ["bash/bashrc"]=".bashrc"
+  ["config/bat"]=".config/bat"
+  ["config/bottom"]="Library/Application Support/bottom"
+  ["config/bpytop"]=".config/bpytop"
+  ["config/glow"]="Library/Preferences/glow"
+  ["config/htop"]=".config/htop"
+  ["config/kitty"]=".config/kitty"
+  ["config/nvim"]=".config/nvim"
+  ["config/youtube-dl"]=".config/youtube-dl"
+  ["mac/hammerspoon"]=".hammerspoon"
+  ["mac/karabiner"]=".config/karabiner"
+  ["python/flake8"]=".config/flake8"
+  ["python/ipython/ipython_config.py"]=".ipython/profile_default/ipython_config.py"
+  ["python/ipython/startup"]=".ipython/profile_default/startup"
+  ["python/pip"]=".config/pip"
+  ["python/pylintrc"]=".pylintrc"
+  ["tmux/tmux.conf"]=".tmux.conf"
+  ["vim"]=".vim"
+  ["vim/vimrc"]=".vimrc"
+  ["zsh/zprofile"]=".zprofile"
+  ["zsh/zshenv"]=".zshenv"
+  ["zsh/zshrc"]=".zshrc"
+)
+
 setup_symlinks() {
   # What does this file do? {{{
   #
@@ -514,55 +550,12 @@ setup_symlinks() {
 
   # Create the necessary symbolic links between the `dotfiles` and `HOME` directory.
   header "Creating the necessary symlinks..."
-  link ".editorconfig" ".editorconfig"
 
-  # Bash
-  link "bash/bashrc" ".bashrc"
-  link "bash/bash_profile" ".bash_profile"
-
-  # Zsh
-  link "zsh/zshrc" ".zshrc"
-  link "zsh/zshenv" ".zshenv"
-  link "zsh/zprofile" ".zprofile"
-
-  # Neovim/Vim
-  link "vim/vimrc" ".vimrc"
-  link "vim" ".vim"
-  link "config/nvim" ".config/nvim"
-
-  # Tmux
-  link "tmux/tmux.conf" ".tmux.conf"
-
-  # Python
-  link "python/pip" ".config/pip"
-  link "python/flake8" ".config/flake8"
-  link "python/pylintrc" ".pylintrc"
-  link "python/ipython/ipython_config.py" ".ipython/profile_default/ipython_config.py"
-  link "python/ipython/startup" ".ipython/profile_default/startup"
-
-  # Git
-  link "assets/git/gitignore" ".gitignore"
-  link "assets/git/gitconfig" ".gitconfig"
-  link "assets/git/gitmessage" ".gitmessage"
-
-  # Shell
-  link "assets/inputrc" ".inputrc"
-  link "assets/gpg/gpg.conf" ".gnupg/gpg.conf"
-  link "assets/gpg/gpg-agent.conf" ".gnupg/gpg-agent.conf"
-  link "assets/ssh/config" ".ssh/config"
-
-  # Mac
-  link "mac/karabiner" ".config/karabiner"
-  link "mac/hammerspoon" ".hammerspoon"
-
-  # CLI config
-  link "config/youtube-dl" ".config/youtube-dl"
-  link "config/bpytop" ".config/bpytop"
-  link "config/htop" ".config/htop"
-  link "config/bottom" "Library/Application Support/bottom"
-  link "config/bat" ".config/bat"
-  link "config/kitty" ".config/kitty"
-  link "config/glow" "Library/Preferences/glow"
+  #                ┌ list associative array keys
+  #                │
+  for source in "${!symlinks[@]}"; do
+    link "$source" "${symlinks[$source]}"
+  done
 }
 
 # :src/lib/setup/tmux_plugins.sh
@@ -1383,7 +1376,9 @@ initialize() {
 run() {
   declare -A args
   declare -a other_args
-  parse_requirements "$@"
+  declare -a input
+  normalize_input "$@"
+  parse_requirements "${input[@]}"
 
   if [[ $action == "mac" ]]; then
     if [[ ${args[--help]} ]]; then
