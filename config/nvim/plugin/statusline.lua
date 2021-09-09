@@ -54,11 +54,15 @@ local special_buffer_line = {
 ---@return string
 local function buffer_info(ctx)
   local bo = vim.bo[ctx.bufnr]
-  local enc = bo.fileencoding
-  enc = enc ~= "" and enc or vim.o.encoding
-  local format = bo.fileformat:upper()
+  local encoding = bo.fileencoding ~= "" and bo.fileencoding or vim.o.encoding
+  local fileinfo = ("%s%s")
+    :format(
+      encoding ~= "utf-8" and encoding .. " " or "",
+      bo.fileformat ~= "unix" and bo.fileformat .. " " or ""
+    )
+    :upper()
   local indent = (bo.expandtab and "S:" or "T:") .. bo.shiftwidth
-  return " " .. indent .. " | " .. enc:upper() .. " " .. format .. " "
+  return " " .. indent .. (fileinfo ~= "" and " | " .. fileinfo or "") .. " "
 end
 
 ---@see b:gitsigns_head g:gitsigns_head
