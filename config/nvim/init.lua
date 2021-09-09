@@ -41,7 +41,7 @@ g.markdown_fenced_languages = {
 g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
 g.loaded_python_provider = 0
-g.python3_host_prog = "~/.neovim/py3/bin/python3"
+g.python3_host_prog = "~/.neovim/venv/bin/python3"
 g.node_host_prog = "/usr/local/bin/neovim-node-host"
 
 -- Disable built-in plugins (`:h standard-plugin-list`) {{{
