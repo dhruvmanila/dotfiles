@@ -58,7 +58,7 @@ local function collect_github_stars(opts)
   Job
     :new({
       command = "gh",
-      args = { "api", "user/starred", "--paginate" },
+      args = { "api", "user/starred", "--paginate", "--cache", "24h" },
       enable_recording = true,
       on_exit = vim.schedule_wrap(process_complete),
     })
@@ -91,7 +91,6 @@ github_stars = function(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    dm.notify("Telescope", "Job started to collect GitHub stars")
     return collect_github_stars(opts)
   end
 
