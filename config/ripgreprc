@@ -7,3 +7,6 @@
 
 # Search in hidden (.*) files and directories
 --hidden
+
+# Ofcourse, avoid going into the .git directory
+--glob=!.git
