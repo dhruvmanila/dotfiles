@@ -39,7 +39,7 @@ local function load_packer()
     compile_path = g.packer_compiled_path,
     disable_commands = true,
     display = {
-      open_cmd = "silent botright 80vnew packer",
+      open_cmd = "silent botright 80vnew",
       prompt_border = dm.border[vim.g.border_style],
     },
     profile = {

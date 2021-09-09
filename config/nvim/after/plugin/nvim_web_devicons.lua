@@ -1,6 +1,4 @@
 require("nvim-web-devicons").setup {
-  -- your personnal icons can go here (to override)
-  -- DevIcon will be appended to `name`
   override = {
     ["TelescopePrompt"] = {
       icon = "",
@@ -12,8 +10,11 @@ require("nvim-web-devicons").setup {
       color = "#787878",
       name = "Dashboard",
     },
+    ["[packer]"] = {
+      icon = "",
+      color = "#787878",
+      name = "Packer",
+    },
   },
-  -- globally enable default icons (default to false)
-  -- will get overriden by `get_icons` option
   default = true,
 }
