@@ -136,7 +136,6 @@ local function load_plugins()
       keys = "-",
       config = conf "lir",
     },
-    { "tjdevries/lazy.nvim" },
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
     { "tpope/vim-fugitive" },

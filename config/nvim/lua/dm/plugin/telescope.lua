@@ -1,10 +1,8 @@
-local lazy = require "lazy"
-
 local telescope = require "telescope"
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local action_utils = require "telescope.actions.utils"
-local builtin = lazy.require_on_exported_call "telescope.builtin"
+local builtin = require "telescope.builtin"
 local themes = require "telescope.themes"
 
 local parsers = require "nvim-treesitter.parsers"
