@@ -66,7 +66,6 @@ function __build_prompt() { # {{{
   local -r yellow="\[\e[0;33m\]"
   local -r blue="\[\e[1;34m\]"
   local -r white="\[\e[1;37m\]"
-  local -r bold="\[\e[1m\]"
 
   # First line {{{
   PS1="\n"
@@ -95,7 +94,7 @@ function __build_prompt() { # {{{
   PS1+="${green}\w"
 
   # Git repository details
-  PS1+="${GITSTATUS_PROMPT:+ ${bold}${GITSTATUS_PROMPT}}"
+  PS1+="${GITSTATUS_PROMPT:+ ${white}on ${GITSTATUS_PROMPT}}"
 
   # }}}
   # Second line {{{
