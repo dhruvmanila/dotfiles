@@ -57,9 +57,14 @@ fi
 # }}}
 # Prompt {{{
 
-function __build_prompt() { # {{{
-  local -i exit="$?"
+# The exitcode needs to be captured first when updating the prompt.
+declare -i exitcode=0
 
+function __capture_exitcode() { # {{{
+  exitcode="$?"
+}
+# }}}
+function __build_prompt() { # {{{
   local -r reset="\[\e[0m\]"
   local -r red="\[\e[0;31m\]"
   local -r green="\[\e[0;32m\]"
@@ -71,8 +76,8 @@ function __build_prompt() { # {{{
   PS1="\n"
 
   # Show the exit code if it is not 0
-  if [[ $exit -ne 0 ]]; then
-    PS1+="${red}✗ ${exit} "
+  if [[ $exitcode -ne 0 ]]; then
+    PS1+="${red}✗ ${exitcode} "
   fi
 
   # Python virtual environment name
@@ -145,7 +150,7 @@ function __refresh_env_in_tmux() { # {{{
 #
 # Source: /etc/bashrc_Apple_Terminal:80 (Press 'gF' to go to the specified line)
 # }}}
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}__build_prompt;__refresh_env_in_tmux"
+PROMPT_COMMAND="__capture_exitcode;${PROMPT_COMMAND:+$PROMPT_COMMAND;}__build_prompt;__refresh_env_in_tmux"
 
 # }}}
 # Completions {{{
