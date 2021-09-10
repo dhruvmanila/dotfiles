@@ -119,15 +119,17 @@ function __refresh_env_in_tmux() { # {{{
   if [[ -n "$TMUX" ]]; then
     # NOTE: Only include the variables which needs to be udpated.
     for var in "KITTY_LISTEN_ON" "KITTY_WINDOW_ID"; do
-      # Do NOT include the `-g` flag {{{
-      #
-      # In tmux, the global environment is different than the sesion
-      # environment. These variables are updated in the session environment
-      # through the `update-environment` option in `~/.tmux.conf`.
-      #
-      # See: `man tmux /global and session environment`
-      # }}}
-      source <(tmux show-environment -s $var)
+      if [[ -n "$var" ]]; then
+        # Do NOT include the `-g` flag {{{
+        #
+        # In tmux, the global environment is different than the sesion
+        # environment. These variables are updated in the session environment
+        # through the `update-environment` option in `~/.tmux.conf`.
+        #
+        # See: `man tmux /global and session environment`
+        # }}}
+        source <(tmux show-environment -s $var)
+      fi
     done
   fi
 }
