@@ -144,7 +144,7 @@ function __refresh_env_in_tmux() { # {{{
 #
 # Source: /etc/bashrc_Apple_Terminal:80 (Press 'gF' to go to the specified line)
 # }}}
-PROMPT_COMMAND="__build_prompt;__refresh_env_in_tmux${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;}__build_prompt;__refresh_env_in_tmux"
 
 # }}}
 # Completions {{{
