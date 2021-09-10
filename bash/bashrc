@@ -14,6 +14,14 @@ esac
 # ours.
 # }}}
 
+# Source the Bash prompt for gitstatus.
+#
+# This should be sourced first as it resets the $PROMPT_COMMAND instead of
+# resusing the previous values.
+#
+# https://github.com/romkatv/gitstatus
+source "/usr/local/opt/gitstatus/gitstatus.prompt.sh"
+
 # Source the environment variables
 source ~/dotfiles/assets/env
 
@@ -30,11 +38,6 @@ source ~/dotfiles/assets/functions
 # Do NOT edit this line! The installer can recognize the presence of this line
 # and avoid duplication.
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-# Source the Bash prompt for gitstatus.
-#
-# https://github.com/romkatv/gitstatus
-source "/usr/local/opt/gitstatus/gitstatus.prompt.sh"
 
 # }}}
 # Plugins {{{
