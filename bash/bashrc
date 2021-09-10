@@ -89,7 +89,7 @@ function __build_prompt() { # {{{
   fi
 
   # Show username only if its root
-  if [[ $USER == "root" ]]; then
+  if ((UID == 0)); then
     PS1+="${white}(${red}\u${white}) "
   fi
 
@@ -154,6 +154,10 @@ function __refresh_env_in_tmux() { # {{{
 # Source: /etc/bashrc_Apple_Terminal:80 (Press 'gF' to go to the specified line)
 # }}}
 PROMPT_COMMAND="__capture_exitcode;${PROMPT_COMMAND:+$PROMPT_COMMAND;}__build_prompt;__refresh_env_in_tmux"
+
+# Keep the working directory part (\w and \W) of the Bash prompt trimmed to a
+# more sensible size in case of deeply nested paths.
+PROMPT_DIRTRIM=3
 
 # }}}
 # Completions {{{
