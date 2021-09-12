@@ -45,10 +45,6 @@ brew "cmake"
 brew "datamash"
 # DuckDuckGo from the terminal
 brew "ddgr"
-# Bash, Zsh and Fish completion for Docker
-brew "docker-completion"
-# Completion script for docker-compose
-brew "docker-compose-completion"
 # Tool for managing dock items
 brew "dockutil"
 # Maintain consistent coding style between multiple editors
@@ -57,6 +53,8 @@ brew "editorconfig"
 brew "fd"
 # Generic library support script
 brew "libtool"
+# OpenType text shaping engine
+brew "harfbuzz"
 # Play, record, convert, and stream audio and video
 brew "ffmpeg"
 # Collection of GNU find, xargs, and locate
@@ -103,10 +101,14 @@ brew "lolcat"
 brew "lua@5.1"
 # OpenResty's Branch of LuaJIT 2
 brew "luajit-openresty"
+# Package manager for the Lua programming language
+brew "luarocks"
 # Mac App Store command-line interface
 brew "mas"
 # Whole-program, optimizing compiler for Standard ML
 brew "mlton"
+# MongoDB CLI enables you to manage your MongoDB in the Cloud
+brew "mongocli"
 # Collection of tools that nobody wrote when UNIX was young
 brew "moreutils"
 # Small build system for use with gyp or CMake
@@ -129,6 +131,8 @@ brew "pyenv"
 brew "rename"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
+# Powerful, clean, object-oriented scripting language
+brew "ruby"
 # Safe, concurrent, practical language
 brew "rust"
 # Static analysis and lint tool, for (ba)sh scripts
@@ -199,10 +203,14 @@ cask "kitty"
 # Controls and monitors all fans on Apple computers
 cask "macs-fan-control"
 cask "mark-text"
+# Explore and manipulate your MongoDB data
+cask "mongodb-compass"
 # Tool to control external monitor brightness & volume
 cask "monitorcontrol"
 # Media player based on MPlayer and mplayer2
 cask "mpv"
+# Reverse proxy, secure introspectable tunnels to localhost
+cask "ngrok"
 # Collaboration platform for API development
 cask "postman"
 # IDE for Python programming - Community Edition
@@ -215,8 +223,6 @@ cask "rectangle"
 cask "skype"
 # Team communication and collaboration software
 cask "slack"
-# Music streaming service
-cask "spotify"
 # Development environment
 cask "vagrant"
 # Free and open-source hosted hypervisor for x86 virtualization
