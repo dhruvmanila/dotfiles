@@ -26,6 +26,24 @@ pip-uninstall() {
     | xargs python -m pip uninstall --yes
 }
 
+# Create an IPython kernel for the current Python virtual environment.
+# This is useful to have one Jupyter installation but different Python kernels
+# for individual environments.
+#
+# $1 (string): name and display name of the kernal
+py-kernel() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: py-kernel <name>"
+    return 1
+  elif [[ -z "$VIRTUAL_ENV" ]]; then
+    echo "py-kernel: not in a virtual environment"
+    return 1
+  fi
+  python -m pip install --quiet ipykernel
+  python -m ipykernel install --user --name "$1" --display-name "Python ($1)"
+  echo "Use the 'Python ($1)' kernel for current venv in Jupyter"
+}
+
 # `o` with no arguments opens the current directory, otherwise opens the given
 # location.
 o() {
