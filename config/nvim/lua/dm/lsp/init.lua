@@ -35,6 +35,8 @@ do
     })
     local bufnr, winnr = default(contents, syntax, opts)
     nnoremap("q", "<Cmd>bdelete<CR>", { buffer = bufnr, nowait = true })
+    -- As per `:h 'showbreak'`, the value should be a literal "NONE".
+    vim.wo[winnr].showbreak = "NONE"
     return bufnr, winnr
   end
 end
