@@ -1,5 +1,6 @@
 local fn = vim.fn
-local feedkeys = vim.api.nvim_feedkeys
+local api = vim.api
+local feedkeys = api.nvim_feedkeys
 local escape = dm.escape
 local lsp_kind = dm.icons.lsp_kind
 
@@ -13,12 +14,16 @@ local source_name = {
   buffer = "[Buf]",
 }
 
--- Returns true if the cursor is in leftmost column or at a whitespace
--- character, false otherwise.
+-- Returns true if the position before the cursor (if not in the first column)
+-- contains anything except for a whitespace character, false otherwise.
 ---@return boolean
-local function check_back_space()
-  local col = fn.col "." - 1
-  return col == 0 or fn.getline("."):sub(col, col):match "%s" ~= nil
+local function has_words_before()
+  local line, col = unpack(api.nvim_win_get_cursor(0))
+  return col ~= 0
+    and api.nvim_buf_get_lines(0, line - 1, line, true)[1]
+        :sub(col, col)
+        :match "%s"
+      == nil
 end
 
 -- Use `<Tab>` to either:
@@ -30,9 +35,9 @@ local function tab(fallback)
   if fn.pumvisible() == 1 then
     return feedkeys(escape "<C-n>", "n", true)
   elseif luasnip.expand_or_jumpable() then
-    return feedkeys(escape "<Plug>luasnip-expand-or-jump", "", true)
-  elseif check_back_space() then
-    return feedkeys(escape "<Tab>", "n", true)
+    return luasnip.expand_or_jump()
+  elseif has_words_before() then
+    return cmp.complete()
   else
     return fallback()
   end
@@ -46,7 +51,7 @@ local function shift_tab(fallback)
   if fn.pumvisible() == 1 then
     return feedkeys(escape "<C-p>", "n", true)
   elseif luasnip.jumpable(-1) then
-    return feedkeys(escape "<Plug>luasnip-jump-prev", "", true)
+    return luasnip.jump(-1)
   else
     return fallback()
   end
@@ -103,8 +108,8 @@ cmp.setup {
         -- Provide suggestions from all the visible buffers.
         get_bufnrs = function()
           return vim.tbl_map(function(winid)
-            return vim.api.nvim_win_get_buf(winid)
-          end, vim.api.nvim_list_wins())
+            return api.nvim_win_get_buf(winid)
+          end, api.nvim_list_wins())
         end,
       },
     },
