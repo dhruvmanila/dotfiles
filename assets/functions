@@ -26,6 +26,31 @@ pip-uninstall() {
     | xargs python -m pip uninstall --yes
 }
 
+# Upgrade the Python version for the current virtual environment.
+# NOTE: This assumes that we're using `pyenv` to install Python versions.
+#
+# $1 (string): upgrade to this version
+py-upgrade-venv() {
+  if [[ -z "$VIRTUAL_ENV" ]]; then
+    echo "py-upgrade-venv: not in a virtual environment"
+    return 1
+  elif [[ -z "$1" ]]; then
+    echo "Usage: py-upgrade-venv <version>"
+    return 1
+  fi
+  python_exec="$(pyenv root)/versions/$1/bin/python"
+  if [[ ! -e $python_exec ]]; then
+    echo "py-upgrade-venv: version $1 does not exist"
+    echo "py-upgrade-venv: Use 'pyenv install $1' to install it"
+    return 1
+  fi
+  # The `--upgrade` flag assumes that Python was upgraded in place, so we need
+  # to update the symlink to point to the desired Python version.
+  echo "==> Updating the symlink..."
+  ln -vsf "$python_exec" "$VIRTUAL_ENV/bin/python3"
+  $python_exec -m venv --upgrade "$VIRTUAL_ENV"
+}
+
 # Create an IPython kernel for the current Python virtual environment.
 # This is useful to have one Jupyter installation but different Python kernels
 # for individual environments.

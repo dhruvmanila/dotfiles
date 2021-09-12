@@ -295,8 +295,8 @@ unset pathmunge
 
 # Python {{{1
 
-# Disable pyenv virtualenv prompt
-export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+# Disable virtual environment prompt (we add it with colors)
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8'

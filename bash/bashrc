@@ -7,7 +7,7 @@ case $- in
   *) return ;;
 esac
 
-# Sourcing {{{
+# Sourcing {{{1
 # Warning: Don't move `Sourcing` after `Key bindings`! {{{
 #
 # It would give priority to the key bindings defined in third-party files over
@@ -20,7 +20,7 @@ esac
 # resusing the previous values.
 #
 # https://github.com/romkatv/gitstatus
-source "/usr/local/opt/gitstatus/gitstatus.prompt.sh"
+source /usr/local/opt/gitstatus/gitstatus.prompt.sh
 
 # Source the environment variables
 source ~/dotfiles/assets/env
@@ -31,7 +31,7 @@ source ~/dotfiles/assets/functions
 
 # Install programmable completion functions for the most common Unix commands.
 # This requires the 'bash-completion@v2' package.
-[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && source "/usr/local/etc/profile.d/bash_completion.sh"
+[[ -r /usr/local/etc/profile.d/bash_completion.sh ]] && source /usr/local/etc/profile.d/bash_completion.sh
 
 # Source fzf config which includes fuzzy completion and key-bindings.
 #
@@ -39,8 +39,7 @@ source ~/dotfiles/assets/functions
 # and avoid duplication.
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-# }}}
-# Plugins {{{
+# Plugins {{{1
 
 # Initialize pyenv.
 #
@@ -50,31 +49,34 @@ if command -v pyenv &> /dev/null; then
   eval "$(pyenv init -)"
 fi
 
-# Disabling it as this slows down the prompt by injecting the function
-# _pyenv_virtualenv_hook to $PROMPT_COMMAND
-#
-# if command -v pyenv-virtualenv-init &> /dev/null; then
-#   eval "$(pyenv virtualenv-init -)"
-# fi
+# Prompt {{{1
 
-# }}}
-# Prompt {{{
+# Colors
+reset="\[\e[0m\]"
+red="\[\e[0;31m\]"
+green="\[\e[0;32m\]"
+yellow="\[\e[0;33m\]"
+blue="\[\e[1;34m\]"
+white="\[\e[1;37m\]"
 
 # The exitcode needs to be captured first when updating the prompt.
 declare -i exitcode=0
 
-function __capture_exitcode() { # {{{
+function __capture_exitcode() { # {{{2
   exitcode="$?"
 }
-# }}}
-function __build_prompt() { # {{{
-  local -r reset="\[\e[0m\]"
-  local -r red="\[\e[0;31m\]"
-  local -r green="\[\e[0;32m\]"
-  local -r yellow="\[\e[0;33m\]"
-  local -r blue="\[\e[1;34m\]"
-  local -r white="\[\e[1;37m\]"
-
+function __python_activate_venv() { # {{{2
+  if [[ -r "./venv/bin/activate" ]]; then
+    if [[ -z "$VIRTUAL_ENV" ]]; then
+      source ./venv/bin/activate
+    fi
+  elif [[ -n "$VIRTUAL_ENV" ]] && [[ -z "$PYENV_VIRTUAL_ENV" ]]; then
+    if [[ "$PWD" != "${VIRTUAL_ENV%/venv}"* ]]; then
+      deactivate
+    fi
+  fi
+}
+function __build_prompt() { # {{{2
   # First line {{{
   PS1="\n"
 
@@ -84,8 +86,19 @@ function __build_prompt() { # {{{
   fi
 
   # Python virtual environment name
+  #
+  # 1. Check for the 'prompt' value in the environment config file (pyvenv.cfg)
+  # 2. If that's empty, then use the name of the directory
   if [[ -n $VIRTUAL_ENV ]]; then
-    PS1+="${white}(${blue}$(basename "$VIRTUAL_ENV")${white}) "
+    local pyvenv_prompt
+    pyvenv_prompt=$(awk -F '[ ]*=[ ]*' '{if ($1 == "prompt") print $2}' "$VIRTUAL_ENV"/pyvenv.cfg)
+    if [[ -z $pyvenv_prompt ]]; then
+      pyvenv_prompt=$(basename "$VIRTUAL_ENV")
+    else
+      # In `pyvenv.cfg`, the prompt value is in single quotes, so remove it.
+      pyvenv_prompt=${pyvenv_prompt//\'/}
+    fi
+    PS1+="${white}(${blue}${pyvenv_prompt}${white}) "
   fi
 
   # Show username only if its root
@@ -109,7 +122,7 @@ function __build_prompt() { # {{{
   # Line break / Space
   PS1+="\n"
 
-  # Prompt character '$ '
+  # Prompt character
   PS1+="${white}❯ ${reset}"
 
   # }}}
@@ -121,8 +134,7 @@ function __build_prompt() { # {{{
   PS4="${white}==> ${reset}"
   # }}}
 }
-# }}}
-function __refresh_env_in_tmux() { # {{{
+function __refresh_env_in_tmux() { # {{{2
   if [[ -n "$TMUX" ]]; then
     # NOTE: Only include the variables which needs to be udpated.
     for var in "KITTY_LISTEN_ON" "KITTY_WINDOW_ID"; do
@@ -140,7 +152,7 @@ function __refresh_env_in_tmux() { # {{{
     done
   fi
 }
-# }}}
+# }}}2
 
 # Set the various prompt commands (PS1, PS2, PS4) {{{
 #
@@ -153,14 +165,13 @@ function __refresh_env_in_tmux() { # {{{
 #
 # Source: /etc/bashrc_Apple_Terminal:80 (Press 'gF' to go to the specified line)
 # }}}
-PROMPT_COMMAND="__capture_exitcode;${PROMPT_COMMAND:+$PROMPT_COMMAND;}__build_prompt;__refresh_env_in_tmux"
+PROMPT_COMMAND="__capture_exitcode;${PROMPT_COMMAND:+$PROMPT_COMMAND;}__python_activate_venv;__build_prompt;__refresh_env_in_tmux"
 
 # Keep the working directory part (\w and \W) of the Bash prompt trimmed to a
 # more sensible size in case of deeply nested paths.
 PROMPT_DIRTRIM=3
 
-# }}}
-# Completions {{{
+# Completions {{{1
 
 # From `git-completion.bash`:
 #
@@ -189,8 +200,7 @@ if command -v kitty &> /dev/null; then
   source <(kitty + complete setup bash)
 fi
 
-# }}}
-# Key Bindings {{{
+# Key Bindings {{{1
 
 # Automatic history expansion (`!!`) when inserting a space.
 #
@@ -198,8 +208,7 @@ fi
 # spaces inside various programs such as python, etc.
 bind '" ": magic-space'
 
-# }}}
-# Shell Options {{{
+# Shell Options {{{1
 #
 # Set/unset each option using the '-s' and '-u' flag.
 # For help on each option: `man bash` and search `list.*shopt`
@@ -236,6 +245,6 @@ shopt -s histverify
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob
 
-# }}}
+# }}}1
 
 # vim: foldmethod=marker
