@@ -66,12 +66,16 @@ function __capture_exitcode() { # {{{2
   exitcode="$?"
 }
 function __python_activate_venv() { # {{{2
-  if [[ -r "./venv/bin/activate" ]]; then
-    if [[ -z "$VIRTUAL_ENV" ]]; then
-      source ./venv/bin/activate
+  # Hook to activate/deactivate the virtual environment automagically
+  activate_script=$(ls -- */bin/activate 2> /dev/null || echo "")
+  if [[ -r "$activate_script" ]]; then
+    # We cannot use the VIRTUAL_ENV variable for this because it stays in the
+    # environment after a reload.
+    if ! declare -f deactivate &> /dev/null; then
+      source "$activate_script"
     fi
   elif [[ -n "$VIRTUAL_ENV" ]] && [[ -z "$PYENV_VIRTUAL_ENV" ]]; then
-    if [[ "$PWD" != "${VIRTUAL_ENV%/venv}"* ]]; then
+    if [[ "$PWD" != "$(dirname "$VIRTUAL_ENV")"* ]]; then
       deactivate
     fi
   fi
