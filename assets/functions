@@ -12,18 +12,18 @@ mcd() {
 }
 
 # Upgrade the outdated Python packages for the current environment.
-pipup() {
-  pip list --outdated \
+pip-upgrade() {
+  python -m pip list --outdated \
     | awk 'NR>2 {print $1}' \
-    | xargs pip install --upgrade
+    | xargs python -m pip install --upgrade
 }
 
 # Uninstall all the Python packages for the current environment except for the
 # ones already included when the environment was created.
-pipun() {
-  pip list \
+pip-uninstall() {
+  python -m pip list \
     | awk 'NR>2 {if ($1 != "pip" && $1 != "setuptools") print $1}' \
-    | xargs pip uninstall --yes
+    | xargs python -m pip uninstall --yes
 }
 
 # `o` with no arguments opens the current directory, otherwise opens the given
