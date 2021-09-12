@@ -65,8 +65,9 @@ commands:
           - brew
           - lua_lsp
           - neovim
-          - packages
+          - npm
           - plugins
+          - python
 
     completions: *upgrade_package_list
 

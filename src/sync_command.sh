@@ -15,16 +15,12 @@ fi
 
 if [[ $sync_all || $sync_python ]]; then
   header "Syncing requirements.txt with the global Python packages..."
-  pipx list --json \
-    | jq --raw-output '.venvs | keys | join("\n")' \
-    | tee "${PYTHON_GLOBAL_REQUIREMENTS}" \
-    | xargs -I{} echo "    {}"
+  pip-compile --quiet "$PACKAGE_DIR/requirements.in"
 fi
 
 if [[ $sync_all || $sync_node ]]; then
   header "Syncing node_modules.txt with the global Node packages..."
   npm --global --json list \
     | jq --raw-output '.dependencies | del(."instant-markdown-d") | keys | join("\n")' \
-    | tee "${NPM_GLOBAL_PACKAGES}" \
-    | xargs -I{} echo "    {}"
+      > "${NPM_GLOBAL_PACKAGES}"
 fi

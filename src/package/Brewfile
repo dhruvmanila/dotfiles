@@ -117,8 +117,6 @@ brew "node"
 brew "par"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
-# Execute binaries from Python packages in isolated environments
-brew "pipx"
 # Object-relational database system
 brew "postgresql"
 # Parse HTML at the command-line

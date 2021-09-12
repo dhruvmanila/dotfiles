@@ -26,7 +26,6 @@ if ! is_git_repo; then
 fi
 
 install_python
-install_global_python_packages
 install_global_npm_packages
 
 setup_neovim_nightly

@@ -23,13 +23,11 @@ install_python() {
   eval "$(pyenv init -)"
   eval "$(pyenv init --path)"
 
-  header "Rehashing pyenv shims..."
+  header "Installing pip-tools to manage global packages..."
+  python -m pip install pip-tools
   pyenv rehash
-}
 
-function install_global_python_packages() {
   header "Installing global Python packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
-  while IFS= read -r package; do
-    pipx install "$package"
-  done < "${PYTHON_GLOBAL_REQUIREMENTS}"
+  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
+  pyenv rehash
 }

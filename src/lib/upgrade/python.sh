@@ -1,13 +1,10 @@
-upgrade_packages() {
+upgrade_python() {
   for python_version in "${PYTHON_VERSIONS[@]}"; do
     header "Upgrading pip for Python $python_version..."
     "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
   done
 
-  header "Upgrading all pipx packages..."
-  pipx upgrade-all
-
-  header "Upgrading npm and packages..."
-  npm --global install npm@latest
-  npm --global upgrade
+  header "Upgrading all Python global packages..."
+  pip-compile --upgrade --quiet "$PACKAGE_DIR/requirements.in"
+  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
 }

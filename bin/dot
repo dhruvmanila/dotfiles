@@ -206,7 +206,7 @@ dot_upgrade_usage() {
     # :argument.usage
     echo "  PACKAGE"
     printf "    package to upgrade\n"
-    printf "    Allowed: all, brew, lua_lsp, neovim, packages, plugins\n"
+    printf "    Allowed: all, brew, lua_lsp, neovim, npm, plugins, python\n"
     printf "    Default: all\n"
     echo
 
@@ -499,15 +499,13 @@ install_python() {
   eval "$(pyenv init -)"
   eval "$(pyenv init --path)"
 
-  header "Rehashing pyenv shims..."
+  header "Installing pip-tools to manage global packages..."
+  python -m pip install pip-tools
   pyenv rehash
-}
 
-function install_global_python_packages() {
   header "Installing global Python packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
-  while IFS= read -r package; do
-    pipx install "$package"
-  done < "${PYTHON_GLOBAL_REQUIREMENTS}"
+  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
+  pyenv rehash
 }
 
 # :src/lib/setup/symlinks.sh
@@ -676,16 +674,8 @@ upgrade_neovim() {
   )
 }
 
-# :src/lib/upgrade/packages.sh
-upgrade_packages() {
-  for python_version in "${PYTHON_VERSIONS[@]}"; do
-    header "Upgrading pip for Python $python_version..."
-    "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
-  done
-
-  header "Upgrading all pipx packages..."
-  pipx upgrade-all
-
+# :src/lib/upgrade/npm.sh
+upgrade_npm() {
   header "Upgrading npm and packages..."
   npm --global install npm@latest
   npm --global upgrade
@@ -703,6 +693,18 @@ upgrade_plugins() {
   header "Cleaning and updating tmux plugins..."
   ~/.tmux/plugins/tpm/bin/clean_plugins
   ~/.tmux/plugins/tpm/bin/update_plugins all
+}
+
+# :src/lib/upgrade/python.sh
+upgrade_python() {
+  for python_version in "${PYTHON_VERSIONS[@]}"; do
+    header "Upgrading pip for Python $python_version..."
+    "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
+  done
+
+  header "Upgrading all Python global packages..."
+  pip-compile --upgrade --quiet "$PACKAGE_DIR/requirements.in"
+  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
 }
 
 # :src/lib/utils.sh
@@ -851,7 +853,6 @@ dot_setup_command() {
   fi
 
   install_python
-  install_global_python_packages
   install_global_npm_packages
 
   setup_neovim_nightly
@@ -887,18 +888,14 @@ dot_sync_command() {
 
   if [[ $sync_all || $sync_python ]]; then
     header "Syncing requirements.txt with the global Python packages..."
-    pipx list --json \
-      | jq --raw-output '.venvs | keys | join("\n")' \
-      | tee "${PYTHON_GLOBAL_REQUIREMENTS}" \
-      | xargs -I{} echo "    {}"
+    pip-compile --quiet "$PACKAGE_DIR/requirements.in"
   fi
 
   if [[ $sync_all || $sync_node ]]; then
     header "Syncing node_modules.txt with the global Node packages..."
     npm --global --json list \
       | jq --raw-output '.dependencies | del(."instant-markdown-d") | keys | join("\n")' \
-      | tee "${NPM_GLOBAL_PACKAGES}" \
-      | xargs -I{} echo "    {}"
+        > "${NPM_GLOBAL_PACKAGES}"
   fi
 }
 
@@ -1287,8 +1284,8 @@ dot_upgrade_parse_requirements() {
   # :command.default_assignments
   [[ -n ${args[package]} ]] || args[package]="all"
   # :command.whitelist_filter
-  if [[ ! ${args[package]} =~ ^(all|brew|lua_lsp|neovim|packages|plugins)$ ]]; then
-    printf "%s\n" "package must be one of: all, brew, lua_lsp, neovim, packages, plugins"
+  if [[ ! ${args[package]} =~ ^(all|brew|lua_lsp|neovim|npm|plugins|python)$ ]]; then
+    printf "%s\n" "package must be one of: all, brew, lua_lsp, neovim, npm, plugins, python"
     exit 1
   fi
 }
@@ -1334,9 +1331,13 @@ initialize() {
 
   # Python versions to be installed on the system.
   # First version will be the global one
-  PYTHON_VERSIONS=("3.9.6")
+  PYTHON_VERSIONS=(
+    "3.9.7"
+    "3.9.6"
+  )
 
   # Packages file
+  PACKAGE_DIR="${DOTFILES_DIRECTORY}/src/package"
   HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/src/package/Brewfile"
   PYTHON_GLOBAL_REQUIREMENTS="${DOTFILES_DIRECTORY}/src/package/requirements.txt"
   NPM_GLOBAL_PACKAGES="${DOTFILES_DIRECTORY}/src/package/node_modules.txt"
