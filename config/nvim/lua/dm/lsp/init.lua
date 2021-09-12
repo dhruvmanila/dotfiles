@@ -11,7 +11,7 @@ require "dm.lsp.handlers"
 require "dm.lsp.progress"
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-vim.lsp.set_log_level(vim.env.DEBUG and "debug" or "info")
+vim.lsp.set_log_level(vim.env.DEBUG and "debug" or "warn")
 
 nnoremap("<Leader>ll", "<Cmd>LspLog<CR>")
 nnoremap("<Leader>lr", "<Cmd>LspRestart<CR>")
