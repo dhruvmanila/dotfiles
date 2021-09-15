@@ -18,6 +18,9 @@ alias vm='nvim -nu ${HOME}/dotfiles/config/nvim/minimal.lua'
 alias dv='cd ${HOME}/contributing/neovim && VIMRUNTIME=runtime ./build/bin/nvim && cd -'
 alias dvr='cd ${HOME}/contributing/neovim && VIMRUNTIME=${HOME}/neovim/share/nvim/runtime ./build/bin/nvim && cd -'
 
+alias vim-startuptime='vim-startuptime | head -n 30'
+alias nvim-startuptime='\vim-startuptime -vimpath nvim | head -n30'
+
 # Fix ownership in /usr/local/ directories
 alias fixlocal='cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var Frameworks'
 

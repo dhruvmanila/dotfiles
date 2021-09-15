@@ -258,12 +258,6 @@ unset brew_prefix
 
 # https://pypa.github.io/pipx/installation/
 #
-#   > The default binary location for pipx-installed apps is `~/.local/bin`.
-#   > This can be overridden with the environment variable `PIPX_BIN_DIR`.
-#   >
-#   > pipx's default virtual environment location is `~/.local/pipx`.
-#   > This can be overridden with the environment variable `PIPX_HOME`.
-#
 # This will also be used to store custom scripts available in `dotfiles/bin`
 # directory.
 pathmunge "${HOME}/.local/bin"
