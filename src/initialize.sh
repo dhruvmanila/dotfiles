@@ -70,13 +70,15 @@ MACOS_DOCK_APPLICATIONS=(
   "/Applications/Safari.app"
   "/Applications/Brave Browser.app"
   "/Applications/kitty.app"
+  "/Applications/Docker.app/Contents/MacOS/Docker Desktop.app"
+  "/Applications/Postman.app"
+  "/Applications/MongoDB Compass.app"
   "/System/Applications/Notes.app"
   "/Applications/Mark Text.app"
   "/System/Applications/Music.app"
   "/System/Applications/Books.app"
   "/Applications/Slack.app"
   "/Applications/Discord.app"
-  "/Applications/Docker.app"
 )
 
 setup_required_directories silent

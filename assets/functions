@@ -11,6 +11,14 @@ mcd() {
   mkdir -p "$@" && cd "$_" || return
 }
 
+# List out the bundle identifier of all the current dock applications.
+# Used for `MACOS_DOCK_APPLICATIONS` in `~/dotfiles/src/initialize.sh`
+dock-apps() {
+  defaults read com.apple.dock persistent-apps \
+    | rg --only-matching '\s*"_CFURLString" = "file://(.*)/";' --replace '"$1"' \
+    | sed 's/%20/ /g'
+}
+
 # Upgrade the outdated Python packages for the current environment.
 pip-upgrade() {
   python -m pip list --outdated \
