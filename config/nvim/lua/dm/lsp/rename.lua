@@ -32,10 +32,7 @@ end
 function M.rename()
   local params = lsp.util.make_position_params()
   lsp.buf_request(0, "textDocument/prepareRename", params, function(err, result)
-    if err then
-      dm.notify("LSP Rename", err.message, 4)
-      return
-    elseif not result then
+    if not (err or result) then
       dm.notify("LSP Rename", "Nothing to rename")
       return
     end
@@ -47,15 +44,23 @@ function M.rename()
     --   - null
     ---@see https://microsoft.github.io/language-server-protocol/specification#textDocument_prepareRename
 
-    local orig_name = result.placeholder
-    if not orig_name and result.start and result["end"] then
-      local line = fn.getline(result.start.line + 1)
-      orig_name = line:sub(result.start.character + 1, result["end"].character)
-    else
-      -- Fallback to guessing symbol using `<cword>`.
-      --
-      -- This can happen if the language server does not support `prepareRename`,
-      -- returns an unexpected response, or requests for "default behavior"
+    local orig_name
+    if result then
+      orig_name = result.placeholder
+      if not orig_name and result.start and result["end"] then
+        local line = fn.getline(result.start.line + 1)
+        orig_name = line:sub(
+          result.start.character + 1,
+          result["end"].character
+        )
+      end
+    end
+
+    -- Fallback to guessing symbol using `<cword>`.
+    --
+    -- This can happen if the language server does not support `prepareRename`,
+    -- returns an unexpected response, or requests for "default behavior"
+    if not orig_name then
       orig_name = fn.expand "<cword>"
     end
 
