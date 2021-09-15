@@ -48,7 +48,13 @@ end
 ---@return string, string
 local function ft_icon(ctx)
   local extension = fn.fnamemodify(ctx.bufname, ":e")
-  return devicons.get_icon(ctx.filename, extension, { default = true })
+  return devicons.get_icon(
+    --         lir/devicons:12 ┐
+    --                         │
+    ctx.filetype == "lir" and "lir_folder_icon" or ctx.filename,
+    extension,
+    { default = true }
+  )
 end
 
 ---Tabline labels
