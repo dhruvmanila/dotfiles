@@ -1,3 +1,4 @@
+local lsp = vim.lsp
 local icons = dm.icons
 local nnoremap = dm.nnoremap
 local xnoremap = dm.xnoremap
@@ -11,7 +12,8 @@ require "dm.lsp.handlers"
 require "dm.lsp.progress"
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-vim.lsp.set_log_level(vim.env.DEBUG and "debug" or "warn")
+lsp.set_log_level(vim.env.DEBUG and "debug" or "warn")
+require("vim.lsp.log").set_format_func(vim.inspect)
 
 nnoremap("<Leader>ll", "<Cmd>LspLog<CR>")
 nnoremap("<Leader>lr", "<Cmd>LspRestart<CR>")
@@ -28,8 +30,8 @@ vim.fn.sign_define {
 --   - Default border according to `vim.g.border_style`
 --   - 'q' to quit with `nowait = true`
 do
-  local default = vim.lsp.util.open_floating_preview
-  vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
+  local default = lsp.util.open_floating_preview
+  lsp.util.open_floating_preview = function(contents, syntax, opts)
     opts = vim.tbl_deep_extend("force", opts, {
       border = dm.border[vim.g.border_style],
     })
@@ -55,21 +57,21 @@ local function custom_on_attach(client, bufnr)
 
   -- For all types of diagnostics: [d | ]d
   nnoremap("[d", function()
-    vim.lsp.diagnostic.goto_prev { enable_popup = false }
+    lsp.diagnostic.goto_prev { enable_popup = false }
   end, opts)
   nnoremap("]d", function()
-    vim.lsp.diagnostic.goto_next { enable_popup = false }
+    lsp.diagnostic.goto_next { enable_popup = false }
   end, opts)
 
   -- For warning and error diagnostics: [e | ]e
   nnoremap("[e", function()
-    vim.lsp.diagnostic.goto_prev {
+    lsp.diagnostic.goto_prev {
       severity_limit = "Warning",
       enable_popup = false,
     }
   end, opts)
   nnoremap("]e", function()
-    vim.lsp.diagnostic.goto_next {
+    lsp.diagnostic.goto_next {
       severity_limit = "Warning",
       enable_popup = false,
     }
@@ -83,31 +85,31 @@ local function custom_on_attach(client, bufnr)
   )
 
   if capabilities.hover then
-    nnoremap("K", vim.lsp.buf.hover, opts)
+    nnoremap("K", lsp.buf.hover, opts)
   end
 
   if capabilities.goto_definition then
-    nnoremap("gd", vim.lsp.buf.definition, opts)
+    nnoremap("gd", lsp.buf.definition, opts)
     nnoremap("<leader>pd", preview.definition, opts)
   end
 
   if capabilities.declaration then
-    nnoremap("gD", vim.lsp.buf.declaration, opts)
+    nnoremap("gD", lsp.buf.declaration, opts)
     nnoremap("<leader>pD", preview.declaration, opts)
   end
 
   if capabilities.type_definition then
-    nnoremap("gy", vim.lsp.buf.type_definition, opts)
+    nnoremap("gy", lsp.buf.type_definition, opts)
     nnoremap("<leader>py", preview.type_definition, opts)
   end
 
   if capabilities.implementation then
-    nnoremap("gi", vim.lsp.buf.implementation, opts)
+    nnoremap("gi", lsp.buf.implementation, opts)
     nnoremap("<leader>pi", preview.implementation, opts)
   end
 
   if capabilities.find_references then
-    nnoremap("gr", vim.lsp.buf.references, opts)
+    nnoremap("gr", lsp.buf.references, opts)
   end
 
   if capabilities.rename then
@@ -119,12 +121,12 @@ local function custom_on_attach(client, bufnr)
     table.insert(lsp_autocmds, {
       events = "CursorHold",
       targets = "<buffer>",
-      command = vim.lsp.buf.document_highlight,
+      command = lsp.buf.document_highlight,
     })
     table.insert(lsp_autocmds, {
       events = "CursorMoved",
       targets = "<buffer>",
-      command = vim.lsp.buf.clear_references,
+      command = lsp.buf.clear_references,
     })
     table.insert(lsp_autocmds, {
       events = "CursorHold",
@@ -134,7 +136,7 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.signature_help then
-    nnoremap("<C-s>", vim.lsp.buf.signature_help, opts)
+    nnoremap("<C-s>", lsp.buf.signature_help, opts)
   end
 
   if capabilities.code_action then
@@ -162,7 +164,7 @@ do
   -- Define default client capabilities.
   ---@see https://github.com/hrsh7th/cmp-nvim-lsp#setup
   ---@see https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#completionClientCapabilities
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  local capabilities = lsp.protocol.make_client_capabilities()
   require("cmp_nvim_lsp").update_capabilities(capabilities)
 
   -- Setting up the servers with the provided configuration and additional
