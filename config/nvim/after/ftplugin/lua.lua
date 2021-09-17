@@ -1,5 +1,6 @@
 local opt_local = vim.opt_local
 
+opt_local.formatprg = "stylua --search-parent-directories --stdin-filepath % -"
 opt_local.formatoptions:remove "o"
 opt_local.includeexpr = "v:lua.LuaInclude()"
 
