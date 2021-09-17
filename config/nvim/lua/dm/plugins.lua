@@ -80,6 +80,7 @@ local function load_plugins()
       },
     },
     { "itchyny/vim-external" },
+    { "jpalardy/vim-slime" },
     { "junegunn/vim-easy-align" },
     { "kyazdani42/nvim-web-devicons" },
     { "lewis6991/impatient.nvim" },
