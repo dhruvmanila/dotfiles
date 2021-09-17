@@ -29,7 +29,6 @@ LUA_LANGUAGE_SERVER_DIRECTORY="${HOME}/git/lua-language-server"
 # First version will be the global one
 PYTHON_VERSIONS=(
   "3.9.7"
-  "3.9.6"
 )
 
 # Packages file

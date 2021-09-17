@@ -307,8 +307,155 @@ warning() {
   yellow_bold "[!] $1"
 }
 
-# :src/lib/setup/dotfiles_git_repository.sh
-setup_dotfiles_git_repository() {
+# :src/lib/setup.sh
+declare -a PY_NEOVIM_PACKAGES=(
+  "pynvim"
+)
+
+declare -A SYMLINKS=(
+  [".editorconfig"]=".editorconfig"
+  ["assets/git/gitconfig"]=".gitconfig"
+  ["assets/git/gitignore"]=".gitignore"
+  ["assets/git/gitmessage"]=".gitmessage"
+  ["assets/gpg/gpg-agent.conf"]=".gnupg/gpg-agent.conf"
+  ["assets/gpg/gpg.conf"]=".gnupg/gpg.conf"
+  ["assets/inputrc"]=".inputrc"
+  ["assets/ssh/config"]=".ssh/config"
+  ["bash/bash_profile"]=".bash_profile"
+  ["bash/bashrc"]=".bashrc"
+  ["config/bat"]=".config/bat"
+  ["config/bottom"]="Library/Application Support/bottom"
+  ["config/bpytop"]=".config/bpytop"
+  ["config/glow"]="Library/Preferences/glow"
+  ["config/htop"]=".config/htop"
+  ["config/kitty"]=".config/kitty"
+  ["config/nvim"]=".config/nvim"
+  ["config/youtube-dl"]=".config/youtube-dl"
+  ["mac/hammerspoon"]=".hammerspoon"
+  ["mac/karabiner"]=".config/karabiner"
+  ["python/flake8"]=".config/flake8"
+  ["python/ipython/ipython_config.py"]=".ipython/profile_default/ipython_config.py"
+  ["python/ipython/startup"]=".ipython/profile_default/startup"
+  ["python/pip"]=".config/pip"
+  ["python/pylintrc"]=".pylintrc"
+  ["tmux/tmux.conf"]=".tmux.conf"
+  ["vim"]=".vim"
+  ["vim/vimrc"]=".vimrc"
+  ["zsh/zprofile"]=".zprofile"
+  ["zsh/zshenv"]=".zshenv"
+  ["zsh/zshrc"]=".zshrc"
+)
+
+download_dotfiles() { # {{{1
+  header "Downloading the dotfiles..."
+  mkdir -p "${DOTFILES_DIRECTORY}"
+  curl -fsSLo ~/dotfiles.tar.gz https://github.com/dhruvmanila/dotfiles/tarball/master
+
+  header "Extracting the dotfiles..."
+  tar -zxf "${HOME}/dotfiles.tar.gz" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
+  rm -rf ~/dotfiles.tar.gz
+}
+
+install_homebrew() { # {{{1
+  header "Installing Homebrew..."
+  set +e
+  if ! /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"; then
+    error "Failure occured during Homebrew installation"
+    # https://github.com/Homebrew/brew/pull/9383
+    core_location="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core"
+
+    header "Checking if homebrew-core is a shallow clone..."
+    if [[ -f "${core_location}/.git/shallow" ]]; then
+      header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
+
+      # This `git` is from the xcode command-line tools. By default, we will
+      # be using the brew installed `git` to keep up-to date.
+      git -C $core_location fetch --unshallow
+    else
+      error "Unknown error while installing homebrew, exiting..."
+      exit 1
+    fi
+  fi
+  set -e
+}
+
+install_homebrew_packages() { # {{{1
+  header "Installing homebrew bundle tap..."
+  brew tap homebrew/bundle
+
+  header "Installing packages from Brewfile..."
+  #  prints output from commands as they are run ┐
+  #                                              │
+  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install -v --no-lock --file "$HOMEBREW_BUNDLE_FILE"
+  #                                                  │
+  #         don't output a `Brewfile.lock.json` file ┘
+
+  header "Cleaning up..."
+  brew cleanup
+}
+
+install_npm_global_packages() { # {{{1
+  header "Installing global npm packages from ${NPM_GLOBAL_PACKAGES}..."
+  while IFS= read -r package; do
+    npm --global install "$package"
+  done < "${NPM_GLOBAL_PACKAGES}"
+}
+
+install_python() { # {{{1
+  # Setup the mentioned Python versions in from the constant $PYTHON_VERSIONS.
+  # The first element is made the global Python version.
+  #
+  # If the version is already installed, it will be skipped. `pip` will be
+  # upgraded for every mentioned version.
+  for python_version in "${PYTHON_VERSIONS[@]}"; do
+    if ! pyenv versions | grep -q "${python_version}"; then
+      header "Installing Python ${python_version}..."
+      pyenv install "${python_version}"
+    else
+      header "Python $python_version is already installed."
+    fi
+    header "Upgrading pip for Python ${python_version}..."
+    "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
+  done
+
+  pyenv_global_python="${PYTHON_VERSIONS[0]}"
+  header "Making ${pyenv_global_python} as the global Python version..."
+  pyenv global "${pyenv_global_python}"
+
+  header "Initiating pyenv..."
+  eval "$(pyenv init -)"
+  eval "$(pyenv init --path)"
+
+  header "Installing pip-tools to manage global packages..."
+  python -m pip install pip-tools
+  pyenv rehash
+
+  header "Installing global Python packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
+  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
+  pyenv rehash
+}
+
+install_xcode_command_line_tools() { # {{{1
+  header "Installing xcode command line tools..."
+  xcode-select --install
+  # wait until the tools are installed...
+  until xcode-select -p &> /dev/null; do
+    sleep 5
+  done
+}
+setup_aws() { # {{{1
+  # This is the recommended way of installing the tool.
+  # https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html#cliv2-mac-install-cmd
+  curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+
+  # This requires root permission to create symlinks between `path/to/aws-cli/*`
+  # and `/usr/local/bin/*` where '*' indicates the necessary executables.
+  sudo installer -pkg AWSCLIV2.pkg -target /
+
+  rm AWSCLIV2.pkg
+}
+
+setup_dotfiles_git_repository() { # {{{1
   header "Initializing Git repository..."
   set -x
   git init
@@ -319,19 +466,7 @@ setup_dotfiles_git_repository() {
   set +x
 }
 
-# :src/lib/setup/download_dotfiles.sh
-download_dotfiles() {
-  header "Downloading the dotfiles..."
-  mkdir -p "${DOTFILES_DIRECTORY}"
-  curl -fsSLo ~/dotfiles.tar.gz https://github.com/dhruvmanila/dotfiles/tarball/master
-
-  header "Extracting the dotfiles..."
-  tar -zxf "${HOME}/dotfiles.tar.gz" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
-  rm -rf ~/dotfiles.tar.gz
-}
-
-# :src/lib/setup/github_ssh.sh
-setup_github_ssh() {
+setup_github_ssh() { # {{{1
   # NOTE: This function should be called after symlinking the dotfiles
   ssh -T git@github.com &> /dev/null
   if [[ $? -eq 1 ]]; then
@@ -369,47 +504,7 @@ setup_github_ssh() {
   done
 }
 
-# :src/lib/setup/homebrew.sh
-install_homebrew() {
-  header "Installing Homebrew..."
-  set +e
-  if ! /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"; then
-    error "Failure occured during Homebrew installation"
-    # https://github.com/Homebrew/brew/pull/9383
-    core_location="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core"
-
-    header "Checking if homebrew-core is a shallow clone..."
-    if [[ -f "${core_location}/.git/shallow" ]]; then
-      header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
-
-      # This `git` is from the xcode command-line tools. By default, we will
-      # be using the brew installed `git` to keep up-to date.
-      git -C $core_location fetch --unshallow
-    else
-      error "Unknown error while installing homebrew, exiting..."
-      exit 1
-    fi
-  fi
-  set -e
-}
-
-install_homebrew_packages() {
-  header "Installing homebrew bundle tap..."
-  brew tap homebrew/bundle
-
-  header "Installing packages from Brewfile..."
-  #  prints output from commands as they are run ┐
-  #                                              │
-  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install -v --no-lock --file "$HOMEBREW_BUNDLE_FILE"
-  #                                                  │
-  #         don't output a `Brewfile.lock.json` file ┘
-
-  header "Cleaning up..."
-  brew cleanup
-}
-
-# :src/lib/setup/lua_language_server.sh
-setup_lua_language_server() {
+setup_lua_language_server() { # {{{1
   header "Setting up the lua language server..."
   git clone --depth=1 https://github.com/sumneko/lua-language-server.git "$LUA_LANGUAGE_SERVER_DIRECTORY"
   (
@@ -419,33 +514,7 @@ setup_lua_language_server() {
   )
 }
 
-# :src/lib/setup/macos.sh
-update_macos_settings() {
-  header "Updating macOS settings..."
-  bash "${DOTFILES_DIRECTORY}/mac/osxdefaults"
-}
-
-update_macos_dock() {
-  header "Updating macOS dock applications..."
-  dockutil --remove all
-  for app in "${MACOS_DOCK_APPLICATIONS[@]}"; do
-    dockutil --add "$app" --section apps
-  done
-
-  dockutil \
-    --add "${HOME}/Downloads" \
-    --view grid \
-    --display folder \
-    --sort dateadded \
-    --section others
-}
-
-# :src/lib/setup/neovim_nightly.sh
-py_neovim_packages=(
-  "pynvim"
-)
-
-setup_neovim_nightly() {
+setup_neovim_nightly() { # {{{1
   header "Setting up Neovim nightly..."
   git clone --depth=1 git@github.com:dhruvmanila/neovim.git "$NEOVIM_DIRECTORY"
   (
@@ -454,98 +523,17 @@ setup_neovim_nightly() {
     git remote add upstream git@github.com:neovim/neovim.git
     build_neovim
   )
-
   header "Setting up Neovim Python environment..."
   (
     cd ~/.neovim || exit 1
     python3 -m venv venv
     source venv/bin/activate
-    pip3 install "${py_neovim_packages[*]}"
+    pip3 install "${PY_NEOVIM_PACKAGES[*]}"
     deactivate
   )
 }
 
-# :src/lib/setup/npm_global_packages.sh
-install_npm_global_packages() {
-  header "Installing global npm packages from ${NPM_GLOBAL_PACKAGES}..."
-  while IFS= read -r package; do
-    npm --global install "$package"
-  done < "${NPM_GLOBAL_PACKAGES}"
-}
-
-# :src/lib/setup/python.sh
-# Setup the mentioned Python versions in from the constant $PYTHON_VERSIONS.
-# The first element is made the global Python version.
-#
-# If the version is already installed, it will be skipped. `pip` will be
-# upgraded for every mentioned version.
-install_python() {
-  for python_version in "${PYTHON_VERSIONS[@]}"; do
-    if ! pyenv versions | grep -q "${python_version}"; then
-      header "Installing Python ${python_version}..."
-      pyenv install "${python_version}"
-    else
-      header "Python $python_version is already installed."
-    fi
-    header "Upgrading pip for Python ${python_version}..."
-    "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
-  done
-
-  pyenv_global_python="${PYTHON_VERSIONS[0]}"
-  header "Making ${pyenv_global_python} as the global Python version..."
-  pyenv global "${pyenv_global_python}"
-
-  header "Initiating pyenv..."
-  eval "$(pyenv init -)"
-  eval "$(pyenv init --path)"
-
-  header "Installing pip-tools to manage global packages..."
-  python -m pip install pip-tools
-  pyenv rehash
-
-  header "Installing global Python packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
-  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
-  pyenv rehash
-}
-
-# :src/lib/setup/symlinks.sh
-declare -A symlinks
-
-symlinks=(
-  [".editorconfig"]=".editorconfig"
-  ["assets/git/gitconfig"]=".gitconfig"
-  ["assets/git/gitignore"]=".gitignore"
-  ["assets/git/gitmessage"]=".gitmessage"
-  ["assets/gpg/gpg-agent.conf"]=".gnupg/gpg-agent.conf"
-  ["assets/gpg/gpg.conf"]=".gnupg/gpg.conf"
-  ["assets/inputrc"]=".inputrc"
-  ["assets/ssh/config"]=".ssh/config"
-  ["bash/bash_profile"]=".bash_profile"
-  ["bash/bashrc"]=".bashrc"
-  ["config/bat"]=".config/bat"
-  ["config/bottom"]="Library/Application Support/bottom"
-  ["config/bpytop"]=".config/bpytop"
-  ["config/glow"]="Library/Preferences/glow"
-  ["config/htop"]=".config/htop"
-  ["config/kitty"]=".config/kitty"
-  ["config/nvim"]=".config/nvim"
-  ["config/youtube-dl"]=".config/youtube-dl"
-  ["mac/hammerspoon"]=".hammerspoon"
-  ["mac/karabiner"]=".config/karabiner"
-  ["python/flake8"]=".config/flake8"
-  ["python/ipython/ipython_config.py"]=".ipython/profile_default/ipython_config.py"
-  ["python/ipython/startup"]=".ipython/profile_default/startup"
-  ["python/pip"]=".config/pip"
-  ["python/pylintrc"]=".pylintrc"
-  ["tmux/tmux.conf"]=".tmux.conf"
-  ["vim"]=".vim"
-  ["vim/vimrc"]=".vimrc"
-  ["zsh/zprofile"]=".zprofile"
-  ["zsh/zshenv"]=".zshenv"
-  ["zsh/zshrc"]=".zshrc"
-)
-
-setup_symlinks() {
+setup_symlinks() { # {{{1
   # What does this file do? {{{
   #
   #   > Immediately after logging a user in, login displays the system copyright
@@ -564,32 +552,40 @@ setup_symlinks() {
 
   #                ┌ list associative array keys
   #                │
-  for source in "${!symlinks[@]}"; do
-    link "$source" "${symlinks[$source]}"
+  for source in "${!SYMLINKS[@]}"; do
+    link "$source" "${SYMLINKS[$source]}"
   done
 }
 
-# :src/lib/setup/tmux_plugins.sh
-setup_tmux_plugins() {
+setup_tmux_plugins() { # {{{1
   header "Installing tmux plugin manager..."
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
   header "Installing tmux plugins..."
   ~/.tmux/plugins/tpm/bin/install_plugins
 }
-
-# :src/lib/setup/xcode_command_line_tools.sh
-install_xcode_command_line_tools() {
-  header "Installing xcode command line tools..."
-  xcode-select --install
-  # wait until the tools are installed...
-  until xcode-select -p &> /dev/null; do
-    sleep 5
-  done
+update_macos_settings() { # {{{1
+  header "Updating macOS settings..."
+  bash "${DOTFILES_DIRECTORY}/mac/osxdefaults"
 }
 
-# :src/lib/upgrade/all.sh
-upgrade_all() {
+update_macos_dock() { # {{{1
+  header "Updating macOS dock applications..."
+  dockutil --remove all
+  for app in "${MACOS_DOCK_APPLICATIONS[@]}"; do
+    dockutil --add "$app" --section apps
+  done
+
+  dockutil \
+    --add "${HOME}/Downloads" \
+    --view grid \
+    --display folder \
+    --sort dateadded \
+    --section others
+}
+
+# :src/lib/upgrade.sh
+upgrade_all() { # {{{1
   upgrade_brew
   upgrade_plugins
   upgrade_packages
@@ -597,8 +593,7 @@ upgrade_all() {
   upgrade_lua_language_server
 }
 
-# :src/lib/upgrade/brew.sh
-upgrade_brew() {
+upgrade_brew() { # {{{1
   header "Updating homebrew..."
   brew update
 
@@ -613,19 +608,16 @@ upgrade_brew() {
   brew cleanup --prune 1
 }
 
-# :src/lib/upgrade/lua_lsp.sh
-MAIN_BRANCH="master"
-
-# https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
-upgrade_lua_lsp() {
-  header "Upgrading the lua language server to ${1:-"the latest commit on $MAIN_BRANCH"}..."
+upgrade_lua_lsp() { # {{{1
+  # https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
+  header "Upgrading the lua language server to ${1:-"the latest commit on master"}..."
   (
     cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
     curr_hash=$(git rev-parse HEAD)
 
     # Pull the latest changes
-    git checkout $MAIN_BRANCH
-    git pull origin $MAIN_BRANCH
+    git checkout master
+    git pull origin master
     git fetch origin --tags --force
     if [[ -n $1 ]]; then
       git checkout "$1"
@@ -643,20 +635,17 @@ upgrade_lua_lsp() {
   )
 }
 
-# :src/lib/upgrade/neovim.sh
-MAIN_BRANCH="master"
-
-upgrade_neovim() {
-  header "Upgrading Neovim to ${1:-"the latest commit on $MAIN_BRANCH"}..."
+upgrade_neovim() { # {{{1
+  header "Upgrading Neovim to ${1:-"the latest commit on master"}..."
 
   (
     cd "$NEOVIM_DIRECTORY" || exit 1
     curr_hash=$(git rev-parse HEAD)
 
     # Pull the latest changes
-    git checkout $MAIN_BRANCH
-    git pull upstream $MAIN_BRANCH
-    git push origin $MAIN_BRANCH
+    git checkout master
+    git pull upstream master
+    git push origin master
     git fetch upstream --tags --force
     if [[ -n $1 ]]; then
       git checkout "$1"
@@ -674,15 +663,13 @@ upgrade_neovim() {
   )
 }
 
-# :src/lib/upgrade/npm.sh
-upgrade_npm() {
+upgrade_npm() { # {{{1
   header "Upgrading npm and packages..."
   npm --global install npm@latest
   npm --global upgrade
 }
 
-# :src/lib/upgrade/plugins.sh
-upgrade_plugins() {
+upgrade_plugins() { # {{{1
   # Not quiting vim/neovim to check what's new
   header "Upgrading vim plugins..."
   vim +PlugUpgrade +PlugClean +PlugUpdate
@@ -695,8 +682,7 @@ upgrade_plugins() {
   ~/.tmux/plugins/tpm/bin/update_plugins all
 }
 
-# :src/lib/upgrade/python.sh
-upgrade_python() {
+upgrade_python() { # {{{1
   for python_version in "${PYTHON_VERSIONS[@]}"; do
     header "Upgrading pip for Python $python_version..."
     "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
@@ -854,6 +840,8 @@ dot_setup_command() {
 
   install_python
   install_global_npm_packages
+
+  setup_aws
 
   setup_neovim_nightly
   setup_lua_language_server
@@ -1333,7 +1321,6 @@ initialize() {
   # First version will be the global one
   PYTHON_VERSIONS=(
     "3.9.7"
-    "3.9.6"
   )
 
   # Packages file

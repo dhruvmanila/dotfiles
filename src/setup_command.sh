@@ -28,6 +28,8 @@ fi
 install_python
 install_global_npm_packages
 
+setup_aws
+
 setup_neovim_nightly
 setup_lua_language_server
 
