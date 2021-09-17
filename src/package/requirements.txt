@@ -20,22 +20,16 @@ attrs==21.2.0
     # via
     #   jsonschema
     #   markdown-it-py
-awscli==1.20.40
-    # via -r /Users/dhruv/dotfiles/src/package/requirements.in
 babel==2.9.1
     # via jupyterlab-server
 backcall==0.2.0
     # via ipython
 backports.entry-points-selectable==1.1.0
     # via virtualenv
-black==21.8b0
+black==21.9b0
     # via -r /Users/dhruv/dotfiles/src/package/requirements.in
 bleach==4.1.0
     # via nbconvert
-botocore==1.21.40
-    # via
-    #   awscli
-    #   s3transfer
 bpytop==1.0.67
     # via -r /Users/dhruv/dotfiles/src/package/requirements.in
 cachecontrol[filecache]==0.12.6
@@ -48,7 +42,7 @@ cffi==1.14.6
     # via argon2-cffi
 cfgv==3.3.1
     # via pre-commit
-charset-normalizer==2.0.4
+charset-normalizer==2.0.5
     # via requests
 cleo==0.8.1
     # via poetry
@@ -58,8 +52,6 @@ clikit==0.6.2
     # via
     #   cleo
     #   poetry
-colorama==0.4.3
-    # via awscli
 crashtest==0.3.1
     # via
     #   clikit
@@ -76,8 +68,6 @@ defusedxml==0.7.1
     #   nbconvert
 distlib==0.3.2
     # via virtualenv
-docutils==0.15.2
-    # via awscli
 entrypoints==0.3
     # via
     #   jupyter-client
@@ -125,21 +115,19 @@ jinja2==3.0.1
     #   jupyterlab-server
     #   nbconvert
     #   notebook
-jmespath==0.10.0
-    # via botocore
 json5==0.9.6
     # via jupyterlab-server
 jsonschema==3.2.0
     # via
     #   jupyterlab-server
     #   nbformat
-jupyter-client==7.0.2
+jupyter-client==7.0.3
     # via
     #   ipykernel
     #   jupyter-server
     #   nbclient
     #   notebook
-jupyter-core==4.7.1
+jupyter-core==4.8.1
     # via
     #   jupyter-client
     #   jupyter-server
@@ -152,7 +140,7 @@ jupyter-server==1.11.0
     #   jupyterlab
     #   jupyterlab-server
     #   nbclassic
-jupyterlab==3.1.11
+jupyterlab==3.1.12
     # via -r /Users/dhruv/dotfiles/src/package/requirements.in
 jupyterlab-pygments==0.1.2
     # via nbconvert
@@ -190,7 +178,7 @@ mypy-extensions==0.4.3
     # via
     #   black
     #   mypy
-nbclassic==0.3.1
+nbclassic==0.3.2
     # via jupyterlab
 nbclient==0.5.4
     # via nbconvert
@@ -211,7 +199,7 @@ nest-asyncio==1.5.1
     #   nbclient
 nodeenv==1.6.0
     # via pre-commit
-notebook==6.4.3
+notebook==6.4.4
     # via
     #   -r /Users/dhruv/dotfiles/src/package/requirements.in
     #   nbclassic
@@ -221,7 +209,7 @@ packaging==20.9
     #   jupyterlab
     #   jupyterlab-server
     #   poetry
-pandocfilters==1.4.3
+pandocfilters==1.5.0
     # via nbconvert
 parso==0.8.2
     # via jedi
@@ -261,8 +249,6 @@ ptyprocess==0.7.0
     # via
     #   pexpect
     #   terminado
-pyasn1==0.4.8
-    # via rsa
 pycodestyle==2.7.0
     # via flake8
 pycparser==2.20
@@ -284,17 +270,14 @@ pyrsistent==0.18.0
 pysocks==1.7.1
     # via requests
 python-dateutil==2.8.2
-    # via
-    #   botocore
-    #   jupyter-client
+    # via jupyter-client
 pytz==2021.1
     # via babel
 pyyaml==5.4.1
     # via
-    #   awscli
     #   jupytext
     #   pre-commit
-pyzmq==22.2.1
+pyzmq==22.3.0
     # via
     #   jupyter-client
     #   jupyter-server
@@ -315,10 +298,6 @@ requests-toolbelt==0.9.1
     #   poetry
 requests-unixsocket==0.2.0
     # via jupyter-server
-rsa==4.7.2
-    # via awscli
-s3transfer==0.5.0
-    # via awscli
 send2trash==1.8.0
     # via
     #   jupyter-server
@@ -378,10 +357,9 @@ typing-extensions==3.10.0.2
     #   mypy
 urllib3==1.26.6
     # via
-    #   botocore
     #   requests
     #   requests-unixsocket
-virtualenv==20.7.2
+virtualenv==20.8.0
     # via
     #   poetry
     #   pre-commit
