@@ -77,6 +77,25 @@ py-kernel() {
   echo "Use the 'Python ($1)' kernel for current venv in Jupyter"
 }
 
+# Get the latest master for the git repository and show the diff between then
+# and now.
+#
+# $1 (string) (optional): remote name
+# $2 (string) (optional): HEAD branch name
+gld() {
+  local curr_hash latest_hash
+  curr_hash=$(git rev-parse HEAD)
+  # These are optional arguments and if we quote them, the command will contain
+  # empty string and `git` will complain.
+  # shellcheck disable=SC2086
+  git pull $1 $2
+  latest_hash=$(git rev-parse HEAD)
+  if [[ "$curr_hash" != "$latest_hash" ]]; then
+    # `show` will display the commit message along with the diff.
+    git show "$curr_hash".."$latest_hash" | delta --side-by-side
+  fi
+}
+
 # `o` with no arguments opens the current directory, otherwise opens the given
 # location.
 o() {
