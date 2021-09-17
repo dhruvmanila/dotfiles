@@ -221,6 +221,11 @@ if command -v kitty &> /dev/null; then
   source <(kitty + complete setup bash)
 fi
 
+# Completion for the `aws` command.
+if command -v aws_completer &> /dev/null; then
+  complete -C aws_completer aws
+fi
+
 # Key Bindings {{{1
 
 # Automatic history expansion (`!!`) when inserting a space.
