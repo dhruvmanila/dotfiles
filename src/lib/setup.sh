@@ -254,6 +254,7 @@ setup_tmux_plugins() { # {{{1
   header "Installing tmux plugins..."
   ~/.tmux/plugins/tpm/bin/install_plugins
 }
+
 update_macos_settings() { # {{{1
   header "Updating macOS settings..."
   bash "${DOTFILES_DIRECTORY}/mac/osxdefaults"
@@ -261,15 +262,21 @@ update_macos_settings() { # {{{1
 
 update_macos_dock() { # {{{1
   header "Updating macOS dock applications..."
-  dockutil --remove all
+  dockutil --remove all --no-restart
   for app in "${MACOS_DOCK_APPLICATIONS[@]}"; do
-    dockutil --add "$app" --section apps
+    echo "    Adding '$app'..."
+    dockutil --add "$app" --section apps --no-restart
   done
 
+  echo "    Adding '${HOME}/Downloads'..."
   dockutil \
     --add "${HOME}/Downloads" \
     --view grid \
     --display folder \
     --sort dateadded \
-    --section others
+    --section others \
+    --no-restart
+
+  header "Restarting the dock..."
+  killall Dock &> /dev/null
 }
