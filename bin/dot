@@ -425,14 +425,27 @@ install_python() { # {{{1
   header "Initiating pyenv..."
   eval "$(pyenv init -)"
   eval "$(pyenv init --path)"
+}
 
-  header "Installing pip-tools to manage global packages..."
-  python -m pip install pip-tools
+install_python_global_packages() { # {{{1
+  header "Installing pipx to manage global packages..."
+  python -m pip install pipx
   pyenv rehash
 
   header "Installing global Python packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
-  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
-  pyenv rehash
+  while IFS= read -r package; do
+    if [[ "$package" == "jupyter" ]]; then
+      # 'jupyter' is a metapackage used for installation of all packages related
+      # to the ecosystem.
+      pipx install --include-deps "$package"
+
+      # These packages needs to be inject in the same environment.
+      pipx inject --include-apps "$package" jupyterlab
+      pipx inject --include-apps "$package" jupytext
+    else
+      pipx install "$package"
+    fi
+  done < "${PYTHON_GLOBAL_REQUIREMENTS}"
 }
 
 install_xcode_command_line_tools() { # {{{1
@@ -696,8 +709,7 @@ upgrade_python() { # {{{1
   done
 
   header "Upgrading all Python global packages..."
-  pip-compile --upgrade --quiet "$PACKAGE_DIR/requirements.in"
-  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
+  pipx upgrade-all --include-injected
 }
 
 # :src/lib/utils.sh
@@ -846,6 +858,7 @@ dot_setup_command() {
   fi
 
   install_python
+  install_python_global_packages
   install_global_npm_packages
 
   setup_aws
@@ -883,7 +896,9 @@ dot_sync_command() {
 
   if [[ $sync_all || $sync_python ]]; then
     header "Syncing requirements.txt with the global Python packages..."
-    pip-compile --quiet "$PACKAGE_DIR/requirements.in"
+    pipx list --json \
+      | jq --raw-output '.venvs | keys | join("\n")' \
+        > "${PYTHON_GLOBAL_REQUIREMENTS}"
   fi
 
   if [[ $sync_all || $sync_node ]]; then
@@ -1332,9 +1347,9 @@ initialize() {
 
   # Packages file
   PACKAGE_DIR="${DOTFILES_DIRECTORY}/src/package"
-  HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/src/package/Brewfile"
-  PYTHON_GLOBAL_REQUIREMENTS="${DOTFILES_DIRECTORY}/src/package/requirements.txt"
-  NPM_GLOBAL_PACKAGES="${DOTFILES_DIRECTORY}/src/package/node_modules.txt"
+  HOMEBREW_BUNDLE_FILE="${PACKAGE_DIR}/Brewfile"
+  PYTHON_GLOBAL_REQUIREMENTS="${PACKAGE_DIR}/requirements.txt"
+  NPM_GLOBAL_PACKAGES="${PACKAGE_DIR}/node_modules.txt"
 
   # On initialization of the script, if these directories does not exist, then
   # they will be created.

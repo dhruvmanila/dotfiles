@@ -33,9 +33,9 @@ PYTHON_VERSIONS=(
 
 # Packages file
 PACKAGE_DIR="${DOTFILES_DIRECTORY}/src/package"
-HOMEBREW_BUNDLE_FILE="${DOTFILES_DIRECTORY}/src/package/Brewfile"
-PYTHON_GLOBAL_REQUIREMENTS="${DOTFILES_DIRECTORY}/src/package/requirements.txt"
-NPM_GLOBAL_PACKAGES="${DOTFILES_DIRECTORY}/src/package/node_modules.txt"
+HOMEBREW_BUNDLE_FILE="${PACKAGE_DIR}/Brewfile"
+PYTHON_GLOBAL_REQUIREMENTS="${PACKAGE_DIR}/requirements.txt"
+NPM_GLOBAL_PACKAGES="${PACKAGE_DIR}/node_modules.txt"
 
 # On initialization of the script, if these directories does not exist, then
 # they will be created.

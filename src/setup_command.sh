@@ -26,6 +26,7 @@ if ! is_git_repo; then
 fi
 
 install_python
+install_python_global_packages
 install_global_npm_packages
 
 setup_aws

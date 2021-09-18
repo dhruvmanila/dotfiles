@@ -102,6 +102,5 @@ upgrade_python() { # {{{1
   done
 
   header "Upgrading all Python global packages..."
-  pip-compile --upgrade --quiet "$PACKAGE_DIR/requirements.in"
-  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
+  pipx upgrade-all --include-injected
 }

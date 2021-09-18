@@ -15,7 +15,9 @@ fi
 
 if [[ $sync_all || $sync_python ]]; then
   header "Syncing requirements.txt with the global Python packages..."
-  pip-compile --quiet "$PACKAGE_DIR/requirements.in"
+  pipx list --json \
+    | jq --raw-output '.venvs | keys | join("\n")' \
+      > "${PYTHON_GLOBAL_REQUIREMENTS}"
 fi
 
 if [[ $sync_all || $sync_node ]]; then

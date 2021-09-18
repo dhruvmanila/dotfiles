@@ -115,14 +115,27 @@ install_python() { # {{{1
   header "Initiating pyenv..."
   eval "$(pyenv init -)"
   eval "$(pyenv init --path)"
+}
 
-  header "Installing pip-tools to manage global packages..."
-  python -m pip install pip-tools
+install_python_global_packages() { # {{{1
+  header "Installing pipx to manage global packages..."
+  python -m pip install pipx
   pyenv rehash
 
   header "Installing global Python packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
-  pip-sync "$PYTHON_GLOBAL_REQUIREMENTS"
-  pyenv rehash
+  while IFS= read -r package; do
+    if [[ "$package" == "jupyter" ]]; then
+      # 'jupyter' is a metapackage used for installation of all packages related
+      # to the ecosystem.
+      pipx install --include-deps "$package"
+
+      # These packages needs to be inject in the same environment.
+      pipx inject --include-apps "$package" jupyterlab
+      pipx inject --include-apps "$package" jupytext
+    else
+      pipx install "$package"
+    fi
+  done < "${PYTHON_GLOBAL_REQUIREMENTS}"
 }
 
 install_xcode_command_line_tools() { # {{{1
