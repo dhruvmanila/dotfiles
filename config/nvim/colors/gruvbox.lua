@@ -334,59 +334,41 @@ vim.g.terminal_color_14 = palette.cyan
 vim.g.terminal_color_15 = palette.fg
 
 -- Neovim builtin LSP {{{1
--- Default Diagnostics {{{2
-highlight("LspDiagnosticsDefaultError", { fg = palette.red })
-highlight("LspDiagnosticsDefaultWarning", { fg = palette.yellow })
-highlight("LspDiagnosticsDefaultInformation", { fg = palette.blue })
-highlight("LspDiagnosticsDefaultHint", { fg = palette.aqua })
-
 -- Floating Diagnostics {{{2
-highlight("LspDiagnosticsFloatingError", {
+highlight("DiagnosticFloatingError", {
   fg = palette.red,
   bg = palette.bg_float,
 })
-highlight("LspDiagnosticsFloatingWarning", {
+highlight("DiagnosticFloatingWarn", {
   fg = palette.yellow,
   bg = palette.bg_float,
 })
-highlight("LspDiagnosticsFloatingInformation", {
+highlight("DiagnosticFloatingInfo", {
   fg = palette.blue,
   bg = palette.bg_float,
 })
-highlight("LspDiagnosticsFloatingHint", {
+highlight("DiagnosticFloatingHint", {
   fg = palette.aqua,
   bg = palette.bg_float,
 })
 
 -- Virtual Text Diagnostics {{{2
-link("LspDiagnosticsVirtualTextError", "LspDiagnosticsDefaultError")
-link("LspDiagnosticsVirtualTextWarning", "LspDiagnosticsDefaultWarning")
-link("LspDiagnosticsVirtualTextInformation", "LspDiagnosticsDefaultInformation")
-link("LspDiagnosticsVirtualTextHint", "LspDiagnosticsDefaultHint")
+highlight("DiagnosticVirtualTextError", { fg = palette.red })
+highlight("DiagnosticVirtualTextWarn", { fg = palette.yellow })
+highlight("DiagnosticVirtualTextInfo", { fg = palette.blue })
+highlight("DiagnosticVirtualTextHint", { fg = palette.aqua })
 
 -- Underline Diagnostics {{{2
-highlight("LspDiagnosticsUnderlineError", {
-  gui = "undercurl",
-  sp = palette.red,
-})
-highlight("LspDiagnosticsUnderlineWarning", {
-  gui = "undercurl",
-  sp = palette.yellow,
-})
-highlight("LspDiagnosticsUnderlineInformation", {
-  gui = "undercurl",
-  sp = palette.blue,
-})
-highlight("LspDiagnosticsUnderlineHint", {
-  gui = "undercurl",
-  sp = palette.aqua,
-})
+highlight("DiagnosticUnderlineError", { gui = "undercurl", sp = palette.red })
+highlight("DiagnosticUnderlineWarn", { gui = "undercurl", sp = palette.yellow })
+highlight("DiagnosticUnderlineInfo", { gui = "undercurl", sp = palette.blue })
+highlight("DiagnosticUnderlineHint", { gui = "undercurl", sp = palette.aqua })
 
 -- Sign Diagnostics {{{2
-highlight("LspDiagnosticsSignError", { fg = palette.red })
-highlight("LspDiagnosticsSignWarning", { fg = palette.yellow })
-highlight("LspDiagnosticsSignInformation", { fg = palette.blue })
-highlight("LspDiagnosticsSignHint", { fg = palette.aqua })
+highlight("DiagnosticSignError", { fg = palette.red })
+highlight("DiagnosticSignWarn", { fg = palette.yellow })
+highlight("DiagnosticSignInfo", { fg = palette.blue })
+highlight("DiagnosticSignHint", { fg = palette.aqua })
 
 -- Reference Text {{{2
 highlight("LspReferenceText", { bg = palette.bg_current_word })

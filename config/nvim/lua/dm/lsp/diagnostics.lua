@@ -8,10 +8,10 @@ local utils = require "dm.utils"
 
 local severity_signs = { icons.error, icons.warning, icons.info, icons.hint }
 local severity_hl = {
-  "LspDiagnosticsFloatingError",
-  "LspDiagnosticsFloatingWarning",
-  "LspDiagnosticsFloatingInformation",
-  "LspDiagnosticsFloatingHint",
+  "DiagnosticFloatingError",
+  "DiagnosticFloatingWarn",
+  "DiagnosticFloatingInfo",
+  "DiagnosticFloatingHint",
 }
 
 -- Configuration for the diagnostics window.

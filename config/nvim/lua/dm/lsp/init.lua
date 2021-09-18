@@ -20,10 +20,26 @@ nnoremap("<Leader>lr", "<Cmd>LspRestart<CR>")
 
 -- Update the default signs
 vim.fn.sign_define {
-  { name = "LspDiagnosticsSignError", text = icons.error },
-  { name = "LspDiagnosticsSignWarning", text = icons.warning },
-  { name = "LspDiagnosticsSignInformation", text = icons.info },
-  { name = "LspDiagnosticsSignHint", text = icons.hint },
+  {
+    name = "DiagnosticSignError",
+    text = icons.error,
+    texthl = "DiagnosticSignError",
+  },
+  {
+    name = "DiagnosticSignWarn",
+    text = icons.warning,
+    texthl = "DiagnosticSignWarn",
+  },
+  {
+    name = "DiagnosticSignInfo",
+    text = icons.info,
+    texthl = "DiagnosticSignInfo",
+  },
+  {
+    name = "DiagnosticSignHint",
+    text = icons.hint,
+    texthl = "DiagnosticSignHint",
+  },
 }
 
 -- Set the default options for all LSP floating windows.
