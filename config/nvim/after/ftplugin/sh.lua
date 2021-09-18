@@ -1,7 +1,3 @@
-local opt_local = vim.opt_local
-
-opt_local.makeprg = "$SHELL %"
-
 -- Return a list of diagnostic codes of the current buffer for shellcheck.
 ---@return string[]
 function _G.buf_shellcheck_error_codes()
