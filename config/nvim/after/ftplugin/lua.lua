@@ -1,3 +1,4 @@
+local api = vim.api
 local opt_local = vim.opt_local
 
 opt_local.formatprg = "stylua --search-parent-directories --stdin-filepath % -"
@@ -12,17 +13,14 @@ opt_local.includeexpr = "v:lua.LuaInclude()"
 -- required path, Vim will not call this function as its thinking the file has
 -- been found.
 function LuaInclude()
-  local fname = vim.v.fname
-  local module = fname:gsub("%.", "/")
-  for _, lua_path in ipairs(vim.api.nvim_list_runtime_paths()) do
-    lua_path = lua_path .. "/lua/"
-    local check1 = lua_path .. module .. ".lua"
-    local check2 = lua_path .. module .. "/init.lua"
-    if vim.fn.filereadable(check1) == 1 then
-      return check1
-    elseif vim.fn.filereadable(check2) == 1 then
-      return check2
-    end
+  local module = vim.v.fname:gsub("%.", "/")
+  local check = api.nvim_get_runtime_file("lua/" .. module .. ".lua", false)
+  if not vim.tbl_isempty(check) then
+    return check[1]
   end
-  return fname
+  check = api.nvim_get_runtime_file("lua/" .. module .. "/init.lua", false)
+  if not vim.tbl_isempty(check) then
+    return check[1]
+  end
+  return module
 end
