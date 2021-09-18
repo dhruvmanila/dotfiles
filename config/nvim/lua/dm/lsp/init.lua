@@ -42,6 +42,13 @@ vim.fn.sign_define {
   },
 }
 
+-- Update the global diagnostic options.
+vim.diagnostic.config {
+  underline = false,
+  virtual_text = false,
+  signs = true,
+}
+
 -- Set the default options for all LSP floating windows.
 --   - Default border according to `vim.g.border_style`
 --   - 'q' to quit with `nowait = true`
@@ -73,21 +80,21 @@ local function custom_on_attach(client, bufnr)
 
   -- For all types of diagnostics: [d | ]d
   nnoremap("[d", function()
-    lsp.diagnostic.goto_prev { enable_popup = false }
+    vim.diagnostic.goto_prev { enable_popup = false }
   end, opts)
   nnoremap("]d", function()
-    lsp.diagnostic.goto_next { enable_popup = false }
+    vim.diagnostic.goto_next { enable_popup = false }
   end, opts)
 
   -- For warning and error diagnostics: [e | ]e
   nnoremap("[e", function()
-    lsp.diagnostic.goto_prev {
+    vim.diagnostic.goto_prev {
       severity_limit = "Warning",
       enable_popup = false,
     }
   end, opts)
   nnoremap("]e", function()
-    lsp.diagnostic.goto_next {
+    vim.diagnostic.goto_next {
       severity_limit = "Warning",
       enable_popup = false,
     }

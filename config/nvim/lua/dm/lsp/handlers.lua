@@ -2,17 +2,6 @@ local lsp = vim.lsp
 local api = vim.api
 local handlers = lsp.handlers
 
--- Can use `lsp.diagnostics.show_line_diagnostic()` instead of `virtual_text`
-handlers["textDocument/publishDiagnostics"] = lsp.with(
-  lsp.diagnostic.on_publish_diagnostics,
-  {
-    virtual_text = false,
-    underline = false,
-    signs = true,
-    update_in_insert = false,
-  }
-)
-
 -- Modified version of the original handler. This will open the quickfix
 -- window only if the response is a list and the count is greater than 1.
 local function location_handler(_, result, ctx)
@@ -25,8 +14,7 @@ local function location_handler(_, result, ctx)
   -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
   if vim.tbl_islist(result) then
     if vim.tbl_count(result) > 1 then
-      lsp.util.set_qflist(lsp.util.locations_to_items(result))
-      api.nvim_command "copen"
+      vim.diagnostic.setqflist { title = ctx.method }
       api.nvim_command "wincmd p"
     end
     lsp.util.jump_to_location(result[1])
