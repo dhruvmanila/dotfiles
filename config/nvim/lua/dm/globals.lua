@@ -293,11 +293,24 @@ function dm.command(name, repl, opts)
   local repl_type = type(repl)
   if vim.is_callable(repl) then
     local fn_id = create(repl)
-    local fargs = ""
-    if opts.nargs and (type(opts.nargs) == "string" or opts.nargs > 0) then
-      fargs = ", <f-args>"
+    local args = ""
+    if opts.nargs then
+      -- Rationale {{{
+      --
+      -- In case when no argument is passed for `nargs=?`, `<f-args>` expands to
+      -- nothing and the function call gives us a syntax error:
+      --
+      --     `command_function(<fn_id>,,<q-mods>)`
+      --
+      -- With `<q-args>` it will be:
+      --
+      --     `command_function(<fn_id>, '', <q-mods>)`
+      -- }}}
+      args = (opts.nargs == "?" or opts.nargs <= 1) and ", <q-args>"
+        or ", <f-args>"
     end
-    repl = ("lua dm._execute(%d%s)"):format(fn_id, fargs)
+    -- Using `<q-mods>` instead of `<mods>` for the same reason as mentioned above.
+    repl = ("lua dm._execute(%d%s, <q-mods>)"):format(fn_id, args)
   elseif repl_type ~= "string" then
     error("[command] Unsupported repl type: " .. repl_type)
   end
