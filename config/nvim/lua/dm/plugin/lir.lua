@@ -68,7 +68,6 @@ local clipboard_actions = setmetatable({}, {
 -- window, thus not blocking other windows if opened.
 ---@return table<string, any>
 local function construct_win_opts()
-  local winpos = api.nvim_win_get_position(0)
   local winwidth = api.nvim_win_get_width(0)
   local winheight = api.nvim_win_get_height(0)
 
@@ -78,11 +77,12 @@ local function construct_win_opts()
   local col = (winwidth / 2) - (width / 2)
 
   return {
-    width = width,
-    height = height,
-    row = row + winpos[1],
-    col = col + winpos[2],
     border = dm.border[vim.g.border_style],
+    col = col,
+    height = height,
+    relative = "win",
+    row = row,
+    width = width,
   }
 end
 
