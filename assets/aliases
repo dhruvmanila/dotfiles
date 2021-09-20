@@ -21,6 +21,10 @@ alias dvr='cd ${HOME}/contributing/neovim && VIMRUNTIME=${HOME}/neovim/share/nvi
 alias vim-startuptime='vim-startuptime | head -n 30'
 alias nvim-startuptime='\vim-startuptime -vimpath nvim | head -n30'
 
+# Always show size in human readable format
+alias du='du -h'
+alias usage='du -d 1'
+
 # Default to using Finder for trash.
 alias trash='trash -F'
 

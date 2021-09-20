@@ -42,11 +42,15 @@ $ dot sync --python
 # upgrade everything
 $ dot upgrade
 
-# or upgrade specifc package, for package managers upgrade its installed packages
+# or upgrade specifc package, for package managers upgrade itself and all the
+# installed packages
 $ dot upgrade neovim
 $ dot upgrade brew
 
 # for packages which are manually installed like neovim, you can checkout to a
 # specific ref (commit/tag/branch)
 $ dot upgrade neovim --ref v0.5.0
+
+# to specify a build type for neovim
+$ NEOVIM_BUILD_TYPE=Release dot upgrade neovim
 ```

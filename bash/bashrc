@@ -211,6 +211,9 @@ complete -F _docker_compose dc
 complete -F __youtube_dl yt
 complete -F _pyenv p
 
+# Completion for custom functions/scripts.
+complete -c viw
+
 # Heroku autocomplete (this takes 1-2 seconds of the startup time)
 # if command -v heroku &> /dev/null; then
 #   source <(heroku autocomplete:script bash)

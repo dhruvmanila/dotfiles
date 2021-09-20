@@ -148,6 +148,7 @@ py-upgrade-venv() { # {{{1
 
 viw() { # {{{1
   # Open a CLI script in vim
+  # For `pyenv`, it will resolve path using the provided command.
   # Mnemonic: (vi)m (w)hich
   local path
   path=$(which "$1")

@@ -86,7 +86,6 @@ local function load_plugins()
     { "lewis6991/impatient.nvim" },
     {
       "lewis6991/gitsigns.nvim",
-      event = "BufRead",
       config = conf "gitsigns",
     },
     {
