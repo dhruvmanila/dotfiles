@@ -42,7 +42,6 @@ do
         return false
       end
     end,
-    stdin = true,
   })
 end
 
@@ -55,7 +54,6 @@ register("python", {
         return false
       end
     end,
-    stdin = true,
   },
   {
     cmd = "isort",
@@ -65,7 +63,6 @@ register("python", {
         return false
       end
     end,
-    stdin = true,
   },
 })
 
@@ -77,7 +74,6 @@ register("sh", {
       or 0
     return { "-i", indent_size, "-bn", "-ci", "-sr", "-kp", "-" }
   end,
-  stdin = true,
 })
 
 register("json", { use_lsp = true })
@@ -88,11 +84,9 @@ register("yaml", {
     local tabwidth = lsp_util.get_effective_tabstop()
     return { "--parser", "yaml", "--tab-width", tabwidth }
   end,
-  stdin = true,
 })
 
 register("sql", {
   cmd = "sqlformat",
   args = { "--reindent", "--keywords", "upper", "--wrap_after", "80", "-" },
-  stdin = true,
 })
