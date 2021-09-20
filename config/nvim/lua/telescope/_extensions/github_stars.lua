@@ -4,13 +4,14 @@ if not has_telescope then
   return
 end
 
-local Job = require "plenary.job"
 local finders = require "telescope.finders"
 local pickers = require "telescope.pickers"
 local config = require("telescope.config").values
 local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
+
+local job = require "dm.job"
 
 -- Keep the values around between reloads
 _CachedGithubStars = _CachedGithubStars or { stars = {}, max_length = 0 }
@@ -41,28 +42,18 @@ end
 -- GitHub's CLI tool `gh`.
 ---@param opts table picker opts table
 local function collect_github_stars(opts)
-  ---@param job Job
-  ---@param code number
-  local function process_complete(job, code)
-    if code > 0 then
-      dm.notify("Telescope", table.concat(job:stderr_result(), "\n"), 4)
-      return
-    end
-    local result = job:result()
-    if result and result[1] ~= "" then
-      parse_data(result[1])
-    end
-    github_stars(opts)
-  end
-
-  Job
-    :new({
-      command = "gh",
-      args = { "api", "user/starred", "--paginate", "--cache", "24h" },
-      enable_recording = true,
-      on_exit = vim.schedule_wrap(process_complete),
-    })
-    :start()
+  job {
+    cmd = "gh",
+    args = { "api", "user/starred", "--paginate", "--cache", "24h" },
+    on_exit = function(result)
+      if result.code > 0 then
+        dm.notify("Telescope", result.stderr, 4)
+        return
+      end
+      parse_data(result.stdout)
+      github_stars(opts)
+    end,
+  }
 end
 
 -- Defines the action to open the selection in the browser.

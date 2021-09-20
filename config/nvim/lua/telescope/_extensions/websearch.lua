@@ -18,7 +18,7 @@ local action_state = require "telescope.actions.state"
 local action_utils = require "telescope.actions.utils"
 local entry_display = require "telescope.pickers.entry_display"
 
-local Job = require "plenary.job"
+local job = require "dm.job"
 
 local state = {}
 
@@ -134,43 +134,35 @@ local function do_search()
     )
   end
 
-  ---@param job Job
-  ---@param code number
-  local function process_complete(job, code)
-    if code > 0 then
-      vim.api.nvim_err_writeln(
-        "Telescope (websearch)\n\n" .. table.concat(job:stderr_result(), "\n")
-      )
+  local function on_exit(result)
+    if result.code > 0 then
+      vim.api.nvim_err_writeln("Telescope (websearch): " .. result.stderr)
       return
     end
-    local result = job:result()
-    result = vim.fn.json_decode(result)
+    local data = vim.fn.json_decode(result.stdout)
     vim.fn.timer_stop(state.anim_timer)
     state.anim_timer = nil
     -- We will change the finder only if there are any results, otherwise reset
     -- the finder to be in QUERY mode.
-    if vim.tbl_isempty(result) then
+    if vim.tbl_isempty(data) then
       set_finder(mode.QUERY)
     else
-      set_finder(mode.RESULT, result)
+      set_finder(mode.RESULT, data)
     end
   end
 
-  Job
-    :new({
-      command = executable[state.search_engine],
-      args = {
-        "--nocolor",
-        "-n",
-        state.max_results,
-        "--json",
-        "--noprompt",
-        query_text,
-      },
-      enable_recording = true,
-      on_exit = vim.schedule_wrap(process_complete),
-    })
-    :start()
+  job {
+    cmd = executable[state.search_engine],
+    args = {
+      "--nocolor",
+      "-n",
+      state.max_results,
+      "--json",
+      "--noprompt",
+      query_text,
+    },
+    on_exit = on_exit,
+  }
 end
 
 -- Define the default action of either searching or opening the URL(s) depending
