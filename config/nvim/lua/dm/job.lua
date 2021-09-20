@@ -31,8 +31,7 @@ local function reader(prefix)
 end
 
 ---@param opts table
----@param callback function
-return function(opts, callback)
+return function(opts)
   vim.validate { cmd = { opts.cmd, "s" } }
 
   local cmd = opts.cmd
@@ -59,7 +58,7 @@ return function(opts, callback)
     close_safely(handle, stdin, stdout, stderr)
 
     vim.schedule(function()
-      callback {
+      opts.on_exit {
         code = code,
         signal = signal,
         stdout = stdout_handler.data,

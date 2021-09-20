@@ -62,18 +62,19 @@ end
 -- Run the given formatter asynchronously.
 ---@param formatter Formatter
 function Format:run(formatter)
-  job({
+  job {
     cmd = formatter.cmd,
     args = formatter.args,
     writer = table.concat(self.output, "\n"),
-  }, function(result)
-    if result.code > 0 then
-      log.error(result.stderr)
+    on_exit = function(result)
+      if result.code > 0 then
+        log.error(result.stderr)
+        return self:step()
+      end
+      self.output = vim.fn.split(result.stdout, "\n")
       return self:step()
-    end
-    self.output = vim.fn.split(result.stdout, "\n")
-    return self:step()
-  end)
+    end,
+  }
 end
 
 -- Format:run_lsp {{{1
