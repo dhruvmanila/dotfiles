@@ -163,6 +163,12 @@ export MANPAGER="nvim +Man!"
 export NNN_OPTS="dDeHuU"
 export NNN_FIFO=/tmp/nnn.fifo
 
+# Use system Trash.
+#
+# This actually uses `trash-put` from `trash-cli` but we are using `trash` from
+# Homebrew and so an alias script by the same name exists on PATH.
+export NNN_TRASH=1
+
 # nnn plugins
 # - To run a plugin, press ; followed by the key or Alt+key
 # - To skip directory refresh after running a plugin, prefix with -

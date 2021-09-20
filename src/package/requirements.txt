@@ -11,4 +11,3 @@ line-profiler
 mypy
 poetry
 pre-commit
-trash-cli

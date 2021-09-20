@@ -21,6 +21,9 @@ alias dvr='cd ${HOME}/contributing/neovim && VIMRUNTIME=${HOME}/neovim/share/nvi
 alias vim-startuptime='vim-startuptime | head -n 30'
 alias nvim-startuptime='\vim-startuptime -vimpath nvim | head -n30'
 
+# Default to using Finder for trash.
+alias trash='trash -F'
+
 # Fix ownership in /usr/local/ directories
 alias fixlocal='cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var Frameworks'
 

@@ -151,6 +151,8 @@ brew "tldr"
 brew "tmux"
 # Program that allows you to count code, quickly
 brew "tokei"
+# CLI tool that moves files or folder to the trash
+brew "trash"
 # Display directories as trees (with optional color/HTML output)
 brew "tree"
 # Maintained ctags implementation

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# This script is mainly to act as a wrapper for `nnn`. The tool only has support
+# for `trash-cli` which provides a `trash-put` command which the explorer uses.
+#
+# To enable:
+#
+#     `export NNN_TRASH=1`
+
+trash -F "$@"
+#      │
+#      └ Ask Finder to move the files/folders to the trash.
+#        This ensures that Finder plays the "trash" sound, and
+#        that the "put back" feature is enabled.
