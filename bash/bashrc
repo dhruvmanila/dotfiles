@@ -221,6 +221,11 @@ if command -v kitty &> /dev/null; then
   source <(kitty + complete setup bash)
 fi
 
+# `pipx` completions
+if command -v pipx &> /dev/null; then
+  eval "$(register-python-argcomplete pipx)"
+fi
+
 # Completion for the `aws` command.
 if command -v aws_completer &> /dev/null; then
   complete -C aws_completer aws
