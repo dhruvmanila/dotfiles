@@ -149,5 +149,10 @@ py-upgrade-venv() { # {{{1
 viw() { # {{{1
   # Open a CLI script in vim
   # Mnemonic: (vi)m (w)hich
-  $EDITOR "$(which "$1")"
+  local path
+  path=$(which "$1")
+  if [[ "$path" == "$(pyenv root)/shims/"* ]]; then
+    path=$(pyenv which "$1")
+  fi
+  $EDITOR "$path"
 }
