@@ -57,14 +57,16 @@ return function(opts)
     stderr:read_stop()
     close_safely(handle, stdin, stdout, stderr)
 
-    vim.schedule(function()
-      opts.on_exit {
-        code = code,
-        signal = signal,
-        stdout = stdout_handler.data,
-        stderr = stderr_handler.data,
-      }
-    end)
+    if opts.on_exit then
+      vim.schedule(function()
+        opts.on_exit {
+          code = code,
+          signal = signal,
+          stdout = stdout_handler.data,
+          stderr = stderr_handler.data,
+        }
+      end)
+    end
   end
 
   handle, pid_or_err = uv.spawn(cmd, {
@@ -83,11 +85,11 @@ return function(opts)
   stdout:read_start(stdout_handler)
   stderr:read_start(stderr_handler)
 
-  local writer = opts.writer
-  if type(writer) == "table" then
-    writer = table.concat(writer, "\n")
-  end
-  if writer then
+  if stdin then
+    local writer = opts.writer
+    if type(writer) == "table" then
+      writer = table.concat(writer, "\n")
+    end
     log.fmt_debug("STDIN: %s", writer)
     stdin:write(writer, function()
       stdin:close()
