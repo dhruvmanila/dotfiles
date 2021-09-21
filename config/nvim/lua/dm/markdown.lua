@@ -5,9 +5,12 @@
 --     $ npm -g install
 -- }}}
 
-local curl = require "plenary.curl"
+local job = require "dm.job"
 
 -- Variables {{{1
+
+-- Default request url.
+local API_URL = "http://localhost:8090"
 
 -- Path to the executable
 local SERVER_EXEC = "instant-markdown-d"
@@ -17,7 +20,8 @@ local SERVER_EXEC = "instant-markdown-d"
 local SERVER_ENV = "INSTANT_MARKDOWN_ALLOW_UNSAFE_CONTENT=1"
 
 -- `stdout` and `stderr` of the server will be redirected to this file.
-local SERVER_LOG_FILE = vim.env.DEBUG and "/tmp/instant_markdown_d.log"
+local SERVER_LOG_FILE = vim.env.DEBUG
+    and vim.fn.stdpath "cache" .. "/instant_markdown_d.log"
   or "/dev/null"
 
 -- Command to start the server {{{
@@ -68,7 +72,7 @@ local function cleanup()
   --
   -- Source: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
   -- }}}
-  curl.delete "http://localhost:8090"
+  job { cmd = "curl", args = { "-X", "DELETE", API_URL } }
   state.active = false
   os.execute(RESIZE_KITTY_WINDOW_CMD)
 end
@@ -89,7 +93,7 @@ local function get_lines()
   --    https://github.com/suan/vim-instant-markdown/pull/74#issue-37422001
   --    https://github.com/suan/instant-markdown-d/pull/26
   -- }}}
-  local linenr = math.max(1, vim.fn.line "." - 5)
+  local linenr = vim.fn.line "."
   lines[linenr] = lines[linenr] .. ' <a name="#marker" id="marker"></a>'
   return table.concat(lines, "\n")
 end
@@ -110,11 +114,10 @@ local function toggle_preview()
         },
         targets = "<buffer>",
         command = function()
-          curl.put("http://localhost:8090", {
-            raw_body = get_lines(),
-            -- Dummy function to make the curl request asynchronous.
-            callback = function() end,
-          })
+          job {
+            cmd = "curl",
+            args = { "-X", "PUT", "--data-raw", get_lines(), API_URL },
+          }
         end,
       },
       {
