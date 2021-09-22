@@ -65,7 +65,7 @@ function Format:run(formatter)
   job {
     cmd = formatter.cmd,
     args = formatter.args,
-    writer = table.concat(self.output, "\n"),
+    writer = self.output,
     on_exit = function(result)
       if result.code > 0 then
         log.error(result.stderr)

@@ -188,7 +188,7 @@ do
     config = type(config) == "function" and config() or config
     config.on_attach = custom_on_attach
     config.flags = config.flags or {}
-    config.flags.debounce_text_changes = 150
+    config.flags.debounce_text_changes = 500
     config.capabilities = vim.tbl_deep_extend(
       "keep",
       config.capabilities or {},
