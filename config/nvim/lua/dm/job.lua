@@ -1,6 +1,20 @@
 local uv = vim.loop
 local log = dm.log
 
+---@class JobOpts
+---@field cmd string
+---@field args? string[] | fun():string[]
+---@field cwd? string
+---@field env? table<string, string>
+---@field writer? string | string[]
+---@field on_exit? fun(result: JobResult)
+
+---@class JobResult
+---@field code number
+---@field signal number
+---@field stdout string
+---@field stderr string
+
 -- Helper function to close the handles safely
 -- Adopted from `plenary.job.close_safely`
 local function close_safely(...)
@@ -30,14 +44,24 @@ local function reader(prefix)
   })
 end
 
----@param opts table
+---@param opts JobOpts
 return function(opts)
   vim.validate { cmd = { opts.cmd, "s" } }
 
+  local env
   local cmd = opts.cmd
   local args = opts.args or {}
   if type(args) == "function" then
     args = args()
+  end
+
+  -- From `man environ(7)`
+  --
+  --     > By convention these strings have the form ``name=value''.
+  if opts.env then
+    for k, v in pairs(opts.env) do
+      table.insert(env, ("%s=%s"):format(k, v))
+    end
   end
 
   local stdout_handler = reader "stdout"
@@ -73,6 +97,7 @@ return function(opts)
     args = args,
     stdio = { stdin, stdout, stderr },
     cwd = opts.cwd or uv.cwd(),
+    env = env,
   }, on_exit)
 
   if not handle then
