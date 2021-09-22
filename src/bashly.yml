@@ -64,6 +64,7 @@ commands:
           - all
           - brew
           - lua_lsp
+          - mac
           - neovim
           - npm
           - plugins

@@ -1,9 +1,11 @@
 upgrade_all() { # {{{1
   upgrade_brew
   upgrade_plugins
-  upgrade_packages
+  upgrade_npm
+  upgrade_python
   upgrade_neovim_nightly
   upgrade_lua_language_server
+  upgrade_mac
 }
 
 upgrade_brew() { # {{{1
@@ -46,6 +48,14 @@ upgrade_lua_lsp() { # {{{1
 
     build_lua_lsp
   )
+}
+
+upgrade_mac() { # {{{1
+  header "Upgrading macOS applications..."
+  mas upgrade
+
+  header "Updating softwares..."
+  softwareupdate --install --all
 }
 
 upgrade_neovim() { # {{{1

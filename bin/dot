@@ -206,7 +206,7 @@ dot_upgrade_usage() {
     # :argument.usage
     echo "  PACKAGE"
     printf "    package to upgrade\n"
-    printf "    Allowed: all, brew, lua_lsp, neovim, npm, plugins, python\n"
+    printf "    Allowed: all, brew, lua_lsp, mac, neovim, npm, plugins, python\n"
     printf "    Default: all\n"
     echo
 
@@ -608,9 +608,11 @@ update_macos_dock() { # {{{1
 upgrade_all() { # {{{1
   upgrade_brew
   upgrade_plugins
-  upgrade_packages
+  upgrade_npm
+  upgrade_python
   upgrade_neovim_nightly
   upgrade_lua_language_server
+  upgrade_mac
 }
 
 upgrade_brew() { # {{{1
@@ -653,6 +655,14 @@ upgrade_lua_lsp() { # {{{1
 
     build_lua_lsp
   )
+}
+
+upgrade_mac() { # {{{1
+  header "Upgrading macOS applications..."
+  mas upgrade
+
+  header "Updating softwares..."
+  softwareupdate --install --all
 }
 
 upgrade_neovim() { # {{{1
@@ -1302,8 +1312,8 @@ dot_upgrade_parse_requirements() {
   # :command.default_assignments
   [[ -n ${args[package]} ]] || args[package]="all"
   # :command.whitelist_filter
-  if [[ ! ${args[package]} =~ ^(all|brew|lua_lsp|neovim|npm|plugins|python)$ ]]; then
-    printf "%s\n" "package must be one of: all, brew, lua_lsp, neovim, npm, plugins, python"
+  if [[ ! ${args[package]} =~ ^(all|brew|lua_lsp|mac|neovim|npm|plugins|python)$ ]]; then
+    printf "%s\n" "package must be one of: all, brew, lua_lsp, mac, neovim, npm, plugins, python"
     exit 1
   fi
 }
