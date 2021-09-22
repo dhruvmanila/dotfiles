@@ -6,7 +6,7 @@ local icons = dm.icons
 local Text = require "dm.text"
 local utils = require "dm.utils"
 
-local severity_signs = { icons.error, icons.warning, icons.info, icons.hint }
+local severity_signs = { icons.error, icons.warn, icons.info, icons.hint }
 local severity_hl = {
   "DiagnosticFloatingError",
   "DiagnosticFloatingWarn",

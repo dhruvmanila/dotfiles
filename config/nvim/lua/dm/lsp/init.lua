@@ -18,29 +18,21 @@ require("vim.lsp.log").set_format_func(vim.inspect)
 nnoremap("<Leader>ll", "<Cmd>LspLog<CR>")
 nnoremap("<Leader>lr", "<Cmd>LspRestart<CR>")
 
--- Update the default signs
-vim.fn.sign_define {
-  {
-    name = "DiagnosticSignError",
-    text = icons.error,
-    texthl = "DiagnosticSignError",
-  },
-  {
-    name = "DiagnosticSignWarn",
-    text = icons.warning,
-    texthl = "DiagnosticSignWarn",
-  },
-  {
-    name = "DiagnosticSignInfo",
-    text = icons.info,
-    texthl = "DiagnosticSignInfo",
-  },
-  {
-    name = "DiagnosticSignHint",
-    text = icons.hint,
-    texthl = "DiagnosticSignHint",
-  },
-}
+do
+  local prefix = "DiagnosticSign"
+
+  local severity_icons = {
+    Error = icons.error,
+    Warn = icons.warn,
+    Info = icons.info,
+    Hint = icons.hint,
+  }
+
+  for severity, icon in pairs(severity_icons) do
+    local name = prefix .. severity
+    vim.fn.sign_define(name, { text = icon, texthl = name })
+  end
+end
 
 -- Update the global diagnostic options.
 vim.diagnostic.config {

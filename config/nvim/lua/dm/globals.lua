@@ -60,7 +60,7 @@ dm.icons = {
     TypeParameter = "",
   },
   error = "",
-  warning = "",
+  warn = "",
   info = "",
   hint = "",
 }
@@ -140,7 +140,7 @@ do
       background_colour = "#282828",
       icons = {
         ERROR = dm.icons.error,
-        WARN = dm.icons.warning,
+        WARN = dm.icons.warn,
         INFO = dm.icons.info,
         DEBUG = "",
       },

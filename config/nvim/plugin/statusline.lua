@@ -122,7 +122,7 @@ end
 local diagnostics_opts = {
   { severity = "Information", icon = icons.info, hl = "%6*" },
   { severity = "Hint", icon = icons.hint, hl = "%7*" },
-  { severity = "Warning", icon = icons.warning, hl = "%8*" },
+  { severity = "Warning", icon = icons.warn, hl = "%8*" },
   { severity = "Error", icon = icons.error, hl = "%9*" },
 }
 
