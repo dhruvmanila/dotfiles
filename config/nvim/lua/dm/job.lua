@@ -113,7 +113,7 @@ return function(opts)
   if stdin then
     local writer = opts.writer
     if type(writer) == "table" then
-      writer = table.concat(writer, "\n")
+      writer = table.concat(writer, "\n") .. "\n"
     end
     log.fmt_debug("STDIN: %s", writer)
     stdin:write(writer, function()
