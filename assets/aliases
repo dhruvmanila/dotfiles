@@ -28,6 +28,11 @@ alias usage='du -d 1'
 # Default to using Finder for trash.
 alias trash='trash -F'
 
+# I don't know any other way to find out if I'm using the kitty terminal or not.
+if [[ -n "$KITTY_PID" ]]; then
+  alias ssh='kitty +kitten ssh'
+fi
+
 # Fix ownership in /usr/local/ directories
 alias fixlocal='cd /usr/local && sudo chown -R $(whoami) bin etc include lib sbin share var Frameworks'
 
