@@ -1,10 +1,8 @@
 local api = vim.api
 local lsp_util = vim.lsp.util
 
-local format = require "dm.formatter.format"
+local register = require("dm.formatter.format").register
 local root_pattern = require("lspconfig.util").root_pattern
-
-local register = format.register
 
 -- Returns a function which will check whether the given path is in one of the
 -- provided project names.
@@ -92,5 +90,3 @@ register("sql", {
   cmd = "sqlformat",
   args = { "--reindent", "--keywords", "upper", "--wrap_after", "80", "-" },
 })
-
-return { format = format.format }

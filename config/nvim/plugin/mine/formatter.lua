@@ -6,7 +6,7 @@ if vim.g.loaded_formatter then
 end
 vim.g.loaded_formatter = true
 
-local format = require("dm.formatter").format
+local format = require("dm.formatter.format").format
 
 -- Flag to denote the current state of auto formatting.
 local auto_formatting = false
