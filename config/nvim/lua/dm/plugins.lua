@@ -97,7 +97,6 @@ local function load_plugins()
       config = conf "nvim_dap",
     },
     { "mfussenegger/nvim-dap-python" },
-    { "mfussenegger/nvim-lint" },
     { "milisims/nvim-luaref" },
     { "nanotee/luv-vimdocs" },
     {
