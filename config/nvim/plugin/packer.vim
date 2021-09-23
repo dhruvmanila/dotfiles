@@ -48,9 +48,12 @@ endif
 " first time. Another way to do this is using `dofile` but that requires the
 " full path name of the file: "stdpath('config') .. '/lua/dm/plugins.lua'"
 " Refer: `packer.make_commands`
-command! PackerInstall lua R('dm.plugins').install()
-command! PackerUpdate lua R('dm.plugins').update()
-command! PackerSync lua R('dm.plugins').sync()
+command! -nargs=* -complete=customlist,v:lua.require'packer'.plugin_complete
+      \ PackerInstall lua R('dm.plugins').install(<f-args>)
+command! -nargs=* -complete=customlist,v:lua.require'packer'.plugin_complete
+      \ PackerUpdate lua R('dm.plugins').update(<f-args>)
+command! -nargs=* -complete=customlist,v:lua.require'packer'.plugin_complete
+      \ PackerSync lua R('dm.plugins').sync(<f-args>)
 command! PackerCompile lua R('dm.plugins').compile()
 command! PackerClean lua R('dm.plugins').clean()
 command! PackerStatus lua require('dm.plugins').status()
