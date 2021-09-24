@@ -6,7 +6,13 @@ local icons = dm.icons
 local Text = require "dm.text"
 local utils = require "dm.utils"
 
-local severity_signs = { icons.error, icons.warn, icons.info, icons.hint }
+local severity_signs = {
+  icons.error,
+  icons.warn,
+  icons.info,
+  icons.hint,
+}
+
 local severity_hl = {
   "DiagnosticFloatingError",
   "DiagnosticFloatingWarn",
@@ -19,7 +25,6 @@ local config = {
   show_source = true,
   show_code = true,
   meta_hl = "GreyItalic", -- Highlight group for source and code
-  timeout = 200, -- Time(ms) after which to display the diagnostics
 }
 
 local function show_line_diagnostics()
@@ -30,7 +35,7 @@ local function show_line_diagnostics()
 
   local current_bufnr = api.nvim_get_current_buf()
   local linenr = api.nvim_win_get_cursor(0)[1] - 1
-  local diagnostics = lsp.diagnostic.get_line_diagnostics(current_bufnr, linenr)
+  local diagnostics = vim.diagnostic.get(current_bufnr, { lnum = linenr })
 
   if vim.tbl_isempty(diagnostics) then
     return
@@ -48,8 +53,10 @@ local function show_line_diagnostics()
     if config.show_source and diagnostic.source then
       text:add(" " .. diagnostic.source, config.meta_hl)
     end
-    if config.show_code and diagnostic.code then
-      text:add(" (" .. diagnostic.code .. ")", config.meta_hl)
+    local diagnostic_code = diagnostic.code
+      or (diagnostic.user_data and diagnostic.user_data.lsp.code)
+    if config.show_code and diagnostic_code then
+      text:add(" (" .. diagnostic_code .. ")", config.meta_hl)
     end
     text:newline()
     -- Adds indentation that matches the prefix length to ensure diagnostic
@@ -60,9 +67,6 @@ local function show_line_diagnostics()
     end
   end
 
-  api.nvim_buf_set_option(bufnr, "modifiable", false)
-  api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
-
   local win_opts = utils.make_floating_popup_options(
     text.longest_line,
     text.line,
@@ -70,12 +74,16 @@ local function show_line_diagnostics()
   )
   local winnr = api.nvim_open_win(bufnr, false, win_opts)
 
+  api.nvim_buf_set_option(bufnr, "modifiable", false)
+  api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
+  api.nvim_win_set_option(winnr, "showbreak", "NONE")
+
   lsp.util.close_preview_autocmd({
     "CursorMoved",
     "CursorMovedI",
     "BufHidden",
     "BufLeave",
-    "WinScrolled",
+    "InsertCharPre",
   }, winnr)
 end
 
@@ -85,12 +93,16 @@ do
 
   -- Show the current line diagnostics in a floating window with an icon,
   -- message and optionally source and code information.
-  function M.show_line_diagnostics()
+  ---@param timeout number
+  function M.show_line_diagnostics(timeout)
     if diagnostics_timer then
       diagnostics_timer:stop()
     end
-
-    diagnostics_timer = vim.defer_fn(show_line_diagnostics, config.timeout)
+    if timeout then
+      diagnostics_timer = vim.defer_fn(show_line_diagnostics, timeout)
+    else
+      show_line_diagnostics()
+    end
   end
 end
 
