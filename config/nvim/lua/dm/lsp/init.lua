@@ -39,6 +39,7 @@ vim.diagnostic.config {
   underline = false,
   virtual_text = false,
   signs = true,
+  severity_sort = true,
 }
 
 -- Set the default options for all LSP floating windows.
@@ -65,12 +66,14 @@ end
 -- This function needs to be passed to every language server. If a language
 -- server requires either more config or less, it should also be done in this
 -- function using the `filetype` conditions.
+---@param client table
+---@param bufnr number
 local function custom_on_attach(client, bufnr)
   local lsp_autocmds = {}
   local capabilities = client.resolved_capabilities
   local opts = { buffer = bufnr }
 
-  -- For all types of diagnostics: [d | ]d
+  -- For all types of diagnostics: `[d`, `]d`
   nnoremap("[d", function()
     vim.diagnostic.goto_prev { enable_popup = false }
   end, opts)
@@ -78,17 +81,17 @@ local function custom_on_attach(client, bufnr)
     vim.diagnostic.goto_next { enable_popup = false }
   end, opts)
 
-  -- For warning and error diagnostics: [e | ]e
-  nnoremap("[e", function()
+  -- For warning and error diagnostics: `[w`, `]w`
+  nnoremap("[w", function()
     vim.diagnostic.goto_prev {
-      severity_limit = "Warning",
       enable_popup = false,
+      severity = { min = vim.diagnostic.severity.WARN },
     }
   end, opts)
-  nnoremap("]e", function()
+  nnoremap("]w", function()
     vim.diagnostic.goto_next {
-      severity_limit = "Warning",
       enable_popup = false,
+      severity = { min = vim.diagnostic.severity.WARN },
     }
   end, opts)
 
@@ -142,11 +145,6 @@ local function custom_on_attach(client, bufnr)
       events = "CursorMoved",
       targets = "<buffer>",
       command = lsp.buf.clear_references,
-    })
-    table.insert(lsp_autocmds, {
-      events = "CursorHold",
-      targets = "<buffer>",
-      command = require("dm.lsp.diagnostics").show_line_diagnostics,
     })
   end
 
