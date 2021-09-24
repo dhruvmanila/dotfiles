@@ -139,8 +139,6 @@ brew "rust"
 brew "shellcheck"
 # Autoformat shell script source code
 brew "shfmt"
-# Command-line interface for https://speedtest.net bandwidth tests
-brew "speedtest-cli"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
 # Tool to impose load on and stress test a computer system
