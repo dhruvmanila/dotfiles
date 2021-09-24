@@ -4,6 +4,9 @@
 " https://github.com/wincent/wincent/blob/main/aspects/vim/files/.config/nvim/autoload/wincent/debug.vim
 command! LogAutocmds call s:log_autocmds_toggle()
 
+let s:sep = repeat('-', 10)
+let s:log_file = stdpath('cache') . '/autocmds.log'
+
 function! s:log_autocmds_toggle()
   augroup dm__log_autocmds
     autocmd!
@@ -12,12 +15,12 @@ function! s:log_autocmds_toggle()
   let l:date = strftime('%F', localtime())
   let s:activate = get(s:, 'activate', 0) ? 0 : 1
   if !s:activate
-    call s:log('Stopped autocmd log (' . l:date . ')')
+    call s:log(s:sep . ' Stopped autocmd log (' . l:date . ') ' . s:sep)
     echo "[DEBUG] Logging autocmds: OFF"
     return
   endif
 
-  call s:log('Started autocmd log (' . l:date . ')')
+  call s:log(s:sep . ' Started autocmd log (' . l:date . ') ' . s:sep)
   echo "[DEBUG] Logging autocmds: ON"
   augroup dm__log_autocmds
     for l:au in s:aulist
@@ -36,7 +39,7 @@ function! s:log(name)
         \ '[' . l:timestamp . '] - ' .
         \ a:name .
         \ l:amatch
-        \ ], '/tmp/vim_debug.log', 'a')
+        \ ], s:log_file, 'a')
 endfunction
 
 " These are deliberately left out due to side effects
@@ -104,6 +107,7 @@ let s:aulist = [
       \ 'InsertCharPre',
       \ 'InsertEnter',
       \ 'InsertLeave',
+      \ 'InsertLeavePre',
       \ 'MenuPopup',
       \ 'QuickFixCmdPost',
       \ 'QuickFixCmdPre',
@@ -135,4 +139,5 @@ let s:aulist = [
       \ 'VimResized',
       \ 'WinEnter',
       \ 'WinLeave',
+      \ 'WinScrolled',
       \ ]
