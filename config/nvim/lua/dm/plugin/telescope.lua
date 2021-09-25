@@ -16,7 +16,7 @@ local xnoremap = dm.xnoremap
 local custom_actions = {}
 
 -- Yank the selected entry or all the selections made using multi-selection
--- into the register pointed by the variable 'v:register'.
+-- into the register pointed by the variable 'v:register' separated by newline.
 custom_actions.yank_entry = function(prompt_bufnr)
   local values = {}
   action_utils.map_selections(prompt_bufnr, function(selection)
@@ -171,10 +171,12 @@ telescope.setup {
     lsp_code_actions = {
       theme = "cursor",
     },
+    lsp_document_diagnostics = default_dropdown + { line_width = 60 },
     lsp_document_symbols = default_dropdown,
     lsp_range_code_actions = {
       theme = "cursor",
     },
+    lsp_workspace_diagnostics = default_dropdown + { line_width = 60 },
     lsp_workspace_symbols = default_dropdown,
     man_pages = default_dropdown,
     oldfiles = default_dropdown,
