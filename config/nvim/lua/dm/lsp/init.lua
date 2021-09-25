@@ -1,5 +1,4 @@
 local lsp = vim.lsp
-local icons = dm.icons
 local nnoremap = dm.nnoremap
 local xnoremap = dm.xnoremap
 
@@ -14,33 +13,6 @@ require "dm.lsp.progress"
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
 lsp.set_log_level(vim.env.DEBUG and "debug" or "warn")
 require("vim.lsp.log").set_format_func(vim.inspect)
-
-nnoremap("<Leader>ll", "<Cmd>LspLog<CR>")
-nnoremap("<Leader>lr", "<Cmd>LspRestart<CR>")
-
-do
-  local prefix = "DiagnosticSign"
-
-  local severity_icons = {
-    Error = icons.error,
-    Warn = icons.warn,
-    Info = icons.info,
-    Hint = icons.hint,
-  }
-
-  for severity, icon in pairs(severity_icons) do
-    local name = prefix .. severity
-    vim.fn.sign_define(name, { text = icon, texthl = name })
-  end
-end
-
--- Update the global diagnostic options.
-vim.diagnostic.config {
-  underline = false,
-  virtual_text = false,
-  signs = true,
-  severity_sort = true,
-}
 
 -- Set the default options for all LSP floating windows.
 --   - Default border according to `vim.g.border_style`
@@ -72,35 +44,6 @@ local function custom_on_attach(client, bufnr)
   local lsp_autocmds = {}
   local capabilities = client.resolved_capabilities
   local opts = { buffer = bufnr }
-
-  -- For all types of diagnostics: `[d`, `]d`
-  nnoremap("[d", function()
-    vim.diagnostic.goto_prev { enable_popup = false }
-  end, opts)
-  nnoremap("]d", function()
-    vim.diagnostic.goto_next { enable_popup = false }
-  end, opts)
-
-  -- For warning and error diagnostics: `[w`, `]w`
-  nnoremap("[w", function()
-    vim.diagnostic.goto_prev {
-      enable_popup = false,
-      severity = { min = vim.diagnostic.severity.WARN },
-    }
-  end, opts)
-  nnoremap("]w", function()
-    vim.diagnostic.goto_next {
-      enable_popup = false,
-      severity = { min = vim.diagnostic.severity.WARN },
-    }
-  end, opts)
-
-  -- Custom popup to show line diagnostics with colors and source information.
-  nnoremap(
-    "<leader>ld",
-    require("dm.lsp.diagnostics").show_line_diagnostics,
-    opts
-  )
 
   if capabilities.hover then
     nnoremap("K", lsp.buf.hover, opts)
@@ -134,6 +77,10 @@ local function custom_on_attach(client, bufnr)
     nnoremap("<leader>rn", require("dm.lsp.rename").rename, opts)
   end
 
+  if capabilities.signature_help then
+    nnoremap("<C-s>", lsp.buf.signature_help, opts)
+  end
+
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
   if capabilities.document_highlight then
     table.insert(lsp_autocmds, {
@@ -146,10 +93,6 @@ local function custom_on_attach(client, bufnr)
       targets = "<buffer>",
       command = lsp.buf.clear_references,
     })
-  end
-
-  if capabilities.signature_help then
-    nnoremap("<C-s>", lsp.buf.signature_help, opts)
   end
 
   if capabilities.code_action then
