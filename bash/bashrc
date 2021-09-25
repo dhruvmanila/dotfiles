@@ -71,11 +71,11 @@ function __python_activate_venv() { # {{{2
   # environment after a reload.
   if ! declare -f deactivate &> /dev/null; then
     local curr_dir="$PWD"
-    local activate_script="$curr_dir/venv/bin/activate"
+    local activate_script="$curr_dir/.venv/bin/activate"
     # Check for the activate script by climbing up the path until we find it.
     until [[ -r "$activate_script" ]]; do
       curr_dir=$(dirname "$curr_dir")
-      activate_script="$curr_dir/venv/bin/activate"
+      activate_script="$curr_dir/.venv/bin/activate"
       # To avoid going into infinite loop, we will break if we reach $HOME
       # or below.
       if [[ "$curr_dir" != "$HOME"* ]]; then
