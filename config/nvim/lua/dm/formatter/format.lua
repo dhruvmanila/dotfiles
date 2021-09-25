@@ -8,9 +8,9 @@ local job = require "dm.job"
 -- Types {{{
 
 ---@class Formatter
----@field enable? function enable/disable formatter for current file
+---@field enable? fun():boolean enable/disable formatter for current file
 ---@field cmd string formatter command
----@field args? string[]|function arguments to pass
+---@field args? string[]|fun():string[] arguments to pass
 ---@field use_lsp boolean use the LSP provided formatter
 ---@field opts table LSP formatting options
 
@@ -122,7 +122,7 @@ function Format:step()
   -- Just `f()` is not a tail call, not that it makes a difference here.
   -- This is because lua still have to discard the result of the call and then
   -- return nil. `f()` is similar to `f(); return` instead of `return f()`
-  if formatter.enable() ~= false then
+  if formatter.enable() then
     if formatter.use_lsp then
       return self:lsp_run(formatter)
     end

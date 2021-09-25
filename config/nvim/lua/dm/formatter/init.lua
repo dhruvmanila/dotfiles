@@ -38,9 +38,7 @@ do
     end,
     enable = function()
       stylua_config_dir = finder.stylua_config_file(api.nvim_buf_get_name(0))
-      if not stylua_config_dir then
-        return false
-      end
+      return stylua_config_dir ~= nil
     end,
   })
 end
@@ -50,18 +48,14 @@ register("python", {
     cmd = "black",
     args = { "--fast", "--quiet", "-" },
     enable = function()
-      if finder.py_ignore_projects(api.nvim_buf_get_name(0)) then
-        return false
-      end
+      return not finder.py_ignore_projects(api.nvim_buf_get_name(0))
     end,
   },
   {
     cmd = "isort",
     args = { "--profile", "black", "-" },
     enable = function()
-      if finder.py_ignore_projects(api.nvim_buf_get_name(0)) then
-        return false
-      end
+      return not finder.py_ignore_projects(api.nvim_buf_get_name(0))
     end,
   },
 })
