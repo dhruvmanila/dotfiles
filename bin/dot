@@ -171,6 +171,11 @@ dot_sync_usage() {
     printf "    sync only Python packages\n    File: $PYTHON_GLOBAL_REQUIREMENTS\n"
     echo
 
+    # :flag.usage
+    echo "  --cargo, -c"
+    printf "    sync only Cargo packages\n    File: $CARGO_GLOBAL_PACKAGES\n"
+    echo
+
   fi
 }
 
@@ -206,7 +211,7 @@ dot_upgrade_usage() {
     # :argument.usage
     echo "  PACKAGE"
     printf "    package to upgrade\n"
-    printf "    Allowed: all, brew, lua_lsp, mac, neovim, npm, plugins, python\n"
+    printf "    Allowed: all, brew, cargo, lua_lsp, mac, neovim, npm, plugins, python\n"
     printf "    Default: all\n"
     echo
 
@@ -354,6 +359,13 @@ download_dotfiles() { # {{{1
   header "Extracting the dotfiles..."
   tar -zxf "${HOME}/dotfiles.tar.gz" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
   rm -rf ~/dotfiles.tar.gz
+}
+
+install_cargo_packages() { # {{{1
+  header "Installing global cargo packages from ${CARGO_GLOBAL_PACKAGES}..."
+  while IFS= read -r package; do
+    cargo install "$package"
+  done < "${CARGO_GLOBAL_PACKAGES}"
 }
 
 install_homebrew() { # {{{1
@@ -630,6 +642,14 @@ upgrade_brew() { # {{{1
   brew cleanup --prune 1
 }
 
+upgrade_cargo() { # {{{1
+  header "Upgrading global cargo packages..."
+  while IFS= read -r package; do
+    # The `install` command updates the package if there is a newer version.
+    cargo install "$package"
+  done < "${CARGO_GLOBAL_PACKAGES}"
+}
+
 upgrade_lua_lsp() { # {{{1
   # https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
   header "Upgrading the lua language server to ${1:-"the latest commit on master"}..."
@@ -878,6 +898,7 @@ dot_setup_command() {
   install_python
   install_python_global_packages
   install_global_npm_packages
+  install_cargo_packages
 
   setup_aws
 
@@ -901,6 +922,7 @@ dot_sync_command() {
   sync_brew=${args[--brew]}
   sync_node=${args[--node]}
   sync_python=${args[--python]}
+  sync_cargo=${args[--cargo]}
 
   # If there are no arguments, then the default behavior is to sync all files.
   if [[ -z ${args[*]} ]]; then
@@ -924,6 +946,13 @@ dot_sync_command() {
     npm --global --json list \
       | jq --raw-output '.dependencies | del(."instant-markdown-d") | keys | join("\n")' \
         > "${NPM_GLOBAL_PACKAGES}"
+  fi
+
+  if [[ $sync_all || $sync_cargo ]]; then
+    header "Syncing cargo_packages.txt with the global Cargo packages..."
+    cargo install --list \
+      | awk -F ' ' '{ if(NR % 2 == 1) {print $1} }' \
+        > "${CARGO_GLOBAL_PACKAGES}"
   fi
 }
 
@@ -1232,6 +1261,12 @@ dot_sync_parse_requirements() {
         shift
         ;;
 
+      # :flag.case
+      --cargo | -c)
+        args[--cargo]=1
+        shift
+        ;;
+
       \
         -*)
         printf "invalid option: %s\n" "$key"
@@ -1312,8 +1347,8 @@ dot_upgrade_parse_requirements() {
   # :command.default_assignments
   [[ -n ${args[package]} ]] || args[package]="all"
   # :command.whitelist_filter
-  if [[ ! ${args[package]} =~ ^(all|brew|lua_lsp|mac|neovim|npm|plugins|python)$ ]]; then
-    printf "%s\n" "package must be one of: all, brew, lua_lsp, mac, neovim, npm, plugins, python"
+  if [[ ! ${args[package]} =~ ^(all|brew|cargo|lua_lsp|mac|neovim|npm|plugins|python)$ ]]; then
+    printf "%s\n" "package must be one of: all, brew, cargo, lua_lsp, mac, neovim, npm, plugins, python"
     exit 1
   fi
 }
@@ -1368,6 +1403,7 @@ initialize() {
   HOMEBREW_BUNDLE_FILE="${PACKAGE_DIR}/Brewfile"
   PYTHON_GLOBAL_REQUIREMENTS="${PACKAGE_DIR}/requirements.txt"
   NPM_GLOBAL_PACKAGES="${PACKAGE_DIR}/node_modules.txt"
+  CARGO_GLOBAL_PACKAGES="${PACKAGE_DIR}/cargo_packages.txt"
 
   # On initialization of the script, if these directories does not exist, then
   # they will be created.

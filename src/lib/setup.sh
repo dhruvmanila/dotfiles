@@ -46,6 +46,13 @@ download_dotfiles() { # {{{1
   rm -rf ~/dotfiles.tar.gz
 }
 
+install_cargo_packages() { # {{{1
+  header "Installing global cargo packages from ${CARGO_GLOBAL_PACKAGES}..."
+  while IFS= read -r package; do
+    cargo install "$package"
+  done < "${CARGO_GLOBAL_PACKAGES}"
+}
+
 install_homebrew() { # {{{1
   header "Installing Homebrew..."
   set +e

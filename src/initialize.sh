@@ -36,6 +36,7 @@ PACKAGE_DIR="${DOTFILES_DIRECTORY}/src/package"
 HOMEBREW_BUNDLE_FILE="${PACKAGE_DIR}/Brewfile"
 PYTHON_GLOBAL_REQUIREMENTS="${PACKAGE_DIR}/requirements.txt"
 NPM_GLOBAL_PACKAGES="${PACKAGE_DIR}/node_modules.txt"
+CARGO_GLOBAL_PACKAGES="${PACKAGE_DIR}/cargo_packages.txt"
 
 # On initialization of the script, if these directories does not exist, then
 # they will be created.

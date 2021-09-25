@@ -23,6 +23,14 @@ upgrade_brew() { # {{{1
   brew cleanup --prune 1
 }
 
+upgrade_cargo() { # {{{1
+  header "Upgrading global cargo packages..."
+  while IFS= read -r package; do
+    # The `install` command updates the package if there is a newer version.
+    cargo install "$package"
+  done < "${CARGO_GLOBAL_PACKAGES}"
+}
+
 upgrade_lua_lsp() { # {{{1
   # https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
   header "Upgrading the lua language server to ${1:-"the latest commit on master"}..."

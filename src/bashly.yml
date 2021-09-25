@@ -50,6 +50,12 @@ commands:
           sync only Python packages
           File: $PYTHON_GLOBAL_REQUIREMENTS
 
+      - long: --cargo
+        short: -c
+        help: |
+          sync only Cargo packages
+          File: $CARGO_GLOBAL_PACKAGES
+
   - name: upgrade
     help: upgrade packages
     # catch_all:
@@ -63,6 +69,7 @@ commands:
         allowed: &upgrade_package_list
           - all
           - brew
+          - cargo
           - lua_lsp
           - mac
           - neovim

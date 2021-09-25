@@ -2,6 +2,7 @@
 sync_brew=${args[--brew]}
 sync_node=${args[--node]}
 sync_python=${args[--python]}
+sync_cargo=${args[--cargo]}
 
 # If there are no arguments, then the default behavior is to sync all files.
 if [[ -z ${args[*]} ]]; then
@@ -25,4 +26,11 @@ if [[ $sync_all || $sync_node ]]; then
   npm --global --json list \
     | jq --raw-output '.dependencies | del(."instant-markdown-d") | keys | join("\n")' \
       > "${NPM_GLOBAL_PACKAGES}"
+fi
+
+if [[ $sync_all || $sync_cargo ]]; then
+  header "Syncing cargo_packages.txt with the global Cargo packages..."
+  cargo install --list \
+    | awk -F ' ' '{ if(NR % 2 == 1) {print $1} }' \
+      > "${CARGO_GLOBAL_PACKAGES}"
 fi

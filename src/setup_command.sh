@@ -28,6 +28,7 @@ fi
 install_python
 install_python_global_packages
 install_global_npm_packages
+install_cargo_packages
 
 setup_aws
 
