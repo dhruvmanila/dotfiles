@@ -237,7 +237,6 @@ cask "whatsapp"
 cask "zoom"
 mas "Developer", id: 640199958
 mas "GarageBand", id: 682658836
-mas "Hotspot Shield", id: 771076721
 mas "iMovie", id: 408981434
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825

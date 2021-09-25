@@ -72,7 +72,7 @@ register("sh", {
     local indent_size = vim.bo.expandtab
         and lsp_util.get_effective_tabstop()
       or 0
-    return { "-i", indent_size, "-bn", "-ci", "-sr", "-kp", "-" }
+    return { "-i", indent_size, "-bn", "-ci", "-sr", "-" }
   end,
 })
 

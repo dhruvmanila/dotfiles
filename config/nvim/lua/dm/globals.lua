@@ -17,6 +17,7 @@ _G.dm = {
 --     $ DEBUG=1 nvim
 dm.log = require("plenary.log").new {
   plugin = "dm",
+  use_console = vim.env.DEBUG ~= "1",
   level = vim.env.DEBUG and "debug" or "warn",
 }
 
