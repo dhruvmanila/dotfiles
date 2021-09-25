@@ -247,7 +247,10 @@ highlight("Substitute", { fg = palette.bg0, bg = palette.yellow })
 
 -- Statusline {{{2
 highlight("StatusLine", { fg = palette.grey2, bg = palette.bg_statusline2 })
-highlight("StatusLineTerm", { fg = palette.grey2, bg = palette.bg_statusline2 })
+highlight("StatusLineTerm", {
+  fg = palette.grey2,
+  bg = palette.bg_statusline2,
+})
 highlight("StatusLineNC", { fg = palette.grey0, bg = palette.bg_statusline1 })
 highlight("StatusLineTermNC", {
   fg = palette.grey0,
@@ -360,7 +363,10 @@ highlight("DiagnosticVirtualTextHint", { fg = palette.aqua })
 
 -- Underline Diagnostics {{{2
 highlight("DiagnosticUnderlineError", { gui = "undercurl", sp = palette.red })
-highlight("DiagnosticUnderlineWarn", { gui = "undercurl", sp = palette.yellow })
+highlight("DiagnosticUnderlineWarn", {
+  gui = "undercurl",
+  sp = palette.yellow,
+})
 highlight("DiagnosticUnderlineInfo", { gui = "undercurl", sp = palette.blue })
 highlight("DiagnosticUnderlineHint", { gui = "undercurl", sp = palette.aqua })
 

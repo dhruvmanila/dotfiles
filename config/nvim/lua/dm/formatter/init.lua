@@ -63,8 +63,7 @@ register("python", {
 register("sh", {
   cmd = "shfmt",
   args = function()
-    local indent_size = vim.bo.expandtab
-        and lsp_util.get_effective_tabstop()
+    local indent_size = vim.bo.expandtab and lsp_util.get_effective_tabstop()
       or 0
     return { "-i", indent_size, "-bn", "-ci", "-sr", "-" }
   end,
