@@ -71,6 +71,10 @@ brew "gdb"
 brew "gh"
 # Distributed revision control system
 brew "git"
+# Syntax-highlighting pager for git and diff output
+brew "git-delta"
+# Render markdown on the CLI
+brew "glow"
 # GNU Pretty Good Privacy (PGP) package
 brew "gnupg"
 # Open source programming language to build simple/reliable/efficient software
@@ -143,6 +147,8 @@ brew "shfmt"
 brew "stow"
 # Tool to impose load on and stress test a computer system
 brew "stress"
+# Opinionated Lua code formatter
+brew "stylua"
 # Simplified and community-driven man pages
 brew "tldr"
 # Terminal multiplexer
