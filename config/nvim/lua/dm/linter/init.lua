@@ -4,12 +4,13 @@ local lint = require "dm.linter.lint"
 local register = lint.register
 
 do
-  local pattern = "[^:]+:(%d+):(%d+):(%w+):(.+)"
-  local group = { "lnum", "col", "code", "message" }
+  local pat = "[^:]+:(%d+):(%d+):(([EWF])%w+):(.+)"
+  local group = { "lnum", "col", "code", "severity", "message" }
 
   local severity_map = {
     E = vdiagnostic.severity.ERROR,
     W = vdiagnostic.severity.WARN,
+    F = vdiagnostic.severity.WARN,
   }
 
   register("python", {
@@ -20,10 +21,8 @@ do
       local diagnostics = {}
       for line in vim.gsplit(output, "\n") do
         if line ~= "" then
-          local diagnostic = vdiagnostic.match(line, pattern, group)
+          local diagnostic = vdiagnostic.match(line, pat, group, severity_map)
           diagnostic.source = "flake8"
-          diagnostic.severity = severity_map[diagnostic.code:sub(1, 1)]
-            or severity_map.W
           table.insert(diagnostics, diagnostic)
         end
       end
@@ -33,7 +32,7 @@ do
 end
 
 do
-  local pattern = "[^:]+:(%d+):(%d+): (%a+): (.*)"
+  local pat = "[^:]+:(%d+):(%d+): (%a+): (.*)"
   local groups = { "lnum", "col", "severity", "message" }
 
   local severity_map = {
@@ -56,12 +55,7 @@ do
       local diagnostics = {}
       for line in vim.gsplit(output, "\n") do
         if line ~= "" then
-          local diagnostic = vdiagnostic.match(
-            line,
-            pattern,
-            groups,
-            severity_map
-          )
+          local diagnostic = vdiagnostic.match(line, pat, groups, severity_map)
           diagnostic.source = "mypy"
           table.insert(diagnostics, diagnostic)
         end
