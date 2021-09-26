@@ -4,10 +4,6 @@
         "show_in_menu_bar": true,
         "show_profile_name_in_menu_bar": false
     },
-    "name": "Default profile",
-    "parameters": {
-        "delay_milliseconds_before_open_device": 1000
-    },
     "profiles": [
         {
             "complex_modifications": {
@@ -114,11 +110,11 @@
                             {
                                 "conditions": [
                                     {
-                                        "type": "frontmost_application_if",
                                         "bundle_identifiers": [
                                             "^com\\.apple\\.Terminal$",
                                             "^com\\.googlecode\\.iterm2$"
-                                        ]
+                                        ],
+                                        "type": "frontmost_application_if"
                                     }
                                 ],
                                 "from": {
@@ -132,6 +128,39 @@
                                 "to": [
                                     {
                                         "key_code": "f6"
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Use delete_forward to remove files/folders in Finder",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "bundle_identifiers": [
+                                            "^com\\.apple\\.finder$"
+                                        ],
+                                        "type": "frontmost_application_if"
+                                    },
+                                    {
+                                        "identifiers": [
+                                            {
+                                                "product_id": 50475,
+                                                "vendor_id": 1133
+                                            }
+                                        ],
+                                        "type": "device_if"
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "delete_forward"
+                                },
+                                "to": [
+                                    {
+                                        "shell_command": "osascript ~/dotfiles/mac/karabiner/remove_seleced_files.scpt"
                                     }
                                 ],
                                 "type": "basic"
@@ -179,16 +208,6 @@
                     "ignore": false,
                     "manipulate_caps_lock_led": false,
                     "simple_modifications": [
-                        {
-                            "from": {
-                                "key_code": "delete_forward"
-                            },
-                            "to": [
-                                {
-                                    "shell_command": "osascript ~/dotfiles/mac/karabiner/remove_seleced_files.scpt"
-                                }
-                            ]
-                        },
                         {
                             "from": {
                                 "key_code": "insert"
@@ -364,7 +383,7 @@
                     ]
                 }
             ],
-            "name": "",
+            "name": "Default",
             "parameters": {
                 "delay_milliseconds_before_open_device": 1000
             },
