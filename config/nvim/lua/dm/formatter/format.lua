@@ -89,7 +89,7 @@ function Format:lsp_run(formatter)
     self.bufnr,
     "textDocument/formatting",
     vim.lsp.util.make_formatting_params(formatter.opts),
-    function(err, _, result)
+    function(err, result)
       if err then
         log.error(err.message)
         return
