@@ -203,7 +203,7 @@ dot_upgrade_usage() {
     # :command.usage_flags
     # :flag.usage
     echo "  --ref, -r REF"
-    printf "    Upgrade to a specific ref (commit/branch/tag). This flag is applicable only\n    when 'PACKAGE' is:\n      - neovim\n      - lua_lsp\n"
+    printf "    Upgrade to a specific ref (commit/branch/tag). This flag is applicable only\n    when 'PACKAGE' is:\n      - lua_lsp\n      - neovim\n"
     echo
     # :command.usage_args
     printf "Arguments:\n"
@@ -320,7 +320,6 @@ declare -a PY_NEOVIM_PACKAGES=(
 declare -A SYMLINKS=(
   [".editorconfig"]=".editorconfig"
   ["assets/git/gitconfig"]=".gitconfig"
-  ["assets/git/gitignore"]=".gitignore"
   ["assets/git/gitmessage"]=".gitmessage"
   ["assets/gpg/gpg-agent.conf"]=".gnupg/gpg-agent.conf"
   ["assets/gpg/gpg.conf"]=".gnupg/gpg.conf"
@@ -333,6 +332,7 @@ declare -A SYMLINKS=(
   ["config/bpytop"]=".config/bpytop"
   ["config/glow"]="Library/Preferences/glow"
   ["config/htop"]=".config/htop"
+  ["config/ignore"]=".ignore"
   ["config/kitty"]=".config/kitty"
   ["config/nvim"]=".config/nvim"
   ["config/youtube-dl"]=".config/youtube-dl"

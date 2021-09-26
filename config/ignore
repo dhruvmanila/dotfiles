@@ -1,0 +1,12 @@
+# vim:ft=conf
+# Application agnostic global ignore file
+
+.DS_Store
+
+# Python related
+*.pyc
+.venv
+.mypy_cache
+__pycache__
+.pytest_cache
+.ipynb_checkpoints

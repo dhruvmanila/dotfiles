@@ -100,13 +100,6 @@ telescope.setup {
         flip_columns = 140,
       },
     },
-    file_ignore_patterns = {
-      "__pycache__",
-      ".mypy_cache",
-      ".pytest_cache",
-      ".ipynb_checkpoints",
-      "^[.]?[v]?env",
-    },
     mappings = {
       i = {
         ["<C-x>"] = false,

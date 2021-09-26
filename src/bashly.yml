@@ -85,5 +85,5 @@ commands:
         arg: ref
         help: |
           Upgrade to a specific ref (commit/branch/tag). This flag is applicable only when 'PACKAGE' is:
-            - neovim
             - lua_lsp
+            - neovim

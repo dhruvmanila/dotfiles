@@ -6,7 +6,7 @@
 
 [core]
 	editor = nvim
-	excludesfile = ~/.gitignore
+	excludesfile = ~/.ignore
 	ignorecase = false
 
 [alias]
