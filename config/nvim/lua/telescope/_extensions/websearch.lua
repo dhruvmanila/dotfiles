@@ -139,7 +139,7 @@ local function do_search()
       vim.api.nvim_err_writeln("Telescope (websearch): " .. result.stderr)
       return
     end
-    local data = vim.fn.json_decode(result.stdout)
+    local data = vim.json.decode(result.stdout)
     vim.fn.timer_stop(state.anim_timer)
     state.anim_timer = nil
     -- We will change the finder only if there are any results, otherwise reset

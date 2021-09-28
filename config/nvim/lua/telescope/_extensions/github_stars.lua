@@ -25,7 +25,7 @@ local function parse_data(data)
   -- [{...}, {...}][{...}, {...}] ...
   -- Replace the middle "][" with a "," to make it a valid JSON string.
   data = data:gsub("%]%[", ",")
-  local json_data = vim.fn.json_decode(data)
+  local json_data = vim.json.decode(data)
   local max_length = 0
   for _, repo in ipairs(json_data) do
     max_length = math.max(max_length, #repo.full_name)
