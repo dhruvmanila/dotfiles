@@ -61,12 +61,14 @@ local function load_plugins()
       "L3MON4D3/LuaSnip",
       config = conf "luasnip",
     },
+    { "MTDL9/vim-log-highlighting" },
     { "airblade/vim-rooter" },
     {
       "dstein64/vim-startuptime",
       cmd = "StartupTime",
     },
     { "editorconfig/editorconfig-vim" },
+    { "fladson/vim-kitty" },
     { "folke/lua-dev.nvim" },
     { "ggandor/lightspeed.nvim" },
     {
