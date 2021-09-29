@@ -36,24 +36,16 @@ upgrade_lua_lsp() { # {{{1
   header "Upgrading the lua language server to ${1:-"the latest commit on master"}..."
   (
     cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
-    curr_hash=$(git rev-parse HEAD)
-
-    # Pull the latest changes
+    current_tag="$(git describe --abbrev=0)"
     git checkout master
     git pull origin master
     git fetch origin --tags --force
-    if [[ -n $1 ]]; then
-      git checkout "$1"
+    latest_tag=$(git describe --abbrev=0)
+    if [[ "$current_tag" == "$latest_tag" ]]; then
+      echo "==> Lua language server is to be already up to date to $latest_tag"
+      return
     fi
-
-    new_hash=$(git rev-parse HEAD)
-    if [[ "$curr_hash" == "$new_hash" ]]; then
-      seek_confirmation "Lua language server seems to be already up to date"
-      if ! is_confirmed; then
-        return
-      fi
-    fi
-
+    git checkout "$latest_tag"
     build_lua_lsp
   )
 }

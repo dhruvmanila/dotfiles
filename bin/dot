@@ -203,7 +203,7 @@ dot_upgrade_usage() {
     # :command.usage_flags
     # :flag.usage
     echo "  --ref, -r REF"
-    printf "    Upgrade to a specific ref (commit/branch/tag). This flag is applicable only\n    when 'PACKAGE' is:\n      - lua_lsp\n      - neovim\n"
+    printf "    Upgrade to a specific ref (commit/branch/tag). This flag is applicable only\n    when 'PACKAGE' is:\n      - neovim\n"
     echo
     # :command.usage_args
     printf "Arguments:\n"
@@ -468,6 +468,7 @@ install_xcode_command_line_tools() { # {{{1
     sleep 5
   done
 }
+
 setup_aws() { # {{{1
   # This is the recommended way of installing the tool.
   # https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html#cliv2-mac-install-cmd
@@ -534,7 +535,8 @@ setup_lua_language_server() { # {{{1
   git clone --depth=1 https://github.com/sumneko/lua-language-server.git "$LUA_LANGUAGE_SERVER_DIRECTORY"
   (
     cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
-    git checkout master
+    git fetch origin --tags --force
+    git checkout "$(git describe --abbrev=0)"
     build_lua_lsp
   )
 }
@@ -551,7 +553,7 @@ setup_neovim_nightly() { # {{{1
   header "Setting up Neovim Python environment..."
   (
     cd ~/.neovim || exit 1
-    python3 -m venv venv
+    python3 -m venv --prompt pynvim .venv
     source venv/bin/activate
     pip3 install "${PY_NEOVIM_PACKAGES[*]}"
     deactivate
@@ -666,24 +668,16 @@ upgrade_lua_lsp() { # {{{1
   header "Upgrading the lua language server to ${1:-"the latest commit on master"}..."
   (
     cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
-    curr_hash=$(git rev-parse HEAD)
-
-    # Pull the latest changes
+    current_tag="$(git describe --abbrev=0)"
     git checkout master
     git pull origin master
     git fetch origin --tags --force
-    if [[ -n $1 ]]; then
-      git checkout "$1"
+    latest_tag=$(git describe --abbrev=0)
+    if [[ "$current_tag" == "$latest_tag" ]]; then
+      echo "==> Lua language server is to be already up to date to $latest_tag"
+      return
     fi
-
-    new_hash=$(git rev-parse HEAD)
-    if [[ "$curr_hash" == "$new_hash" ]]; then
-      seek_confirmation "Lua language server seems to be already up to date"
-      if ! is_confirmed; then
-        return
-      fi
-    fi
-
+    git checkout "$latest_tag"
     build_lua_lsp
   )
 }
@@ -1388,7 +1382,7 @@ dot_upgrade_parse_requirements() {
 
 # :command.initialize
 initialize() {
-  version="0.1.0"
+  version="1.0.0"
   long_usage=''
   set -e
 

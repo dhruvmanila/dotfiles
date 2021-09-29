@@ -153,6 +153,7 @@ install_xcode_command_line_tools() { # {{{1
     sleep 5
   done
 }
+
 setup_aws() { # {{{1
   # This is the recommended way of installing the tool.
   # https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html#cliv2-mac-install-cmd
@@ -219,7 +220,8 @@ setup_lua_language_server() { # {{{1
   git clone --depth=1 https://github.com/sumneko/lua-language-server.git "$LUA_LANGUAGE_SERVER_DIRECTORY"
   (
     cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
-    git checkout master
+    git fetch origin --tags --force
+    git checkout "$(git describe --abbrev=0)"
     build_lua_lsp
   )
 }
@@ -236,7 +238,7 @@ setup_neovim_nightly() { # {{{1
   header "Setting up Neovim Python environment..."
   (
     cd ~/.neovim || exit 1
-    python3 -m venv venv
+    python3 -m venv --prompt pynvim .venv
     source venv/bin/activate
     pip3 install "${PY_NEOVIM_PACKAGES[*]}"
     deactivate

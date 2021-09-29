@@ -1,6 +1,6 @@
 name: dot
 help: Personal tool for managing dotfiles and packages
-version: 0.1.0
+version: 1.0.0
 
 commands:
   - name: mac
@@ -86,5 +86,4 @@ commands:
         arg: ref
         help: |
           Upgrade to a specific ref (commit/branch/tag). This flag is applicable only when 'PACKAGE' is:
-            - lua_lsp
             - neovim
