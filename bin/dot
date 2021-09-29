@@ -211,7 +211,7 @@ dot_upgrade_usage() {
     # :argument.usage
     echo "  PACKAGE"
     printf "    package to upgrade\n"
-    printf "    Allowed: all, brew, cargo, lua_lsp, mac, neovim, npm, plugins, python\n"
+    printf "    Allowed: all, brew, cargo, lua_lsp, mac, neovim, nnn, npm, plugins, python\n"
     printf "    Default: all\n"
     echo
 
@@ -558,6 +558,17 @@ setup_neovim_nightly() { # {{{1
   )
 }
 
+setup_nnn() { # {{{1
+  header "Setting up nnn..."
+  git clone git@github.com:jarun/nnn.git "$NNN_DIRECTORY"
+  (
+    cd "$NNN_DIRECTORY" || exit 1
+    git fetch origin --tags --force
+    git checkout "$(git describe --abbrev=0)"
+    build_nnn
+  )
+}
+
 setup_symlinks() { # {{{1
   # What does this file do? {{{
   #
@@ -687,7 +698,6 @@ upgrade_mac() { # {{{1
 
 upgrade_neovim() { # {{{1
   header "Upgrading Neovim to ${1:-"the latest commit on master"}..."
-
   (
     cd "$NEOVIM_DIRECTORY" || exit 1
     curr_hash=$(git rev-parse HEAD)
@@ -710,6 +720,24 @@ upgrade_neovim() { # {{{1
     fi
 
     build_neovim
+  )
+}
+
+upgrade_nnn() { # {{{1
+  header "Upgrading nnn to the latest version..."
+  (
+    cd "$NNN_DIRECTORY" || exit 1
+    current_tag="$(git describe --abbrev=0)"
+    git checkout master
+    git pull origin master
+    git fetch origin --tags --force
+    latest_tag="$(git describe --abbrev=0)"
+    if [[ "$current_tag" == "$latest_tag" ]]; then
+      echo "==> nnn is already up to date to $latest_tag"
+      return
+    fi
+    git checkout "$latest_tag"
+    build_nnn
   )
 }
 
@@ -794,6 +822,11 @@ build_lua_lsp() {
   compile/install.sh
   cd ../..
   ./3rd/luamake/luamake rebuild
+}
+
+build_nnn() {
+  make uninstall
+  make O_NERD=1 install
 }
 
 link() {
@@ -1347,8 +1380,8 @@ dot_upgrade_parse_requirements() {
   # :command.default_assignments
   [[ -n ${args[package]} ]] || args[package]="all"
   # :command.whitelist_filter
-  if [[ ! ${args[package]} =~ ^(all|brew|cargo|lua_lsp|mac|neovim|npm|plugins|python)$ ]]; then
-    printf "%s\n" "package must be one of: all, brew, cargo, lua_lsp, mac, neovim, npm, plugins, python"
+  if [[ ! ${args[package]} =~ ^(all|brew|cargo|lua_lsp|mac|neovim|nnn|npm|plugins|python)$ ]]; then
+    printf "%s\n" "package must be one of: all, brew, cargo, lua_lsp, mac, neovim, nnn, npm, plugins, python"
     exit 1
   fi
 }
@@ -1391,6 +1424,7 @@ initialize() {
   NEOVIM_DIRECTORY="${HOME}/contributing/neovim"
   NEOVIM_INSTALL_DIRECTORY="${HOME}/neovim"
   LUA_LANGUAGE_SERVER_DIRECTORY="${HOME}/git/lua-language-server"
+  NNN_DIRECTORY="${HOME}/git/nnn"
 
   # Python versions to be installed on the system.
   # First version will be the global one

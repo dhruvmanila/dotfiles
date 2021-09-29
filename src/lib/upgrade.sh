@@ -68,7 +68,6 @@ upgrade_mac() { # {{{1
 
 upgrade_neovim() { # {{{1
   header "Upgrading Neovim to ${1:-"the latest commit on master"}..."
-
   (
     cd "$NEOVIM_DIRECTORY" || exit 1
     curr_hash=$(git rev-parse HEAD)
@@ -91,6 +90,24 @@ upgrade_neovim() { # {{{1
     fi
 
     build_neovim
+  )
+}
+
+upgrade_nnn() { # {{{1
+  header "Upgrading nnn to the latest version..."
+  (
+    cd "$NNN_DIRECTORY" || exit 1
+    current_tag="$(git describe --abbrev=0)"
+    git checkout master
+    git pull origin master
+    git fetch origin --tags --force
+    latest_tag="$(git describe --abbrev=0)"
+    if [[ "$current_tag" == "$latest_tag" ]]; then
+      echo "==> nnn is already up to date to $latest_tag"
+      return
+    fi
+    git checkout "$latest_tag"
+    build_nnn
   )
 }
 

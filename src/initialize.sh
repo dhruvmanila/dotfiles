@@ -24,6 +24,7 @@ DOTFILES_DIRECTORY="${HOME}/dotfiles"
 NEOVIM_DIRECTORY="${HOME}/contributing/neovim"
 NEOVIM_INSTALL_DIRECTORY="${HOME}/neovim"
 LUA_LANGUAGE_SERVER_DIRECTORY="${HOME}/git/lua-language-server"
+NNN_DIRECTORY="${HOME}/git/nnn"
 
 # Python versions to be installed on the system.
 # First version will be the global one

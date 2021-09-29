@@ -43,6 +43,11 @@ build_lua_lsp() {
   ./3rd/luamake/luamake rebuild
 }
 
+build_nnn() {
+  make uninstall
+  make O_NERD=1 install
+}
+
 link() {
   local source_file="${DOTFILES_DIRECTORY}/${1}"
   local target_file="${HOME}/${2}"

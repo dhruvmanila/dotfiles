@@ -243,6 +243,17 @@ setup_neovim_nightly() { # {{{1
   )
 }
 
+setup_nnn() { # {{{1
+  header "Setting up nnn..."
+  git clone git@github.com:jarun/nnn.git "$NNN_DIRECTORY"
+  (
+    cd "$NNN_DIRECTORY" || exit 1
+    git fetch origin --tags --force
+    git checkout "$(git describe --abbrev=0)"
+    build_nnn
+  )
+}
+
 setup_symlinks() { # {{{1
   # What does this file do? {{{
   #

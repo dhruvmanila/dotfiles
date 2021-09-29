@@ -73,6 +73,7 @@ commands:
           - lua_lsp
           - mac
           - neovim
+          - nnn
           - npm
           - plugins
           - python
