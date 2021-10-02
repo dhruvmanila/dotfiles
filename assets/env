@@ -257,9 +257,6 @@ pathmunge "${brew_prefix}/opt/ruby/bin"
 # Source: `brew info ruby`
 pathmunge "${brew_prefix}"/lib/ruby/gems/*/bin
 
-# Homebrew does not seem to be symlinking the binaries for Docker cask.
-pathmunge "/Applications/Docker.app/Contents/Resources/bin"
-
 unset brew_prefix
 
 # https://pypa.github.io/pipx/installation/
