@@ -62,10 +62,11 @@ white="\[\e[1;37m\]"
 # The exitcode needs to be captured first when updating the prompt.
 declare -i exitcode=0
 
-function __capture_exitcode() { # {{{2
+__capture_exitcode() { # {{{2
   exitcode="$?"
 }
-function __python_activate_venv() { # {{{2
+
+__python_activate_venv() { # {{{2
   # Hook to activate/deactivate the virtual environment automagically
   # We cannot use the VIRTUAL_ENV variable for this because it stays in the
   # environment after a reload.
@@ -91,7 +92,8 @@ function __python_activate_venv() { # {{{2
     fi
   fi
 }
-function __build_prompt() { # {{{2
+
+__build_prompt() { # {{{2
   # First line {{{
   PS1="\n"
 
@@ -149,7 +151,11 @@ function __build_prompt() { # {{{2
   PS4="${white}==> ${reset}"
   # }}}
 }
+
+__update_terminal_title() { # {{{2
+  echo -ne "\033]0;$(basename "$PWD")\007"
 }
+
 # }}}2
 
 # Set the various prompt commands (PS1, PS2, PS4) {{{
@@ -168,6 +174,7 @@ PROMPT_COMMAND="
   ${PROMPT_COMMAND:+$PROMPT_COMMAND;}
   __python_activate_venv;
   __build_prompt;
+  __update_terminal_title;
 "
 
 # Keep the working directory part (\w and \W) of the Bash prompt trimmed to a
@@ -201,17 +208,14 @@ complete -c viw
 #   source <(heroku autocomplete:script bash)
 # fi
 
-# Kitty completions
 if command -v kitty &> /dev/null; then
   source <(kitty + complete setup bash)
 fi
 
-# `pipx` completions
 if command -v pipx &> /dev/null; then
   eval "$(register-python-argcomplete pipx)"
 fi
 
-# Completion for the `aws` command.
 if command -v aws_completer &> /dev/null; then
   complete -C aws_completer aws
 fi
