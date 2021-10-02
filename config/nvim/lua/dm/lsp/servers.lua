@@ -29,15 +29,14 @@ return {
   },
 
   -- https://github.com/sumneko/lua-language-server
-  -- Settings: https://github.com/sumneko/vscode-lua/blob/master/setting/schema.json
+  -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#sumneko_lua
   sumneko_lua = function()
-    local home = vim.loop.os_homedir()
-    local root = home .. "/git/lua-language-server"
+    local root = vim.loop.os_homedir() .. "/git/lua-language-server"
     local bin = root .. "/bin/macOS/lua-language-server"
 
     return require("lua-dev").setup {
       library = {
-        plugins = { "plenary.nvim" },
+        plugins = false,
       },
       lspconfig = {
         cmd = { bin, "-E", root .. "/main.lua" },
