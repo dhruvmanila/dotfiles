@@ -635,8 +635,10 @@ upgrade_all() { # {{{1
   upgrade_plugins
   upgrade_npm
   upgrade_python
-  upgrade_neovim_nightly
-  upgrade_lua_language_server
+  upgrade_cargo
+  upgrade_neovim "$@"
+  upgrade_lua_lsp
+  upgrade_nnn
   upgrade_mac
 }
 
@@ -665,7 +667,7 @@ upgrade_cargo() { # {{{1
 
 upgrade_lua_lsp() { # {{{1
   # https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
-  header "Upgrading the lua language server to ${1:-"the latest commit on master"}..."
+  header "Upgrading the lua language server to the latest version..."
   (
     cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
     current_tag="$(git describe --abbrev=0)"
