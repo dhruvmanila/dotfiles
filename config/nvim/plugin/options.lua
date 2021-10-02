@@ -293,6 +293,14 @@ opt.swapfile = false
 -- Enable persistent undo
 opt.undofile = true
 
+-- title {{{1
+
+-- Set the title of the window to the value of 'titlestring'
+opt.title = true
+
+-- Set the custom title string to include the filename, cwd and 'NVIM' word.
+opt.titlestring = "%t (%{fnamemodify(getcwd(), ':t')}) - NVIM"
+
 -- updatetime {{{1
 
 -- Wait for 'n' number of milliseconds before executing `CursorHold`
