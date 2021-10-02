@@ -44,6 +44,7 @@ local opts = {
     source = "always",
     show_header = false,
     format = format_diagnostic,
+    focusable = false,
   },
 }
 
