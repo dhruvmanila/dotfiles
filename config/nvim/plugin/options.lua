@@ -1,11 +1,6 @@
 local opt = vim.opt
 
--- cmdline: cmd, mode, ruler {{{1
-
--- Shows the effects of a command incrementally, as you type
---
--- Works for `:substitute`, `:smagic`, `:snomagic`
-opt.inccommand = "nosplit"
+-- cmdline: mode, ruler {{{1
 
 -- When `'statusline'` is empty, Vim displays the current line address, and
 -- column number, in the statusline. This region is called the “ruler bar“
@@ -14,14 +9,8 @@ opt.inccommand = "nosplit"
 -- Even though we should never see it, disable it explicitly.
 opt.ruler = false
 
--- Show incomplete command as being typed and also the size of the selected area
--- for the visual selection. Set this option off if your terminal is slow.
-opt.showcmd = true
-
--- We don't show mode in the statusline, so let's keep this on.
---
--- NOTE: It can erase a message ouput by `:echo` or `:lua print`
-opt.showmode = true
+-- NOTE: If on, it can erase a message ouput by `:echo` or `:lua print`
+opt.showmode = false
 
 -- clipboard {{{1
 
@@ -151,11 +140,6 @@ opt.grepprg = "rg --vimgrep"
 --                         │  │  │  ┌ error message
 --                         │  │  │  │
 opt.grepformat:prepend { "%f:%l:%c:%m" }
-
--- hidden {{{1
-
--- Hide a buffer when it's abandoned (instead of unloading it)
-opt.hidden = true
 
 -- indentation {{{1
 
@@ -347,6 +331,7 @@ opt.wildmode = {
 -- When we create a new horizontal viewport, it should be displayed at the
 -- bottom of the screen
 opt.splitbelow = true
+
 -- and a new vertical one should be displayed on the right
 opt.splitright = true
 
