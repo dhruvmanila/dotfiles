@@ -44,6 +44,7 @@ do
   register("python", {
     cmd = "mypy",
     args = {
+      "--ignore-missing-imports",
       "--show-column-numbers",
       "--hide-error-context",
       "--no-color-output",
