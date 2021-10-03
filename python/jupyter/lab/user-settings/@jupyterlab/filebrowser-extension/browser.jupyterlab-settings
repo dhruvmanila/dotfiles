@@ -1,0 +1,11 @@
+// vim: ft=javascript
+{
+    // File Browser
+    // @jupyterlab/filebrowser-extension:browser
+    // File Browser settings.
+    // *****************************************
+
+    // Show last modified column
+    // Whether to show the last modified column
+    "showLastModifiedColumn": false,
+}

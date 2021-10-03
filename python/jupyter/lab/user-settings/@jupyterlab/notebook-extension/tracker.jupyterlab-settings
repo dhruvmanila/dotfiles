@@ -1,0 +1,14 @@
+// vim: ft=javascript
+{
+    // Notebook
+    // @jupyterlab/notebook-extension:tracker
+    // Notebook settings.
+    // **************************************
+
+    // Code Cell Configuration
+    // The configuration for all code cells.
+    "codeCellConfig": {
+        "fontFamily": "JetBrains Mono",
+        "fontSize": 15,
+    },
+}

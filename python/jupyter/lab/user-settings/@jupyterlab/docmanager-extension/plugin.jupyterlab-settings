@@ -1,0 +1,11 @@
+// vim: ft=javascript
+{
+    // Document Manager
+    // @jupyterlab/docmanager-extension:plugin
+    // Document Manager settings.
+    // ***************************************
+
+    // Autosave Documents
+    // Whether to autosave documents
+    "autosave": false
+}
