@@ -139,7 +139,7 @@ install_python_global_packages() { # {{{1
       # to the ecosystem.
       pipx install --include-deps "$package"
 
-      # These packages needs to be inject in the same environment.
+      # These packages needs to be injected in the same environment.
       pipx inject --include-apps "$package" jupyterlab
       pipx inject --include-apps "$package" jupytext
     else
