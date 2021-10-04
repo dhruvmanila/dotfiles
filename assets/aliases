@@ -2,6 +2,7 @@
 
 alias python="python3"
 alias g="git"
+alias d="docker"
 alias dc="docker-compose"
 alias yt="youtube-dl"
 

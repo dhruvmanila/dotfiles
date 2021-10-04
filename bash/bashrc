@@ -196,6 +196,7 @@ __git_complete g git
 # We can use `complete | grep <command>` to find the options and functions
 # used to define completion for the original command and use the same to for
 # our alias completion.
+complete -F _docker d
 complete -F _docker_compose dc
 complete -F __youtube_dl yt
 
