@@ -84,13 +84,44 @@ do
     ignore_exitcode = true,
     parser = function(output)
       local diagnostics = {}
-      for _, item in ipairs(vim.fn.json_decode(output)) do
+      for _, item in ipairs(vim.json.decode(output)) do
         table.insert(diagnostics, {
           source = "shellcheck",
           lnum = item.line - 1,
           end_lnum = item.endLine - 1,
           col = item.column - 1,
           end_col = item.endColumn - 1,
+          severity = severity_map[item.level],
+          code = item.code,
+          message = item.message,
+        })
+      end
+      return diagnostics
+    end,
+  })
+end
+
+do
+  local severity_map = {
+    error = vdiagnostic.severity.ERROR,
+    warning = vdiagnostic.severity.WARN,
+    info = vdiagnostic.severity.INFO,
+    style = vdiagnostic.severity.HINT,
+  }
+
+  register("Dockerfile", {
+    cmd = "hadolint",
+    args = { "--format", "json", "-" },
+    ignore_exitcode = true,
+    parser = function(output)
+      local diagnostics = {}
+      for _, item in ipairs(vim.json.decode(output)) do
+        table.insert(diagnostics, {
+          source = "hadolint",
+          lnum = item.line - 1,
+          end_lnum = item.line,
+          col = item.column - 1,
+          end_col = item.column,
           severity = severity_map[item.level],
           code = item.code,
           message = item.message,
