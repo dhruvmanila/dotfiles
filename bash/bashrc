@@ -198,7 +198,6 @@ __git_complete g git
 # our alias completion.
 complete -F _docker_compose dc
 complete -F __youtube_dl yt
-complete -F _pyenv p
 
 # Completion for custom functions/scripts.
 complete -c viw
