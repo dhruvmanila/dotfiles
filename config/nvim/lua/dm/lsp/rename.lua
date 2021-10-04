@@ -2,7 +2,6 @@ local fn = vim.fn
 local api = vim.api
 local lsp = vim.lsp
 local cmd = api.nvim_command
-local utils = require "dm.utils"
 
 local nnoremap = dm.nnoremap
 local inoremap = dm.inoremap
@@ -65,7 +64,9 @@ function M.rename()
     end
 
     local bufnr = api.nvim_create_buf(false, true)
-    local win_opts = utils.make_floating_popup_options(40, 1, "rounded")
+    local win_opts = lsp.util.make_floating_popup_options(40, 1, {
+      border = "rounded",
+    })
     local winnr = api.nvim_open_win(bufnr, true, win_opts)
 
     vim.bo[bufnr].buftype = "prompt"
