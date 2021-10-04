@@ -105,15 +105,13 @@ end
 
 ---@return string[]
 local function generate_sub_header()
-  -- Why `split()` instead of `vim.split()`? {{{
-  --
-  -- The former trims empty items at the ends while the latter does not.
-  -- There is a PR in the works: https://github.com/neovim/neovim/pull/15218
-  --
-  -- TODO: update this when the above PR merges
-  -- }}}
-  local v = fn.split(fn.split(api.nvim_exec("version", true), "\n")[1])[2]
-  return { v, "", "" }
+  local version = api.nvim_exec("version", true)
+  version = vim.split(
+    vim.split(version, "\n", { trimempty = true })[1],
+    " ",
+    { trimempty = true }
+  )[2]
+  return { version, "", "" }
 end
 
 ---@return string[]

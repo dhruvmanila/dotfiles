@@ -71,7 +71,7 @@ function Format:run(formatter)
         log.error(result.stderr)
         return self:step()
       end
-      self.output = vim.fn.split(result.stdout, "\n")
+      self.output = vim.split(result.stdout, "\n", { trimempty = true })
       return self:step()
     end,
   }
