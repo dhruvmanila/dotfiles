@@ -24,7 +24,10 @@ endif
 " `did_filetype()` will return false after this command.
 
 augroup filetypedetect
-  autocmd BufNewFile,BufRead Dockerfile* setfiletype Dockerfile
+  autocmd BufNewFile,BufRead Dockerfile*
+        \ | if fnamemodify(expand('<amatch>'), ':e') != 'lua'
+        \ |   setfiletype Dockerfile
+        \ | endif
 
   " All files with an extension `.log` or ending with `_log`
   autocmd BufNewFile,BufRead *[_.]log setfiletype log
