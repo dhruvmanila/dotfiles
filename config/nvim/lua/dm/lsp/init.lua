@@ -19,9 +19,12 @@ require("vim.lsp.log").set_format_func(vim.inspect)
 --   - 'q' to quit with `nowait = true`
 do
   local default = lsp.util.open_floating_preview
+
   lsp.util.open_floating_preview = function(contents, syntax, opts)
     opts = vim.tbl_deep_extend("force", opts, {
       border = dm.border[vim.g.border_style],
+      max_width = math.min(math.floor(vim.o.columns * 0.7), 100),
+      max_height = math.min(math.floor(vim.o.lines * 0.3), 30),
     })
     local bufnr, winnr = default(contents, syntax, opts)
     nnoremap("q", "<Cmd>bdelete<CR>", { buffer = bufnr, nowait = true })
