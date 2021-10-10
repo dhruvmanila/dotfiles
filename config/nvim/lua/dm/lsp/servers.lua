@@ -8,6 +8,9 @@ return {
   -- https://github.com/llvm/llvm-project/tree/main/clang-tools-extra/clangd
   clangd = {},
 
+  -- https://github.com/rcjsuen/dockerfile-language-server-nodejs
+  dockerls = {},
+
   -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
   -- Settings: https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server#settings
   jsonls = {},
