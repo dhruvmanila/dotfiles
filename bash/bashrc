@@ -87,7 +87,20 @@ __python_activate_venv() { # {{{2
       source "$activate_script"
     fi
   elif [[ -n "$VIRTUAL_ENV" ]] && [[ -z "$PYENV_VIRTUAL_ENV" ]]; then
-    if [[ "$PWD" != "$(dirname "$VIRTUAL_ENV")"* ]]; then
+    # Why '/' ? {{{
+    #
+    # Take these two directories for example:
+    #   1. ~/test         - contains virtual environment
+    #   2. ~/test-other   - no virtual environment
+    #
+    # If we go from the first directory to the second, the environment will not
+    # be deactivated because of the glob. By adding a forward slash, we restrict
+    # the match and avoid the case where the string is a substring.
+    #
+    #   `[[ "~/test-other"  != "~/test"*  ]]` -> false
+    #   `[[ "~/test-other/" != "~/test/"* ]]` -> true
+    # }}}
+    if [[ "$PWD/" != "$(dirname "$VIRTUAL_ENV")/"* ]]; then
       deactivate
     fi
   fi
