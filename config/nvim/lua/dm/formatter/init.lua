@@ -13,9 +13,8 @@ local root_pattern = require("lspconfig.util").root_pattern
 local function ignore_projects(...)
   local projects = { ... }
   return function(path)
-    local components = vim.split(path, "/")
-    for _, component in ipairs(components) do
-      if vim.tbl_contains(projects, component) then
+    for _, project in ipairs(projects) do
+      if string.find(path, project, 1, true) then
         return true
       end
     end
