@@ -1,1 +1,4 @@
-vim.cmd "setlocal nowrap"
+vim.cmd [[
+setlocal nowrap
+setlocal nofoldenable
+]]
