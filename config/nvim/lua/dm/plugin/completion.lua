@@ -32,8 +32,8 @@ end
 --   - pass raw <Tab> character
 ---@param fallback function
 local function tab(fallback)
-  if fn.pumvisible() == 1 then
-    return feedkeys(escape "<C-n>", "n", true)
+  if cmp.visible() then
+    return cmp.select_next_item()
   elseif luasnip.expand_or_jumpable() then
     return luasnip.expand_or_jump()
   elseif has_words_before() then
@@ -48,8 +48,8 @@ end
 --   - jump to the previous insertion node in snippets
 ---@param fallback function
 local function shift_tab(fallback)
-  if fn.pumvisible() == 1 then
-    return feedkeys(escape "<C-p>", "n", true)
+  if cmp.visible() then
+    return cmp.select_prev_item()
   elseif luasnip.jumpable(-1) then
     return luasnip.jump(-1)
   else
