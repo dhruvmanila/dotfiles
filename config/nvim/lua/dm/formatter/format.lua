@@ -44,10 +44,7 @@ Format.__index = Format
 -- Initiate the format process for the given formatters.
 ---@param formatters Formatter[]
 ---@return Format
-function Format:new(formatters)
-  local bufnr = api.nvim_get_current_buf()
-  local input = api.nvim_buf_get_lines(bufnr, 0, -1, false)
-
+function Format:new(bufnr, input, formatters)
   return setmetatable({
     bufnr = bufnr,
     formatters = vim.deepcopy(formatters),
@@ -193,7 +190,12 @@ function M.format()
   if not formatters then
     return
   end
-  return Format:new(formatters):step()
+  local bufnr = api.nvim_get_current_buf()
+  local input = api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  if vim.tbl_isempty(input) then
+    return
+  end
+  return Format:new(bufnr, input, formatters):step()
 end
 
 -- For debugging purposes.
