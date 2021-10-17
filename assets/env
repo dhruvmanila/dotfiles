@@ -76,12 +76,15 @@ unset TTY
 
 # Default bash history file
 export HISTFILE="${HOME}/.bash_history"
+
 # Increase Bash history size. For unlimited history, set this to -1.
-export HISTSIZE='99999'
-export HISTFILESIZE="${HISTSIZE}"
+export HISTSIZE="99999"
+export HISTFILESIZE="999999"
 export HISTTIMEFORMAT="[%F %T] "
-# Omit duplicates and commands that begin with a space from history.
-export HISTCONTROL='ignoreboth'
+
+# Lines beginning with a *space* character and matching the _previous_ history
+# entry are not saved.
+export HISTCONTROL="ignoreboth:erasedups"
 
 # Merge the history of all terminals and make it available for every terminal.
 #
@@ -91,7 +94,7 @@ export HISTCONTROL='ignoreboth'
 #
 # 'history list': history lines entered since the beginning of the current
 # bash session (kind of temporary buffer)
-PROMPT_COMMAND="history -a; history -c; history -r; ${PROMPT_COMMAND}"
+PROMPT_COMMAND="history -a; ${PROMPT_COMMAND}"
 
 # Homebrew {{{1
 
