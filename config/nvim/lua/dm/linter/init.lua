@@ -20,8 +20,8 @@ do
     parser = function(output)
       local diagnostics = {}
       for line in vim.gsplit(output, "\n") do
-        if line ~= "" then
-          local diagnostic = vdiagnostic.match(line, pat, group, severity_map)
+        local diagnostic = vdiagnostic.match(line, pat, group, severity_map)
+        if diagnostic then
           diagnostic.source = "flake8"
           table.insert(diagnostics, diagnostic)
         end
@@ -55,8 +55,8 @@ do
     parser = function(output)
       local diagnostics = {}
       for line in vim.gsplit(output, "\n") do
-        if line ~= "" then
-          local diagnostic = vdiagnostic.match(line, pat, groups, severity_map)
+        local diagnostic = vdiagnostic.match(line, pat, groups, severity_map)
+        if diagnostic then
           diagnostic.source = "mypy"
           table.insert(diagnostics, diagnostic)
         end
