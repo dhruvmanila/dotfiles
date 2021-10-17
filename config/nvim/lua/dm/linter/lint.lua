@@ -15,7 +15,7 @@ local job = require "dm.job"
 ---@field ignore_exitcode? boolean (default: false)
 ---@field env? table<string, string>
 ---@field parser fun(output: string, bufnr: number): table
----@field private _ns number
+---@field private namespace number
 
 -- }}}
 
@@ -50,7 +50,7 @@ local function run_linter(bufnr, linter)
       end
       local output = result[linter.stream]
       local diagnostics = linter.parser(output, bufnr)
-      vim.diagnostic.set(linter._ns, bufnr, diagnostics)
+      vim.diagnostic.set(linter.namespace, bufnr, diagnostics)
     end,
   }
 end
@@ -79,9 +79,7 @@ function M.register(filetype, linter)
   -- setting an empty diagnostics from linter B will reset the ones from
   -- linter A.
   -- }}}
-  linter._ns = api.nvim_create_namespace(
-    ("dm__diagnostics_%s_%s"):format(filetype, linter.cmd)
-  )
+  linter.namespace = api.nvim_create_namespace("dm__linter_" .. linter.cmd)
 
   table.insert(registered_linters[filetype], linter)
 end
