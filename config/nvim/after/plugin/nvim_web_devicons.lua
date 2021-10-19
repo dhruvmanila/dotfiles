@@ -1,12 +1,12 @@
 local nvim_web_devicons = require "nvim-web-devicons"
 
 local custom_icons = {
-  ["TelescopePrompt"] = {
+  TelescopePrompt = {
     icon = "",
     color = "#f38019",
     name = "TelescopePrompt",
   },
-  ["Dashboard"] = {
+  Dashboard = {
     icon = "",
     color = "#787878",
     name = "Dashboard",
@@ -15,6 +15,11 @@ local custom_icons = {
     icon = "",
     color = "#787878",
     name = "Packer",
+  },
+  lir_folder_icon = {
+    icon = "",
+    color = "#7ebae4",
+    name = "LirFolderNode",
   },
 }
 
