@@ -1,4 +1,3 @@
-local fn = vim.fn
 local api = vim.api
 local feedkeys = api.nvim_feedkeys
 local escape = dm.escape
@@ -101,7 +100,11 @@ cmp.setup {
       luasnip.lsp_expand(args.body)
     end,
   },
+  -- By default, the order of the sources matter. That gives them priority.
   sources = {
+    { name = "nvim_lsp" },
+    { name = "path" },
+    { name = "luasnip" },
     {
       name = "buffer",
       opts = {
@@ -113,8 +116,5 @@ cmp.setup {
         end,
       },
     },
-    { name = "luasnip" },
-    { name = "nvim_lsp" },
-    { name = "path" },
   },
 }
