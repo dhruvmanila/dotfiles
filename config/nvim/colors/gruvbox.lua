@@ -405,6 +405,11 @@ link("LirFloatNormal", "NormalFloat")
 link("LirSymlink", "GreyItalic")
 link("LirEmptyDirText", "LirSymlink")
 
+-- nvim-cmp {{{2
+link("CmpItemAbbr", "Comment")
+link("CmpItemAbbrDeprecated", "Error")
+link("CmpItemMenu", "NonText")
+
 -- nvim-notify {{{2
 
 ---@see https://github.com/rcarriga/nvim-notify#highlights
