@@ -25,7 +25,7 @@ local custom_icons = {
 
 if not nvim_web_devicons.has_loaded() then
   nvim_web_devicons.setup {
-    overrides = custom_icons,
+    override = custom_icons,
     default = true,
   }
 else
