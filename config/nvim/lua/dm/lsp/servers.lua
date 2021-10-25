@@ -45,6 +45,10 @@ return {
         cmd = { bin, "-E", root .. "/main.lua" },
         settings = {
           Lua = {
+            completion = {
+              -- Do NOT show contextual words, I got `cmp-buffer` for that.
+              showWord = "Disable",
+            },
             workspace = {
               preloadFileSize = 1000,
             },

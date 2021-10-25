@@ -115,6 +115,7 @@ cmp.setup {
           end, api.nvim_list_wins())
         end,
       },
+      keyword_length = 4,
     },
   },
 }
