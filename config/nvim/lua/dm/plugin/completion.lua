@@ -7,10 +7,11 @@ local cmp = require "cmp"
 local luasnip = require "luasnip"
 
 local source_name = {
+  buffer = "[Buf]",
+  gh_issue = "[Gh]",
+  luasnip = "[Snip]",
   nvim_lsp = "[LSP]",
   path = "[Path]",
-  luasnip = "[Snip]",
-  buffer = "[Buf]",
 }
 
 -- Returns true if the position before the cursor (if not in the first column)
@@ -102,6 +103,7 @@ cmp.setup {
   },
   -- By default, the order of the sources matter. That gives them priority.
   sources = {
+    { name = "gh_issue" },
     { name = "nvim_lsp" },
     { name = "path" },
     { name = "luasnip" },
