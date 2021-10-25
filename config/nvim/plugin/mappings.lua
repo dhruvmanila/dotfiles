@@ -56,8 +56,8 @@ end
 cnoremap("<Tab>", wrap(navigate_search, "<C-g>", "<C-z>"), { expr = true })
 cnoremap("<S-Tab>", wrap(navigate_search, "<C-t>", "<S-Tab>"), { expr = true })
 
--- cnoremap("<C-a>", "<Home>")
--- cnoremap("<C-e>", "<End>")
+cnoremap("<C-a>", "<Home>")
+cnoremap("<C-e>", "<End>")
 
 cmap("<C-f>", "<Right>")
 cmap("<C-b>", "<Left>")
@@ -112,6 +112,11 @@ nnoremap("<Tab>", "za")
 -- Easy way to do `:make`
 nnoremap("m<CR>", "<Cmd>make<CR>")
 nnoremap("m<Space>", ":make ")
+
+-- Make 'gu' toggle between upper and lower case instead of only upper.
+-- '~' can also be made to accept motion if 'tildeop' is set to `true`.
+nnoremap("gu", "g~")
+xnoremap("gu", "g~")
 
 -- Source files (only for lua or vim files)
 nnoremap("<leader>so", function()
