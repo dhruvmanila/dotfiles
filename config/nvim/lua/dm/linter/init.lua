@@ -32,8 +32,8 @@ do
 end
 
 do
-  local pat = "[^:]+:(%d+):(%d+): (%a+): (.*)"
-  local groups = { "lnum", "col", "severity", "message" }
+  local pat = "([^:]+):(%d+):(%d+): (%a+): (.*)"
+  local groups = { "file", "lnum", "col", "severity", "message" }
 
   local severity_map = {
     error = vdiagnostic.severity.ERROR,
@@ -46,17 +46,26 @@ do
     args = {
       "--ignore-missing-imports",
       "--show-column-numbers",
+      "--hide-error-codes",
       "--hide-error-context",
       "--no-color-output",
       "--no-error-summary",
+      "--no-pretty",
     },
     stdin = false,
     ignore_exitcode = true,
-    parser = function(output)
+    parser = function(output, bufnr)
       local diagnostics = {}
       for line in vim.gsplit(output, "\n") do
         local diagnostic = vdiagnostic.match(line, pat, groups, severity_map)
-        if diagnostic then
+        if
+          diagnostic
+          -- Use the `file` group to filter diagnostics related to other files.
+          -- This is done because `mypy` can follow imports and report errors
+          -- from other files which will be displayed in the current buffer.
+          and diagnostic.file
+            == vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":~:.")
+        then
           diagnostic.source = "mypy"
           table.insert(diagnostics, diagnostic)
         end
