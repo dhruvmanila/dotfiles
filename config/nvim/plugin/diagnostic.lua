@@ -2,14 +2,6 @@ local icons = dm.icons
 local nnoremap = dm.nnoremap
 local vdiagnostic = vim.diagnostic
 
--- Global diagnostic configuration.
-vdiagnostic.config {
-  underline = false,
-  virtual_text = false,
-  signs = true,
-  severity_sort = true,
-}
-
 do
   local prefix = "DiagnosticSign"
 
@@ -39,22 +31,37 @@ local function format_diagnostic(diagnostic)
   return message
 end
 
-local opts = {
-  popup_opts = {
-    source = "always",
+-- Global diagnostic configuration.
+vdiagnostic.config {
+  underline = false,
+  virtual_text = false,
+  signs = true,
+  severity_sort = true,
+  float = {
     show_header = false,
+    source = "always",
     format = format_diagnostic,
-    focusable = false,
   },
 }
 
 -- For all types of diagnostics: `[d`, `]d`
-nnoremap("[d", wrap(vdiagnostic.goto_prev, opts))
-nnoremap("]d", wrap(vdiagnostic.goto_next, opts))
+nnoremap("[d", wrap(vdiagnostic.goto_prev, { float = { focusable = false } }))
+nnoremap("]d", wrap(vdiagnostic.goto_next, { float = { focusable = false } }))
 
-opts.severity = { min = vdiagnostic.severity.WARN }
 -- For warning and error diagnostics: `[w`, `]w`
-nnoremap("[w", wrap(vdiagnostic.goto_prev, opts))
-nnoremap("]w", wrap(vdiagnostic.goto_next, opts))
+nnoremap(
+  "[w",
+  wrap(vdiagnostic.goto_prev, {
+    float = { focusable = false },
+    severity = { min = vdiagnostic.severity.WARN },
+  })
+)
+nnoremap(
+  "]w",
+  wrap(vdiagnostic.goto_next, {
+    float = { focusable = false },
+    severity = { min = vdiagnostic.severity.WARN },
+  })
+)
 
-nnoremap("<leader>l", wrap(vdiagnostic.show_line_diagnostics, opts.popup_opts))
+nnoremap("<leader>l", wrap(vdiagnostic.open_float, 0, { scope = "line" }))
