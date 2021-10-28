@@ -18,7 +18,10 @@ local log = dm.log
 -- Helper function to close the handles safely
 -- Adopted from `plenary.job.close_safely`
 local function close_safely(...)
-  for _, handle in ipairs { ... } do
+  -- `ipairs` cannot be used because it stops as soon as `nil` is reached and
+  -- most likely the `stdin` handle will be `nil`.
+  for i = 1, select("#", ...) do
+    local handle = select(i, ...)
     if handle and not handle:is_closing() then
       handle:close()
     end
@@ -71,7 +74,7 @@ return function(opts)
   local stdout = uv.new_pipe()
   local stderr = uv.new_pipe()
 
-  log.fmt_debug("Spawning process: `%s %s`", cmd, table.concat(args, " "))
+  log.fmt_debug("Spawning process: %s %s", cmd, table.concat(args, " "))
 
   local handle, pid_or_err
 
@@ -116,8 +119,7 @@ return function(opts)
       writer = table.concat(writer, "\n") .. "\n"
     end
     log.fmt_debug("STDIN: %s", writer)
-    stdin:write(writer, function()
-      stdin:close()
-    end)
+    stdin:write(writer)
+    stdin:shutdown()
   end
 end
