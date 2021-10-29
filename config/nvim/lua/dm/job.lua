@@ -39,7 +39,9 @@ local function reader(prefix)
         log.fmt_error("Error while reading for %s: %s", prefix, err)
       elseif chunk then
         self.data = self.data .. chunk
-        log.fmt_debug("%s: %s", prefix, chunk)
+        log.lazy_debug(function()
+          return ("%s: %s"):format(prefix, vim.inspect(chunk))
+        end)
       else
         log.fmt_debug("Buffer size for %s: %s", prefix, #self.data)
       end
@@ -118,7 +120,9 @@ return function(opts)
     if type(writer) == "table" then
       writer = table.concat(writer, "\n") .. "\n"
     end
-    log.fmt_debug("STDIN: %s", writer)
+    log.lazy_debug(function()
+      return ("STDIN: %s"):format(vim.inspect(writer))
+    end)
     stdin:write(writer)
     stdin:shutdown()
   end
