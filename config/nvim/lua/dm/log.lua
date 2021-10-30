@@ -172,7 +172,7 @@ log.new = function(config, standalone)
         local fmt = table.remove(passed, 1)
         local inspected = {}
         for _, v in ipairs(passed) do
-          table.insert(inspected, make_string(v))
+          table.insert(inspected, vim.inspect(v))
         end
         return string.format(fmt, unpack(inspected))
       end, ...)

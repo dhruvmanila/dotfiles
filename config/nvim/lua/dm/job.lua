@@ -36,12 +36,10 @@ local function reader(prefix)
   return setmetatable({ data = "" }, {
     __call = function(self, err, chunk)
       if err then
-        log.fmt_error("Error while reading for %s: %s", prefix, err)
+        log.fmt_error("Error while reading %s: %s", prefix, err)
       elseif chunk then
         self.data = self.data .. chunk
-        log.lazy_debug(function()
-          return ("%s: %s"):format(prefix, vim.inspect(chunk))
-        end)
+        log.fmt_debug("Read %s: %s", prefix, chunk)
       else
         log.fmt_debug("Buffer size for %s: %s", prefix, #self.data)
       end
@@ -80,6 +78,9 @@ return function(opts)
 
   local handle, pid_or_err
 
+  -- `on_exit` callback for `uv.spawn`.
+  ---@param code number
+  ---@param signal number
   local function on_exit(code, signal)
     log.fmt_debug("Process exited (code: %d, signal: %d)", code, signal)
     stdout:read_stop()
@@ -120,9 +121,7 @@ return function(opts)
     if type(writer) == "table" then
       writer = table.concat(writer, "\n") .. "\n"
     end
-    log.lazy_debug(function()
-      return ("STDIN: %s"):format(vim.inspect(writer))
-    end)
+    log.fmt_debug("Writing to STDIN: %s", writer)
     stdin:write(writer)
     stdin:shutdown()
   end
