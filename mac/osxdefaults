@@ -4,6 +4,7 @@
 
 export PS4="\e[1m==> \e[0m"
 
+# Path to the executable
 plistbuddy="/usr/libexec/PlistBuddy"
 
 # Close any open System Preferences panes, to prevent them from overriding
@@ -202,13 +203,13 @@ defaults write com.apple.screencapture disable-shadow -bool true
 
 # Display {{{1
 
-domain="/Library/Preferences/com.apple.windowserver"
-
 # Enable HiDPI display modes (requires restart)
-sudo defaults write "$domain" DisplayResolutionEnabled -bool true
+sudo defaults write /Library/Preferences/com.apple.windowserver \
+  DisplayResolutionEnabled -bool true
 
 # Use the external display as the main display.
-sudo defaults write "$domain" DisplayMainOnInternal -bool false
+sudo defaults write /Library/Preferences/com.apple.windowserver \
+  DisplayMainOnInternal -bool false
 
 # Finder {{{1
 
@@ -302,14 +303,14 @@ $plistbuddy -c "Set :FK_StandardViewSettings:IconViewSettings:arrangeBy kind" ~/
 $plistbuddy -c "Set :StandardViewSettings:IconViewSettings:arrangeBy kind" ~/Library/Preferences/com.apple.finder.plist
 
 # Increase grid spacing for icons on the desktop and in other icon views
-$plistbuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist
-$plistbuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist
-$plistbuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 80" ~/Library/Preferences/com.apple.finder.plist
+$plistbuddy -c "Set :DesktopViewSettings:IconViewSettings:gridSpacing 60" ~/Library/Preferences/com.apple.finder.plist
+$plistbuddy -c "Set :FK_StandardViewSettings:IconViewSettings:gridSpacing 60" ~/Library/Preferences/com.apple.finder.plist
+$plistbuddy -c "Set :StandardViewSettings:IconViewSettings:gridSpacing 60" ~/Library/Preferences/com.apple.finder.plist
 
 # Increase the size of icons on the desktop and in other icon views
-$plistbuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
-$plistbuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
-$plistbuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 50" ~/Library/Preferences/com.apple.finder.plist
+$plistbuddy -c "Set :DesktopViewSettings:IconViewSettings:iconSize 60" ~/Library/Preferences/com.apple.finder.plist
+$plistbuddy -c "Set :FK_StandardViewSettings:IconViewSettings:iconSize 60" ~/Library/Preferences/com.apple.finder.plist
+$plistbuddy -c "Set :StandardViewSettings:IconViewSettings:iconSize 60" ~/Library/Preferences/com.apple.finder.plist
 
 # Show the ~/Library folder
 chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library
@@ -424,7 +425,7 @@ defaults write com.apple.dock wvous-br-modifier -int 0
 defaults write com.apple.Safari WebKitTabToLinksPreferenceKey -bool true
 defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2TabsToLinks -bool true
 
-# Show the full URL in the address bar (note: this still hides the scheme) TODO: This pair does not exist
+# Show the full URL in the address bar (note: this still hides the scheme)
 defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
 
 # Set Safari’s home page to `about:blank` for faster loading
