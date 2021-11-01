@@ -82,7 +82,22 @@ function M.rename()
         return
       end
       params.newName = new_name
-      lsp.buf_request(0, "textDocument/rename", params)
+
+      ---@diagnostic disable-next-line: redefined-local
+      lsp.buf_request(0, "textDocument/rename", params, function(_, result, ctx)
+        if result and result.changes then
+          local lines = {}
+          for uri, change in pairs(result.changes) do
+            local fname = vim.uri_to_fname(uri)
+            fname = vim.fn.fnamemodify(fname, ":~:.")
+            lines[#lines + 1] = ("%2d: %s"):format(#change, fname)
+          end
+          local heading = (" Renamed %s -> %s\n\n"):format(orig_name, new_name)
+          dm.notify("LSP Rename Stats", heading .. table.concat(lines, "\n"))
+        end
+        -- Let the client decide how to handle the rename.
+        vim.lsp.handlers[ctx.method](_, result, ctx)
+      end)
     end)
 
     set_mappings(bufnr)
