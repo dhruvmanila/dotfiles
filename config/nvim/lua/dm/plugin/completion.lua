@@ -80,10 +80,12 @@ cmp.setup {
     winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
   },
   formatting = {
+    -- Order of item's fields for completion menu.
+    fields = { "kind", "abbr", "menu" },
     --                        ┌ `:help complete-items`
     --                        │
     format = function(entry, item)
-      item.kind = ("%s %s"):format(lsp_kind[item.kind], item.kind)
+      item.kind = lsp_kind[item.kind]
       item.menu = source_name[entry.source.name]
       return item
     end,
@@ -111,6 +113,7 @@ cmp.setup {
       name = "buffer",
       opts = {
         -- Provide suggestions from all the visible buffers.
+        ---@return number[]
         get_bufnrs = function()
           return vim.tbl_map(function(winid)
             return api.nvim_win_get_buf(winid)
