@@ -14,18 +14,6 @@ local source_name = {
   path = "[Path]",
 }
 
--- Returns true if the position before the cursor (if not in the first column)
--- contains anything except for a whitespace character, false otherwise.
----@return boolean
-local function has_words_before()
-  local line, col = unpack(api.nvim_win_get_cursor(0))
-  return col ~= 0
-    and api.nvim_buf_get_lines(0, line - 1, line, true)[1]
-        :sub(col, col)
-        :match "%s"
-      == nil
-end
-
 -- Use `<Tab>` to either:
 --   - move to next item in the completion menu
 --   - jump to the next insertion node in snippets
@@ -36,8 +24,6 @@ local function tab(fallback)
     return cmp.select_next_item()
   elseif luasnip.expand_or_jumpable() then
     return luasnip.expand_or_jump()
-  elseif has_words_before() then
-    return cmp.complete()
   else
     return fallback()
   end
@@ -94,6 +80,7 @@ cmp.setup {
     ["<Tab>"] = cmp.mapping(tab, { "i", "s" }),
     ["<S-Tab>"] = cmp.mapping(shift_tab, { "i", "s" }),
     ["<C-e>"] = cmp.mapping(c_e, { "i", "s" }),
+    ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
     ["<C-b>"] = cmp.mapping.scroll_docs(-4),
     ["<CR>"] = cmp.mapping.confirm(),
