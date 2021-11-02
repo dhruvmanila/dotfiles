@@ -1,6 +1,10 @@
 ---@see https://github.com/akinsho/dotfiles/tree/main/.config/nvim/lua/as/globals.lua
 ---@see https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals.lua
 
+local api = vim.api
+
+local log = require "dm.log"
+
 -- Store all callbacks in one global table so they are able to survive
 -- re-requiring this file
 _NvimGlobalCallbacks = _NvimGlobalCallbacks or {}
@@ -211,7 +215,7 @@ end
 ---@param str string
 ---@return string
 function dm.escape(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
+  return api.nvim_replace_termcodes(str, true, true, true)
 end
 
 ---@class AutocmdOpts
@@ -304,7 +308,8 @@ function dm.command(name, repl, opts)
     -- Using `<q-mods>` instead of `<mods>` for the same reason as mentioned above.
     repl = ("lua dm._execute(%d%s, <q-mods>)"):format(fn_id, args)
   elseif repl_type ~= "string" then
-    error("[command] Unsupported repl type: " .. repl_type)
+    log.fmt_error("Unsupported repl type %s for command %s", repl_type, name)
+    return
   end
   local attr = ""
   for key, val in pairs(opts) do
@@ -351,20 +356,32 @@ do
 end
 
 do
+  ---@alias KeymapMode
+  ---| '""'  # Normal, Visual, Select and Operator-pending
+  ---| '"n"' # Normal
+  ---| '"v"' # Visual and Select
+  ---| '"s"' # Select
+  ---| '"x"' # Visual
+  ---| '"o"' # Operator-pending
+  ---| '"i"' # Insert
+  ---| '"c"' # Command-line
+  ---| '"t"' # Terminal
+
   -- Register the callback for the given key.
-  ---@param mode string
+  ---@param mode KeymapMode
   ---@param key string
   ---@param callback function
-  ---@param bufnr? number
+  ---@param bufnr? number (optional)
   ---@return string
   local function create_keymap_entry(mode, key, callback, bufnr)
     -- Prefix it with a letter so it can be used as a dictionary key.
     local id = "k" .. mode .. key
+
     if bufnr then
       -- Initialize and establish cleanup.
       if not dm._map_store[bufnr] then
         dm._map_store[bufnr] = {}
-        vim.api.nvim_buf_attach(bufnr, false, {
+        api.nvim_buf_attach(bufnr, false, {
           on_detach = function()
             dm._map_store[bufnr] = nil
           end,
@@ -374,14 +391,15 @@ do
     else
       dm._map_store[id] = callback
     end
+
     -- The ID should be escaped only for creating the keymap itself and not
     -- when using it as the key to store the callback.
-    -- The key escapement logic is taken from packer/compile.lua
+    -- The key escapement logic is taken from `packer/compile`
     return id:gsub("<", "<lt>"):gsub('([\\"])', "\\%1")
   end
 
-  -- Execute the keymap callback at the provided bufnr and id.
-  ---@param bufnr? number
+  -- Execute the keymap callback for the provided bufnr and id.
+  ---@param bufnr? number (optional)
   ---@param id string
   ---@return any
   function dm._execute_keymap(bufnr, id)
@@ -392,23 +410,25 @@ do
   end
 
   -- Factory function to create mapper functions.
-  ---@param mode string
+  ---@param mode KeymapMode
   ---@param defaults table
   ---@return fun(lhs: string, rhs: string|function, opts: table): nil
   local function make_mapper(mode, defaults)
     return function(lhs, rhs, opts)
       opts = opts or {}
       opts = vim.tbl_extend("force", defaults, opts)
+
       local bufnr
       if opts.buffer then
         bufnr = opts.buffer
         -- We are directly using the current buffer instead of passing in the
         -- 0 because we need to store it accordingly.
         if bufnr == true or bufnr == 0 then
-          bufnr = vim.api.nvim_get_current_buf()
+          bufnr = api.nvim_get_current_buf()
         end
         opts.buffer = nil
       end
+
       local rhs_type = type(rhs)
       if vim.is_callable(rhs) then
         local fn_id = create_keymap_entry(mode, lhs, rhs, bufnr)
@@ -417,10 +437,8 @@ do
         if opts.expr then
           -- This is going into vimscript world so it requires `v:null` instead
           -- of the lua `nil`.
-          rhs = ('v:lua.dm._execute_keymap(%s, "%s")'):format(
-            bufnr or "v:null",
-            fn_id
-          )
+          bufnr = bufnr or "v:null"
+          rhs = ('v:lua.dm._execute_keymap(%s, "%s")'):format(bufnr, fn_id)
         elseif mode == "v" or mode == "x" then
           rhs = (':<C-U>lua dm._execute_keymap(%s, "%s")<CR>'):format(
             bufnr,
@@ -433,18 +451,20 @@ do
           )
         end
       elseif rhs_type ~= "string" then
-        error("[mapper] Unsupported rhs type: " .. rhs_type)
+        log.fmt_error("Unsupported rhs type %s for key %s", rhs_type, lhs)
+        return
       end
+
       if bufnr then
-        vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
+        api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
       else
-        vim.api.nvim_set_keymap(mode, lhs, rhs, opts)
+        api.nvim_set_keymap(mode, lhs, rhs, opts)
       end
     end
   end
 
   -- Factory function to create unmap functions.
-  ---@param mode string
+  ---@param mode KeymapMode
   ---@return fun(lhs: string, buffer: "true"|number): nil
   local function make_delete_mapper(mode)
     return function(lhs, buffer)
@@ -453,14 +473,14 @@ do
         -- We are directly using the current buffer instead of passing in the
         -- 0 because we need to clear the functions accordingly.
         if buffer == true or buffer == 0 then
-          buffer = vim.api.nvim_get_current_buf()
+          buffer = api.nvim_get_current_buf()
         end
-        vim.api.nvim_buf_del_keymap(buffer, mode, lhs)
+        api.nvim_buf_del_keymap(buffer, mode, lhs)
         if dm._map_store[buffer] then
           dm._map_store[buffer][id] = nil
         end
       else
-        vim.api.nvim_del_keymap(mode, lhs)
+        api.nvim_del_keymap(mode, lhs)
         dm._map_store[id] = nil
       end
     end
