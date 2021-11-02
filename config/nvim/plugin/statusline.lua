@@ -119,11 +119,11 @@ local function lsp_clients_and_messages(ctx)
 end
 
 -- Used for showing the LSP diagnostics information. The order is maintained.
-local diagnostics_opts = {
-  { severity = "Information", icon = icons.info, hl = "%6*" },
-  { severity = "Hint", icon = icons.hint, hl = "%7*" },
-  { severity = "Warning", icon = icons.warn, hl = "%8*" },
-  { severity = "Error", icon = icons.error, hl = "%9*" },
+local DIAGNOSTIC_OPTS = {
+  { severity = vim.diagnostic.severity.INFO, icon = icons.info, hl = "%6*" },
+  { severity = vim.diagnostic.severity.HINT, icon = icons.hint, hl = "%7*" },
+  { severity = vim.diagnostic.severity.WARN, icon = icons.warn, hl = "%8*" },
+  { severity = vim.diagnostic.severity.ERROR, icon = icons.error, hl = "%9*" },
 }
 
 -- Return the diagnostics information if > 0.
@@ -132,8 +132,10 @@ local diagnostics_opts = {
 local function lsp_diagnostics(ctx)
   local bufnr = ctx.bufnr
   local result = {}
-  for _, opt in ipairs(diagnostics_opts) do
-    local count = vim.lsp.diagnostic.get_count(bufnr, opt.severity)
+  for _, opt in ipairs(DIAGNOSTIC_OPTS) do
+    local count = vim.tbl_count(
+      vim.diagnostic.get(bufnr, { severity = opt.severity })
+    )
     if count > 0 then
       table.insert(result, opt.hl .. opt.icon .. " " .. count)
     end
