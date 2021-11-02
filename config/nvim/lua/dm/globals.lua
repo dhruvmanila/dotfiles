@@ -401,8 +401,10 @@ do
         if opts.expr then
           -- This is going into vimscript world so it requires `v:null` instead
           -- of the lua `nil`.
-          bufnr = bufnr or "v:null"
-          rhs = ('v:lua.dm._execute_keymap(%s, "%s")'):format(bufnr, fn_id)
+          rhs = ('v:lua.dm._execute_keymap(%s, "%s")'):format(
+            bufnr or "v:null",
+            fn_id
+          )
         elseif mode == "v" or mode == "x" then
           rhs = (':<C-U>lua dm._execute_keymap(%s, "%s")<CR>'):format(
             bufnr,
