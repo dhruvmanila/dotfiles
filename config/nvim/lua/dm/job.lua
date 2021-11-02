@@ -1,5 +1,5 @@
 local uv = vim.loop
-local log = dm.log
+local log = require "dm.log"
 
 ---@class JobOpts
 ---@field cmd string

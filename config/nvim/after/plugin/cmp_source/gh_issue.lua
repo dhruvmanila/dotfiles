@@ -1,4 +1,4 @@
-local log = dm.log
+local log = require "dm.log"
 local job = require "dm.job"
 
 -- Default configuration for the source.

@@ -12,11 +12,6 @@ _G.dm = {
   _map_store = _NvimKeymapCallbacks,
 }
 
--- Logging handler. To turn on debug mode:
---
---     $ DEBUG=1 nvim
-dm.log = require "dm.log"
-
 -- If the border key is custom, then return the respective table otherwise
 -- return the string as it is.
 dm.border = setmetatable({
