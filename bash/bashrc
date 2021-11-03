@@ -241,6 +241,16 @@ fi
 # spaces inside various programs such as python, etc.
 bind '" ": magic-space'
 
+# This does not redraw the prompt.
+scroll-and-clear-screen() {
+  for ((i = 0; i <= LINES; i++)); do
+    printf "\n"
+  done
+  clear
+}
+
+bind -x '"\C-l": "scroll-and-clear-screen"'
+
 # Shell Options {{{1
 #
 # Set/unset each option using the '-s' and '-u' flag.
