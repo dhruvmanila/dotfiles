@@ -101,6 +101,15 @@ cmp.setup {
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
     ["<C-b>"] = cmp.mapping.scroll_docs(-4),
     ["<CR>"] = cmp.mapping.confirm(),
+
+    -- Disable some default mappings which comes in the way on the command-line.
+    -- This is most likely temporary as I haven't yet experimented with the
+    -- command-line completion feature.
+    ["<C-p>"] = cmp.config.disable,
+    ["<C-n>"] = cmp.config.disable,
+    ["<C-y>"] = cmp.config.disable,
+    ["<Up>"] = cmp.config.disable,
+    ["<Down>"] = cmp.config.disable,
   },
   snippet = {
     expand = function(args)
