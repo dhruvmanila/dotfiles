@@ -1,0 +1,68 @@
+# Options {{{1
+#
+# Set/unset each option using the `setopt` and `unsetopt` command. We can use
+# `setopt NO<name>` to unset an option but we cannot find `NO<name>` option
+# names in the manpage.
+#
+# For help on each option: `man zshoptions(1)`
+
+# Let us `cd` into a directory just by typing its name, without `cd`.
+#
+# Only works when `SHIN_STDIN` (SHell INput STanDard INput) is set, i.e. when the
+# commands are being read from standard input, i.e. in interactive use.
+setopt AUTO_CD
+
+# Make `cd` push the old directory onto the directory stack.
+setopt AUTO_PUSHD
+
+# Try to correct the spelling of commands.
+setopt CORRECT
+
+# Try to correct the spelling of all arguments in a line.
+setopt CORRECT_ALL
+
+# Do not display a line previously found.
+setopt HIST_FIND_NO_DUPS
+
+# Don't record an entity that was just recorded again.
+setopt HIST_IGNORE_DUPS
+
+# Don't record an entry starting with a space.
+setopt HIST_IGNORE_SPACE
+
+# Whenever the user enters a line with history expansion, don't execute the
+# line directly; instead, perform history expansion and reload the line into
+# the editing buffer.
+setopt HIST_VERIFY
+
+# Do not exit on end-of-file (pressing `<C-d>`). Requires the use of `exit`
+# or `logout` instead.
+setopt IGNORE_EOF
+
+# Add new history lines incrementally (as soon as they are entered), rather
+# than waiting until the shell exists.
+setopt INC_APPEND_HISTORY
+
+# Allow comments even in interactive shells.
+setopt INTERACTIVE_COMMENTS
+
+# All unquoted arguments of the form `anything=expression` appearing after the
+# command name have filename expansion performed.
+#
+#   % echo var=~/dotfiles
+#     var=~/dotfiles
+#
+#   % echo var=~/dotfiles
+#     var=/Users/name/dotfiles
+setopt MAGIC_EQUAL_SUBST
+
+# On an ambiguous completion, instead of listing possibilities, insert the
+# first match immediately. This makes us enter the menu in a single Tab,
+# instead of 2.
+setopt MENU_COMPLETE
+
+# Don't push multiple copies of the same directory onto the directory stack.
+setopt PUSHD_IGNORE_DUPS
+
+# Share history between all sessions.
+setopt SHARE_HISTORY
