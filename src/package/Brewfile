@@ -6,11 +6,8 @@ tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
+tap "mongodb/brew"
 tap "romkatv/gitstatus"
-# C/C++ resolver library and DNS resolver utilities
-brew "adns"
-# Source code beautifier for C, C++, C#, and Java
-brew "astyle"
 # Tool for generating GNU Standards-compliant Makefiles
 brew "automake"
 # Bourne-Again SHell, a UNIX command interpreter
@@ -23,12 +20,8 @@ brew "bashdb"
 brew "bat"
 # Garbage collector for C and C++
 brew "bdw-gc"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@1.1"
 # GNU internationalization (i18n) and localization (l10n) library
 brew "gettext"
-# Library for command-line editing
-brew "readline"
 # Command-line interface for SQLite
 brew "sqlite"
 # General-purpose data compression with high compression ratio
@@ -41,6 +34,8 @@ brew "tcl-tk"
 brew "cairo"
 # Cross-platform make
 brew "cmake"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
 # Tool to perform numerical, textual & statistical operations
 brew "datamash"
 # DuckDuckGo from the terminal
@@ -53,8 +48,12 @@ brew "editorconfig"
 brew "fd"
 # Generic library support script
 brew "libtool"
+# Validating, recursive, caching DNS resolver
+brew "unbound"
 # OpenType text shaping engine
 brew "harfbuzz"
+# Secure Reliable Transport
+brew "srt"
 # Play, record, convert, and stream audio and video
 brew "ffmpeg"
 # Collection of GNU find, xargs, and locate
@@ -81,6 +80,8 @@ brew "gnupg"
 brew "go"
 # Google Search and News from the command-line
 brew "googler"
+# Smarter Dockerfile linter to validate best practices
+brew "hadolint"
 # CLI email client written in Rust
 brew "himalaya"
 # Improved top (interactive process viewer)
@@ -109,34 +110,46 @@ brew "luajit-openresty"
 brew "luarocks"
 # Mac App Store command-line interface
 brew "mas"
-# Whole-program, optimizing compiler for Standard ML
-brew "mlton"
 # MongoDB CLI enables you to manage your MongoDB in the Cloud
 brew "mongocli"
 # Collection of tools that nobody wrote when UNIX was young
 brew "moreutils"
+# HTTP/2 C Library
+brew "nghttp2"
+# HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server
+brew "nginx"
 # Small build system for use with gyp or CMake
 brew "ninja"
 # Platform built on V8 to build network applications
 brew "node"
+# Tool for creating identical machine images for multiple platforms
+brew "packer"
 # Paragraph reflow for email
 brew "par"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Object-relational database system
 brew "postgresql"
+# Coreutils progress viewer
+brew "progress"
 # Parse HTML at the command-line
 brew "pup"
 # Monitor data's progress through a pipe
 brew "pv"
 # Python version management
 brew "pyenv"
+# Software environment for statistical computing
+brew "r"
+# Persistent key-value database, with built-in net interface
+brew "redis"
 # Perl-powered file rename script with many helpful built-ins
 brew "rename"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
 # Powerful, clean, object-oriented scripting language
 brew "ruby"
+# Install various Ruby versions and implementations
+brew "ruby-build"
 # Safe, concurrent, practical language
 brew "rust"
 # Static analysis and lint tool, for (ba)sh scripts
@@ -145,8 +158,6 @@ brew "shellcheck"
 brew "shfmt"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
-# Tool to impose load on and stress test a computer system
-brew "stress"
 # Opinionated Lua code formatter
 brew "stylua"
 # Simplified and community-driven man pages
@@ -179,6 +190,8 @@ brew "zsh-completions"
 brew "clementtsang/bottom/bottom"
 # Everything you need to get started with Heroku
 brew "heroku/brew/heroku"
+# High-performance, schema-free, document-oriented database
+brew "mongodb/brew/mongodb-community"
 # Git status for Bash/Zsh prompt
 brew "romkatv/gitstatus/gitstatus"
 # Compact TeX distribution as alternative to the full TeX Live / MacTeX
@@ -191,8 +204,6 @@ cask "discord"
 cask "docker"
 # Web browser
 cask "firefox"
-# Web browser
-cask "firefox-developer-edition"
 cask "font-fira-code"
 # Typeface made for developers
 cask "font-jetbrains-mono"
@@ -200,14 +211,14 @@ cask "font-jetbrains-mono"
 cask "google-chrome"
 # Desktop automation application
 cask "hammerspoon"
+# HTTP and GraphQL Client
+cask "insomnia"
 # Terminal emulator as alternative to Apple's Terminal app
 cask "iterm2"
 # Keyboard customizer
 cask "karabiner-elements"
 # GPU-based terminal emulator
 cask "kitty"
-# Controls and monitors all fans on Apple computers
-cask "macs-fan-control"
 cask "mark-text"
 # Explore and manipulate your MongoDB data
 cask "mongodb-compass"
@@ -225,8 +236,6 @@ cask "pycharm-ce"
 cask "qbittorrent"
 # Move and resize windows using keyboard shortcuts or snap areas
 cask "rectangle"
-# Video chat, voice call and instant messaging application
-cask "skype"
 # Team communication and collaboration software
 cask "slack"
 # Development environment
@@ -242,8 +251,7 @@ cask "whatsapp"
 # Video communication and virtual meeting platform
 cask "zoom"
 mas "Developer", id: 640199958
-mas "GarageBand", id: 682658836
-mas "iMovie", id: 408981434
+mas "Hotspot Shield", id: 771076721
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
