@@ -74,8 +74,6 @@ return function(opts)
   local stdout = uv.new_pipe()
   local stderr = uv.new_pipe()
 
-  log.fmt_debug("Spawning process: %s %s", cmd, table.concat(args, " "))
-
   local handle, pid_or_err
 
   -- `on_exit` callback for `uv.spawn`.
@@ -99,6 +97,7 @@ return function(opts)
     end
   end
 
+  log.fmt_debug("Spawning process: %s %s", cmd, args)
   handle, pid_or_err = uv.spawn(cmd, {
     args = args,
     stdio = { stdin, stdout, stderr },

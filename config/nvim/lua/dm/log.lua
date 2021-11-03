@@ -37,7 +37,7 @@ local default_config = {
     { name = "fatal", hl = "ErrorMsg" },
   },
 
-  -- Can limit the number of decimals displayed for floats
+  -- Limit the number of decimals displayed for floats
   ---@type number
   float_precision = 0.01,
 }
@@ -60,28 +60,33 @@ log.new = function(config, standalone)
     levels[v.name] = i
   end
 
-  local round = function(x, increment)
+  -- Round a float to a certain precision.
+  ---@param x number
+  ---@param increment number
+  ---@return number
+  local function round(x, increment)
     increment = increment or 1
     x = x / increment
     return (x > 0 and math.floor(x + 0.5) or math.ceil(x - 0.5)) * increment
   end
 
-  local make_string = function(...)
-    local t = {}
+  -- Convert the given arguments to a string.
+  ---@vararg any
+  ---@return string
+  local function make_string(...)
+    local result = {}
     for i = 1, select("#", ...) do
-      local x = select(i, ...)
-
-      if type(x) == "number" and config.float_precision then
-        x = tostring(round(x, config.float_precision))
-      elseif type(x) == "table" then
-        x = vim.inspect(x)
+      local item = select(i, ...)
+      if type(item) == "number" and config.float_precision then
+        item = tostring(round(item, config.float_precision))
+      elseif type(item) == "table" then
+        item = vim.inspect(item)
       else
-        x = tostring(x)
+        item = tostring(item)
       end
-
-      t[#t + 1] = x
+      result[#result + 1] = item
     end
-    return table.concat(t, " ")
+    return table.concat(result, " ")
   end
 
   local console_output = vim.schedule_wrap(

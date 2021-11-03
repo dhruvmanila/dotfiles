@@ -138,7 +138,7 @@ telescope.setup {
         height = function(picker, _, editor_height)
           return math.max(
             5,
-            math.min(editor_height - 10, #picker.finder.results)
+            math.min(editor_height - 10, #picker.finder.results + 4)
           )
         end,
       },
