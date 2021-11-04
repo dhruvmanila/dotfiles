@@ -1,13 +1,4 @@
 # vim: ft=zsh
-#
-# NOTE:
-#
-#   > You don't need export if the variable is already in the environment: any
-#   > change of the value of the variable is reflected in the environment. PATH
-#   > is pretty much always in the environment; all unix systems set it very
-#   > early on (usually in the very first process, in fact).
-#
-# Source: https://unix.stackexchange.com/a/26059/289772
 
 export DOTFILES="${HOME}/dotfiles"
 
@@ -59,6 +50,16 @@ export FZF_ALT_C_OPTS="
 # https://stackoverflow.com/a/42265848/96656
 export GPG_TTY="$(tty)"
 
+# history {{{1
+
+# The variable is already set by system rc file but that can change and without
+# this, the history is not saved.
+export HISTFILE="${HOME}/.zsh_history"
+
+# Infinite history
+export HISTSIZE=999999999
+export SAVEHIST=$HISTSIZE
+
 # Homebrew {{{1
 
 # Opt-out of homebrew's analytics
@@ -67,6 +68,25 @@ export HOMEBREW_NO_ANALYTICS=1
 # Do not create the lock file on `brew bundle`
 export HOMEBREW_BUNDLE_NO_LOCK=1
 export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
+
+# less {{{1
+
+# `less(1)` default options to pass to the command.
+#
+# `i` - ignore case in search pattern. This option is ignored if it contains
+#       uppercase characters
+# `~` - Normally lines after end of file are displayed as a single tilde (~).
+#       This option causes lines after end of file to be displayed as blank lines.
+# `J` - Show status column at the left edge of the screen
+# `M` - Make prompt more verbose. At the bottom of the screen, it prints info
+#       about our position with a percentage, and line numbers.
+# `R` - Send ANSI "color" escape sequences and OSC 8 hyperlink in "raw" form
+#       which will allow us to see colors. This is useful for commands such as
+#       `git log`. Without, you would see things like `ESC[33m ... ESC[m`.
+export LESS='i~JMR'
+
+# `X` - leave content on-screen
+# `F` - quit automatically if less than one screenfull
 
 # locale {{{1
 
@@ -165,4 +185,3 @@ export PYTHONIOENCODING='UTF-8'
 
 # https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
 export RIPGREP_CONFIG_PATH="${HOME}/dotfiles/config/ripgreprc"
-
