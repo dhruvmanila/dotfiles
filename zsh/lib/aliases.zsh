@@ -1,5 +1,11 @@
 # Zsh Aliases
 
+# List indivial path in separate line.
+alias path='echo -e ${PATH//:/\\n}'
+
+# Reload the shell (i.e. invoke as a login shell)
+alias reload='exec $SHELL -l'
+
 # cd {{{1
 
 # Easier navigation to parent directories.
@@ -66,6 +72,18 @@ alias la='ls -lA'
 # To reset `less`
 alias nnn='LESS=-R nnn'
 
+# nocorrect {{{1
+
+# From `man zshmisc(1)` /nocorrect
+#
+#     > Spelling correction is not done on any of the words. This must appear
+#     > before any other precommand modifier, as it is interpreted immediately,
+#     > before any parsing is done. It has no effect in non-interactive shells.
+
+alias man='nocorrect man'
+alias mkdir='nocorrect mkdir'
+alias sudo='nocorrect sudo'
+
 # nvim {{{1
 
 alias v='nvim'
@@ -81,11 +99,6 @@ alias vm='nvim -n -u ${HOME}/dotfiles/config/nvim/minimal.lua'
 # https://github.com/rhysd/vim-startuptime
 alias vim-startuptime='vim-startuptime | head -n 30'
 alias nvim-startuptime='\vim-startuptime -vimpath nvim | head -n 30'
-
-# PATH {{{1
-
-# List indivial path in separate line.
-alias path='echo -e ${PATH//:/\\n}'
 
 # python {{{1
 
