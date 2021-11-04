@@ -11,6 +11,53 @@
 #   specified function is called. If no function is specified, it defaults
 #   to the same name as the widget. For more info: `man zshzle(1)` /WIDGETS
 # }}}
+# Respect these principles for ordering the sections:{{{
+#
+# `Plugins` should be near the beginning because we need to be able to override
+# whatever interface they install.
+#
+# `Abbreviations` should be right after `Key Bindings` because it installs key
+# bindings.
+#
+# `Syntax Highlighting` should be at the end, because the documentation of the
+# plugin explains that it must be sourced after all custom widgets have been
+# created (i.e., after all `zle -N` calls).
+# }}}
+
+# Use emacs keybindings, set to -v for vi bindings.
+# Warning: {{{
+#
+# Don't move this line after the `Sourcing` section.
+# It would reset `fzf` key bindings.
+# }}}
+bindkey -e
+
+# By default, `run-help` is merely an alias for `man`.
+# We want the `run-help` shell function which tries to figure out where to get
+# the best help, and get it.
+unalias run-help > /dev/null 2>&1
+#                ├──────────────┘
+#                └ to avoid error messages when we reload zshrc
+#
+# This should be in:
+#     /usr/local/share/zsh/functions/
+autoload -Uz run-help
+
+# Completion {{{1
+
+# This module offers enhancements to the completion menu:
+# - Highlight matches.
+# - Scroll through long lists.
+# - Alternative style of selecting matches, called menu selection.
+#
+# This should be loaded *before* initializing completion (`compinit`).
+# zmodload zsh/complist
+
+# They install programmable completion functions for the most common Unix
+# commands. They also enable some more central functionality, on which
+# `zstyle`, for example, rely.
+autoload -Uz compinit
+compinit
 
 # Options {{{1
 #
@@ -81,6 +128,19 @@ setopt PUSHD_IGNORE_DUPS
 # Share history between all sessions.
 setopt SHARE_HISTORY
 
+# Plugins {{{1
+
+# Source fzf config which includes fuzzy completion and key-bindings.
+#
+# Do NOT edit this line! The installer can recognize the presence of this line
+# and avoid duplication.
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Prompt
+#
+# https://github.com/starship/starship
+eval "$(starship init zsh)"
+
 # Sourcing {{{1
 
 # Source zsh specific functions and aliases.
@@ -103,9 +163,6 @@ source "${HOME}/dotfiles/zsh/lib/aliases.zsh"
 # - `man zshcontrib(1)` /select-word-style
 autoload -Uz select-word-style
 select-word-style bash
-
-# Use emacs keybindings, set to -v for vi bindings.
-bindkey -e
 
 # Use S-Tab to cycle backward during a completion
 bindkey '\e[Z' reverse-menu-complete
@@ -157,3 +214,5 @@ bindkey '^X^E' edit-command-line
 #
 #     "^Xh" is describe-key-briefly
 bindkey '^Xh' describe-key-briefly
+
+# Abbreviations {{{1
