@@ -12,75 +12,6 @@
 #   to the same name as the widget. For more info: `man zshzle(1)` /WIDGETS
 # }}}
 
-# When we hit `C-w`, don't delete back to a space, but to a space *or* a slash.
-# Useful to have more control over deletion on a filepath.
-#
-# See:
-# - http://stackoverflow.com/a/1438523
-# - http://stackoverflow.com/a/11200998
-# - `man zshcontrib(1)` /select-word-style
-autoload -Uz select-word-style
-select-word-style bash
-
-# Key Bindings {{{1
-#
-# In kitty, one can find the sequence of characters the terminal sends to the
-# program for a certain key combination using `kitty +kitten show_key`.
-
-# Use emacs keybindings, set to -v for vi bindings.
-bindkey -e
-
-# Use S-Tab to cycle backward during a completion
-bindkey '\e[Z' reverse-menu-complete
-#        ├──┘
-#        └ the shell doesn't seem to recognize the keysym "S-Tab" but when we
-#          press "S-Tab", the terminal sends the sequence "^[[Z" or "ESC [ Z",
-#          so we use it in the lhs of our mapping.
-
-# The delete key doesn't work in zsh. I use `C-d` but still let's just fix it.
-bindkey '\e[3~' delete-char
-
-# Search backward/forward in the history for a line beginning with the current
-# line up to the cursor. This leaves the cursor in its original position.
-#
-# By default, `C-p/C-n` are bound to `up-line-or-history/down-line-or-history`.
-#
-# See:
-#     man zshcontrib
-#     /down-line-or-beginning-search
-#     /up-line-or-beginning-search
-bindkey '^P' history-beginning-search-backward
-bindkey '^N' history-beginning-search-forward
-
-# By default, C-u deletes the whole line (kill-whole-line).
-# bindkey '^U' backward-kill-line
-
-# Remap `C-l` to both scroll the current screen contents into the scrollback
-# buffer and clear the screen, instead of just clearing the screen.
-#
-# Source:
-# https://sw.kovidgoyal.net/kitty/conf/#shortcut-kitty.Reset-the-terminal
-scroll-and-clear-screen() {
-  printf '\n%.0s' {1..$LINES}
-  zle clear-screen
-}
-zle -N scroll-and-clear-screen
-bindkey '^L' scroll-and-clear-screen
-
-# Automatic history expansion (`!!`) when inserting a space.
-bindkey ' ' magic-space
-
-# Edit the command line using the VISUAL editor.
-autoload -Uz edit-command-line
-zle -N edit-command-line
-bindkey '^X^E' edit-command-line
-
-# Press `C-x H`, then some key combination for which you want the name of the
-# zle function which is invoked, like `C-x h`, and you'll see something like:
-#
-#     "^Xh" is describe-key-briefly
-bindkey '^Xh' describe-key-briefly
-
 # Options {{{1
 #
 # Set/unset each option using the `setopt` and `unsetopt` command. We can use
@@ -157,3 +88,72 @@ setopt SHARE_HISTORY
 # There's no point in having {ba,z}sh compatibility which would not allow us to
 # use the set of features specific to zsh.
 source "${HOME}/dotfiles/zsh/lib/aliases.zsh"
+
+# Key Bindings {{{1
+#
+# In kitty, one can find the sequence of characters the terminal sends to the
+# program for a certain key combination using `kitty +kitten show_key`.
+
+# When we hit `C-w`, don't delete back to a space, but to a space *or* a slash.
+# Useful to have more control over deletion on a filepath.
+#
+# See:
+# - http://stackoverflow.com/a/1438523
+# - http://stackoverflow.com/a/11200998
+# - `man zshcontrib(1)` /select-word-style
+autoload -Uz select-word-style
+select-word-style bash
+
+# Use emacs keybindings, set to -v for vi bindings.
+bindkey -e
+
+# Use S-Tab to cycle backward during a completion
+bindkey '\e[Z' reverse-menu-complete
+#        ├──┘
+#        └ the shell doesn't seem to recognize the keysym "S-Tab" but when we
+#          press "S-Tab", the terminal sends the sequence "^[[Z" or "ESC [ Z",
+#          so we use it in the lhs of our mapping.
+
+# The delete key doesn't work in zsh. I use `C-d` but still let's just fix it.
+bindkey '\e[3~' delete-char
+
+# Search backward/forward in the history for a line beginning with the current
+# line up to the cursor. This leaves the cursor in its original position.
+#
+# By default, `C-p/C-n` are bound to `up-line-or-history/down-line-or-history`.
+#
+# See:
+#     man zshcontrib
+#     /down-line-or-beginning-search
+#     /up-line-or-beginning-search
+bindkey '^P' history-beginning-search-backward
+bindkey '^N' history-beginning-search-forward
+
+# By default, C-u deletes the whole line (kill-whole-line).
+# bindkey '^U' backward-kill-line
+
+# Remap `C-l` to both scroll the current screen contents into the scrollback
+# buffer and clear the screen, instead of just clearing the screen.
+#
+# Source:
+# https://sw.kovidgoyal.net/kitty/conf/#shortcut-kitty.Reset-the-terminal
+scroll-and-clear-screen() {
+  printf '\n%.0s' {1..$LINES}
+  zle clear-screen
+}
+zle -N scroll-and-clear-screen
+bindkey '^L' scroll-and-clear-screen
+
+# Automatic history expansion (`!!`) when inserting a space.
+bindkey ' ' magic-space
+
+# Edit the command line using the VISUAL editor.
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
+# Press `C-x H`, then some key combination for which you want the name of the
+# zle function which is invoked, like `C-x h`, and you'll see something like:
+#
+#     "^Xh" is describe-key-briefly
+bindkey '^Xh' describe-key-briefly
