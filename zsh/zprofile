@@ -112,6 +112,10 @@ unset NNN_SHELL_PLUGINS NNN_PLUGINS
 
 # path {{{1
 
+# Keep only the first occurrence of each duplicated value on assignment.
+# For more info, see `man zshbuiltins(1)`.
+typeset -U PATH path
+
 brew_prefix=$(brew --prefix)
 
 # https://github.com/golang/go/wiki/SettingGOPATH#bash
@@ -140,12 +144,9 @@ path=(
   #
   # In other words, these are keg-only and if we want to use the binaries from
   # these packages, their bin directory needs to be added first in the PATH.
-  "${brew_prefix}/opt/ruby/bin"
-  "${brew_prefix}/opt/sqlite/bin"
-  "${brew_prefix}/opt/llvm/bin"
+  "${brew_prefix}"/opt/{ruby,sqlite,llvm}/bin
 
   # Previous path values.
-  # Do NOT quote this otherwise the array won't expand.
   $path
 )
 
