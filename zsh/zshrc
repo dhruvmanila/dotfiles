@@ -136,6 +136,9 @@ setopt SHARE_HISTORY
 # and avoid duplication.
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# Initialize pyenv.
+eval "$(pyenv init -)"
+
 # Prompt
 #
 # https://github.com/starship/starship

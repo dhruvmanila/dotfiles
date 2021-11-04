@@ -150,6 +150,8 @@ path=(
   $path
 )
 
+# Add `pyenv` shims directory to PATH.
+eval "$(pyenv init --path)"
 
 # Python {{{1
 
