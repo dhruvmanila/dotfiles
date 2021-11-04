@@ -79,24 +79,19 @@ alias update='sudo softwareupdate --install --all'
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
-  colorflag="--color"
+  alias ls='ls --color=auto -h -F'
 else # macOS `ls`
-  colorflag="-G"
+  alias ls='ls -G -h -F'
 fi
 
 # List all files colorized in long format
-alias l="ls -lhF ${colorflag}"
+alias l='ls -l'
 
 # List all files colorized in long format, excluding . and ..
-alias la="ls -lhAF ${colorflag}"
+alias la='ls -lA'
 
 # List only directories
-alias ld="ls -lhF ${colorflag} | grep -Ei --color=always ' [a-z0-9.-]+/$'"
+alias ld='ls -l | grep -Ei --color=always " [a-z0-9.-]+/$"'
 
 # List all the directories
-alias lda="ls -lhAF ${colorflag} | grep -Ei --color=always ' [a-z0-9.-]+/$'"
-
-# Always use color output for `ls`
-alias ls="ls ${colorflag} -h"
-
-unset colorflag
+alias lda='ls -lA | grep -Ei --color=always " [a-z0-9.-]+/$"'
