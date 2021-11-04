@@ -26,6 +26,7 @@ dot_usage() {
   printf "Commands:\n"
   echo "  mac       update macOS related stuff"
   echo "  link      symlink dotfiles after backing up the existing ones"
+  echo "  shell     setup the default shell for the current user"
   echo "  setup     setup a new mac machine the way I like it"
   echo "  sync      sync lib files with global package list"
   echo "  upgrade   upgrade packages"
@@ -104,6 +105,33 @@ dot_link_usage() {
     # :flag.usage
     echo "  --force, -f"
     printf "    skip backup for the existing dotfiles\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+dot_shell_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "dot shell\n"
+    echo
+    printf "  setup the default shell for the current user\n  \n  Default shell path: \"$DEFAULT_SHELL_PATH\"\n"
+    echo
+  else
+    printf "dot shell - setup the default shell for the current user\n"
+    echo
+  fi
+
+  printf "Usage:\n"
+  printf "  dot shell\n"
+  printf "  dot shell --help | -h\n"
+  echo
+
+  if [[ -n $long_usage ]]; then
+    printf "Options:\n"
+    # :command.usage_fixed_flags
+    echo "  --help, -h"
+    printf "    Show this help\n"
     echo
 
   fi
@@ -903,6 +931,27 @@ dot_link_command() {
 }
 
 # :command.function
+dot_shell_command() {
+  # :src/shell_command.sh
+  # Setup the default shell as mentioned in the DEFAULT_SHELL_PATH global
+  # variable. This will be skipped if the shell is already the default one.
+
+  # https://stackoverflow.com/a/41553295
+  if dscl . -read ~/ UserShell | grep "$DEFAULT_SHELL_PATH" &> /dev/null; then
+    header "'$DEFAULT_SHELL_PATH' is already the default shell."
+    return
+  fi
+
+  if ! grep -F -q "${DEFAULT_SHELL_PATH}" /etc/shells; then
+    header "Adding '$DEFAULT_SHELL_PATH' to /etc/shells..."
+    echo "${DEFAULT_SHELL_PATH}" | sudo tee -a /etc/shells
+  fi
+
+  header "Switching to '${DEFAULT_SHELL_PATH}' as the default shell..."
+  chsh -s "${DEFAULT_SHELL_PATH}"
+}
+
+# :command.function
 dot_setup_command() {
   # :src/setup_command.sh
   seek_confirmation "'setup' command should only be invoked on a fresh setup"
@@ -1045,6 +1094,13 @@ parse_requirements() {
       action="link"
       shift
       dot_link_parse_requirements "$@"
+      shift $#
+      ;;
+
+    shell)
+      action="shell"
+      shift
+      dot_shell_parse_requirements "$@"
       shift $#
       ;;
 
@@ -1192,6 +1248,51 @@ dot_link_parse_requirements() {
 
       \
         -*)
+        printf "invalid option: %s\n" "$key"
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        printf "invalid argument: %s\n" "$key"
+        exit 1
+        ;;
+
+    esac
+  done
+  # :command.catch_all_filter
+  # :command.default_assignments
+  # :command.whitelist_filter
+}
+
+# :command.parse_requirements
+dot_shell_parse_requirements() {
+  # :command.fixed_flag_filter
+  case "$1" in
+    --version | -v)
+      version_command
+      exit
+      ;;
+
+    --help | -h)
+      long_usage=yes
+      dot_shell_usage
+      exit
+      ;;
+
+  esac
+  # :command.environment_variables_filter
+  # :command.dependencies_filter
+  # :command.command_filter
+  action="shell"
+  # :command.required_args_filter
+  # :command.required_flags_filter
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -*)
         printf "invalid option: %s\n" "$key"
         exit 1
         ;;

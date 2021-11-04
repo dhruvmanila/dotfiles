@@ -17,7 +17,10 @@ case "$(uname)" in
     ;;
 esac
 
-DEFAULT_SHELL="bash"
+HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
+
+# Default shell path. This can be set using `dot shell`.
+DEFAULT_SHELL_PATH="${HOMEBREW_PREFIX}/bin/bash"
 
 # Common directories
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
