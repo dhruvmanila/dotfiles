@@ -1,0 +1,165 @@
+# vim: ft=zsh
+#
+# NOTE:
+#
+#   > You don't need export if the variable is already in the environment: any
+#   > change of the value of the variable is reflected in the environment. PATH
+#   > is pretty much always in the environment; all unix systems set it very
+#   > early on (usually in the very first process, in fact).
+#
+# Source: https://unix.stackexchange.com/a/26059/289772
+
+export DOTFILES="${HOME}/dotfiles"
+
+# EDITOR {{{1
+
+# Make Neovim the default editor.
+# https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
+export EDITOR='nvim'
+export VISUAL="$EDITOR"
+
+# fzf {{{1
+
+# Fzf configuration
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+export FZF_DEFAULT_OPTS='
+  --height=50%
+  --layout=reverse
+  --info=inline
+  --prompt="❯ "
+  --bind=ctrl-p:toggle-preview
+  --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+  --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54'
+
+# Molokai for fzf
+# --color fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81
+# --color info:144,prompt:161,spinner:135,pointer:135,marker:118
+
+export FZF_CTRL_R_OPTS="
+  --prompt='History ❯ '
+  --preview 'echo {}'
+  --preview-window down:3:wrap
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
+
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_OPTS="
+  --prompt='Files ❯ '
+  --preview 'bat --color=always --line-range :300 {}'"
+
+export FZF_ALT_C_COMMAND='fd --type d . --hidden --exclude .git'
+export FZF_ALT_C_OPTS="
+  --prompt='CD ❯ '
+  --preview 'tree -C {} | head -100'"
+
+# gpg {{{1
+
+# Avoid issues with `gpg` as installed via Homebrew.
+# https://stackoverflow.com/a/42265848/96656
+export GPG_TTY="$(tty)"
+
+# Homebrew {{{1
+
+# Opt-out of homebrew's analytics
+export HOMEBREW_NO_ANALYTICS=1
+
+# Do not create the lock file on `brew bundle`
+export HOMEBREW_BUNDLE_NO_LOCK=1
+export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
+
+# locale {{{1
+
+# Prefer US English and use UTF-8.
+export LANG='en_US.UTF-8'
+export LC_ALL='en_US.UTF-8'
+
+# man {{{1
+
+export MANPAGER="nvim +Man!"
+
+# nnn {{{1
+
+# Options {{{
+#                ┌ detail mode
+#                │┌ show directories in context color with NNN_FCOLORS set
+#                ││┌ open text files in $VISUAL/$EDITOR/vi
+#                │││┌ show hidden files (toggled with '.')
+#                ││││┌ use selection (no prompt)
+#                │││││┌ show user and group names in status bar
+#                ││││││ }}}
+export NNN_OPTS="dDeHuU"
+export NNN_FIFO=/tmp/nnn.fifo
+
+# Use system Trash.
+#
+# This actually uses `trash-put` from `trash-cli` but we are using `trash` from
+# Homebrew and so an alias script by the same name exists on PATH.
+export NNN_TRASH=1
+
+# Plugins {{{
+#
+# - To run a plugin, press ; followed by the key or Alt+key
+# - To skip directory refresh after running a plugin, prefix with -
+# - To assign keys to arbitrary non-background non-shell-interpreted cli
+#   commands and invoke like plugins, add ! (bang) before the command.
+# }}}
+NNN_SHELL_PLUGINS='l:-!git log;x:!chmod +x $nnn'
+NNN_PLUGINS='p:preview-tui-ext;c:fzcd;o:fzopen'
+export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
+
+unset NNN_SHELL_PLUGINS NNN_PLUGINS
+
+# path {{{1
+
+brew_prefix=$(brew --prefix)
+
+# https://github.com/golang/go/wiki/SettingGOPATH#bash
+export GOPATH="${HOME}/go"
+
+# https://www.rust-lang.org/tools/install
+export CARGO_HOME="${HOME}/.cargo"
+
+path=(
+  # Local build of Neovim nightly.
+  "${HOME}/neovim/bin"
+
+  # Language specific bin directory.
+  "${CARGO_HOME}/bin"
+  "${GOPATH}/bin"
+
+  # Local scripts and `pipx` installed executables.
+  "${HOME}/.local/bin"
+
+  # MacOS ships with an older version of Ruby, so replace the system ruby with
+  # an updated one from Homebrew.
+  "${brew_prefix}"/lib/ruby/gems/*/bin
+
+  # Brew installed packages which are not symlinked into /usr/local because a
+  # similar software is already provided by the system.
+  #
+  # In other words, these are keg-only and if we want to use the binaries from
+  # these packages, their bin directory needs to be added first in the PATH.
+  "${brew_prefix}/opt/ruby/bin"
+  "${brew_prefix}/opt/sqlite/bin"
+  "${brew_prefix}/opt/llvm/bin"
+
+  # Previous path values.
+  # Do NOT quote this otherwise the array won't expand.
+  $path
+)
+
+
+# Python {{{1
+
+# Disable virtual environment prompt.
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+
+# Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
+export PYTHONIOENCODING='UTF-8'
+
+# ripgrep {{{1
+
+# https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+export RIPGREP_CONFIG_PATH="${HOME}/dotfiles/config/ripgreprc"
+

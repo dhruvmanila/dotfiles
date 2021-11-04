@@ -1,0 +1,6 @@
+# This file is always sourced, no matter the type of the shell:
+# login, non-login, interactive, non-interactive.
+#
+# We could change the location of our `zsh` config files:
+#
+#     export ZDOTDIR=~/.config/zsh
