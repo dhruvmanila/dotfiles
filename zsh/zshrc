@@ -149,3 +149,11 @@ setopt PUSHD_IGNORE_DUPS
 
 # Share history between all sessions.
 setopt SHARE_HISTORY
+
+# Sourcing {{{1
+
+# Source zsh specific functions and aliases.
+#
+# There's no point in having {ba,z}sh compatibility which would not allow us to
+# use the set of features specific to zsh.
+source "${HOME}/dotfiles/zsh/lib/aliases.zsh"
