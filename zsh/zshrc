@@ -63,6 +63,24 @@ zmodload zsh/complist
 autoload -Uz compinit
 compinit
 
+# For some commands/programs, like `pipx`, `aws`, there's no easy way to
+# find/generate a zsh completion function. But there's one for bash. In this
+# case, it can be useful to use the bash completion function. To do so, we need
+# to install a compatibility layer to emulate `compgen` and `complete`.
+#
+# Source: `man zshcompsys`.
+#
+# NOTE: It will work only if the completion function needs `compgen` and/or `complete`.
+autoload -Uz bashcompinit
+bashcompinit
+
+# Activate third-party completions.
+source <(kitty +complete setup zsh)
+
+# These requires `bashcompinit`.
+source <(register-python-argcomplete pipx)
+complete -C aws_completer aws
+
 # Options {{{1
 #
 # Set/unset each option using the `setopt` and `unsetopt` command. We can use
