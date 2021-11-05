@@ -1,5 +1,28 @@
 # vim: ft=zsh
 
+# Don't source any global config file from this point onwards {{{
+#
+# The loading order for zsh rc files are:
+#     zshenv
+#     zprofile
+#     zshrc
+#     zlogin
+#     ...
+#     zlogout
+#
+# First, the system file is loaded (/etc) and then the user file for each
+# entry in the above list.
+#
+# On MacOS, the system zshenv file is setting up the PATH variable using the
+# `path_helper` script. We will use that and add our own paths in this
+# (zprofile) file. The problem is that system zshrc file will override some of
+# the HIST* variables and we don't want that.
+#
+# More generally, we only want *our* config files (zshrc, zshenv, ...) to be
+# sourced, because we want *total* control over our shell.
+#}}}
+unsetopt GLOBAL_RCS
+
 export DOTFILES="${HOME}/dotfiles"
 
 # EDITOR {{{1
