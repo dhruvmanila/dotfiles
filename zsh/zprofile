@@ -153,13 +153,25 @@ export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
 
 unset NNN_SHELL_PLUGINS NNN_PLUGINS
 
+# PAGER {{{1
+
+# Rationale {{{
+#
+# Some scripts/programs may rely on this variable to determine which pager they
+# should invoke. If `PAGER` is not set, they may fall back on `more(1)`. That's
+# the case, for example, with the zsh script `run-help` (bound to `C-x H` atm):
+#
+#     /usr/local/share/zsh/functions/run-help
+#
+# We always want `less(1)` to be invoked.
+# }}}
+export PAGER='less'
+
 # path {{{1
 
-# Keep only the first occurrence of each duplicated value on assignment.
-# For more info, see `man zshbuiltins(1)`.
-typeset -U PATH path
-
-brew_prefix=$(brew --prefix)
+# Add this installation of Homebrew to PATH, MANPATH and INFOPATH. Also, export
+# some HOMEBREW* variables to avoid querying them multiple times.
+eval "$(brew shellenv)"
 
 # https://github.com/golang/go/wiki/SettingGOPATH#bash
 export GOPATH="${HOME}/go"
@@ -180,14 +192,14 @@ path=(
 
   # MacOS ships with an older version of Ruby, so replace the system ruby with
   # an updated one from Homebrew.
-  "${brew_prefix}"/lib/ruby/gems/*/bin
+  "${HOMEBREW_PREFIX}"/lib/ruby/gems/*/bin
 
   # Brew installed packages which are not symlinked into /usr/local because a
   # similar software is already provided by the system.
   #
   # In other words, these are keg-only and if we want to use the binaries from
   # these packages, their bin directory needs to be added first in the PATH.
-  "${brew_prefix}"/opt/{ruby,sqlite,llvm}/bin
+  "${HOMEBREW_PREFIX}"/opt/{ruby,sqlite,llvm}/bin
 
   # Previous path values.
   $path

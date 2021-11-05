@@ -32,6 +32,10 @@
 # }}}
 bindkey -e
 
+# Automatically remove duplicates from these arrays.
+# For more info, see `man zshbuiltins(1)`.
+typeset -U path cdpath fpath manpath
+
 # By default, `run-help` is merely an alias for `man`.
 # We want the `run-help` shell function which tries to figure out where to get
 # the best help, and get it.
@@ -46,12 +50,12 @@ autoload -Uz run-help
 # Completion {{{1
 
 # This module offers enhancements to the completion menu:
-# - Highlight matches.
-# - Scroll through long lists.
-# - Alternative style of selecting matches, called menu selection.
+#   - Highlight matches
+#   - Scroll through long lists
+#   - Alternative style of selecting matches, called menu selection
 #
 # This should be loaded *before* initializing completion (`compinit`).
-# zmodload zsh/complist
+zmodload zsh/complist
 
 # They install programmable completion functions for the most common Unix
 # commands. They also enable some more central functionality, on which
@@ -175,7 +179,8 @@ eval "$(starship init zsh)"
 #
 # There's no point in having {ba,z}sh compatibility which would not allow us to
 # use the set of features specific to zsh.
-source "${HOME}/dotfiles/zsh/lib/aliases.zsh"
+source "${DOTFILES}/zsh/lib/functions.zsh"
+source "${DOTFILES}/zsh/lib/aliases.zsh"
 
 # Key Bindings {{{1
 #
@@ -211,11 +216,11 @@ bindkey '\e[3~' delete-char
 #     man zshcontrib
 #     /down-line-or-beginning-search
 #     /up-line-or-beginning-search
-bindkey '^P' history-beginning-search-backward
-bindkey '^N' history-beginning-search-forward
+bindkey '\C-p' history-beginning-search-backward
+bindkey '\C-n' history-beginning-search-forward
 
 # By default, C-u deletes the whole line (kill-whole-line).
-# bindkey '^U' backward-kill-line
+# bindkey '\C-u' backward-kill-line
 
 # Remap `C-l` to both scroll the current screen contents into the scrollback
 # buffer and clear the screen, instead of just clearing the screen.
@@ -227,7 +232,7 @@ scroll-and-clear-screen() {
   zle clear-screen
 }
 zle -N scroll-and-clear-screen
-bindkey '^L' scroll-and-clear-screen
+bindkey '\C-l' scroll-and-clear-screen
 
 # Automatic history expansion (`!!`) when inserting a space.
 bindkey ' ' magic-space
@@ -235,12 +240,12 @@ bindkey ' ' magic-space
 # Edit the command line using the VISUAL editor.
 autoload -Uz edit-command-line
 zle -N edit-command-line
-bindkey '^X^E' edit-command-line
+bindkey '\C-x\C-e' edit-command-line
 
 # Press `C-x H`, then some key combination for which you want the name of the
 # zle function which is invoked, like `C-x h`, and you'll see something like:
 #
 #     "^Xh" is describe-key-briefly
-bindkey '^Xh' describe-key-briefly
+bindkey '\C-xh' describe-key-briefly
 
 # Abbreviations {{{1
