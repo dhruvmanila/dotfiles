@@ -6,6 +6,12 @@ alias path='echo -e ${PATH//:/\\n}'
 # Reload the shell (i.e. invoke as a login shell)
 alias reload='exec $SHELL -l'
 
+# Global aliases -- These do not have to be at the beginning of the command line.
+alias -g H='--help | less'
+alias -g L='| less'
+alias -g N='> /dev/null'
+alias -g T='| tail'
+
 # cd {{{1
 
 # Easier navigation to parent directories.
@@ -80,8 +86,10 @@ alias nnn='LESS=-R nnn'
 #     > before any other precommand modifier, as it is interpreted immediately,
 #     > before any parsing is done. It has no effect in non-interactive shells.
 
+alias cp='nocorrect cp'
 alias man='nocorrect man'
 alias mkdir='nocorrect mkdir'
+alias mv='nocorrect mv'
 alias sudo='nocorrect sudo'
 
 # nvim {{{1
