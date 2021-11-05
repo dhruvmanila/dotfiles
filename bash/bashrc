@@ -235,12 +235,6 @@ fi
 
 # Key Bindings {{{1
 
-# Automatic history expansion (`!!`) when inserting a space.
-#
-# WARNING: Don't write this in `~/.inputrc`, it would prevent us from inserting
-# spaces inside various programs such as python, etc.
-bind '" ": magic-space'
-
 # This does not redraw the prompt.
 scroll-and-clear-screen() {
   for ((i = 0; i <= LINES; i++)); do

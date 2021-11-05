@@ -98,6 +98,14 @@ TAB: menu-complete
 # Expand aliases with C-x-space (originally bound to `possible-hostname-completions`)
 "\C-x\C-@": alias-expand-line
 
+$if Bash
+  # Automatic history expansion (`!!`) when inserting a space.
+  #
+  # WARNING: This should be enabled only in Bash else it would prevent us from
+  # inserting spaces inside various programs such as python, etc.
+  Space: magic-space
+$endif
+
 # }}}
 
 # vim: foldmethod=marker
