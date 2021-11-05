@@ -51,6 +51,8 @@ end
 return function(opts)
   vim.validate { cmd = { opts.cmd, "s" } }
 
+  -- We cannot initialize this to an empty table because it would reset the
+  -- environment for the process even if `opts.env` is `nil`.
   local env
   local cmd = opts.cmd
   local args = opts.args or {}
@@ -62,6 +64,9 @@ return function(opts)
   --
   --     > By convention these strings have the form ``name=value''.
   if opts.env then
+    -- In this case, the process will only contain those environment variables
+    -- which are passed in by the user.
+    env = {}
     for k, v in pairs(opts.env) do
       table.insert(env, ("%s=%s"):format(k, v))
     end
