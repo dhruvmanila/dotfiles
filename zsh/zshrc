@@ -67,6 +67,29 @@ compinit
 #
 # For help on each option: `man zshoptions(1)`
 
+# NOTES: {{{2
+#
+# Do NOT set `HIST_REDUCE_BLANKS`:
+#
+#   % setopt HIST_REDUCE_BLANKS
+#   % echo "one" \
+#   > "two"
+#   % history
+#   ...
+#   13715 echo "one" "two"
+#                   │
+#                   └ newline is being striped off
+#
+#   % unsetopt HIST_REDUCE_BLANKS
+#   % echo "one" \
+#   > "two"
+#   % history
+#   ...
+#   13719 echo "one" \\n"two"
+#
+# See: https://github.com/ohmyzsh/ohmyzsh/issues/8949
+# }}}2
+
 # Let us `cd` into a directory just by typing its name, without `cd`.
 #
 # Only works when `SHIN_STDIN` (SHell INput STanDard INput) is set, i.e. when the
@@ -82,27 +105,29 @@ setopt CORRECT
 # Try to correct the spelling of all arguments in a line.
 setopt CORRECT_ALL
 
+# Save each command's beginning timestamp (in seconds since the epoch) and the
+# duration (in seconds) to the history file.
+setopt EXTENDED_HISTORY
+
 # Do not display a line previously found.
 setopt HIST_FIND_NO_DUPS
+
+# If a new command line being added to the history list duplicates an older
+# one, the older command is removed from the list (even if it is not the
+# previous event).
+setopt HIST_IGNORE_ALL_DUPS
 
 # Don't record an entity that was just recorded again.
 setopt HIST_IGNORE_DUPS
 
-# Don't record an entry starting with a space.
+# Do not enter command lines into the history list if they are duplicates of
+# the previous event.
 setopt HIST_IGNORE_SPACE
 
 # Whenever the user enters a line with history expansion, don't execute the
 # line directly; instead, perform history expansion and reload the line into
 # the editing buffer.
 setopt HIST_VERIFY
-
-# Do not exit on end-of-file (pressing `<C-d>`). Requires the use of `exit`
-# or `logout` instead.
-setopt IGNORE_EOF
-
-# Add new history lines incrementally (as soon as they are entered), rather
-# than waiting until the shell exists.
-setopt INC_APPEND_HISTORY
 
 # Allow comments even in interactive shells.
 setopt INTERACTIVE_COMMENTS
