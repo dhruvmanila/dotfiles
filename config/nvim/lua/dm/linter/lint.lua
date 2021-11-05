@@ -30,12 +30,20 @@ local function run_linter(bufnr, linter)
   if type(args) == "function" then
     args = args()
   end
+
   if not linter.stdin then
     -- Do NOT mutate the original `args` table.
     args = vim.deepcopy(args)
     table.insert(args, api.nvim_buf_get_name(bufnr))
   else
     writer = api.nvim_buf_get_lines(bufnr, 0, -1, false)
+  end
+
+  if linter.env then
+    if not linter.env["PATH"] then
+      -- Always include PATH as we need it to execute the linter command.
+      linter.env["PATH"] = os.getenv "PATH"
+    end
   end
 
   job {
