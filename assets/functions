@@ -23,8 +23,8 @@ explain() { # {{{1
     curl -s --get "$api_url" --data-urlencode "q=$*"
   else
     echo "Usage:"
-    echo "  explain                  interactive mode"
-    echo "  explain 'cmd -o | ...'   one quoted command to explain it"
+    echo "  $0                  interactive mode"
+    echo "  $0 'cmd -o | ...'   one quoted command to explain it"
     return 1
   fi
 }
@@ -110,10 +110,10 @@ py-kernel() { # {{{1
   #
   # $1 (string): name and display name of the kernal
   if [[ -z "$1" ]]; then
-    echo "Usage: py-kernel <name>"
+    echo "Usage: $0 <name>"
     return 1
   elif [[ -z "$VIRTUAL_ENV" ]]; then
-    echo "py-kernel: not in a virtual environment"
+    echo "$0: not in a virtual environment"
     return 1
   fi
   python -m pip install --quiet ipykernel
@@ -127,16 +127,16 @@ py-upgrade-venv() { # {{{1
   #
   # $1 (string): upgrade to this version
   if [[ -z "$VIRTUAL_ENV" ]]; then
-    echo "py-upgrade-venv: not in a virtual environment"
+    echo "$0: not in a virtual environment"
     return 1
   elif [[ -z "$1" ]]; then
-    echo "Usage: py-upgrade-venv <version>"
+    echo "Usage: $0 <version>"
     return 1
   fi
   python_exec="$(pyenv root)/versions/$1/bin/python"
   if [[ ! -e $python_exec ]]; then
-    echo "py-upgrade-venv: version $1 does not exist"
-    echo "py-upgrade-venv: Use 'pyenv install $1' to install it"
+    echo "$0: version $1 does not exist"
+    echo "$0: Use 'pyenv install $1' to install it"
     return 1
   fi
   # The `--upgrade` flag assumes that Python was upgraded in place, so we need

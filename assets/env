@@ -22,11 +22,6 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 export EDITOR='nvim'
 export VISUAL="$EDITOR"
 
-# docker {{{1
-
-# For docker-compose (internetarchive/openlibrary)
-# export COMPOSE_FILE="docker-compose.yml:docker-compose.override.yml:docker-compose.infogami-local.yml"
-
 # fzf {{{1
 
 # Fzf configuration
