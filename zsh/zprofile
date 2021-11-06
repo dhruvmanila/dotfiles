@@ -25,6 +25,21 @@ unsetopt GLOBAL_RCS
 
 export DOTFILES="${HOME}/dotfiles"
 
+# cdpath {{{1
+
+# An array of directories specifying the search path for the `cd` command.
+#
+# This will allow us to cd into any directory, within the specified ones in the
+# array, from anywhere.
+#
+# Alternative: `z.lua` (preferred), `autojump`, `fasd`, `z`
+cdpath=(
+  ..
+  "$HOME"
+  "$HOME/work"
+  "$DOTFILES"
+)
+
 # EDITOR {{{1
 
 # Make Neovim the default editor.
