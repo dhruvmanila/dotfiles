@@ -73,6 +73,10 @@ alias l='ls -l'
 alias la='ls -lA'
 #              └ show entries starting with . (dot) except for . and ..
 
+# List only directories and symbolic links that point to directories.
+# See `man zshexpn(1)` /Glob Qualifiers
+alias lsd='ls -ld *(-/DN)'
+
 # nnn {{{1
 
 # To reset `less`
