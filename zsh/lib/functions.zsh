@@ -100,6 +100,21 @@ pip-upgrade() { # {{{1
     | xargs python -m pip install --upgrade
 }
 
+py-activate-venv() { # {{{1
+  # Activate the Python virtual environment. This is mainly used for the
+  # `_python_auto_venv` hook, but is defined here to be used from the
+  # command-line if needed.
+  local project_root="$PWD"
+  # Check for the `.venv` directory by climbing up the path until we find it
+  # or we reach the root directory.
+  while [[ "$project_root" != "/" && ! -e "$project_root/.venv" ]]; do
+    project_root="${project_root:h}"
+  done
+  if [[ -e "$project_root/.venv/bin/activate" ]]; then
+    source "$project_root/.venv/bin/activate"
+  fi
+}
+
 py-kernel() { # {{{1
   # Create an IPython kernel for the current Python virtual environment.
   # This is useful to have one Jupyter installation but different Python kernels

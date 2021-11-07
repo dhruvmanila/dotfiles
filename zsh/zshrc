@@ -200,14 +200,69 @@ eval "$(pyenv init -)"
 # https://github.com/starship/starship
 eval "$(starship init zsh)"
 
-# Sourcing {{{1
+# Functions, Aliases {{{1
 
-# Source zsh specific functions and aliases.
-#
 # There's no point in having {ba,z}sh compatibility which would not allow us to
 # use the set of features specific to zsh.
 source "${DOTFILES}/zsh/lib/functions.zsh"
 source "${DOTFILES}/zsh/lib/aliases.zsh"
+
+# Hooks {{{1
+#
+# A function which is run automatically at a specific point during shell
+# execution. To list all the hooks:
+#
+#     % add-zsh-hook -L
+
+# `man zshcontrib /Manipulating Hook Functions`
+# `man zshmisc /SPECIAL FUNCTIONS/;/Hook Functions`
+autoload -Uz add-zsh-hook
+
+_python_auto_venv() {
+  # Hook to activate/deactivate the Python virtual environment automagically.
+  #
+  # NOTE: This only works if using the builtin `venv` module and the name of
+  # the virtual environment should be `.venv`.
+  #
+  # We cannot use the `VIRTUAL_ENV` variable for this because it stays in the
+  # environment after a reload.
+  if ! typeset -f deactivate &> /dev/null; then
+    # This function is defined in `./lib/functions.zsh` so that it can be used
+    # from the command-line if needed.
+    py-activate-venv
+  elif [[ -n "$VIRTUAL_ENV" ]]; then
+    # Why '/' ? {{{
+    #
+    # Take these two directories for example:
+    #   1. ~/test         - contains virtual environment
+    #   2. ~/test-other   - no virtual environment
+    #
+    # If we go from the first directory to the second, the environment will not
+    # be deactivated because of the glob. By adding a forward slash, we restrict
+    # the match and avoid the case where the string is a substring.
+    #
+    #   `[[ "~/test-other"  != "~/test"*  ]]` -> false
+    #   `[[ "~/test-other/" != "~/test/"* ]]` -> true
+    # }}}
+    if [[ "$PWD/" != "${VIRTUAL_ENV:h}/"* ]]; then
+      deactivate
+      # If we're changing a directory containing a virtual environment to
+      # another directory with a virtual environment, then we should deactivate
+      # the first one and activate the current one.
+      py-activate-venv
+    fi
+  fi
+}
+
+_update_terminal_title() {
+  # `man zshmisc /SIMPLE PROMPT ESCAPES/;/Shell state`
+  print -Pn '\e]0;%1/\a'
+  #               ├─┘
+  #               └ last component of the current working directory
+}
+
+add-zsh-hook -Uz precmd _update_terminal_title
+add-zsh-hook -Uz chpwd _python_auto_venv
 
 # Key Bindings {{{1
 #
