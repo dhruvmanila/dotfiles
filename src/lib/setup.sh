@@ -20,6 +20,7 @@ declare -A SYMLINKS=(
   ["config/ignore"]=".ignore"
   ["config/kitty"]=".config/kitty"
   ["config/nvim"]=".config/nvim"
+  ["config/starship.toml"]=".config/starship.toml"
   ["config/youtube-dl"]=".config/youtube-dl"
   ["mac/hammerspoon"]=".hammerspoon"
   ["mac/karabiner"]=".config/karabiner"

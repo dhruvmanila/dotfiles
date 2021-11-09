@@ -1,0 +1,43 @@
+[aws]
+disabled = true
+
+[character]
+error_symbol = "[✘](bold red)"
+
+[cmd_duration]
+min_time = 10_000
+
+[directory]
+read_only = " "
+
+[git_branch]
+symbol = " "
+
+[git_commit]
+tag_disabled = false
+tag_symbol = "  "
+
+[git_state]
+rebase = "rebasing"
+merge = "merging"
+revert = "reverting"
+cherry_pick = "cherry-picking"
+bisect = "bisecting"
+
+[golang]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[package]
+symbol = " "
+
+[python]
+symbol = " "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = " "
