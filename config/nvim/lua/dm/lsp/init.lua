@@ -77,7 +77,7 @@ local function custom_on_attach(client, bufnr)
   end
 
   if capabilities.rename then
-    nnoremap("<leader>rn", require("dm.lsp.rename").rename, opts)
+    nnoremap("<leader>rn", lsp.buf.rename, opts)
   end
 
   if capabilities.signature_help then
