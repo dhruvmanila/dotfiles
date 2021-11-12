@@ -18,7 +18,7 @@ indent_size = 2
 [karabiner.json]
 indent_size = 4
 
-[*{gitconfig,Makefile}]
+[*{gitconfig,Makefile,go}]
 indent_size = 4
 indent_style = tab
 

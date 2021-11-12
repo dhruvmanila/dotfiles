@@ -11,6 +11,10 @@ return {
   -- https://github.com/rcjsuen/dockerfile-language-server-nodejs
   dockerls = {},
 
+  -- https://github.com/golang/tools/tree/master/gopls
+  -- Settings: https://github.com/golang/tools/blob/master/gopls/doc/settings.md
+  gopls = {},
+
   -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
   -- Settings: https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server#settings
   jsonls = function()
