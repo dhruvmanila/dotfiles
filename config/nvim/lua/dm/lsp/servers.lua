@@ -13,7 +13,13 @@ return {
 
   -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
   -- Settings: https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server#settings
-  jsonls = {},
+  jsonls = function()
+    return {
+      settings = {
+        schemas = require("schemastore").json.schemas(),
+      },
+    }
+  end,
 
   -- https://github.com/microsoft/pyright
   -- Settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md

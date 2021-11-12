@@ -63,6 +63,7 @@ local function load_plugins()
     },
     { "MTDL9/vim-log-highlighting" },
     { "airblade/vim-rooter" },
+    { "b0o/SchemaStore.nvim" },
     {
       "dstein64/vim-startuptime",
       cmd = "StartupTime",
