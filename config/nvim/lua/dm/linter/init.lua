@@ -86,9 +86,7 @@ do
   register("sh", {
     cmd = "shellcheck",
     args = function()
-      -- Or should we just hardcode the default shell?
-      local shell = vim.fn.fnamemodify(vim.env.SHELL, ":t")
-      return { "--format", "json", "--shell", shell, "-" }
+      return { "--format", "json", "-" }
     end,
     ignore_exitcode = true,
     parser = function(output)
