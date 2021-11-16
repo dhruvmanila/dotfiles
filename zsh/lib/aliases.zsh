@@ -119,12 +119,9 @@ alias pip='python3 -m pip'
 
 # ssh {{{1
 
-# Don't know if there is any other (better?) way to find out if we're in the
-# kitty terminal or not.
-#
 # This will copy the terminfo file kitty uses (xterm-kitty) to the server.
 # https://sw.kovidgoyal.net/kitty/faq/
-if [[ -n "$KITTY_PID" ]]; then
+if [[ "$TERM" = "xterm-kitty" ]]; then
   alias ssh='kitty +kitten ssh'
 fi
 
