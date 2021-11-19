@@ -35,7 +35,6 @@ declare -A SYMLINKS=(
   ["tmux/tmux.conf"]=".tmux.conf"
   ["vim"]=".vim"
   ["vim/vimrc"]=".vimrc"
-  ["zsh/zprofile"]=".zprofile"
   ["zsh/zshenv"]=".zshenv"
   ["zsh/zshrc"]=".zshrc"
 )
