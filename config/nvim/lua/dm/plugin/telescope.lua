@@ -1,5 +1,6 @@
 local telescope = require "telescope"
 local actions = require "telescope.actions"
+local action_layout = require "telescope.actions.layout"
 local action_state = require "telescope.actions.state"
 local action_utils = require "telescope.actions.utils"
 local builtin = require "telescope.builtin"
@@ -48,32 +49,13 @@ end
 
 -- Default theme options {{{1
 
----@param width? number
----@param height? number
----@return table
-local function dropdown_opts(width, height)
-  return setmetatable(
-    themes.get_dropdown {
-      layout_config = {
-        width = width or 0.7,
-        height = height or 0.75,
-      },
-      previewer = false,
-    },
-    {
-      __add = function(lhs, rhs)
-        assert(not vim.tbl_islist(rhs), "'rhs' cannot be a list like table")
-        return setmetatable(
-          vim.tbl_deep_extend("force", lhs, rhs),
-          getmetatable(lhs)
-        )
-      end,
-    }
-  )
-end
-
-local default_dropdown = dropdown_opts()
-local dropdown_list = dropdown_opts(50, 0.5)
+local dropdown_list = themes.get_dropdown {
+  layout_config = {
+    width = 50,
+    height = 0.5,
+  },
+  previewer = false,
+}
 
 -- Setup {{{1
 
@@ -100,12 +82,16 @@ telescope.setup {
         flip_columns = 140,
       },
     },
+    preview = {
+      hide_on_startup = true,
+    },
     mappings = {
       i = {
         ["<C-x>"] = false,
         ["<C-u>"] = false,
         ["<C-d>"] = false,
         ["<Esc>"] = actions.close,
+        ["<C-h>"] = action_layout.toggle_preview,
         ["<C-j>"] = actions.move_selection_next,
         ["<C-k>"] = actions.move_selection_previous,
         ["<C-n>"] = actions.cycle_history_next,
@@ -131,52 +117,26 @@ telescope.setup {
         i = { ["<C-d>"] = actions.delete_buffer },
         n = { ["<C-d>"] = actions.delete_buffer },
       },
-      layout_config = {
-        width = function(_, editor_width, _)
-          return math.min(editor_width - 20, 100)
-        end,
-        height = function(picker, _, editor_height)
-          return math.max(
-            5,
-            math.min(editor_height - 10, #picker.finder.results + 4)
-          )
-        end,
-      },
     },
-    builtin = dropdown_list + {
+    builtin = {
+      theme = "dropdown",
+      layout_config = {
+        width = 50,
+        height = 0.5,
+      },
       include_extensions = true,
     },
-    command_history = default_dropdown,
-    commands = default_dropdown,
-    current_buffer_fuzzy_find = default_dropdown,
-    find_files = default_dropdown,
-    git_branches = default_dropdown,
-    git_files = default_dropdown,
+    git_branches = { theme = "dropdown" },
     grep_string = {
       path_display = { "tail" },
     },
-    help_tags = default_dropdown,
-    highlights = dropdown_list,
-    keymaps = default_dropdown,
     live_grep = {
       path_display = { "tail" },
     },
-    lsp_code_actions = {
-      theme = "cursor",
-    },
-    lsp_document_diagnostics = default_dropdown + { line_width = 60 },
-    lsp_document_symbols = default_dropdown,
-    lsp_range_code_actions = {
-      theme = "cursor",
-    },
-    lsp_workspace_diagnostics = default_dropdown + { line_width = 60 },
-    lsp_workspace_symbols = default_dropdown,
-    man_pages = default_dropdown,
-    oldfiles = default_dropdown,
-    reloader = default_dropdown,
-    search_history = default_dropdown,
-    vim_options = default_dropdown,
-    treesitter = default_dropdown,
+    lsp_code_actions = { theme = "cursor" },
+    lsp_range_code_actions = { theme = "cursor" },
+    lsp_document_diagnostics = { line_width = 60 },
+    lsp_workspace_diagnostics = { line_width = 60 },
   },
   extensions = { -- {{{2
     fzf = {
@@ -315,7 +275,7 @@ end)
 
 -- Gaze the stars with the power of telescope.
 nnoremap("<leader>gs", function()
-  telescope.extensions.github_stars.github_stars(default_dropdown)
+  telescope.extensions.github_stars.github_stars()
 end)
 
 -- List out all the installed plugins and provide action to either go to the
@@ -326,13 +286,13 @@ end)
 
 -- Fuzzy find over your browser bookmarks.
 nnoremap("<leader>fb", function()
-  telescope.extensions.bookmarks.bookmarks(default_dropdown)
+  telescope.extensions.bookmarks.bookmarks()
 end)
 
 -- Using `ddgr/googler` search the web and fuzzy find through the results and
 -- open them up in the browser.
 nnoremap("<leader>fw", function()
-  telescope.extensions.websearch.websearch(default_dropdown)
+  telescope.extensions.websearch.websearch()
 end)
 
 -- This is wrapped inside a function to avoid loading telescope modules.
@@ -345,7 +305,7 @@ end)
 local function lir_cd()
   -- Previewer is turned off by default. If it is enabled, then use the
   -- horizontal layout with wider results window and narrow preview window.
-  telescope.extensions.lir_cd.lir_cd(default_dropdown)
+  telescope.extensions.lir_cd.lir_cd()
 end
 
 -- List out all the saved sessions and provide action to either open them or
