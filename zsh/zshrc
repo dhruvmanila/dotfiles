@@ -81,6 +81,91 @@ source <(kitty +complete setup zsh)
 source <(register-python-argcomplete pipx)
 complete -C aws_completer aws
 
+# Zstyles {{{1
+
+# What is `zstyle`? {{{
+# `zstyle` is a "global" builtin function which is defined in `zsh/util` module,
+# and the documentation can be accessed by running `man zshmodules(1)`.
+#
+#   zstyle <context> <style>
+#          ├───────────────┘
+#          └ context defines where the style will apply. The context is a
+#            colon (:) separated strings.
+#
+# This gist shows how you might use `zstyle` to store and retrieve information:
+# https://gist.github.com/mattmc3/449430b6654aaab0ba7160e8efe8291b
+# }}}
+# Completion context string {{{
+#
+#   :completion:function:completer:command:argument:tag
+#   ├─────────┘
+#   └ literal string "completion"
+#
+# For more info: `man zshcompsys(1)`
+# }}}
+# What does the 'format' style control? {{{
+#
+# The appearance of a description for each list of matches, when you
+# tab-complete a word on the command line. Its value gives the format to print
+# the message in.
+#
+# You can use the same escape sequences you would use in a prompt, described at
+# `man zshmisc /EXPANSION OF PROMPT SEQUENCES`:
+# }}}
+
+ITALIC_ON=$'\e[3m'
+ITALIC_OFF=$'\e[23m'
+
+# Do menu-driven completion. This allows navigation in the completion menu
+# using the arrow keys.
+zstyle ':completion:*' menu 'select'
+
+# Set the 'format' style for some well-known tags. {{{
+#
+# - messages: when there can't be any completion
+# - descriptions: for types of matches (e.g., option, file, etc.)
+# - warnings: when there are no matches (%d/%D is replaced with descriptions
+#             for the matches that were expected separated by spaces/newlines)
+# }}}
+zstyle ':completion:*:messages' format '%F{blue}--- %d ---%f'
+zstyle ':completion:*:descriptions' format "%F{yellow}%B${ITALIC_ON}--- %d ---${ITALIC_OFF}%b%f"
+zstyle ':completion:*:warnings' format '%F{red}--- no matches found ---%f'
+
+# Group matches with the same tag and display them separately. All matches
+# without a group name will be put under '-default-'.
+zstyle ':completion:*' group-name ''
+
+# Define the description for options that are not described by the completion
+# functions, but that have exactly one argument. The sequence `%d` in the value
+# will be replaced by the description for this argument.
+zstyle ':completion:*' auto-description 'specify: %d'
+
+# Colorize completions by using the default `ls` colors.
+zstyle ':completion:*' list-colors ''
+
+# Show the default prompt during menu selection when the completion list does
+# not fit on the screen as a whole.
+zstyle ':completion:*' select-prompt ''
+
+# This defines the characters printed between a match and its description.
+# By default, its value is `--`.
+zstyle ':completion:*' list-separator '  #'
+
+# $CDPATH is overpowered (can allow us to jump to 100s of directories) so tends
+# to dominate completion; exclude `path-directories` from the `tag-order` so
+# that they will only be used as a fallback if no completions are found.
+zstyle ':completion:*:*:(cd|pushd):*' tag-order local-directories directory-stack path-directories
+
+# Provide completion for *all* the running processes and not just the processes
+# running in the current shell.
+zstyle ':completion:*:processes' command 'ps -u $LOGNAME -o pid,user,command -w'
+
+# https://unix.stackexchange.com/a/604514/289772
+zstyle ':completion:*:manuals' separate-sections true
+zstyle ':completion:*' insert-sections true
+
+unset ITALIC_ON ITALIC_OFF
+
 # Options {{{1
 #
 # Set/unset each option using the `setopt` and `unsetopt` command. We can use
@@ -204,8 +289,8 @@ eval "$(starship init zsh)"
 
 # There's no point in having {ba,z}sh compatibility which would not allow us to
 # use the set of features specific to zsh.
-source "${DOTFILES}/zsh/lib/functions.zsh"
-source "${DOTFILES}/zsh/lib/aliases.zsh"
+source ~/dotfiles/zsh/lib/functions.zsh
+source ~/dotfiles/zsh/lib/aliases.zsh
 
 # Hooks {{{1
 #
@@ -329,5 +414,11 @@ bindkey '\C-x\C-e' edit-command-line
 #
 #     "^Xh" is describe-key-briefly
 bindkey '\C-xh' describe-key-briefly
+
+# Completion menu navigation using "menuselect" keymap.
+bindkey -M menuselect '^J' down-line-or-history
+bindkey -M menuselect '^K' up-line-or-history
+bindkey -M menuselect '^H' backward-char
+bindkey -M menuselect '^L' forward-char
 
 # Abbreviations {{{1
