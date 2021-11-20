@@ -8,6 +8,12 @@ local highlighter = require "nvim-treesitter.highlight"
 
 -- Table consisting of treesitter node types to use for preview.
 local node_types = {
+  -- go
+  "function_declaration",
+  "method_declaration",
+  "type_declaration",
+  "var_declaration",
+
   -- lua
   "program", -- preview the entire module
   "function", -- for method nodes like `class:method()`
