@@ -112,11 +112,6 @@ alias vm='nvim -n -u ${HOME}/dotfiles/config/nvim/minimal.lua'
 alias vim-startuptime='vim-startuptime | head -n 30'
 alias nvim-startuptime='\vim-startuptime -vimpath nvim | head -n 30'
 
-# python {{{1
-
-alias python='python3'
-alias pip='python3 -m pip'
-
 # ssh {{{1
 
 # This will copy the terminfo file kitty uses (xterm-kitty) to the server.

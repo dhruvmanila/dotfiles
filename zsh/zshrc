@@ -47,6 +47,22 @@ unalias run-help > /dev/null 2>&1
 #     /usr/local/share/zsh/functions/
 autoload -Uz run-help
 
+# An array (colon separated list) of directories specifying the search path
+# for function definitions. This path is searched when a function with the `-u`
+# attribute is referenced.
+#
+# NOTE: Any change to `fpath` after `compinit` has been invoked won't have any
+# effect.
+fpath=(
+  # Custom and third-party completion definitions. This is kept first in path
+  # to override any possible conflicting function.
+  ${DOTFILES}/zsh/completions
+  # Additional completion definitions, not available in a default installation.
+  ${DOTFILES}/zsh/plugins/zsh-completions/src
+
+  $fpath
+)
+
 # Completion {{{1
 
 # This module offers enhancements to the completion menu:
@@ -129,7 +145,7 @@ zstyle ':completion:*' menu 'select'
 # }}}
 zstyle ':completion:*:messages' format '%F{blue}--- %d ---%f'
 zstyle ':completion:*:descriptions' format "%F{yellow}%B${ITALIC_ON}--- %d ---${ITALIC_OFF}%b%f"
-zstyle ':completion:*:warnings' format '%F{red}--- no matches found ---%f'
+zstyle ':completion:*:warnings' format $'%F{red}--- no matches found for ---%f\n%D'
 
 # Group matches with the same tag and display them separately. All matches
 # without a group name will be put under '-default-'.
@@ -160,9 +176,12 @@ zstyle ':completion:*:*:(cd|pushd):*' tag-order local-directories directory-stac
 # running in the current shell.
 zstyle ':completion:*:processes' command 'ps -u $LOGNAME -o pid,user,command -w'
 
-# https://unix.stackexchange.com/a/604514/289772
+# Provide more processes in completion of programs like `killall`.
+zstyle ':completion:*:processes-names' command 'ps -c -u $LOGNAME -o command | uniq'
+
+# Complete manual with sections.
 zstyle ':completion:*:manuals' separate-sections true
-zstyle ':completion:*' insert-sections true
+zstyle ':completion:*:manuals.*' insert-sections true
 
 unset ITALIC_ON ITALIC_OFF
 
