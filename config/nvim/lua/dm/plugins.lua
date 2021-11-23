@@ -86,6 +86,7 @@ local function load_plugins()
     { "jpalardy/vim-slime" },
     { "junegunn/vim-easy-align" },
     { "kyazdani42/nvim-web-devicons" },
+    { "lambdalisue/vim-protocol" },
     { "lewis6991/impatient.nvim" },
     {
       "lewis6991/gitsigns.nvim",
