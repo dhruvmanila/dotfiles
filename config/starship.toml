@@ -1,6 +1,9 @@
 [aws]
 disabled = true
 
+[battery]
+disabled = true
+
 [character]
 error_symbol = "[✘](bold red)"
 
@@ -41,3 +44,6 @@ symbol = " "
 
 [rust]
 symbol = " "
+
+[vagrant]
+disabled = true
