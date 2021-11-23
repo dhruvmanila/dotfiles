@@ -140,9 +140,14 @@ cmp.setup {
         -- Provide suggestions from all the visible buffers.
         ---@return number[]
         get_bufnrs = function()
-          return vim.tbl_map(function(winid)
-            return api.nvim_win_get_buf(winid)
-          end, api.nvim_list_wins())
+          local bufnrs = {}
+          for _, winid in ipairs(api.nvim_list_wins()) do
+            local bufnr = api.nvim_win_get_buf(winid)
+            if api.nvim_buf_get_option(bufnr, "filetype") ~= "terminal" then
+              bufnrs[#bufnrs + 1] = bufnr
+            end
+          end
+          return bufnrs
         end,
       },
       keyword_length = 4,
