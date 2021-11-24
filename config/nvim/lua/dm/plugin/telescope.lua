@@ -165,6 +165,10 @@ telescope.setup {
 -- are loaded, the others will be loaded lazily by telescope.
 pcall(telescope.load_extension, "fzf")
 
+-- Start the background job for collecting the GitHub stars. This will be cached
+-- and used by `:Telescope github_stars` extension.
+require("dm.gh").collect_stars()
+
 -- Key Bindings {{{1
 -- Builtin Pickers {{{2
 

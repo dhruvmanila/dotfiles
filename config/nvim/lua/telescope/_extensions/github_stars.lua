@@ -11,51 +11,6 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local entry_display = require "telescope.pickers.entry_display"
 
-local job = require "dm.job"
-
--- Keep the values around between reloads
-_CachedGithubStars = _CachedGithubStars or { stars = {}, max_length = 0 }
-
-local github_stars
-
--- Parse the data received from running the GitHub stars job.
----@data string
-local function parse_data(data)
-  -- As we're paginating the results, GitHub will separate the page results as:
-  -- [{...}, {...}][{...}, {...}] ...
-  -- Replace the middle "][" with a "," to make it a valid JSON string.
-  data = data:gsub("%]%[", ",")
-  local json_data = vim.json.decode(data)
-  local max_length = 0
-  for _, repo in ipairs(json_data) do
-    max_length = math.max(max_length, #repo.full_name)
-    table.insert(_CachedGithubStars.stars, {
-      name = repo.full_name,
-      description = repo.description ~= vim.NIL and repo.description or "",
-      url = repo.html_url,
-    })
-  end
-  _CachedGithubStars.max_length = max_length
-end
-
--- Start a new asynchronous job to collect the user GitHub stars using
--- GitHub's CLI tool `gh`.
----@param opts table picker opts table
-local function collect_github_stars(opts)
-  job {
-    cmd = "gh",
-    args = { "api", "user/starred", "--paginate", "--cache", "24h" },
-    on_exit = function(result)
-      if result.code > 0 then
-        dm.notify("Telescope", result.stderr, 4)
-        return
-      end
-      parse_data(result.stdout)
-      github_stars(opts)
-    end,
-  }
-end
-
 -- Defines the action to open the selection in the browser.
 local function open_in_browser(prompt_bufnr)
   local selection = action_state.get_selected_entry()
@@ -78,11 +33,11 @@ end
 -- Default action (<CR>) will open the GitHub URL in the default browser.
 ---@opts table
 ---@return nil
-github_stars = function(opts)
+local function github_stars(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    return collect_github_stars(opts)
+    return dm.notify("Telescope", "GitHub stars are not cached yet", 3)
   end
 
   local displayer = entry_display.create {
