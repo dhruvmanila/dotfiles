@@ -136,7 +136,7 @@ cmp.setup {
     { name = "luasnip" },
     {
       name = "buffer",
-      opts = {
+      options = {
         -- Provide suggestions from all the visible buffers.
         ---@return number[]
         get_bufnrs = function()

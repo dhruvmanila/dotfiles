@@ -10,14 +10,14 @@ explain() { # {{{1
   # Explain whole commands using https://mankier.com
   local api_url
   api_url="https://www.mankier.com/api/v2/explain/?cols=$(($(tput cols) - 3))"
-  if (($# == 0)); then
+  if (( $# == 0 )); then
     while read -r "$(printf "?\e[1;37mCommand: \e[0m")" cmd; do
       if [[ "$cmd" == "" ]]; then
         break
       fi
       curl -s --get "$api_url" --data-urlencode "q=$cmd"
     done
-  elif (($# == 1)); then
+  elif (( $# == 1 )); then
     curl -s --get "$api_url" --data-urlencode "q=$*"
   else
     echo "Usage:"
@@ -78,7 +78,7 @@ n() { # {{{1
 o() { # {{{1
   # `o` with no arguments opens the current directory, otherwise opens the given
   # location.
-  if [ $# -eq 0 ]; then
+  if (( $# == 0 )); then
     open .
   else
     open "$@"
@@ -121,7 +121,7 @@ py-kernel() { # {{{1
   # for individual environments.
   #
   # $1 (string): name and display name of the kernal
-  if [[ -z "$1" ]]; then
+  if (( $# != 1 )); then
     echo "Usage: $0 <name>"
     return 1
   elif [[ -z "$VIRTUAL_ENV" ]]; then
@@ -141,7 +141,7 @@ py-upgrade-venv() { # {{{1
   if [[ -z "$VIRTUAL_ENV" ]]; then
     echo "$0: not in a virtual environment"
     return 1
-  elif [[ -z "$1" ]]; then
+  elif (( $# != 1 )); then
     echo "Usage: $0 <version>"
     return 1
   fi
