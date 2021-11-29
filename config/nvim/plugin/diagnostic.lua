@@ -2,20 +2,17 @@ local icons = dm.icons
 local nnoremap = dm.nnoremap
 local vdiagnostic = vim.diagnostic
 
-do
-  local prefix = "DiagnosticSign"
+-- Icon and highlight information for each diagnostic severity.
+---@type { icon: string, hl: string }[]
+local severity_info = {
+  { icon = icons.error, hl = "DiagnosticSignError" },
+  { icon = icons.warn, hl = "DiagnosticSignWarn" },
+  { icon = icons.hint, hl = "DiagnosticSignHint" },
+  { icon = icons.info, hl = "DiagnosticSignInfo" },
+}
 
-  local severity_icons = {
-    Error = icons.error,
-    Warn = icons.warn,
-    Info = icons.info,
-    Hint = icons.hint,
-  }
-
-  for severity, icon in pairs(severity_icons) do
-    local name = prefix .. severity
-    vim.fn.sign_define(name, { text = icon, texthl = name })
-  end
+for _, info in ipairs(severity_info) do
+  vim.fn.sign_define(info.hl, { text = info.icon, texthl = info.hl })
 end
 
 -- Format the diagnostic message to include the `code` value.
@@ -31,6 +28,15 @@ local function format_diagnostic(diagnostic)
   return message
 end
 
+-- Prefix each diagnostic in the floating window with an appropriate icon.
+---@param diagnostic table
+---@return string #icon as per the diagnostic severity
+---@return string #highlight group as per the diagnostic severity
+local function prefix_diagnostic(diagnostic)
+  local info = severity_info[diagnostic.severity]
+  return info.icon .. " ", info.hl
+end
+
 -- Global diagnostic configuration.
 vdiagnostic.config {
   underline = false,
@@ -38,9 +44,10 @@ vdiagnostic.config {
   signs = true,
   severity_sort = true,
   float = {
-    show_header = false,
+    header = false,
     source = "always",
     format = format_diagnostic,
+    prefix = prefix_diagnostic,
   },
 }
 
