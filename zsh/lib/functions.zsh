@@ -6,6 +6,17 @@ dock-apps() { # {{{1
     | sed 's/%20/ /g'
 }
 
+dsh() { # {{{1
+  # Start a bash shell for the given docker container.
+  if (( $# == 0 )); then
+    echo "Usage: $0 CONTAINER"
+    return 1
+  fi
+  container_id=$(docker ps --format='{{.ID}}' --filter name="$1" | head -1)
+  echo "==> Starting bash in $container_id..."
+  docker exec --interactive --tty "$container_id" bash
+}
+
 explain() { # {{{1
   # Explain whole commands using https://mankier.com
   local api_url
