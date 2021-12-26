@@ -4,28 +4,8 @@ nnoremap("<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>")
 nnoremap("<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>")
 
 require("nvim-treesitter.configs").setup {
-  -- one of 'all', 'language', or a list of languages
-  ensure_installed = {
-    "bash",
-    "c",
-    "comment",
-    "cpp",
-    "css",
-    "dockerfile",
-    "go",
-    "gomod",
-    "hcl",
-    "html",
-    "javascript",
-    "json",
-    "lua",
-    "python",
-    "query",
-    "regex",
-    "ruby",
-    "toml",
-    "yaml",
-  },
+  -- one of 'all', 'maintained', or a list of languages
+  ensure_installed = "maintained",
 
   highlight = {
     enable = true,
