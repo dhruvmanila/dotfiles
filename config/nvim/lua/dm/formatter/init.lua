@@ -59,6 +59,8 @@ register("python", {
   },
 })
 
+register("go", { use_lsp = true })
+
 register("sh", {
   cmd = "shfmt",
   args = function()
