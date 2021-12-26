@@ -268,11 +268,6 @@ setopt INTERACTIVE_COMMENTS
 #     var=/Users/name/dotfiles
 setopt MAGIC_EQUAL_SUBST
 
-# On an ambiguous completion, instead of listing possibilities, insert the
-# first match immediately. This makes us enter the menu in a single Tab,
-# instead of 2.
-setopt MENU_COMPLETE
-
 # Don't push multiple copies of the same directory onto the directory stack.
 setopt PUSHD_IGNORE_DUPS
 
