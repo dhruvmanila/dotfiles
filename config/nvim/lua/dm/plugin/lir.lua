@@ -146,9 +146,25 @@ lir.setup {
     -- Mapping is similar to `nnn`
     [";c"] = require("dm.plugin.telescope").lir_cd,
   },
+  on_init = function()
+    -- These additional mappings allow us to visually select multiple items and
+    -- then copy or cut them all at once.
+    --
+    -- They need to be defined here as using the setup table only maps to normal mode.
+    dm.xnoremap("C", function()
+      clipboard_actions.copy "v"
+    end, {
+      buffer = true,
+      silent = true,
+    })
+
+    dm.xnoremap("X", function()
+      clipboard_actions.cut "v"
+    end, {
+      buffer = true,
+      silent = true,
+    })
+  end,
 }
 
 dm.nnoremap("-", require("lir.float").toggle)
-
--- Used to set keymap in ftplugin/lir.lua
-return { clipboard_actions = clipboard_actions }
