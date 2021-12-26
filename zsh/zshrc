@@ -317,7 +317,7 @@ source ~/dotfiles/zsh/lib/aliases.zsh
 # `man zshmisc /SPECIAL FUNCTIONS/;/Hook Functions`
 autoload -Uz add-zsh-hook
 
-_python_auto_venv() {
+_python_auto_venv() { # {{{2
   # Hook to activate/deactivate the Python virtual environment automagically.
   #
   # NOTE: This only works if using the builtin `venv` module and the name of
@@ -353,15 +353,35 @@ _python_auto_venv() {
   fi
 }
 
-_update_terminal_title() {
-  # `man zshmisc /SIMPLE PROMPT ESCAPES/;/Shell state`
-  print -Pn '\e]0;%1/\a'
-  #               ├─┘
-  #               └ last component of the current working directory
+_update_terminal_title_precmd() { # {{{2
+  # Update pane title when in tmux. This requires the `allow-rename` option
+  # to be turned on.
+  if [[ -n "$TMUX" ]]; then
+    print -Pn "\ek%1/\e\\"
+  else
+    # `man zshmisc /SIMPLE PROMPT ESCAPES/;/Shell state`
+    print -Pn "\e]0;%1/\a"
+    #               ├─┘
+    #               └ last component of the current working directory
+  fi
 }
 
-add-zsh-hook -Uz precmd _update_terminal_title
-add-zsh-hook -Uz chpwd _python_auto_venv
+_update_terminal_title_preexec() { # {{{2
+  setopt EXTENDED_GLOB
+
+  # Command name only, or if this is sudo or ssh, the next command.
+  local cmd="${1[(wr)^(*=*|sudo|ssh|-*)]:gs/%/%%}"
+
+  print -Pn "\e]0;$cmd\a"
+}
+# }}}2
+
+# precmd: runs before showing the prompt
+add-zsh-hook -Uz precmd _update_terminal_title_precmd
+add-zsh-hook -Uz precmd _python_auto_venv
+
+# preexec: runs before executing the command
+add-zsh-hook -Uz preexec _update_terminal_title_preexec
 
 # Key Bindings {{{1
 #
