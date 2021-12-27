@@ -49,6 +49,7 @@ end
 
 ---@param opts JobOpts
 return function(opts)
+  opts = opts or {}
   vim.validate { cmd = { opts.cmd, "s" } }
 
   -- We cannot initialize this to an empty table because it would reset the

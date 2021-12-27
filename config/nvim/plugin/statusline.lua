@@ -1,6 +1,7 @@
 local fn = vim.fn
 local api = vim.api
 local icons = dm.icons
+local job = require "dm.job"
 
 local function center(str)
   return "%=" .. str .. "%="
@@ -123,7 +124,11 @@ local DIAGNOSTIC_OPTS = {
   { severity = vim.diagnostic.severity.INFO, icon = icons.info, hl = "%6*" },
   { severity = vim.diagnostic.severity.HINT, icon = icons.hint, hl = "%7*" },
   { severity = vim.diagnostic.severity.WARN, icon = icons.warn, hl = "%8*" },
-  { severity = vim.diagnostic.severity.ERROR, icon = icons.error, hl = "%9*" },
+  {
+    severity = vim.diagnostic.severity.ERROR,
+    icon = icons.error,
+    hl = "%9*",
+  },
 }
 
 -- Return the diagnostics information if > 0.
@@ -202,31 +207,28 @@ function _G.nvim_statusline()
     .. "%*"
 end
 
--- Create a timer for the given task to be invoked every `interval` ms.
+-- Create a timer for the given callback to be invoked every `interval` ms.
 ---@param interval number (ms)
----@param task function
-local function job(interval, task)
-  vim.defer_fn(task, 100)
-  local pending_job
-  fn.timer_start(interval, function()
-    if pending_job then
-      fn.jobstop(pending_job)
-    end
-    pending_job = task()
-  end, {
-    ["repeat"] = -1,
-  })
+---@param callback function
+---@return number #timer handle (uv_timer_t)
+local function set_interval_callback(interval, callback)
+  vim.defer_fn(callback, 100)
+  local timer = vim.loop.new_timer()
+  timer:start(interval, interval, function()
+    callback()
+  end)
+  return timer
 end
 
 local function set_python_version()
-  return fn.jobstart("python --version", {
-    stdout_buffered = true,
-    on_stdout = function(_, data, _)
-      if data and data[1] ~= "" then
-        vim.g.current_python_version = data[1]
-      end
+  job {
+    cmd = "python",
+    args = { "--version" },
+    ---@param result JobResult
+    on_exit = function(result)
+      vim.g.current_python_version = result.stdout:gsub("\n", "")
     end,
-  })
+  }
 end
 
 dm.augroup("dm__statusline", {
@@ -235,7 +237,7 @@ dm.augroup("dm__statusline", {
     targets = "python",
     command = function()
       if fn.executable "python" > 0 then
-        job(5 * 1000, set_python_version)
+        set_interval_callback(5 * 1000, set_python_version)
       end
     end,
   },
