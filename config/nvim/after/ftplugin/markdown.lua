@@ -2,8 +2,9 @@ vim.cmd [[
 setlocal textwidth=80
 ]]
 
-dm.command(
+vim.api.nvim_buf_add_user_command(
+  0,
   "Preview",
   require("dm.markdown").preview,
-  { bar = true, buffer = true }
+  { bar = true }
 )

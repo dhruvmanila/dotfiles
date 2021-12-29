@@ -4,7 +4,7 @@ end
 vim.g.loaded_session = true
 
 local fn = vim.fn
-local command = dm.command
+local api = vim.api
 
 local session = require "dm.session"
 
@@ -25,18 +25,20 @@ dm.augroup("dm__session_persistence", {
   },
 })
 
--- We will save the function in our global namespace, so that Vim can acess it
--- from the command-line to get the completion candidates.
-dm._session_list = session.list
+local function session_function_factory(function_name)
+  return function(opts)
+    session[function_name](opts.args)
+  end
+end
 
 do
-  local opts = { nargs = 1, complete = "customlist,v:lua.dm._session_list" }
+  local opts = { nargs = 1, complete = session.list }
 
-  command("SClose", session.close)
-  command("SDelete", session.delete, opts)
-  command("SLoad", session.load, opts)
-  command("SRename", session.rename, opts)
-  command("SSave", session.save, opts)
+  api.nvim_add_user_command("SClose", session.close, {})
+  api.nvim_add_user_command("SDelete", session_function_factory "delete", opts)
+  api.nvim_add_user_command("SLoad", session_function_factory "load", opts)
+  api.nvim_add_user_command("SRename", session_function_factory "rename", opts)
+  api.nvim_add_user_command("SSave", session_function_factory "save", opts)
 end
 
 -- One caveat for storing 'curdir': {{{

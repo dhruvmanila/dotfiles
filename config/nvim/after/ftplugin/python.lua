@@ -7,8 +7,8 @@ vim.b.slime_cell_delimiter = "# %%"
 opt_local.makeprg = "python3 %"
 opt_local.formatprg = "black --quiet - | isort --quiet --profile=black -"
 
-dm.command("PyDoc", function(word, mods)
-  mods = mods or ""
+api.nvim_buf_add_user_command(0, "PyDoc", function(opts)
+  local word = opts.args
 
   -- Extract the 'word' at the cursor {{{
   --
@@ -21,7 +21,7 @@ dm.command("PyDoc", function(word, mods)
   --
   -- With the cursor at ^ this returns 'xml'; at ! it returns 'xml.dom'.
   -- }}}
-  if not word or word == "" then
+  if word == "" then
     local _, col = unpack(api.nvim_win_get_cursor(0))
     local line = api.nvim_get_current_line()
     word = line:sub(0, col):match "[%w_.]*$" .. line:match("^[%w_]*", col + 1)
@@ -48,7 +48,7 @@ dm.command("PyDoc", function(word, mods)
     return dm.notify("PyDoc", lines[1])
   end
 
-  vim.cmd(mods .. " split __doc__")
+  vim.cmd(opts.mods .. " split __doc__")
   vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
   vim.bo.readonly = true
   vim.bo.modifiable = false
@@ -56,7 +56,6 @@ dm.command("PyDoc", function(word, mods)
   vim.bo.filetype = "man"
   vim.bo.bufhidden = "wipe"
 end, {
-  buffer = true,
   nargs = "?",
 })
 
