@@ -77,12 +77,11 @@ local function git_branch()
 end
 
 -- Return the Python version and virtual environment name if we are in any.
----@param ctx table
 ---@return string
-local function python_version(ctx)
-  local env = os.getenv "VIRTUAL_ENV"
+local function python_version()
+  local env = vim.g.current_python_venv_name
   local version = vim.g.current_python_version
-  env = env and "(" .. fn.fnamemodify(env, ":t") .. ") " or ""
+  env = env and "(" .. env .. ") " or ""
   version = version and " " .. version .. " " or ""
   return version .. env
 end
@@ -94,7 +93,7 @@ local function filetype(ctx)
   if ft == "" then
     return ""
   elseif ft == "python" then
-    return python_version(ctx)
+    return python_version()
   end
   return " " .. ft .. " "
 end
@@ -231,6 +230,23 @@ local function set_python_version()
   }
 end
 
+-- Set the current Python virtual environment name if we are in one.
+local function set_python_venv_name()
+  local dir = os.getenv "VIRTUAL_ENV"
+  if dir then
+    for line in io.lines(dir .. "/pyvenv.cfg") do
+      local match = line:match "^prompt = '(.*)'$"
+      if match then
+        vim.g.current_python_venv_name = match
+      end
+    end
+    -- Fallback to the directory name.
+    if not vim.g.current_python_venv_name then
+      vim.g.current_python_venv_name = fn.fnamemodify(dir, ":t")
+    end
+  end
+end
+
 dm.augroup("dm__statusline", {
   {
     events = "FileType",
@@ -239,6 +255,7 @@ dm.augroup("dm__statusline", {
       if fn.executable "python" > 0 then
         set_interval_callback(5 * 1000, set_python_version)
       end
+      set_interval_callback(5 * 1000, set_python_venv_name)
     end,
   },
 })
