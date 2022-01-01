@@ -52,23 +52,33 @@ vdiagnostic.config {
 }
 
 -- For all types of diagnostics: `[d`, `]d`
-nnoremap("[d", wrap(vdiagnostic.goto_prev, { float = { focusable = false } }))
-nnoremap("]d", wrap(vdiagnostic.goto_next, { float = { focusable = false } }))
+nnoremap(
+  "[d",
+  partial(vdiagnostic.goto_prev, {
+    float = { focusable = false },
+  })
+)
+nnoremap(
+  "]d",
+  partial(vdiagnostic.goto_next, {
+    float = { focusable = false },
+  })
+)
 
 -- For warning and error diagnostics: `[w`, `]w`
 nnoremap(
   "[w",
-  wrap(vdiagnostic.goto_prev, {
+  partial(vdiagnostic.goto_prev, {
     float = { focusable = false },
     severity = { min = vdiagnostic.severity.WARN },
   })
 )
 nnoremap(
   "]w",
-  wrap(vdiagnostic.goto_next, {
+  partial(vdiagnostic.goto_next, {
     float = { focusable = false },
     severity = { min = vdiagnostic.severity.WARN },
   })
 )
 
-nnoremap("<leader>l", wrap(vdiagnostic.open_float, 0, { scope = "line" }))
+nnoremap("<leader>l", partial(vdiagnostic.open_float, 0, { scope = "line" }))

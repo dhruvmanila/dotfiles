@@ -94,8 +94,8 @@ cmp.setup {
     end,
   },
   mapping = {
-    ["<Tab>"] = cmp.mapping(tab, { "i", "s" }),
-    ["<S-Tab>"] = cmp.mapping(shift_tab, { "i", "s" }),
+    ["<C-n>"] = cmp.mapping(tab, { "i", "s" }),
+    ["<C-p>"] = cmp.mapping(shift_tab, { "i", "s" }),
     ["<C-e>"] = cmp.mapping(c_e, { "i", "s" }),
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
@@ -105,8 +105,8 @@ cmp.setup {
     -- Disable some default mappings which comes in the way on the command-line.
     -- This is most likely temporary as I haven't yet experimented with the
     -- command-line completion feature.
-    ["<C-p>"] = cmp.config.disable,
-    ["<C-n>"] = cmp.config.disable,
+    ["<Tab>"] = cmp.config.disable,
+    ["<S-Tab>"] = cmp.config.disable,
     ["<C-y>"] = cmp.config.disable,
     ["<Up>"] = cmp.config.disable,
     ["<Down>"] = cmp.config.disable,

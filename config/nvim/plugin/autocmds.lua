@@ -145,7 +145,7 @@ do
     {
       events = "InsertLeave",
       targets = "*",
-      command = wrap(set_colorcolumn, true),
+      command = partial(set_colorcolumn, true),
     },
   })
 end
@@ -212,7 +212,7 @@ do
         "WinEnter",
       },
       targets = "*",
-      command = wrap(set_cursorline, true),
+      command = partial(set_cursorline, true),
     },
     {
       events = {
