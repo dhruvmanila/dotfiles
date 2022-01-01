@@ -1,9 +1,10 @@
 local fn = vim.fn
 local api = vim.api
+local nvim_add_user_command = api.nvim_add_user_command
 
 -- BufOnly {{{1
 
-api.nvim_add_user_command("BufOnly", function()
+nvim_add_user_command("BufOnly", function()
   local deleted, modified = 0, 0
   local curr_buf = api.nvim_get_current_buf()
   for _, bufnr in ipairs(api.nvim_list_bufs()) do
@@ -24,12 +25,13 @@ api.nvim_add_user_command("BufOnly", function()
     dm.notify("BufOnly", info)
   end
 end, {
-  desc = "Delete all the buffers except the current buffer while ignoring any terminal buffers.",
+  force = true,
+  desc = "Delete all but the current buffer (ignores terminal buffers)",
 })
 
 -- LspClient {{{1
 
-api.nvim_add_user_command("LspClient", function(opts)
+nvim_add_user_command("LspClient", function(opts)
   local info
   if opts.args ~= "" then
     info = vim.lsp.get_client_by_id(opts.args)
@@ -38,11 +40,13 @@ api.nvim_add_user_command("LspClient", function(opts)
   end
   print(vim.inspect(info))
 end, {
+  force = true,
   nargs = "?",
   complete = function()
+    -- https://github.com/neovim/nvim-lspconfig/blob/master/plugin/lspconfig.vim#L10
     return lsp_get_active_client_ids()
   end,
-  desc = "Print information for given client, if given, or all clients.",
+  desc = "Print information for given client id, or all clients if none given",
 })
 
 -- LspLog {{{1
@@ -50,39 +54,44 @@ end, {
 -- Do NOT define the command as plain string because the module `vim.lsp` is
 -- expensive to load on startup.
 
-api.nvim_add_user_command("LspLog", function()
+nvim_add_user_command("LspLog", function()
   vim.cmd("botright split | resize 20 | edit + " .. vim.lsp.get_log_path())
 end, {
+  force = true,
   desc = "Open logs for the builtin LSP client",
 })
 
 -- Term / Vterm / Tterm {{{1
 
-api.nvim_add_user_command("Term", "new | wincmd J | resize -5 | term", {
+nvim_add_user_command("Term", "new | wincmd J | resize -5 | term", {
+  force = true,
   desc = "Open the terminal on the bottom occupying full width of the editor",
 })
 
-api.nvim_add_user_command("Vterm", "vnew | wincmd L | term", {
+nvim_add_user_command("Vterm", "vnew | wincmd L | term", {
+  force = true,
   desc = "Open the terminal on the right hand side occupying full height of the editor",
 })
 
-api.nvim_add_user_command("Tterm", "tabnew | term", {
+nvim_add_user_command("Tterm", "tabnew | term", {
+  force = true,
   desc = "Open the terminal in a new tab",
 })
 
 -- Todo {{{1
 
-api.nvim_add_user_command(
+nvim_add_user_command(
   "Todo",
   [[noautocmd silent! grep! 'TODO\|FIXME\|BUG\|HACK' | copen]],
   {
+    force = true,
     desc = "List out all the location where todos and other related keywords are present in the current project",
   }
 )
 
 -- TrimLines {{{1
 
-api.nvim_add_user_command("TrimLines", function()
+nvim_add_user_command("TrimLines", function()
   local pos = api.nvim_win_get_cursor(0)
   local last_line = api.nvim_buf_line_count(0)
   local last_non_blank_line = fn.prevnonblank(last_line)
@@ -94,6 +103,7 @@ api.nvim_add_user_command("TrimLines", function()
   api.nvim_win_set_cursor(0, pos)
 end, {
   bar = true,
+  force = true,
   desc = "Trim blank lines at the end of the current buffer, restoring the cursor position",
 })
 
@@ -101,11 +111,12 @@ end, {
 
 -- Purpose: Trim trailing whitespace for the current buffer, restoring the
 -- cursor position. This command can be followed by another command.
-api.nvim_add_user_command("TrimWhitespace", function()
+nvim_add_user_command("TrimWhitespace", function()
   local pos = api.nvim_win_get_cursor(0)
   vim.cmd [[keeppatterns keepjumps %s/\s\+$//e]]
   api.nvim_win_set_cursor(0, pos)
 end, {
   bar = true,
+  force = true,
   desc = "Trim trailing whitespace for the current buffer, restoring the cursor position",
 })

@@ -25,12 +25,10 @@ local function toggle_auto_formatting()
   dm.augroup("dm__auto_formatting", commands)
 end
 
-vim.api.nvim_add_user_command(
-  "ToggleAutoFormatting",
-  toggle_auto_formatting,
-  {}
-)
-vim.api.nvim_add_user_command("Format", format, {})
+vim.api.nvim_add_user_command("ToggleAutoFormatting", toggle_auto_formatting, {
+  force = true,
+})
+vim.api.nvim_add_user_command("Format", format, { force = true })
 
 dm.nnoremap(";f", "<Cmd>Format<CR>")
 

@@ -16,8 +16,7 @@ nnoremap(
 )
 
 -- Required for fugitive + rhubarb as I have disabled netrw.
-vim.api.nvim_add_user_command(
-  "Browse",
-  "call external#browser(<f-args>)",
-  { nargs = 1 }
-)
+vim.api.nvim_add_user_command("Browse", "call external#browser(<f-args>)", {
+  force = true,
+  nargs = 1,
+})

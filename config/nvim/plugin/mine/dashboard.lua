@@ -26,6 +26,9 @@ dm.augroup("dm__dashboard", {
   },
 })
 
-vim.api.nvim_add_user_command("Dashboard", dashboard.open, { bar = true })
+vim.api.nvim_add_user_command("Dashboard", dashboard.open, {
+  bar = true,
+  force = true,
+})
 
 dm.nnoremap(";d", "<Cmd>Dashboard<CR>")
