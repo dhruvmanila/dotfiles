@@ -6,12 +6,10 @@ local api = vim.api
 -- Store all callbacks in one global table so they are able to survive
 -- re-requiring this file
 _NvimGlobalCallbacks = _NvimGlobalCallbacks or {}
-_NvimKeymapCallbacks = _NvimKeymapCallbacks or {}
 
 -- Create a global namespace to store callbacks, global functions, etc.
 _G.dm = {
   _store = _NvimGlobalCallbacks,
-  _map_store = _NvimKeymapCallbacks,
 }
 
 -- If the border key is custom, then return the respective table otherwise
@@ -293,9 +291,12 @@ do
       end
 
       if opts.buffer then
-        local buffer = opts.buffer
+        local bufnr = opts.buffer
+        if bufnr == true then
+          bufnr = api.nvim_get_current_buf()
+        end
         opts.buffer = nil
-        vim.api.nvim_buf_set_keymap(buffer, mode, lhs, rhs, opts)
+        vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
       else
         vim.api.nvim_set_keymap(mode, lhs, rhs, opts)
       end
