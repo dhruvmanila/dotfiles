@@ -173,11 +173,11 @@ viw() { # {{{1
   # Open a CLI script in vim
   # For `pyenv`, it will resolve path using the provided command.
   # Mnemonic: (vi)m (w)hich
-  local path
-  path=$(which "$1")
-  if [[ "$path" == "$(pyenv root)/shims/"* ]]; then
-    path=$(pyenv which "$1")
+  local bin
+  bin=$(which "$1")
+  if [[ "$bin" == "$(pyenv root)/shims/"* ]]; then
+    bin=$(pyenv which "$1")
   fi
-  $EDITOR "$path"
+  $EDITOR "$bin"
 }
 
