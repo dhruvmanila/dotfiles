@@ -422,8 +422,8 @@ for _, section in ipairs { "Border", "Icon", "Title" } do
 end
 
 -- nvim-treesitter {{{2
-highlight("TSDanger", { fg = palette.bg0, bg = palette.red, gui = "bold" })
-highlight("TSWarning", { fg = palette.bg0, bg = palette.yellow, gui = "bold" })
+highlight("TSDanger", { fg = palette.red, gui = "bold" })
+highlight("TSWarning", { fg = palette.yellow, gui = "bold" })
 link("TSConstant", "Fg")
 link("TSConstBuiltin", "BlueItalic")
 link("TSConstMacro", "BlueItalic")
