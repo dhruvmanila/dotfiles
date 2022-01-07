@@ -58,11 +58,11 @@ dm.icons = {
 }
 
 ---@generic T
----@param v T
+---@param ... T
 ---@return T
-P = function(v)
-  print(vim.inspect(v))
-  return v
+P = function(...)
+  vim.pretty_print(...)
+  return ...
 end
 
 -- Clear the 'require' cache and 'luacache' for the module name.
@@ -76,13 +76,6 @@ end
 R = function(name)
   RELOAD(name)
   return require(name)
-end
-
--- Dump the contents of the given arguments.
----@vararg any
-function _G.dump(...)
-  local objects = vim.tbl_map(vim.inspect, { ... })
-  print(table.concat(objects, "\n"))
 end
 
 do
