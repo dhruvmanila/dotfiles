@@ -106,35 +106,6 @@ do
   }
 end
 
--- Return a new function which when called will behave like func called with
--- the arguments args. If more arguments are supplied to the call, they are
--- appended to args.
---
--- It is used for partial function application which "freezes" some portion of
--- a function's arguments resulting in a new object with a simplified
--- signature.
---
--- ```lua
--- local hello = partial(function(a, b, c)
---   print(a, b, c)
--- end, "hello")
---
--- hello("world")                    -- output: hello world nil
--- hello("world", "cool")            -- output: hello world cool
--- hello("world", "cool", "ignored") -- output: hello world cool
--- ```
----@param func function
----@param ... any
----@return fun(...): any
-function _G.partial(func, ...)
-  vim.validate { func = { func, "function" } }
-  local args = { ... }
-  return function(...)
-    vim.list_extend(args, { ... })
-    return func(unpack(args))
-  end
-end
-
 do
   local notify
 
