@@ -1,6 +1,5 @@
 local lsp = vim.lsp
-local nnoremap = dm.nnoremap
-local xnoremap = dm.xnoremap
+local keymap = vim.keymap
 
 local lspconfig = require "lspconfig"
 local servers = require "dm.lsp.servers"
@@ -27,7 +26,10 @@ do
       max_height = math.min(math.floor(vim.o.lines * 0.3), 30),
     })
     local bufnr, winnr = default(contents, syntax, opts)
-    nnoremap("q", "<Cmd>bdelete<CR>", { buffer = bufnr, nowait = true })
+    keymap.set("n", "q", "<Cmd>bdelete<CR>", {
+      buffer = bufnr,
+      nowait = true,
+    })
     -- As per `:h 'showbreak'`, the value should be a literal "NONE".
     vim.wo[winnr].showbreak = "NONE"
     return bufnr, winnr
@@ -49,39 +51,39 @@ local function custom_on_attach(client, bufnr)
   local opts = { buffer = bufnr }
 
   if capabilities.hover then
-    nnoremap("K", lsp.buf.hover, opts)
+    keymap.set("n", "K", lsp.buf.hover, opts)
   end
 
   if capabilities.goto_definition then
-    nnoremap("gd", lsp.buf.definition, opts)
-    nnoremap("<leader>pd", preview.definition, opts)
+    keymap.set("n", "gd", lsp.buf.definition, opts)
+    keymap.set("n", "<leader>pd", preview.definition, opts)
   end
 
   if capabilities.declaration then
-    nnoremap("gD", lsp.buf.declaration, opts)
-    nnoremap("<leader>pD", preview.declaration, opts)
+    keymap.set("n", "gD", lsp.buf.declaration, opts)
+    keymap.set("n", "<leader>pD", preview.declaration, opts)
   end
 
   if capabilities.type_definition then
-    nnoremap("gy", lsp.buf.type_definition, opts)
-    nnoremap("<leader>py", preview.type_definition, opts)
+    keymap.set("n", "gy", lsp.buf.type_definition, opts)
+    keymap.set("n", "<leader>py", preview.type_definition, opts)
   end
 
   if capabilities.implementation then
-    nnoremap("gi", lsp.buf.implementation, opts)
-    nnoremap("<leader>pi", preview.implementation, opts)
+    keymap.set("n", "gi", lsp.buf.implementation, opts)
+    keymap.set("n", "<leader>pi", preview.implementation, opts)
   end
 
   if capabilities.find_references then
-    nnoremap("gr", lsp.buf.references, opts)
+    keymap.set("n", "gr", lsp.buf.references, opts)
   end
 
   if capabilities.rename then
-    nnoremap("<leader>rn", lsp.buf.rename, opts)
+    keymap.set("n", "<leader>rn", lsp.buf.rename, opts)
   end
 
   if capabilities.signature_help then
-    nnoremap("<C-s>", lsp.buf.signature_help, opts)
+    keymap.set("n", "<C-s>", lsp.buf.signature_help, opts)
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
@@ -105,8 +107,8 @@ local function custom_on_attach(client, bufnr)
       command = require("dm.lsp.code_action").code_action_listener,
     })
 
-    nnoremap("<leader>ca", lsp.buf.code_action, opts)
-    xnoremap("<leader>ca", lsp.buf.range_code_action, opts)
+    keymap.set("n", "<leader>ca", lsp.buf.code_action, opts)
+    keymap.set("x", "<leader>ca", lsp.buf.range_code_action, opts)
   end
 
   -- Set the LSP autocmds

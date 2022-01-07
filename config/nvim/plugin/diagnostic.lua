@@ -1,6 +1,5 @@
 local icons = dm.icons
-local nnoremap = dm.nnoremap
-local vdiagnostic = vim.diagnostic
+local keymap = vim.keymap
 
 -- Icon and highlight information for each diagnostic severity.
 ---@type { icon: string, hl: string }[]
@@ -38,7 +37,7 @@ local function prefix_diagnostic(diagnostic)
 end
 
 -- Global diagnostic configuration.
-vdiagnostic.config {
+vim.diagnostic.config {
   underline = false,
   virtual_text = false,
   signs = true,
@@ -52,33 +51,31 @@ vdiagnostic.config {
 }
 
 -- For all types of diagnostics: `[d`, `]d`
-nnoremap(
-  "[d",
-  partial(vdiagnostic.goto_prev, {
+keymap.set("n", "[d", function()
+  vim.diagnostic.goto_prev {
     float = { focusable = false },
-  })
-)
-nnoremap(
-  "]d",
-  partial(vdiagnostic.goto_next, {
+  }
+end)
+keymap.set("n", "]d", function()
+  vim.diagnostic.goto_next {
     float = { focusable = false },
-  })
-)
+  }
+end)
 
 -- For warning and error diagnostics: `[w`, `]w`
-nnoremap(
-  "[w",
-  partial(vdiagnostic.goto_prev, {
+keymap.set("n", "[w", function()
+  vim.diagnostic.goto_prev {
     float = { focusable = false },
-    severity = { min = vdiagnostic.severity.WARN },
-  })
-)
-nnoremap(
-  "]w",
-  partial(vdiagnostic.goto_next, {
+    severity = { min = vim.diagnostic.severity.WARN },
+  }
+end)
+keymap.set("n", "]w", function()
+  vim.diagnostic.goto_next {
     float = { focusable = false },
-    severity = { min = vdiagnostic.severity.WARN },
-  })
-)
+    severity = { min = vim.diagnostic.severity.WARN },
+  }
+end)
 
-nnoremap("<leader>l", partial(vdiagnostic.open_float, 0, { scope = "line" }))
+keymap.set("n", "<leader>l", function()
+  vim.diagnostic.open_float { scope = "line" }
+end)

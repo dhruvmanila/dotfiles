@@ -1,5 +1,4 @@
 local api = vim.api
-local nnoremap = dm.nnoremap
 
 local dap = require "dap"
 local dap_python = require "dap-python"
@@ -17,13 +16,13 @@ dap_python.setup(vim.loop.os_homedir() .. "/.neovim/py3/bin/python3", {
   include_configs = true,
 })
 
-nnoremap("<leader>dl", dap.run_last)
-nnoremap("<leader>dc", dap.continue)
-nnoremap("<leader>ds", dap.step_over)
-nnoremap("<leader>di", dap.step_into)
-nnoremap("<leader>do", dap.step_out)
-nnoremap("<leader>dr", dap.repl.toggle)
-nnoremap("<leader>db", dap.toggle_breakpoint)
+vim.keymap.set("n", "<leader>dl", dap.run_last)
+vim.keymap.set("n", "<leader>dc", dap.continue)
+vim.keymap.set("n", "<leader>ds", dap.step_over)
+vim.keymap.set("n", "<leader>di", dap.step_into)
+vim.keymap.set("n", "<leader>do", dap.step_out)
+vim.keymap.set("n", "<leader>dr", dap.repl.toggle)
+vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
 
 do
   local keymap_restore = {}
@@ -34,12 +33,12 @@ do
       for _, keymap in pairs(keymaps) do
         if keymap.lhs == "K" then
           table.insert(keymap_restore, keymap)
-          api.nvim_buf_del_keymap(bufnr, "n", "K")
+          vim.keymap.del("n", "K", { buffer = bufnr })
         end
       end
     end
 
-    nnoremap("K", function()
+    vim.keymap.set("n", "K", function()
       require("dap.ui.widgets").hover(
         nil,
         { border = dm.border[vim.g.border_style] }
@@ -49,13 +48,11 @@ do
 
   dap.listeners.after["event_terminated"]["dm"] = function()
     for _, keymap in pairs(keymap_restore) do
-      api.nvim_buf_set_keymap(
-        keymap.buffer,
-        keymap.mode,
-        keymap.lhs,
-        keymap.rhs,
-        { noremap = keymap.noremap == 1, silent = keymap.silent == 1 }
-      )
+      vim.keymap.set(keymap.mode, keymap.lhs, keymap.rhs, {
+        noremap = keymap.noremap == 1,
+        silent = keymap.silent == 1,
+        buffer = keymap.buffer,
+      })
     end
     keymap_restore = {}
   end

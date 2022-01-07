@@ -8,9 +8,6 @@ local themes = require "telescope.themes"
 
 local parsers = require "nvim-treesitter.parsers"
 
-local nnoremap = dm.nnoremap
-local xnoremap = dm.xnoremap
-
 -- Custom actions {{{1
 
 -- Namespace to hold custom actions
@@ -147,6 +144,7 @@ telescope.setup {
     bookmarks = {
       selected_browser = "brave",
       url_open_command = "open",
+      full_path = false,
     },
     websearch = {
       search_engine = "duckduckgo",
@@ -174,8 +172,8 @@ require("dm.gh").collect_stars()
 
 -- We cannot bind every builtin picker to a keymap and so this will help us
 -- when we are in need of a rarely used picker.
-nnoremap(";t", builtin.builtin)
-nnoremap("<leader>fr", builtin.resume)
+vim.keymap.set("n", ";t", builtin.builtin)
+vim.keymap.set("n", "<leader>fr", builtin.resume)
 
 -- What's the difference between `git_files` and `find_files`? {{{
 --
@@ -197,15 +195,15 @@ local function find_files()
   end
 end
 
-nnoremap("<C-p>", find_files)
-nnoremap("<leader>;", builtin.buffers)
-nnoremap("<leader>fl", builtin.current_buffer_fuzzy_find)
+vim.keymap.set("n", "<C-p>", find_files)
+vim.keymap.set("n", "<leader>;", builtin.buffers)
+vim.keymap.set("n", "<leader>fl", builtin.current_buffer_fuzzy_find)
 
-nnoremap("<leader>rg", builtin.live_grep)
+vim.keymap.set("n", "<leader>rg", builtin.live_grep)
 
 -- Smart tags picker which uses either the LSP symbols, treesitter symbols or
 -- buffer tags, whichever is available first.
-nnoremap("<leader>ft", function()
+vim.keymap.set("n", "<leader>ft", function()
   if #vim.lsp.buf_get_clients(0) > 0 then
     builtin.lsp_document_symbols()
   elseif parsers.has_parser() then
@@ -215,18 +213,18 @@ nnoremap("<leader>ft", function()
   end
 end)
 
-nnoremap(";b", builtin.git_branches)
-nnoremap("<leader>gc", builtin.git_commits)
-nnoremap("<leader>bc", builtin.git_bcommits)
+vim.keymap.set("n", ";b", builtin.git_branches)
+vim.keymap.set("n", "<leader>gc", builtin.git_commits)
+vim.keymap.set("n", "<leader>bc", builtin.git_bcommits)
 
-nnoremap("<leader>fh", builtin.help_tags)
-nnoremap("<leader>fc", builtin.commands)
-nnoremap("<leader>:", builtin.command_history)
-nnoremap("<leader>/", builtin.search_history)
+vim.keymap.set("n", "<leader>fh", builtin.help_tags)
+vim.keymap.set("n", "<leader>fc", builtin.commands)
+vim.keymap.set("n", "<leader>:", builtin.command_history)
+vim.keymap.set("n", "<leader>/", builtin.search_history)
 
 -- Custom pickers {{{2
 
-nnoremap("<leader>fd", function()
+vim.keymap.set("n", "<leader>fd", function()
   builtin.git_files {
     prompt_title = "Find dotfiles",
     cwd = "~/dotfiles",
@@ -234,7 +232,7 @@ nnoremap("<leader>fd", function()
 end)
 
 -- This is mainly to avoid .gitignore patterns.
-nnoremap("<leader>fa", function()
+vim.keymap.set("n", "<leader>fa", function()
   builtin.find_files {
     prompt_title = "Find All Files",
     hidden = true,
@@ -244,7 +242,7 @@ nnoremap("<leader>fa", function()
   }
 end)
 
-nnoremap("<leader>rp", function()
+vim.keymap.set("n", "<leader>rp", function()
   local pattern = vim.fn.input "Grep pattern ❯ "
   if pattern ~= "" then
     builtin.grep_string {
@@ -255,7 +253,7 @@ nnoremap("<leader>rp", function()
   end
 end)
 
-nnoremap("<leader>rw", function()
+vim.keymap.set("n", "<leader>rw", function()
   local word = vim.fn.expand "<cword>"
   builtin.grep_string {
     prompt_title = ("Find word » %s «"):format(word),
@@ -263,11 +261,11 @@ nnoremap("<leader>rw", function()
   }
 end)
 
-xnoremap("<leader>rw", function()
+vim.keymap.set("n", "<leader>rw", function()
   -- TODO: grep for visual selection
 end)
 
-nnoremap("<leader>rW", function()
+vim.keymap.set("n", "<leader>rW", function()
   local word = vim.fn.expand "<cWORD>"
   builtin.grep_string {
     prompt_title = ("Find WORD » %s «"):format(word),
@@ -278,29 +276,29 @@ end)
 -- Extensions {{{2
 
 -- Gaze the stars with the power of telescope.
-nnoremap("<leader>gs", function()
+vim.keymap.set("n", "<leader>gs", function()
   telescope.extensions.github_stars.github_stars()
 end)
 
 -- List out all the installed plugins and provide action to either go to the
 -- GitHub page of the plugin or find files within the plugin using telescope.
-nnoremap("<leader>fp", function()
+vim.keymap.set("n", "<leader>fp", function()
   telescope.extensions.installed_plugins.installed_plugins(dropdown_list)
 end)
 
 -- Fuzzy find over your browser bookmarks.
-nnoremap("<leader>fb", function()
+vim.keymap.set("n", "<leader>fb", function()
   telescope.extensions.bookmarks.bookmarks()
 end)
 
 -- Using `ddgr/googler` search the web and fuzzy find through the results and
 -- open them up in the browser.
-nnoremap("<leader>fw", function()
+vim.keymap.set("n", "<leader>fw", function()
   telescope.extensions.websearch.websearch()
 end)
 
 -- This is wrapped inside a function to avoid loading telescope modules.
-nnoremap("<leader>fi", function()
+vim.keymap.set("n", "<leader>fi", function()
   telescope.extensions.icons.icons()
 end)
 
@@ -318,7 +316,7 @@ local function sessions()
   telescope.extensions.sessions.sessions(dropdown_list)
 end
 
-nnoremap("<leader>fs", sessions)
+vim.keymap.set("n", "<leader>fs", sessions)
 
 -- }}}2
 -- }}}1

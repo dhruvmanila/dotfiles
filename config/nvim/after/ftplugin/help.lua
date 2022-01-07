@@ -1,7 +1,6 @@
 local fn = vim.fn
 local api = vim.api
 local autocmd = dm.autocmd
-local nnoremap = dm.nnoremap
 
 -- Options {{{1
 
@@ -60,11 +59,11 @@ end
 
 local opts = { buffer = true, nowait = true }
 
-nnoremap("q", "<Cmd>quit<CR>", opts)
-nnoremap("<CR>", "<C-]>", opts)
-nnoremap("<BS>", "<C-T>", opts)
+vim.keymap.set("n", "q", "<Cmd>quit<CR>", opts)
+vim.keymap.set("n", "<CR>", "<C-]>", opts)
+vim.keymap.set("n", "<BS>", "<C-T>", opts)
 
-nnoremap("p", function()
+vim.keymap.set("n", "p", function()
   local ok, err = pcall(vim.cmd, "wincmd }")
   if not ok then
     dm.notify("Help Preview", err, 4)

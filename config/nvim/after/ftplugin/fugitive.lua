@@ -1,7 +1,3 @@
-local api = vim.api
-local nmap = dm.nmap
-local nnoremap = dm.nnoremap
-
 vim.cmd [[
 setlocal nonumber
 setlocal norelativenumber
@@ -34,7 +30,7 @@ end
 -- by looking at the position of the window.
 ---@return boolean
 local function is_vertical_fugitive()
-  local row, col = unpack(api.nvim_win_get_position(0))
+  local row, col = unpack(vim.api.nvim_win_get_position(0))
   return col > 0 and row == 1
 end
 
@@ -45,16 +41,17 @@ if not vertical_fugitive and has_vertical_space() then
 end
 
 local opts = { buffer = true, nowait = true }
+local ropts = { buffer = true, nowait = true, remap = true }
 
 -- Setup the keybindings to open the window in the correct split.
 if vertical_fugitive or vim.o.columns <= 140 then
-  nmap("gh", "g?", opts)
+  vim.keymap.set("n", "gh", "g?", ropts)
 else
-  nnoremap("gh", "<Cmd>vertical help fugitive-map<CR>", opts)
-  nnoremap("cc", "<Cmd>vertical Git commit<CR>", opts)
+  vim.keymap.set("n", "gh", "<Cmd>vertical help fugitive-map<CR>", opts)
+  vim.keymap.set("n", "cc", "<Cmd>vertical Git commit<CR>", opts)
 end
 
-nmap("q", "gq", opts)
+vim.keymap.set("n", "q", "gq", ropts)
 
 -- Easy toggle for inline diff
-nmap("<Tab>", "=", opts)
+vim.keymap.set("n", "<Tab>", "=", ropts)

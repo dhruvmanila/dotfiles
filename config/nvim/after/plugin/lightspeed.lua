@@ -2,10 +2,6 @@
 -- in the future, if I like the `s`/`S` behavior, I might enable it, but most
 -- likely remap it to a different key like `<leader>j`/`<leader>k`.
 
-local nunmap = dm.nunmap
-local xunmap = dm.xunmap
-local ounmap = dm.ounmap
-
 -- Why not `dm.xunmap "S"`? {{{
 --
 -- Short answer: `vim-surround` defines the 'S' map in visual mode.
@@ -15,10 +11,10 @@ local ounmap = dm.ounmap
 -- need to unmap it.
 -- }}}
 
-nunmap "s"
-nunmap "S"
-xunmap "s"
-ounmap "z"
+vim.keymap.del("n", "s")
+vim.keymap.del("n", "S")
+vim.keymap.del("x", "s")
+vim.keymap.del("o", "z")
 
 -- Setting lightspeed options via the `opts` table directly
 local opts = require("lightspeed").opts

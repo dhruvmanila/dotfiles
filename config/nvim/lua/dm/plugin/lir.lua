@@ -151,14 +151,14 @@ lir.setup {
     -- then copy or cut them all at once.
     --
     -- They need to be defined here as using the setup table only maps to normal mode.
-    dm.xnoremap("C", function()
+    vim.keymap.set("x", "C", function()
       clipboard_actions.copy "v"
     end, {
       buffer = true,
       silent = true,
     })
 
-    dm.xnoremap("X", function()
+    vim.keymap.set("x", "X", function()
       clipboard_actions.cut "v"
     end, {
       buffer = true,
@@ -167,4 +167,4 @@ lir.setup {
   end,
 }
 
-dm.nnoremap("-", require("lir.float").toggle)
+vim.keymap.set("n", "-", require("lir.float").toggle)

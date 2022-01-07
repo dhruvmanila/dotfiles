@@ -31,4 +31,4 @@ vim.api.nvim_add_user_command("Dashboard", dashboard.open, {
   force = true,
 })
 
-dm.nnoremap(";d", "<Cmd>Dashboard<CR>")
+vim.keymap.set("n", ";d", "<Cmd>Dashboard<CR>")

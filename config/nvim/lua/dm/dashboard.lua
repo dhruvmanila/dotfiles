@@ -224,13 +224,13 @@ local cursor = {
 --   - `key`: open the entry for the registered entry
 local function setup_mappings()
   local opts = { buffer = true, nowait = true }
-  dm.nnoremap("q", close, opts)
+  vim.keymap.set("n", "q", close, opts)
   for _, entry in ipairs(entries) do
     local command = entry.command
     if type(command) == "string" then
       command = "<Cmd>" .. command .. "<CR>"
     end
-    dm.nnoremap(entry.key, command, opts)
+    vim.keymap.set("n", entry.key, command, opts)
   end
 end
 

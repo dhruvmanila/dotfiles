@@ -1,3 +1,3 @@
-dm.nnoremap("<leader>cc", "<Cmd>ColorizerToggle<CR>")
+vim.keymap.set("n", "<leader>cc", "<Cmd>ColorizerToggle<CR>")
 
 require("colorizer").setup { "css", "html", "lua", "vim" }

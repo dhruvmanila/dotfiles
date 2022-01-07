@@ -1,6 +1,5 @@
 local fn = vim.fn
 local api = vim.api
-local nnoremap = dm.nnoremap
 
 -- Autosize quickfix to match its minimum content
 -- https://vim.fandom.com/wiki/Automatically_fitting_a_quickfix_window_height
@@ -12,9 +11,11 @@ local function adjust_height(minheight, maxheight)
   api.nvim_win_set_height(0, height)
 end
 
-nnoremap("q", "<Cmd>quit<CR>", { buffer = true, nowait = true })
-nnoremap("o", "<CR>", { buffer = true, nowait = true })
-nnoremap("O", "<CR><Cmd>cclose<CR>", { buffer = true, nowait = true })
+local opts = { buffer = true, nowait = true }
+
+vim.keymap.set("n", "q", "<Cmd>quit<CR>", opts)
+vim.keymap.set("n", "o", "<CR>", opts)
+vim.keymap.set("n", "O", "<CR><Cmd>cclose<CR>", opts)
 
 -- Position the (global) quickfix window at the very bottom of the window
 -- (useful for making sure that it appears underneath splits).

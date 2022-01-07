@@ -60,6 +60,6 @@ end, {
 })
 
 -- Similar to how `gf` works with a different keymap of `gK` for vertical split.
-dm.nnoremap("gk", "<Cmd>PyDoc<CR>", { buffer = true })
-dm.nnoremap("gK", "<Cmd>vertical PyDoc<CR>", { buffer = true })
-dm.nnoremap("<C-w>gk", "<Cmd>tab PyDoc<CR>", { buffer = true })
+vim.keymap.set("n", "gk", "<Cmd>PyDoc<CR>", { buffer = true })
+vim.keymap.set("n", "gK", "<Cmd>vertical PyDoc<CR>", { buffer = true })
+vim.keymap.set("n", "<C-w>gk", "<Cmd>tab PyDoc<CR>", { buffer = true })
