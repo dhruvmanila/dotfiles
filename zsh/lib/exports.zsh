@@ -1,5 +1,3 @@
-export DOTFILES="${HOME}/dotfiles"
-
 # EDITOR {{{1
 
 # Make Neovim the default editor.
