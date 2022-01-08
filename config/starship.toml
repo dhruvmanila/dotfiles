@@ -13,7 +13,7 @@ min_time = 10_000
 [directory]
 read_only = " "
 truncate_to_repo = false
-truncation_symbol = ".../"
+truncation_symbol = "…/"
 
 [git_branch]
 symbol = " "
