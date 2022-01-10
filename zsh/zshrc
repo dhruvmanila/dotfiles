@@ -209,13 +209,13 @@ bashcompinit
 # https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org#copying-completions-from-another-command
 # }}}
 compdef viw=which
+compdef o=open
 
 # Activate third-party completions.
-# source <(kitty +complete setup zsh)
-# source <(pip completion --zsh)
+source <(pip completion --zsh)
 
 # These requires `bashcompinit`.
-# source <(register-python-argcomplete pipx) # around 100 ms to load
+# source <(register-python-argcomplete pipx)
 # complete -C aws_completer aws
 # complete -o nospace -C /usr/local/bin/terraform terraform
 
@@ -531,9 +531,21 @@ bindkey '\C-x\C-e' edit-command-line
 bindkey '\C-xh' describe-key-briefly
 
 # Completion menu navigation using "menuselect" keymap.
-bindkey -M menuselect '^J' down-line-or-history
-bindkey -M menuselect '^K' up-line-or-history
-bindkey -M menuselect '^H' backward-char
-bindkey -M menuselect '^L' forward-char
+bindkey -M menuselect '\C-j' down-line-or-history
+bindkey -M menuselect '\C-k' up-line-or-history
+bindkey -M menuselect '\C-h' backward-char
+bindkey -M menuselect '\C-l' forward-char
 
-# Abbreviations {{{1
+# We cannot bind any custom widget in the `menuselect` keymap:
+#
+#   > Note that the following always perform the same task within the menu
+#   > selection map and cannot be replaced by user defined widgets, nor can the
+#   > set of functions be extended:
+#
+# See:
+#   - `man zshmodules /THE ZSH\/COMPLIST MODULE/;/Menu selection`
+#   - https://unix.stackexchange.com/a/588002/289772
+bindkey -M menuselect '\ej' down-line-or-history
+bindkey -M menuselect '\ek' up-line-or-history
+bindkey -M menuselect -s '\C-f' '\ej\ej\ej\ej\ej'
+bindkey -M menuselect -s '\C-b' '\ek\ek\ek\ek\ek'
