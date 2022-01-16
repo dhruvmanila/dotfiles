@@ -7,7 +7,10 @@ local log = require "dm.log"
 ---@field cwd? string
 ---@field env? table<string, string>
 ---@field writer? string | string[]
+---@field detached? boolean
 ---@field on_exit? fun(result: JobResult)
+---@field on_stdout? fun(chunk: string)
+---@field on_stderr? fun(chunk: string)
 
 ---@class JobResult
 ---@field code number
@@ -30,14 +33,20 @@ end
 
 -- Reader for stdout and stderr.
 ---@param prefix '"stdout"'|'"stderr"'
+---@param user_handler fun(chunk: string)
 ---@return table
-local function reader(prefix)
+local function reader(prefix, user_handler)
   prefix = prefix:upper()
   return setmetatable({ data = "" }, {
     __call = function(self, err, chunk)
       if err then
         log.fmt_error("Error while reading %s: %s", prefix, err)
       elseif chunk then
+        if user_handler then
+          vim.schedule(function()
+            user_handler(chunk)
+          end)
+        end
         self.data = self.data .. chunk
         log.fmt_debug("Read %s: %s", prefix, chunk)
       else
@@ -73,8 +82,8 @@ return function(opts)
     end
   end
 
-  local stdout_handler = reader "stdout"
-  local stderr_handler = reader "stderr"
+  local stdout_handler = reader("stdout", opts.on_stdout)
+  local stderr_handler = reader("stderr", opts.on_stderr)
 
   local stdin = opts.writer and uv.new_pipe()
   local stdout = uv.new_pipe()
@@ -109,6 +118,7 @@ return function(opts)
     stdio = { stdin, stdout, stderr },
     cwd = opts.cwd or uv.cwd(),
     env = env,
+    detached = opts.detached,
   }, on_exit)
 
   if not handle then
