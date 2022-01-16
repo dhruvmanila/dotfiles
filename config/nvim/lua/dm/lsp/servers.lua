@@ -39,7 +39,6 @@ return {
         disableOrganizeImports = true, -- Using isort
       },
       python = {
-        venvPath = os.getenv "HOME" .. "/.pyenv",
         analysis = {
           typeCheckingMode = "off", -- Using mypy
         },

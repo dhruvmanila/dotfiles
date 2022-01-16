@@ -161,7 +161,7 @@ keymap.set({ "n", "x" }, "0", "g0")
 
 -- Jump to start (`^`) and end (`$`) of line using the home row keys.
 keymap.set({ "n", "x" }, "H", "^")
-keymap.set({ "n", "x" }, "L", "g_")
+keymap.set({ "n", "x" }, "L", "$")
 
 -- Quickfix List {{{2
 
@@ -360,11 +360,7 @@ keymap.set("o", "al", "_")
 
 -- Entire buffer
 keymap.set("x", "ie", "gg0oG$")
-keymap.set(
-  "o",
-  "ie",
-  ':<C-U>execute "normal! m`" <Bar> keepjumps normal! ggVG<CR>``'
-)
+keymap.set("o", "ie", ':<C-U>exe "norm! m`" <Bar> keepjumps norm! ggVG<CR>``')
 
 -- Terminal {{{1
 

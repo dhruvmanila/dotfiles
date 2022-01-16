@@ -45,7 +45,7 @@ end
 register("python", {
   {
     cmd = "black",
-    args = { "--fast", "--quiet", "-" },
+    args = { "--fast", "--quiet", "--target-version", "py310", "-" },
     enable = function()
       return not finder.py_ignore_projects(api.nvim_buf_get_name(0))
     end,

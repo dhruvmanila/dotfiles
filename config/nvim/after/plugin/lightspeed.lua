@@ -15,6 +15,8 @@ vim.keymap.del("n", "s")
 vim.keymap.del("n", "S")
 vim.keymap.del("x", "s")
 vim.keymap.del("o", "z")
+vim.keymap.del("x", ";")
+vim.keymap.del("o", ";")
 
 -- Setting lightspeed options via the `opts` table directly
 local opts = require("lightspeed").opts

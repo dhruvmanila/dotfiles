@@ -298,8 +298,8 @@ opt.undofile = true
 -- Set the title of the window to the value of 'titlestring'
 opt.title = true
 
--- Set the custom title string to include the filename, cwd and 'NVIM' word.
-opt.titlestring = "%t (%{fnamemodify(getcwd(), ':t')}) - NVIM"
+-- Set the custom title string
+opt.titlestring = "nvim: %t (%{fnamemodify(getcwd(), ':t')})"
 
 -- updatetime {{{1
 
