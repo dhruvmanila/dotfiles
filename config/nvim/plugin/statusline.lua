@@ -148,6 +148,20 @@ local function lsp_diagnostics(ctx)
   return result ~= "" and " " .. result or ""
 end
 
+-- Return the current status of the DAP client.
+---@return string
+local function dap_status()
+  local ok, dap = pcall(require, "dap")
+  if not ok then
+    return ""
+  end
+  local status = dap.status()
+  if status and status ~= "" then
+    return " " .. status .. " |"
+  end
+  return ""
+end
+
 ---@param ctx table
 ---@return string
 local function special_buffer_statusline(ctx)
@@ -197,6 +211,7 @@ function _G.nvim_statusline()
     .. lsp_diagnostics(ctx)
     .. "%*"
     .. "%="
+    .. dap_status()
     .. lsp_clients_and_messages(ctx)
     .. "%2*"
     .. filetype(ctx)

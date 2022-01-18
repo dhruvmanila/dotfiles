@@ -3,21 +3,26 @@ local dap = require "dap"
 local dapui = require "dapui"
 local dap_python = require "dap-python"
 
+-- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
+dap.set_log_level(vim.env.DEBUG and "debug" or "warn")
+
 vim.fn.sign_define {
   { name = "DapBreakpoint", text = "", texthl = "Orange" },
   { name = "DapStopped", text = "", texthl = "" },
 }
 
-vim.keymap.set("n", "<leader>dl", dap.run_last)
-vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
 vim.keymap.set("n", "<F5>", dap.continue)
 vim.keymap.set("n", "<F10>", dap.step_over)
 vim.keymap.set("n", "<F11>", dap.step_into)
 vim.keymap.set("n", "<F12>", dap.step_out)
-vim.keymap.set("n", "<leader>dx", dap.restart)
+vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
+vim.keymap.set("n", "<leader>dl", dap.run_last)
 vim.keymap.set("n", "<leader>dc", dap.run_to_cursor)
-vim.keymap.set("n", "<leader>dr", dap.repl.toggle)
+vim.keymap.set("n", "<leader>dx", dap.restart)
 vim.keymap.set("n", "<leader>ds", dap.terminate)
+vim.keymap.set("n", "<leader>dr", function()
+  dap.repl.toggle { height = math.floor(vim.o.lines * 0.3) }
+end)
 
 -- REPL completion to trigger automatically on any of the completion trigger
 -- characters reported by the debug adapter or on '.' if none are reported.
