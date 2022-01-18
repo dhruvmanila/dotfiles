@@ -95,8 +95,9 @@ local function load_plugins()
     {
       "mfussenegger/nvim-dap",
       keys = {
-        { "n", "<leader>db" },
-        { "n", "<leader>dc" },
+        { "n", "<F5>" }, -- continue
+        { "n", "<leader>db" }, -- toggle_breakpoint
+        { "n", "<leader>dl" }, -- run_last
       },
       config = conf "nvim_dap",
     },

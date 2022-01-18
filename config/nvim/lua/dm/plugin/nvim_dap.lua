@@ -3,37 +3,21 @@ local dap = require "dap"
 local dapui = require "dapui"
 local dap_python = require "dap-python"
 
--- Add configurations from `.vscode/launch.json` file
-require("dap.ext.vscode").load_launchjs()
-
 vim.fn.sign_define {
   { name = "DapBreakpoint", text = "", texthl = "Orange" },
   { name = "DapStopped", text = "", texthl = "" },
 }
 
-dap_python.test_runner = "pytest"
-dap_python.setup(vim.loop.os_homedir() .. "/.neovim/.venv/bin/python", {
-  -- Include the builtin configs which includes launching the current file with
-  -- and without arguments, attaching to a remote session.
-  include_configs = true,
-
-  -- Show the output in the client's default message UI (nvim-dap REPL).
-  -- Other options include `internalTerminal`, `externalTerminal`.
-  console = "internalConsole",
-})
-
 vim.keymap.set("n", "<leader>dl", dap.run_last)
 vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
 vim.keymap.set("n", "<F5>", dap.continue)
--- TODO: set these mappings only during the debugging session (similar to `K`)
 vim.keymap.set("n", "<F10>", dap.step_over)
 vim.keymap.set("n", "<F11>", dap.step_into)
 vim.keymap.set("n", "<F12>", dap.step_out)
+vim.keymap.set("n", "<leader>dx", dap.restart)
+vim.keymap.set("n", "<leader>dc", dap.run_to_cursor)
 vim.keymap.set("n", "<leader>dr", dap.repl.toggle)
--- vim.keymap.set("n", "", dap.restart)
--- vim.keymap.set("n", "", dap.step_back)
--- vim.keymap.set("n", "", dap.run_to_cursor)
--- vim.keymap.set("n", "", dap.terminate --[[ dap.disconnect --]])
+vim.keymap.set("n", "<leader>ds", dap.terminate)
 
 -- REPL completion to trigger automatically on any of the completion trigger
 -- characters reported by the debug adapter or on '.' if none are reported.
@@ -43,44 +27,8 @@ dm.autocmd {
   command = require("dap.ext.autocompl").attach,
 }
 
--- During a debug session, remap `K` to hover a symbol using nvim-dap. Once the
--- session ends, the key will be restored.
-do
-  local keymap_restore = {}
-
-  dap.listeners.after["event_initialized"]["dm"] = function()
-    for _, bufnr in pairs(vim.api.nvim_list_bufs()) do
-      local keymaps = vim.api.nvim_buf_get_keymap(bufnr, "n")
-      for _, keymap in pairs(keymaps) do
-        if keymap.lhs == "K" then
-          table.insert(keymap_restore, keymap)
-          vim.keymap.del("n", "K", { buffer = bufnr })
-        end
-      end
-    end
-
-    vim.keymap.set("n", "K", function()
-      require("dap.ui.widgets").hover(
-        nil,
-        { border = dm.border[vim.g.border_style] }
-      )
-    end)
-  end
-
-  dap.listeners.after["event_terminated"]["dm"] = function()
-    for _, keymap in pairs(keymap_restore) do
-      vim.keymap.set(keymap.mode, keymap.lhs, keymap.rhs or "", {
-        callback = keymap.callback,
-        noremap = keymap.noremap == 1,
-        silent = keymap.silent == 1,
-        buffer = keymap.buffer,
-      })
-    end
-    keymap_restore = {}
-  end
-end
-
 -- Automatically open/close the DAP UI.
+-- FIXME: terminated/exited events are not being triggered?
 dap.listeners.after["event_initialized"]["dapui_config"] = function()
   dapui.open()
 end
@@ -91,6 +39,14 @@ dap.listeners.before["event_exited"]["dapui_config"] = function()
   dapui.close()
 end
 
+-- Extensions {{{1
+
+dap_python.test_runner = "pytest"
+dap_python.setup(vim.loop.os_homedir() .. "/.neovim/.venv/bin/python", {
+  -- We will define the configuration ourselves for additional config options.
+  include_configs = false,
+})
+
 -- UI Config
 dapui.setup {
   mappings = {
@@ -100,24 +56,39 @@ dapui.setup {
     size = math.floor(vim.o.columns * 0.4),
     elements = {
       { id = "scopes", size = 0.6 },
-      { id = "breakpoints", size = 0.2 },
-      { id = "stacks", size = 0.2 },
+      { id = "watches", size = 0.2 },
+      { id = "breakpoints", size = 0.1 },
+      { id = "stacks", size = 0.1 },
     },
   },
   tray = {
     size = math.floor(vim.o.lines * 0.3),
   },
   floating = {
-    border = "rounded",
+    border = dm.border[vim.g.border_style],
   },
 }
+
+-- Adapters {{{1
 
 ---@see https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation#go-using-delve-directly
 dap.adapters.go = function(callback)
   local port = 38697
   job {
     cmd = "dlv",
-    args = { "dap", "--listen", "127.0.0.1:" .. port },
+    args = function()
+      local args = { "dap", "--listen", "127.0.0.1:" .. port }
+      if vim.env.DEBUG then
+        vim.list_extend(args, {
+          "--log",
+          "--log-dest",
+          vim.fn.stdpath "cache" .. "/delve.log",
+          "--log-output",
+          "dap",
+        })
+      end
+      return args
+    end,
     detached = true,
     on_stdout = function(chunk)
       -- Wait for nvim-dap to initiate
@@ -129,7 +100,7 @@ dap.adapters.go = function(callback)
       if result.code ~= 0 then
         dm.notify(
           "DAP (Go adapter - delve)",
-          { "dlv exited with code: " .. result.code, result.stderr },
+          "dlv exited with code: " .. result.code,
           4
         )
       end
@@ -140,6 +111,74 @@ dap.adapters.go = function(callback)
     callback { type = "server", host = "127.0.0.1", port = port }
   end, 100)
 end
+
+-- Configurations {{{1
+
+-- Return the path to Python executable.
+---@return string
+local function get_python_path()
+  -- Use activated virtual environment.
+  if vim.env.VIRTUAL_ENV then
+    return vim.env.VIRTUAL_ENV .. "/bin/python"
+  end
+  -- Fallback to global pyenv Python.
+  return vim.fn.exepath "python"
+end
+
+-- Enable debugger logging if Neovim is opened in debug mode. To open Neovim
+-- in debug mode, use the environment variable `DEBUG` like: `$ DEBUG=1 nvim`.
+---@return boolean?
+local function log_to_file()
+  if vim.env.DEBUG then
+    -- https://github.com/microsoft/debugpy/wiki/Enable-debugger-logs
+    vim.env.DEBUGPY_LOG_DIR = vim.fn.stdpath "cache" .. "/debugpy"
+    return true
+  end
+end
+
+---@see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
+dap.configurations.python = {
+  {
+    name = "Launch: file",
+    type = "python",
+    request = "launch",
+    program = "${file}",
+    console = "internalConsole",
+    justMyCode = false,
+    pythonPath = get_python_path,
+    logToFile = log_to_file,
+  },
+  {
+    name = "Launch: module",
+    type = "python",
+    request = "launch",
+    module = "${fileBasenameNoExtension}",
+    cwd = "${fileDirname}",
+    console = "internalConsole",
+    justMyCode = false,
+    pythonPath = get_python_path,
+    logToFile = log_to_file,
+  },
+  {
+    type = "python",
+    request = "attach",
+    name = "Attach: remote",
+    console = "internalConsole",
+    justMyCode = false,
+    pythonPath = get_python_path,
+    logToFile = log_to_file,
+    host = function()
+      local value = vim.fn.input "Host [127.0.0.1]: "
+      if value ~= "" then
+        return value
+      end
+      return "127.0.0.1"
+    end,
+    port = function()
+      return tonumber(vim.fn.input "Port [5678]: ") or 5678
+    end,
+  },
+}
 
 ---@see https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
 dap.configurations.go = {
@@ -177,7 +216,7 @@ dap.configurations.go = {
       local args = { "-y", year, "-d", day }
       if
         vim.fn.confirm(
-          ("Use test input for %d/%d ?"):format(year, day),
+          ("Use test input for %d/%d?"):format(year, day),
           "&Yes\n&No"
         ) == 1
       then
@@ -187,3 +226,8 @@ dap.configurations.go = {
     end,
   },
 }
+
+-- }}}1
+
+-- Add configurations from `.vscode/launch.json` file
+require("dap.ext.vscode").load_launchjs()
