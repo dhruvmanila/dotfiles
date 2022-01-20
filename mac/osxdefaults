@@ -118,6 +118,14 @@ defaults write NSGlobalDomain InitialKeyRepeat -int 15
 # Disable press-and-hold for keys in favor of key repeat
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
+# Touchbar {{{1
+
+# Show function keys instead of the control strip (appWithControlStrip) for touchbar.
+defaults write com.apple.touchbar.agent PresentationModeGlobal -string functionKeys
+
+# When pressing the fn key, show the full control strip.
+defaults write com.apple.touchbar.agent PresentationModeFnModes -dict functionKeys -string fullControlStrip
+
 # Trackpad {{{1
 
 # Trackpad: enable tap to click for this user and for the login screen
@@ -579,5 +587,8 @@ for app in "Activity Monitor" \
   "Terminal"; do
   killall "${app}" > /dev/null
 done
+
+# Restart touchbar
+sudo pkill TouchBarServer
 
 printf "\nDone. Note that some of these changes require a logout/restart to take effect."
