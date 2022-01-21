@@ -24,6 +24,7 @@ end
 
 local finder = {
   stylua_config_file = root_pattern "stylua.toml",
+  clang_format_config_file = root_pattern ".clang-format",
   py_ignore_projects = ignore_projects("infogami", "openlibrary"),
 }
 
@@ -59,7 +60,22 @@ register("python", {
   },
 })
 
-register("go", { use_lsp = true })
+register({ "c", "cpp" }, {
+  cmd = "clang-format",
+  args = function()
+    return {
+      "--assume-filename",
+      api.nvim_buf_get_name(0),
+      "--style",
+      "file",
+    }
+  end,
+  enable = function()
+    return finder.clang_format_config_file(api.nvim_buf_get_name(0)) ~= nil
+  end,
+})
+
+register({ "go", "json" }, { use_lsp = true })
 
 register("sh", {
   cmd = "shfmt",
@@ -69,8 +85,6 @@ register("sh", {
     return { "-i", indent_size, "-bn", "-ci", "-sr", "-" }
   end,
 })
-
-register("json", { use_lsp = true })
 
 register("yaml", {
   cmd = "prettier",
