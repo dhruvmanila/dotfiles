@@ -163,22 +163,26 @@ end
 -- }}}1
 
 -- Register the formatters for the given filetype.
----@param filetype string
+---@param filetypes string|string[]
 ---@param formatters Formatter|Formatter[]
-function M.register(filetype, formatters)
+function M.register(filetypes, formatters)
+  filetypes = vim.tbl_islist(filetypes) and filetypes or { filetypes }
   formatters = vim.tbl_islist(formatters) and formatters or { formatters }
-  if not registered_formatters[filetype] then
-    registered_formatters[filetype] = {}
-  end
 
-  for _, formatter in ipairs(formatters) do
-    -- By default, every formatter is enabled.
-    formatter.enable = if_nil(formatter.enable, function()
-      return true
-    end)
-    formatter.use_lsp = if_nil(formatter.use_lsp, false)
-    formatter.opts = formatter.opts or {}
-    table.insert(registered_formatters[filetype], formatter)
+  for _, filetype in ipairs(filetypes) do
+    if not registered_formatters[filetype] then
+      registered_formatters[filetype] = {}
+    end
+
+    for _, formatter in ipairs(formatters) do
+      -- By default, every formatter is enabled.
+      formatter.enable = if_nil(formatter.enable, function()
+        return true
+      end)
+      formatter.use_lsp = if_nil(formatter.use_lsp, false)
+      formatter.opts = formatter.opts or {}
+      table.insert(registered_formatters[filetype], formatter)
+    end
   end
 end
 
