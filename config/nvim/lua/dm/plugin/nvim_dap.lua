@@ -16,6 +16,13 @@ vim.keymap.set("n", "<F10>", dap.step_over)
 vim.keymap.set("n", "<F11>", dap.step_into)
 vim.keymap.set("n", "<F12>", dap.step_out)
 vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
+vim.keymap.set("n", "<leader>dB", function()
+  vim.ui.input({ prompt = "Breakpoint Condition: " }, function(condition)
+    if condition then
+      dap.set_breakpoint(condition)
+    end
+  end)
+end)
 vim.keymap.set("n", "<leader>dl", dap.run_last)
 vim.keymap.set("n", "<leader>dc", dap.run_to_cursor)
 vim.keymap.set("n", "<leader>dx", dap.restart)

@@ -97,6 +97,7 @@ local function load_plugins()
       keys = {
         { "n", "<F5>" }, -- continue
         { "n", "<leader>db" }, -- toggle_breakpoint
+        { "n", "<leader>dB" }, -- set_breakpoint (with condition)
         { "n", "<leader>dl" }, -- run_last
       },
       config = conf "nvim_dap",
