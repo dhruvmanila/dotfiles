@@ -14,10 +14,18 @@ vim.ui.input = function(opts, on_confirm)
   vim.validate { on_confirm = { on_confirm, "function" } }
   opts = opts or {}
 
+  -- For rename request, I don't want any prompt and for others we will provide
+  -- a padding between the border and prompt.
+  ---@see $VIMRUNTIME/lua/vim/lsp/buf.lua:253
+  opts.prompt = vim.startswith(opts.prompt, "New Name") and " "
+    or " " .. opts.prompt
+
   local bufnr = vim.api.nvim_create_buf(false, true)
-  local win_opts = vim.lsp.util.make_floating_popup_options(40, 1, {
-    border = "rounded",
-  })
+  local win_opts = vim.lsp.util.make_floating_popup_options(
+    #opts.prompt + 30,
+    1,
+    { border = "rounded" }
+  )
   local winnr = vim.api.nvim_open_win(bufnr, true, win_opts)
 
   vim.bo[bufnr].buftype = "prompt"
@@ -25,13 +33,7 @@ vim.ui.input = function(opts, on_confirm)
   vim.wo[winnr].wrap = false
   vim.wo[winnr].winhl = "FloatBorder:Normal,NormalFloat:Normal"
 
-  -- For rename request, I don't want any prompt and for others we will provide
-  -- a padding between the border and prompt.
-  ---@see $VIMRUNTIME/lua/vim/lsp/buf.lua:253
-  vim.fn.prompt_setprompt(
-    bufnr,
-    vim.startswith(opts.prompt, "New Name") and " " or " " .. opts.prompt
-  )
+  vim.fn.prompt_setprompt(bufnr, opts.prompt)
   vim.fn.prompt_setcallback(bufnr, function(new_input)
     input_cleanup()
     on_confirm(#new_input > 0 and new_input or nil)
