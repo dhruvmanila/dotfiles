@@ -218,17 +218,6 @@ setup_github_ssh() { # {{{1
   done
 }
 
-setup_lua_language_server() { # {{{1
-  header "Setting up the lua language server..."
-  git clone --depth=1 https://github.com/sumneko/lua-language-server.git "$LUA_LANGUAGE_SERVER_DIRECTORY"
-  (
-    cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
-    git fetch origin --tags --force
-    git checkout "$(git describe --abbrev=0)"
-    build_lua_lsp
-  )
-}
-
 setup_neovim_nightly() { # {{{1
   header "Setting up Neovim nightly..."
   git clone --depth=1 git@github.com:dhruvmanila/neovim.git "$NEOVIM_DIRECTORY"

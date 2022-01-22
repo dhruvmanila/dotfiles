@@ -3,14 +3,6 @@ ask() { # {{{1
   read -r -p "$(bold "> ")"
 }
 
-build_lua_lsp() { # {{{1
-  git submodule update --init --recursive
-  cd 3rd/luamake || exit 1
-  compile/install.sh
-  cd ../..
-  ./3rd/luamake/luamake rebuild
-}
-
 build_neovim() { # {{{1
   make distclean
   make \

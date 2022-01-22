@@ -561,17 +561,6 @@ setup_github_ssh() { # {{{1
   done
 }
 
-setup_lua_language_server() { # {{{1
-  header "Setting up the lua language server..."
-  git clone --depth=1 https://github.com/sumneko/lua-language-server.git "$LUA_LANGUAGE_SERVER_DIRECTORY"
-  (
-    cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
-    git fetch origin --tags --force
-    git checkout "$(git describe --abbrev=0)"
-    build_lua_lsp
-  )
-}
-
 setup_neovim_nightly() { # {{{1
   header "Setting up Neovim nightly..."
   git clone --depth=1 git@github.com:dhruvmanila/neovim.git "$NEOVIM_DIRECTORY"
@@ -668,7 +657,6 @@ upgrade_all() { # {{{1
   upgrade_python
   upgrade_cargo
   upgrade_neovim "$@"
-  upgrade_lua_lsp
   upgrade_nnn
   upgrade_mac
 }
@@ -694,25 +682,6 @@ upgrade_cargo() { # {{{1
     # The `install` command updates the package if there is a newer version.
     cargo install "$package"
   done < "${CARGO_GLOBAL_PACKAGES}"
-}
-
-upgrade_lua_lsp() { # {{{1
-  # https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
-  header "Upgrading the lua language server to the latest version..."
-  (
-    cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
-    current_tag="$(git describe --abbrev=0)"
-    git checkout master
-    git pull origin master
-    git fetch origin --tags --force
-    latest_tag=$(git describe --abbrev=0)
-    if [[ "$current_tag" == "$latest_tag" ]]; then
-      echo "==> Lua language server is to be already up to date to $latest_tag"
-      return
-    fi
-    git checkout "$latest_tag"
-    build_lua_lsp
-  )
 }
 
 upgrade_mac() { # {{{1
@@ -809,14 +778,6 @@ upgrade_python() { # {{{1
 ask() { # {{{1
   yellow_bold "[?] $1"
   read -r -p "$(bold "> ")"
-}
-
-build_lua_lsp() { # {{{1
-  git submodule update --init --recursive
-  cd 3rd/luamake || exit 1
-  compile/install.sh
-  cd ../..
-  ./3rd/luamake/luamake rebuild
 }
 
 build_neovim() { # {{{1
@@ -989,7 +950,6 @@ dot_setup_command() {
   setup_aws
 
   setup_neovim_nightly
-  setup_lua_language_server
 
   # No backup as this is a fresh setup
   setup_symlinks

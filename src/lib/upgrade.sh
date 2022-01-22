@@ -5,7 +5,6 @@ upgrade_all() { # {{{1
   upgrade_python
   upgrade_cargo
   upgrade_neovim "$@"
-  upgrade_lua_lsp
   upgrade_nnn
   upgrade_mac
 }
@@ -31,25 +30,6 @@ upgrade_cargo() { # {{{1
     # The `install` command updates the package if there is a newer version.
     cargo install "$package"
   done < "${CARGO_GLOBAL_PACKAGES}"
-}
-
-upgrade_lua_lsp() { # {{{1
-  # https://github.com/sumneko/lua-language-server/wiki/Build-and-Run-(Standalone)
-  header "Upgrading the lua language server to the latest version..."
-  (
-    cd "$LUA_LANGUAGE_SERVER_DIRECTORY" || exit 1
-    current_tag="$(git describe --abbrev=0)"
-    git checkout master
-    git pull origin master
-    git fetch origin --tags --force
-    latest_tag=$(git describe --abbrev=0)
-    if [[ "$current_tag" == "$latest_tag" ]]; then
-      echo "==> Lua language server is to be already up to date to $latest_tag"
-      return
-    fi
-    git checkout "$latest_tag"
-    build_lua_lsp
-  )
 }
 
 upgrade_mac() { # {{{1

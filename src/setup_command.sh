@@ -33,7 +33,6 @@ install_cargo_packages
 setup_aws
 
 setup_neovim_nightly
-setup_lua_language_server
 
 # No backup as this is a fresh setup
 setup_symlinks
