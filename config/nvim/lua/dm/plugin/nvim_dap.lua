@@ -83,6 +83,12 @@ dapui.setup {
 
 -- Adapters {{{1
 
+dap.adapters.lldb = {
+  name = "lldb",
+  type = "executable",
+  command = "lldb-vscode",
+}
+
 ---@see https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation#go-using-delve-directly
 dap.adapters.go = function(callback)
   local port = 38697
@@ -192,50 +198,82 @@ dap.configurations.python = {
   },
 }
 
+-- Return a table of options for debugging a advent of code solution.
+--
+-- The year and day is parsed from the filename. The format of filename should
+-- be `.../year<YYYY>/sol<DD>...` where the day should be zero padded. The
+-- format of the options will be `{ "-y", "YYYY", "-d", "DD" }` with an
+-- optional `-t` flag if the user wants to use the test input.
+---@return string[]
+local function get_advent_of_code_args()
+  local bufname = vim.api.nvim_buf_get_name(0)
+  local year, day = bufname:match ".*year(%d+)/sol(%d+)"
+  if year == nil or day == nil then
+    dm.notify(
+      "Debug Advent of Code solution",
+      "Unable to determine year/day for: " .. bufname,
+      4
+    )
+    return {}
+  end
+  local args = { "-y", year, "-d", day }
+  if
+    vim.fn.confirm(("Use test input for %d/%d?"):format(year, day), "&Yes\n&No")
+    == 1
+  then
+    table.insert(args, "-t")
+  end
+  return args
+end
+
+---@see https://github.com/llvm/llvm-project/tree/main/lldb/tools/lldb-vscode#configurations
+dap.configurations.c = {
+  {
+    name = "Launch: file",
+    type = "lldb",
+    request = "launch",
+    program = function()
+      return vim.fn.input(
+        "Path to executable: ",
+        vim.fn.getcwd() .. "/",
+        "file"
+      )
+    end,
+    cwd = "${workspaceFolder}",
+  },
+  {
+    name = "Build and Launch: AOC solution",
+    type = "lldb",
+    request = "launch",
+    program = function()
+      -- Build the `aoc` executable with debug symbols.
+      vim.cmd "!make --always-make DEBUG=1"
+      return vim.loop.cwd() .. "/aoc"
+    end,
+    cwd = "${workspaceFolder}",
+    args = get_advent_of_code_args,
+  },
+}
+
 ---@see https://github.com/go-delve/delve/blob/master/Documentation/usage/dlv_dap.md
 dap.configurations.go = {
   {
     type = "go",
-    name = "Debug file",
+    name = "Launch: file",
     request = "launch",
-    mode = "debug",
+    mode = function()
+      return vim.endswith(vim.api.nvim_buf_get_name(0), "_test.go") and "test"
+        or "debug"
+    end,
     program = "${file}",
   },
   {
     type = "go",
-    name = "Debug test file", -- configuration for debugging test files
-    request = "launch",
-    mode = "test",
-    program = "${file}",
-  },
-  {
-    type = "go",
-    name = "Debug Advent of Code solution",
+    name = "Launch: Advent of Code solution",
     request = "launch",
     mode = "debug",
     program = "${workspaceFolder}",
-    args = function()
-      local bufname = vim.api.nvim_buf_get_name(0)
-      local year, day = bufname:match ".*year(%d+)/sol(%d+)"
-      if year == nil or day == nil then
-        dm.notify(
-          "Debug Advent of Code solution",
-          "Unable to determine year/day for: " .. bufname,
-          4
-        )
-        return {}
-      end
-      local args = { "-y", year, "-d", day }
-      if
-        vim.fn.confirm(
-          ("Use test input for %d/%d?"):format(year, day),
-          "&Yes\n&No"
-        ) == 1
-      then
-        table.insert(args, "-t")
-      end
-      return args
-    end,
+    args = get_advent_of_code_args,
   },
 }
 
