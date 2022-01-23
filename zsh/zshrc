@@ -150,15 +150,6 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
 # and avoid duplication.
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Reproduce Ubuntu’s command-not-found on macOS using Homebrew.
-#
-# This will use the homebrew-command-not-found tap to provide suggested
-# packages to be installed if a command cannot be found.
-HB_CNF_HANDLER="$HOMEBREW_REPOSITORY/Library/Taps/homebrew/homebrew-command-not-found/handler.sh"
-if [ -f "$HB_CNF_HANDLER" ]; then
-  source "$HB_CNF_HANDLER"
-fi
-
 # Powerlevel10k prompt
 # https://github.com/romkatv/powerlevel10k
 source $DOTFILES/zsh/plugins/powerlevel10k/powerlevel10k.zsh-theme
