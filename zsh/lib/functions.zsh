@@ -126,6 +126,13 @@ py-activate-venv() { # {{{1
   fi
 }
 
+py-make-venv() { # {{{1
+  # Create/rename a Python virtual environment in the current directory.
+  #
+  # $1 (string) (optional): prompt name (default: venv)
+  python -m venv .venv --prompt "${1:-venv}"
+}
+
 py-kernel() { # {{{1
   # Create an IPython kernel for the current Python virtual environment.
   # This is useful to have one Jupyter installation but different Python kernels
@@ -146,7 +153,8 @@ py-kernel() { # {{{1
 
 py-upgrade-venv() { # {{{1
   # Upgrade the Python version for the current virtual environment.
-  # NOTE: This assumes that we're using `pyenv` to install Python versions.
+  # NOTE: This assumes that we're using `pyenv` (custom script) to install
+  # Python versions.
   #
   # $1 (string): upgrade to this version
   if [[ -z "$VIRTUAL_ENV" ]]; then
@@ -156,17 +164,20 @@ py-upgrade-venv() { # {{{1
     echo "Usage: $0 <version>"
     return 1
   fi
-  python_exec="$(pyenv root)/versions/$1/bin/python"
+  DEFINITION="$1"
+  PYTHON_EXEC="$PYENV_ROOT/versions/$DEFINITION/bin/python"
   if [[ ! -e $python_exec ]]; then
-    echo "$0: version $1 does not exist"
-    echo "$0: Use 'pyenv install $1' to install it"
+    echo "$0: version '$DEFINITION' not installed"
+    echo "$0: Use 'pyenv install $DEFINITION' to install it"
     return 1
   fi
   # The `--upgrade` flag assumes that Python was upgraded in place, so we need
   # to update the symlink to point to the desired Python version.
-  echo "==> Updating the symlink..."
-  ln -vsf "$python_exec" "$VIRTUAL_ENV/bin/python3"
-  $python_exec -m venv --upgrade "$VIRTUAL_ENV"
+  echo "$0: $VIRTUAL_ENV/bin/python -> $PYTHON_EXEC"
+  ln -sf "$PYTHON_EXEC" "$VIRTUAL_ENV/bin/python"
+  $PYTHON_EXEC -m venv --upgrade "$VIRTUAL_ENV"
+  echo "$0: Upgraded to $DEFINITION"
+  echo "$0: Update the prompt name with 'py-make-venv <name>'"
 }
 
 viw() { # {{{1

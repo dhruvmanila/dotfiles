@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+#
+# A small utility script to manage Python versions using the `python-build`
+# command in a manner similar to `pyenv`.
+
+set -e
+[[ -n "$PYENV_DEBUG" ]] && set -x
+
+version="v0.1.0"
+
+: "${PYENV_ROOT:="$HOME/.pyenv"}"
+: "${PYTHON_BUILD_CACHE_PATH:="$PYENV_ROOT/cache"}"
+
+if [[ ! -d "$PYENV_ROOT" ]]; then
+  mkdir -p "$PYENV_ROOT/"{versions,cache}
+fi
+
+function usage() {
+  echo "$0 - Personal tool for managing multiple Python versions"
+  echo ""
+  echo "Usage:"
+  echo "  $0 [command]"
+  echo "  $0 [command] --help | -h"
+  echo "  $0 --version | -v"
+  echo ""
+  echo "Commands:"
+  echo "  global       set or show the global Python version"
+  echo "  install      install Python version using python-build"
+  echo "  uninstall    uninstall a specific Python version"
+  echo "  versions     list all the installed Python versions"
+  echo "  root         display root directory where versions are kept"
+}
+
+case "$1" in
+  --version | -v)
+    echo "$version"
+    ;;
+
+  "" | --help | -h)
+    usage
+    ;;
+
+  global)
+    case "$2" in
+      -h | --help)
+        echo "Usage: $0 global [<version>]"
+        ;;
+      "")
+        "$PYENV_ROOT"/bin/python --version
+        ;;
+      *)
+        PREFIX="$PYENV_ROOT/versions/$2"
+        if [[ ! -d "$PREFIX" ]]; then
+          echo "$0: version '$2' not installed"
+          exit 1
+        fi
+        # Remove the old link, if it exists.
+        if [[ -L "$PYENV_ROOT/bin" ]]; then
+          rm "$PYENV_ROOT/bin"
+        fi
+        echo "$0: $PYENV_ROOT/bin -> $PREFIX/bin"
+        ln -sf "$PREFIX/bin" "$PYENV_ROOT/bin"
+        ;;
+    esac
+    ;;
+
+  install)
+    if ! command -v "python-build" > /dev/null; then
+      echo "$0: 'python-build' command not found"
+      exit 1
+    fi
+
+    shift
+    OPTIONS=()
+    ARGUMENTS=()
+    for arg; do
+      if [[ "$arg" == "-"* ]]; then
+        OPTIONS+=("$arg")
+      else
+        ARGUMENTS+=("$arg")
+      fi
+      shift
+    done
+
+    PREFIX_EXISTS=0
+    cleanup() {
+      ((PREFIX_EXISTS)) && rm -rf "$PREFIX"
+    }
+    trap cleanup SIGINT
+
+    STATUS=0
+    case "${#ARGUMENTS[@]}" in
+      0)
+        PYTHON_BUILD_CACHE_PATH="$PYTHON_BUILD_CACHE_PATH" \
+          python-build "${OPTIONS[@]}" || STATUS=$?
+        ;;
+      1)
+        DEFINITION="${ARGUMENTS[0]}"
+        PREFIX="$PYENV_ROOT/versions/$DEFINITION"
+        [[ -d "${PREFIX}" ]] && PREFIX_EXISTS=1
+
+        if ((PREFIX_EXISTS)); then
+          echo "$0: '$PREFIX' already exists"
+          read -rp "$0: continue with installation? [y/n] "
+          case "$REPLY" in
+            y | Y) ;;
+            *) exit 1 ;;
+          esac
+        fi
+
+        PYTHON_BUILD_CACHE_PATH="$PYTHON_BUILD_CACHE_PATH" \
+          python-build "${OPTIONS[@]}" "$DEFINITION" "$PREFIX" || STATUS=$?
+        ;;
+      *)
+        echo "$0: invalid arguments: ${ARGUMENTS[*]}"
+        exit 1
+        ;;
+    esac
+
+    if ((STATUS != 0)); then
+      cleanup
+    fi
+    exit $STATUS
+    ;;
+
+  uninstall)
+    case "$2" in
+      -h | --help)
+        echo "Usage: $0 uninstall <version>"
+        ;;
+      "" | -*)
+        echo "$0: provide the Python version to uninstall"
+        exit 1
+        ;;
+      *)
+        DEFINITION="$2"
+        PREFIX="$PYENV_ROOT/versions/$DEFINITION"
+        if [[ ! -d "$PREFIX" ]]; then
+          echo "$0: version '$DEFINITION' not installed"
+          exit 1
+        fi
+        read -rp "$0: remove $PREFIX? [y/n] "
+        case "$REPLY" in
+          y | Y)
+            rm -rf "$PREFIX"
+            echo "$0: $DEFINITION uninstalled"
+            ;;
+          *) exit 1 ;;
+        esac
+        ;;
+    esac
+    ;;
+
+  versions)
+    for path in "$PYENV_ROOT/versions"/*; do
+      if [[ -d "$path" ]]; then
+        echo "${path##*/}"
+      fi
+    done
+    ;;
+
+  root)
+    echo "$PYENV_ROOT"
+    ;;
+
+  *)
+    echo "$0: invalid command: $1"
+    exit 1
+    ;;
+esac

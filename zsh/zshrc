@@ -103,7 +103,13 @@ export GOPATH="${HOME}/go"
 # https://www.rust-lang.org/tools/install
 export CARGO_HOME="${HOME}/.cargo"
 
+# Custom tool for managing multiple Python versions (smaller version of `pyenv`)
+export PYENV_ROOT="$HOME/.pyenv"
+
 path=( # {{{
+  # Global Python version bin directory.
+  "$PYENV_ROOT/bin"
+
   # Local build of Neovim nightly.
   "${HOME}/neovim/bin"
 
@@ -130,9 +136,6 @@ path=( # {{{
 )
 # }}}
 
-# Add `pyenv` shims directory to PATH.
-eval "$(pyenv init --path)"
-
 # Plugins {{{1
 
 # https://github.com/zsh-users/zsh-autosuggestions
@@ -155,9 +158,6 @@ HB_CNF_HANDLER="$HOMEBREW_REPOSITORY/Library/Taps/homebrew/homebrew-command-not-
 if [ -f "$HB_CNF_HANDLER" ]; then
   source "$HB_CNF_HANDLER"
 fi
-
-# Initialize pyenv.
-eval "$(pyenv init -)"
 
 # Powerlevel10k prompt
 # https://github.com/romkatv/powerlevel10k
