@@ -3,7 +3,28 @@ vim.keymap.set("n", "<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>")
 
 require("nvim-treesitter.configs").setup {
   -- one of 'all', 'maintained', or a list of languages
-  ensure_installed = "maintained",
+  ensure_installed = {
+    "bash",
+    "c",
+    "cmake",
+    "comment",
+    "dockerfile",
+    "go",
+    "gomod",
+    "gowork",
+    "hcl",
+    "json",
+    "jsonc",
+    "lua",
+    "make",
+    "markdown",
+    "python",
+    "query",
+    "rust",
+    "toml",
+    "vim",
+    "yaml",
+  },
 
   highlight = {
     enable = true,
@@ -21,10 +42,10 @@ require("nvim-treesitter.configs").setup {
   incremental_selection = {
     enable = true,
     keymaps = {
-      init_selection = "gnn",
-      node_incremental = "<Tab>",
+      init_selection = "gn",
+      node_incremental = "<C-n>",
       scope_incremental = "<C-s>",
-      node_decremental = "<S-Tab>",
+      node_decremental = "<C-p>",
     },
   },
 
