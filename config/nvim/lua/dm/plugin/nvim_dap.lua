@@ -9,6 +9,7 @@ dap.set_log_level(vim.env.DEBUG and "debug" or "warn")
 vim.fn.sign_define {
   { name = "DapBreakpoint", text = "", texthl = "Orange" },
   { name = "DapStopped", text = "", texthl = "" },
+  { name = "DapBreakpointCondition", text = "", texthl = "Orange" },
 }
 
 vim.keymap.set("n", "<F5>", dap.continue)
@@ -33,11 +34,18 @@ end)
 
 -- REPL completion to trigger automatically on any of the completion trigger
 -- characters reported by the debug adapter or on '.' if none are reported.
-dm.autocmd {
-  events = "FileType",
-  targets = "dap-repl",
-  command = require("dap.ext.autocompl").attach,
-}
+dm.augroup("dm__dap_repl", {
+  {
+    events = "FileType",
+    targets = "dap-repl",
+    command = require("dap.ext.autocompl").attach,
+  },
+  {
+    events = "WinEnter",
+    targets = "\\[dap-repl\\]",
+    command = "startinsert",
+  },
+})
 
 -- Automatically open/close the DAP UI.
 -- FIXME: terminated/exited events are not being triggered?
@@ -80,6 +88,11 @@ dapui.setup {
     border = dm.border[vim.g.border_style],
   },
 }
+
+-- require("nvim-dap-virtual-text").setup {
+--   enabled = true,
+--   commented = true, -- prefix virtual text with `commentstring`
+-- }
 
 -- Adapters {{{1
 

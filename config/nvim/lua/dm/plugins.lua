@@ -142,6 +142,7 @@ local function load_plugins()
       keys = "-",
       config = conf "lir",
     },
+    { "theHamsta/nvim-dap-virtual-text" },
     { "tpope/vim-commentary" },
     { "tpope/vim-eunuch" },
     { "tpope/vim-fugitive" },
