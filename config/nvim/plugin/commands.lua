@@ -29,6 +29,39 @@ end, {
   desc = "Delete all but the current buffer (ignores terminal buffers)",
 })
 
+-- Dap {{{1
+
+local dap_functions = {
+  "clear_breakpoints",
+  "close",
+  "continue",
+  "disconnect",
+  "reverse_continue",
+  "run_last",
+  "run_to_cursor",
+  "set_breakpoint",
+  "set_exception_breakpoints",
+  "step_back",
+  "step_into",
+  "step_out",
+  "step_over",
+  "terminate",
+  "toggle_breakpoint",
+}
+
+nvim_add_user_command("Dap", function(opts)
+  require("dap")[opts.args]()
+end, {
+  nargs = 1,
+  complete = function(arglead)
+    arglead = arglead and (".*" .. arglead .. ".*")
+    return vim.tbl_filter(function(fname)
+      return fname:match(arglead)
+    end, dap_functions)
+  end,
+  desc = "Custom command for all nvim-dap functions",
+})
+
 -- LspClient {{{1
 
 nvim_add_user_command("LspClient", function(opts)
