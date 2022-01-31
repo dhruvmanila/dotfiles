@@ -11,10 +11,10 @@ local function on_attach(bufnr)
 
   -- Navigation
   map("n", "]c", "&diff ? ']c' : '<Cmd>Gitsigns next_hunk<CR>'", {
-    buffer = bufnr,
+    expr = true,
   })
   map("n", "[c", "&diff ? '[c' : '<Cmd>Gitsigns prev_hunk<CR>'", {
-    buffer = bufnr,
+    expr = true,
   })
 
   -- Actions
