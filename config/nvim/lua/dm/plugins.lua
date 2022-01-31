@@ -120,6 +120,7 @@ local function load_plugins()
       "nvim-telescope/telescope-fzf-native.nvim",
       run = "make",
     },
+    { "nvim-telescope/telescope-ui-select.nvim" },
     {
       "nvim-telescope/telescope.nvim",
       config = conf "telescope",

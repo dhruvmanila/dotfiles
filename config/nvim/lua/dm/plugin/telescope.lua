@@ -154,6 +154,7 @@ telescope.setup {
       -- from the first page.
       max_results = 0,
     },
+    ["ui-select"] = { dropdown_list },
   },
 } -- }}}2
 
@@ -162,6 +163,14 @@ telescope.setup {
 -- Load the telescope extensions without blowing up. Only the required extensions
 -- are loaded, the others will be loaded lazily by telescope.
 pcall(telescope.load_extension, "fzf")
+
+-- Loading the extension will increase the startuptime, so defer it when the
+-- function is called.
+vim.ui.select = function(...)
+  -- This will override the `vim.ui.select` function with a new implementation.
+  telescope.load_extension "ui-select"
+  vim.ui.select(...)
+end
 
 -- Start the background job for collecting the GitHub stars. This will be cached
 -- and used by `:Telescope github_stars` extension.
