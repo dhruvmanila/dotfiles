@@ -1,3 +1,26 @@
+# CFLAGS, CPPFLAGS, LDFLAGS {{{1
+
+# The following softwares are installed via Homebrew but they're not symlinked
+# as they are key-only. The official instructions is to include them in common
+# compiler environment variables.
+#
+# NOTE: Homebrew installed `clang` compiler does not search for header and
+# library files in `/usr/local/{include,lib}` directories, so they're added
+# here. This can be seen by running the following command:
+#
+#     $ clang -x c -v -E /dev/null
+
+export CFLAGS="\
+-I$HOMEBREW_PREFIX/include \
+-I$HOMEBREW_PREFIX/opt/openssl@3/include \
+"
+export CPPFLAGS="$CFLAGS"
+
+export LDFLAGS="\
+-L$HOMEBREW_PREFIX/lib \
+-L$HOMEBREW_PREFIX/opt/openssl@3/lib \
+"
+
 # EDITOR {{{1
 
 # Make Neovim the default editor.
