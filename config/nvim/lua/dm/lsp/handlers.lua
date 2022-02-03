@@ -13,18 +13,20 @@ local function location_handler(err, result, ctx)
 
   -- Response: Location | Location[] | LocationLink[] | null
   -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
+
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
   if vim.tbl_islist(result) then
-    vim.lsp.util.jump_to_location(result[1])
+    vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
     if vim.tbl_count(result) > 1 then
       vim.fn.setqflist(
-        vim.lsp.util.locations_to_items(result),
+        vim.lsp.util.locations_to_items(result, client.offset_encoding),
         nil,
         { title = title }
       )
       vim.api.nvim_command "wincmd p"
     end
   else
-    vim.lsp.util.jump_to_location(result)
+    vim.lsp.util.jump_to_location(result, client.offset_encoding)
   end
 end
 

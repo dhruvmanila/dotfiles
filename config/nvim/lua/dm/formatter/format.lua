@@ -86,7 +86,7 @@ function Format:lsp_run(formatter)
     self.bufnr,
     "textDocument/formatting",
     vim.lsp.util.make_formatting_params(formatter.opts),
-    function(err, result)
+    function(err, result, ctx)
       if err then
         log.error(err.message)
         return
@@ -96,7 +96,12 @@ function Format:lsp_run(formatter)
         return
       end
       if result then
-        vim.lsp.util.apply_text_edits(result, self.bufnr)
+        local client = vim.lsp.get_client_by_id(ctx.client_id)
+        vim.lsp.util.apply_text_edits(
+          result,
+          self.bufnr,
+          client.offset_encoding
+        )
         self:write()
       end
     end
