@@ -201,7 +201,7 @@ function M.format()
   end
   local bufnr = api.nvim_get_current_buf()
   local input = api.nvim_buf_get_lines(bufnr, 0, -1, false)
-  if vim.tbl_isempty(input) then
+  if #input == 1 and input[1] == "" then
     return
   end
   return Format:new(bufnr, input, formatters):step()
