@@ -4,28 +4,9 @@ local lsp_util = vim.lsp.util
 local register = require("dm.formatter.format").register
 local root_pattern = require("lspconfig.util").root_pattern
 
--- Returns a function which will check whether the given path is in one of the
--- provided project names.
---
--- This will be useful when there are certain projects which aren't using any
--- formatters. I don't want to manually toggle auto-formatting.
----@return fun(path: string): boolean
-local function ignore_projects(...)
-  local projects = { ... }
-  return function(path)
-    for _, project in ipairs(projects) do
-      if string.find(path, project, 1, true) then
-        return true
-      end
-    end
-    return false
-  end
-end
-
 local finder = {
   stylua_config_file = root_pattern "stylua.toml",
   clang_format_config_file = root_pattern ".clang-format",
-  py_ignore_projects = ignore_projects("infogami", "openlibrary"),
 }
 
 do
@@ -47,16 +28,10 @@ register("python", {
   {
     cmd = "black",
     args = { "--fast", "--quiet", "--target-version", "py310", "-" },
-    enable = function()
-      return not finder.py_ignore_projects(api.nvim_buf_get_name(0))
-    end,
   },
   {
     cmd = "isort",
     args = { "--profile", "black", "-" },
-    enable = function()
-      return not finder.py_ignore_projects(api.nvim_buf_get_name(0))
-    end,
   },
 })
 
