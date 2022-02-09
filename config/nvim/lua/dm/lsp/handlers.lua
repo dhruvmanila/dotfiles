@@ -18,12 +18,11 @@ local function location_handler(err, result, ctx)
   if vim.tbl_islist(result) then
     vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
     if vim.tbl_count(result) > 1 then
-      vim.fn.setqflist(
-        vim.lsp.util.locations_to_items(result, client.offset_encoding),
-        nil,
-        { title = title }
-      )
-      vim.api.nvim_command "wincmd p"
+      vim.fn.setqflist({}, " ", {
+        title = title,
+        items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
+      })
+      vim.api.nvim_command "copen | wincmd p"
     end
   else
     vim.lsp.util.jump_to_location(result, client.offset_encoding)
