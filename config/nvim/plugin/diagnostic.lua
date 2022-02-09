@@ -6,8 +6,8 @@ local keymap = vim.keymap
 local severity_info = {
   { icon = icons.error, hl = "DiagnosticSignError" },
   { icon = icons.warn, hl = "DiagnosticSignWarn" },
-  { icon = icons.hint, hl = "DiagnosticSignHint" },
   { icon = icons.info, hl = "DiagnosticSignInfo" },
+  { icon = icons.hint, hl = "DiagnosticSignHint" },
 }
 
 for _, info in ipairs(severity_info) do
