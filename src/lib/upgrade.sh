@@ -105,18 +105,13 @@ upgrade_plugins() { # {{{1
 }
 
 upgrade_python() { # {{{1
-  local pyenv_root pyenv_global
-  pyenv_root="$(pyenv root)"
-  pyenv_global="$(pyenv global)"
-
   header "Upgrading pip for all pyenv Python versions..."
-  for python_exec in "$pyenv_root"/versions/*/bin/python; do
+  for python_exec in "$PYENV_ROOT"/versions/*/bin/python; do
     $python_exec -m pip install --upgrade pip
   done
 
   header "Upgrading pipx..."
-  local global_python_exec="$pyenv_root/versions/$pyenv_global/bin/python"
-  $global_python_exec -m pip install --upgrade pipx
+  "$PYENV_ROOT/bin/python" -m pip install --upgrade pipx
 
   header "Upgrading all Python global packages..."
   pipx upgrade-all --include-injected

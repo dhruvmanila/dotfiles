@@ -76,7 +76,6 @@ commands:
           - all
           - brew
           - cargo
-          - lua_lsp
           - mac
           - neovim
           - nnn

@@ -239,7 +239,7 @@ dot_upgrade_usage() {
     # :argument.usage
     echo "  PACKAGE"
     printf "    package to upgrade\n"
-    printf "    Allowed: all, brew, cargo, lua_lsp, mac, neovim, nnn, npm, plugins, python\n"
+    printf "    Allowed: all, brew, cargo, mac, neovim, nnn, npm, plugins, python\n"
     printf "    Default: all\n"
     echo
 
@@ -757,18 +757,13 @@ upgrade_plugins() { # {{{1
 }
 
 upgrade_python() { # {{{1
-  local pyenv_root pyenv_global
-  pyenv_root="$(pyenv root)"
-  pyenv_global="$(pyenv global)"
-
   header "Upgrading pip for all pyenv Python versions..."
-  for python_exec in "$pyenv_root"/versions/*/bin/python; do
+  for python_exec in "$PYENV_ROOT"/versions/*/bin/python; do
     $python_exec -m pip install --upgrade pip
   done
 
   header "Upgrading pipx..."
-  local global_python_exec="$pyenv_root/versions/$pyenv_global/bin/python"
-  $global_python_exec -m pip install --upgrade pipx
+  "$PYENV_ROOT/bin/python" -m pip install --upgrade pipx
 
   header "Upgrading all Python global packages..."
   pipx upgrade-all --include-injected
@@ -1445,8 +1440,8 @@ dot_upgrade_parse_requirements() {
   # :command.default_assignments
   [[ -n ${args[package]} ]] || args[package]="all"
   # :command.whitelist_filter
-  if [[ ! ${args[package]} =~ ^(all|brew|cargo|lua_lsp|mac|neovim|nnn|npm|plugins|python)$ ]]; then
-    printf "%s\n" "package must be one of: all, brew, cargo, lua_lsp, mac, neovim, nnn, npm, plugins, python"
+  if [[ ! ${args[package]} =~ ^(all|brew|cargo|mac|neovim|nnn|npm|plugins|python)$ ]]; then
+    printf "%s\n" "package must be one of: all, brew, cargo, mac, neovim, nnn, npm, plugins, python"
     exit 1
   fi
 }
@@ -1572,6 +1567,14 @@ run() {
       dot_link_usage
     else
       dot_link_command
+    fi
+
+  elif [[ $action == "shell" ]]; then
+    if [[ ${args[--help]} ]]; then
+      long_usage=yes
+      dot_shell_usage
+    else
+      dot_shell_command
     fi
 
   elif [[ $action == "setup" ]]; then
