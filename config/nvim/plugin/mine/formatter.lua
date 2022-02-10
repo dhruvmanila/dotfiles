@@ -30,9 +30,9 @@ end
 ---@param ... string
 ---@return boolean
 local function ignore_projects(...)
-  local path = vim.api.nvim_buf_get_name(0)
+  local cwd = vim.loop.cwd()
   for i = 1, select("#", ...) do
-    if path:find(select(i, ...), 1, true) then
+    if cwd:find(select(i, ...), 1, true) then
       return true
     end
   end
