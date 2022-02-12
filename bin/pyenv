@@ -6,8 +6,9 @@
 set -e
 [[ -n "$PYENV_DEBUG" ]] && set -x
 
-version="v0.1.0"
+version="v0.2.0"
 
+: "${CMD:=$(basename "$0")}"
 : "${PYENV_ROOT:="$HOME/.pyenv"}"
 : "${PYTHON_BUILD_CACHE_PATH:="$PYENV_ROOT/cache"}"
 
@@ -16,12 +17,12 @@ if [[ ! -d "$PYENV_ROOT" ]]; then
 fi
 
 function usage() {
-  echo "$0 - Personal tool for managing multiple Python versions"
+  echo "$CMD - Personal tool for managing multiple Python versions"
   echo ""
   echo "Usage:"
-  echo "  $0 [command]"
-  echo "  $0 [command] --help | -h"
-  echo "  $0 --version | -v"
+  echo "  $CMD [command]"
+  echo "  $CMD [command] --help | -h"
+  echo "  $CMD --version | -v"
   echo ""
   echo "Commands:"
   echo "  global       set or show the global Python version"
@@ -43,30 +44,31 @@ case "$1" in
   global)
     case "$2" in
       -h | --help)
-        echo "Usage: $0 global [<version>]"
+        echo "Usage: $CMD global [<version>]"
         ;;
       "")
-        "$PYENV_ROOT"/bin/python --version
+        cat "$PYENV_ROOT/version"
         ;;
       *)
         PREFIX="$PYENV_ROOT/versions/$2"
         if [[ ! -d "$PREFIX" ]]; then
-          echo "$0: version '$2' not installed"
+          echo "$CMD: version '$2' not installed"
           exit 1
         fi
         # Remove the old link, if it exists.
         if [[ -L "$PYENV_ROOT/bin" ]]; then
           rm "$PYENV_ROOT/bin"
         fi
-        echo "$0: $PYENV_ROOT/bin -> $PREFIX/bin"
+        echo "$CMD: $PYENV_ROOT/bin -> $PREFIX/bin"
         ln -sf "$PREFIX/bin" "$PYENV_ROOT/bin"
+        echo "$2" > "$PYENV_ROOT/version"
         ;;
     esac
     ;;
 
   install)
     if ! command -v "python-build" > /dev/null; then
-      echo "$0: 'python-build' command not found"
+      echo "$CMD: 'python-build' command not found"
       exit 1
     fi
 
@@ -100,8 +102,8 @@ case "$1" in
         [[ -d "${PREFIX}" ]] && PREFIX_EXISTS=1
 
         if ((PREFIX_EXISTS)); then
-          echo "$0: '$PREFIX' already exists"
-          read -rp "$0: continue with installation? [y/n] "
+          echo "$CMD: '$PREFIX' already exists"
+          read -rp "$CMD: continue with installation? [y/n] "
           case "$REPLY" in
             y | Y) ;;
             *) exit 1 ;;
@@ -112,7 +114,7 @@ case "$1" in
           python-build "${OPTIONS[@]}" "$DEFINITION" "$PREFIX" || STATUS=$?
         ;;
       *)
-        echo "$0: invalid arguments: ${ARGUMENTS[*]}"
+        echo "$CMD: invalid arguments: ${ARGUMENTS[*]}"
         exit 1
         ;;
     esac
@@ -126,24 +128,24 @@ case "$1" in
   uninstall)
     case "$2" in
       -h | --help)
-        echo "Usage: $0 uninstall <version>"
+        echo "Usage: $CMD uninstall <version>"
         ;;
       "" | -*)
-        echo "$0: provide the Python version to uninstall"
+        echo "$CMD: provide the Python version to uninstall"
         exit 1
         ;;
       *)
         DEFINITION="$2"
         PREFIX="$PYENV_ROOT/versions/$DEFINITION"
         if [[ ! -d "$PREFIX" ]]; then
-          echo "$0: version '$DEFINITION' not installed"
+          echo "$CMD: version '$DEFINITION' not installed"
           exit 1
         fi
-        read -rp "$0: remove $PREFIX? [y/n] "
+        read -rp "$CMD: remove $PREFIX? [y/n] "
         case "$REPLY" in
           y | Y)
             rm -rf "$PREFIX"
-            echo "$0: $DEFINITION uninstalled"
+            echo "$CMD: $DEFINITION uninstalled"
             ;;
           *) exit 1 ;;
         esac
@@ -164,7 +166,7 @@ case "$1" in
     ;;
 
   *)
-    echo "$0: invalid command: $1"
+    echo "$CMD: invalid command: $1"
     exit 1
     ;;
 esac
