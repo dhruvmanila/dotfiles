@@ -130,7 +130,20 @@ py-make-venv() { # {{{1
   # Create/rename a Python virtual environment in the current directory.
   #
   # $1 (string) (optional): prompt name (default: venv)
-  python -m venv .venv --prompt "${1:-venv}"
+  # $2 (string) (optional): Python version to use (default: global)
+  if (( $# == 0 )); then
+    echo "Usage: $0 <prompt> [<version>]"
+    return 1
+  fi
+  local python_exec="python"
+  if [[ -n "$2" ]]; then
+    python_exec="$PYENV_ROOT/versions/$2/bin/python"
+    if [[ ! -f "$python_exec" ]]; then
+      echo "$0: version '$2' does not exist"
+      return 1
+    fi
+  fi
+  $python_exec -m venv .venv --prompt "$1"
 }
 
 py-kernel() { # {{{1
