@@ -69,8 +69,6 @@ local function fully_qualified_name(import_name)
       table.insert(qualname, vim.treesitter.get_node_text(node, 0))
     elseif name == "alias" then
       table.insert(qualname, vim.treesitter.get_node_text(node, 0))
-    elseif name == "import" then
-      table.insert(qualname, vim.treesitter.get_node_text(node, 0))
     end
   end
 
