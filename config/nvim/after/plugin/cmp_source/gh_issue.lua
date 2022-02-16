@@ -20,6 +20,7 @@ end
 ---@return boolean
 function source:is_available()
   return vim.bo.filetype == "gitcommit"
+    and not vim.loop.cwd():find("thoucentric", 1, true) -- uses Azure
 end
 
 -- Return a list of characters which will trigger the source completion.
@@ -47,6 +48,11 @@ function source:complete(params, callback)
         "title,number,body",
       },
       on_exit = function(result)
+        if result.code > 0 then
+          log.fmt_error(result.stderr)
+          return
+        end
+
         local ok, parsed = pcall(vim.json.decode, result.stdout)
         if not ok then
           log.fmt_error("Failed to parse `gh` result: %s", parsed)
