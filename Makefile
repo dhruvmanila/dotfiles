@@ -6,5 +6,5 @@ SH_FILES := $(shell find src -type f -name '*.sh')
 
 $(BIN_DIR)/$(BIN): $(SH_FILES) src/bashly.yml
 	BASHLY_TARGET_DIR=$(BIN_DIR) bashly generate
-	bashly add comp script $(BASH_COMPLETION)
+	bashly add comp script $(BASH_COMPLETION) --force
 	shfmt -w -i 2 -bn -ci -sr $(BIN_DIR)/$(BIN)

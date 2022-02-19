@@ -72,7 +72,7 @@ commands:
       - name: package
         help: package to upgrade
         default: all
-        allowed: &upgrade_package_list
+        allowed:
           - all
           - brew
           - cargo
@@ -82,8 +82,6 @@ commands:
           - npm
           - plugins
           - python
-
-    completions: *upgrade_package_list
 
     flags:
       - long: --ref

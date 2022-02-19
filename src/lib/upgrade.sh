@@ -36,8 +36,16 @@ upgrade_mac() { # {{{1
   header "Upgrading macOS applications..."
   mas upgrade
 
-  header "Updating softwares..."
-  softwareupdate --install --all
+  header "Finding available software..."
+  output="$(softwareupdate --list 2>&1 > /dev/null)"
+  if [[ "$output" == "No new software available." ]]; then
+    echo "No new software available."
+  else
+    seek_confirmation "A system update is available. Do you wish to install it?"
+    if is_confirmed; then
+      softwareupdate --install --all
+    fi
+  fi
 }
 
 upgrade_neovim() { # {{{1

@@ -47,10 +47,8 @@ link() { # {{{1
 }
 
 seek_confirmation() { # {{{1
-  if [[ -n $1 ]]; then
-    warning "$1"
-  fi
-  read -r -p "$(bold "Continue? [y/n] ")" -n 1
+  warning "$1"
+  read -r -p "$(bold "[y/n] ")" -n 1
   printf "\n"
 }
 

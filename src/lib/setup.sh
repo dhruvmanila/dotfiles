@@ -1,5 +1,6 @@
 declare -a PY_NEOVIM_PACKAGES=(
   "pynvim"
+  "debugpy"
 )
 
 declare -A SYMLINKS=(

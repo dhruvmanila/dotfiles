@@ -20,19 +20,19 @@ esac
 HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
 
 # Default shell path. This can be set using `dot shell`.
-DEFAULT_SHELL_PATH="${HOMEBREW_PREFIX}/bin/bash"
+DEFAULT_SHELL_PATH="${HOMEBREW_PREFIX}/bin/zsh"
 
 # Common directories
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 NEOVIM_DIRECTORY="${HOME}/contributing/neovim"
 NEOVIM_INSTALL_DIRECTORY="${HOME}/neovim"
-LUA_LANGUAGE_SERVER_DIRECTORY="${HOME}/git/lua-language-server"
 NNN_DIRECTORY="${HOME}/git/nnn"
 
 # Python versions to be installed on the system.
 # First version will be the global one
 PYTHON_VERSIONS=(
-  "3.9.7"
+  "3.10.2"
+  "3.9.10"
 )
 
 # Packages file
@@ -76,13 +76,14 @@ MACOS_DOCK_APPLICATIONS=(
   "/Applications/kitty.app"
   "/Applications/Docker.app/Contents/MacOS/Docker Desktop.app"
   "/Applications/Postman.app"
+  "/Applications/pgAdmin 4.app"
   "/Applications/MongoDB Compass.app"
   "/System/Applications/Notes.app"
-  "/Applications/Mark Text.app"
   "/System/Applications/Music.app"
   "/System/Applications/Books.app"
+  "/Applications/Microsoft Teams.app"
   "/Applications/Slack.app"
-  "/Applications/Discord.app"
+  "/Applications/Azure VPN Client.app"
 )
 
 setup_required_directories silent
