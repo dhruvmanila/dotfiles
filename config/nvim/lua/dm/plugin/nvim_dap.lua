@@ -27,10 +27,18 @@ end)
 vim.keymap.set("n", "<leader>dl", dap.run_last)
 vim.keymap.set("n", "<leader>dc", dap.run_to_cursor)
 vim.keymap.set("n", "<leader>dx", dap.restart)
-vim.keymap.set("n", "<leader>ds", dap.terminate)
+vim.keymap.set("n", "<leader>ds", function()
+  dap.terminate()
+  dapui.close()
+end)
+vim.keymap.set("n", "<leader>du", dapui.toggle)
 vim.keymap.set("n", "<leader>dr", function()
   dap.repl.toggle { height = math.floor(vim.o.lines * 0.3) }
 end)
+
+-- Default exception breakpoints as per the config/adapter type.
+---@see https://github.com/microsoft/debugpy/blob/main/src/debugpy/adapter/clients.py#L145-L164
+dap.defaults.python.exception_breakpoints = { "uncaught", "userUnhandled" }
 
 -- REPL completion to trigger automatically on any of the completion trigger
 -- characters reported by the debug adapter or on '.' if none are reported.
@@ -41,7 +49,7 @@ dm.augroup("dm__dap_repl", {
     command = require("dap.ext.autocompl").attach,
   },
   {
-    events = "WinEnter",
+    events = "BufEnter",
     targets = "\\[dap-repl\\]",
     command = "startinsert",
   },
@@ -75,10 +83,10 @@ dapui.setup {
   sidebar = {
     size = math.floor(vim.o.columns * 0.4),
     elements = {
-      { id = "scopes", size = 0.6 },
-      { id = "watches", size = 0.2 },
-      { id = "breakpoints", size = 0.1 },
-      { id = "stacks", size = 0.1 },
+      { id = "scopes", size = 0.8 },
+      -- { id = "watches", size = 0.2 },
+      -- { id = "breakpoints", size = 0.1 },
+      { id = "stacks", size = 0.2 },
     },
   },
   tray = {
@@ -229,9 +237,10 @@ local function get_advent_of_code_args()
     )
     return {}
   end
+  day = day:gsub("^0", "")
   local args = { "-y", year, "-d", day }
   if
-    vim.fn.confirm(("Use test input for %d/%d?"):format(year, day), "&Yes\n&No")
+    vim.fn.confirm(("Use test input for %s/%s?"):format(year, day), "&Yes\n&No")
     == 1
   then
     table.insert(args, "-t")
