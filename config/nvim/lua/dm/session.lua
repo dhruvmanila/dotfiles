@@ -143,7 +143,7 @@ end
 ---@param arglead? string
 ---@return string[]
 function session.list(arglead)
-  arglead = arglead and (".*" .. arglead .. ".*")
+  arglead = "^[%a%-_]*" .. (arglead or "") .. "[%a%-_]*$"
   return fn.readdir(SESSION_DIR, function(filename)
     return arglead and (filename:match(arglead) and 1 or 0) or 1
   end)
