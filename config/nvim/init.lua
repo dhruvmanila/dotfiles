@@ -21,18 +21,6 @@ require("impatient").enable_profile()
 -- }}}
 g.mapleader = " "
 
--- Enable syntax highlighting in markdown code fences.
-g.markdown_fenced_languages = {
-  "applescript",
-  "bash=sh",
-  "json",
-  "lua",
-  "python",
-  "sh",
-  "vim",
-  "viml=vim",
-}
-
 -- Setup neovim providers (`:h provider`) {{{
 --
 -- Most of the providers are disabled by default and will be enabled as the need
