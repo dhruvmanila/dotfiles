@@ -3,13 +3,14 @@ awsebcli
 black
 bpytop
 flake8
-grip
 httpie
 ipdb
 isort
 jupyter
 line-profiler
 mypy
+pipenv
 poetry
 pre-commit
 speedtest-cli
+visidata
