@@ -121,10 +121,19 @@ defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 # Touchbar {{{1
 
 # Show function keys instead of the control strip (appWithControlStrip) for touchbar.
-defaults write com.apple.touchbar.agent PresentationModeGlobal -string functionKeys
+defaults write com.apple.touchbar.agent \
+  PresentationModeGlobal -string appWithControlStrip
 
-# When pressing the fn key, show the full control strip.
-defaults write com.apple.touchbar.agent PresentationModeFnModes -dict functionKeys -string fullControlStrip
+# When pressing the fn key, show the function keys.
+defaults write com.apple.touchbar.agent \
+  PresentationModeFnModes -dict functionKeys -string app
+
+# Show function keys when in any of the terminal applications.
+defaults write com.apple.touchbar.agent \
+  PresentationModePerApp -dict-add \
+  "com.apple.Terminal" -string functionKeys \
+  "com.googlecode.iterm2" -string functionKeys \
+  "net.kovidgoyal.kitty" -string functionKeys
 
 # Trackpad {{{1
 
