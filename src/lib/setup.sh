@@ -306,3 +306,5 @@ update_macos_dock() { # {{{1
   header "Restarting the dock..."
   killall Dock &> /dev/null
 }
+
+# }}}1

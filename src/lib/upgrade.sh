@@ -124,3 +124,5 @@ upgrade_python() { # {{{1
   header "Upgrading all Python global packages..."
   pipx upgrade-all --include-injected
 }
+
+# }}}1

@@ -62,3 +62,5 @@ setup_required_directories() { # {{{1
     fi
   done
 }
+
+# }}}1
