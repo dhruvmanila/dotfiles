@@ -6,7 +6,7 @@
 set -e
 [[ -n "$PYENV_DEBUG" ]] && set -x
 
-version="v0.2.0"
+version="v0.3.0"
 
 : "${CMD:=$(basename "$0")}"
 : "${PYENV_ROOT:="$HOME/.pyenv"}"
@@ -154,9 +154,15 @@ case "$1" in
     ;;
 
   versions)
+    global=$(< "$PYENV_ROOT/version")
     for path in "$PYENV_ROOT/versions"/*; do
       if [[ -d "$path" ]]; then
-        echo "${path##*/}"
+        current="${path##*/}"
+        if [[ "$current" == "$global" ]]; then
+          echo "* $current"
+        else
+          echo "  $current"
+        fi
       fi
     done
     ;;
