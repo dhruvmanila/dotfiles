@@ -1,32 +1,35 @@
-local api = vim.api
-local lsp = vim.lsp
-
 local M = {}
 
+local log = require "dm.log"
+
 -- Create a namespace for the lightbulb extmark.
-local LIGHTBULB_EXTMARK_NS = api.nvim_create_namespace "dm__lsp_lightbulb"
+local LIGHTBULB_EXTMARK_NS = vim.api.nvim_create_namespace "dm__lsp_lightbulb"
 
 -- Code action listener to set and update the lightbulb to indicate that there
 -- are code actions available on that line.
-function M.code_action_listener()
-  local params = lsp.util.make_range_params()
-  params.context = { diagnostics = lsp.diagnostic.get_line_diagnostics() }
-  lsp.buf_request(0, "textDocument/codeAction", params, function(err, result)
-    -- Don't do anything if the request returned an error.
-    if err then
-      return
+function M.listener()
+  local params = vim.lsp.util.make_range_params()
+  params.context = { diagnostics = vim.lsp.diagnostic.get_line_diagnostics() }
+  vim.lsp.buf_request(
+    0,
+    "textDocument/codeAction",
+    params,
+    function(err, result, ctx)
+      if err then
+        return log.error("LSP (%s): %s", ctx.method, err)
+      end
+      -- Remove all the existing lightbulbs.
+      vim.api.nvim_buf_clear_namespace(0, LIGHTBULB_EXTMARK_NS, 0, -1)
+      if result and not vim.tbl_isempty(result) then
+        local line = params.range.start.line
+        vim.api.nvim_buf_set_extmark(0, LIGHTBULB_EXTMARK_NS, line, 0, {
+          virt_text = { { "", "Yellow" } },
+          virt_text_pos = "overlay",
+          hl_mode = "combine",
+        })
+      end
     end
-    -- Remove all the existing lightbulbs.
-    api.nvim_buf_clear_namespace(0, LIGHTBULB_EXTMARK_NS, 0, -1)
-    if result and not vim.tbl_isempty(result) then
-      local line = params.range.start.line
-      api.nvim_buf_set_extmark(0, LIGHTBULB_EXTMARK_NS, line, 0, {
-        virt_text = { { "", "Yellow" } },
-        virt_text_pos = "overlay",
-        hl_mode = "combine",
-      })
-    end
-  end)
+  )
 end
 
 return M

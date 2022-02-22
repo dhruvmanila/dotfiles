@@ -104,7 +104,7 @@ local function custom_on_attach(client, bufnr)
     table.insert(lsp_autocmds, {
       events = { "CursorHold", "CursorHoldI" },
       targets = "<buffer>",
-      command = require("dm.lsp.code_action").code_action_listener,
+      command = require("dm.lsp.code_action").listener,
     })
 
     keymap.set("n", "<leader>ca", lsp.buf.code_action, opts)
