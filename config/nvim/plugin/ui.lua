@@ -12,17 +12,15 @@ end
 ---@param on_confirm fun(input?: string): nil
 vim.ui.input = function(opts, on_confirm)
   vim.validate { on_confirm = { on_confirm, "function" } }
-  opts = opts or {}
 
-  -- For rename request, I don't want any prompt and for others we will provide
-  -- a padding between the border and prompt.
-  ---@see $VIMRUNTIME/lua/vim/lsp/buf.lua:253
-  opts.prompt = vim.startswith(opts.prompt, "New Name") and " "
-    or " " .. opts.prompt
+  opts = opts or {}
+  -- Padding between left border and the prompt text.
+  opts.prompt = " " .. (opts.prompt or "")
+  opts.default = opts.default or ""
 
   local bufnr = vim.api.nvim_create_buf(false, true)
   local win_opts = vim.lsp.util.make_floating_popup_options(
-    #opts.prompt + 30,
+    #opts.prompt + #opts.default + 20,
     1,
     { border = "rounded" }
   )
@@ -33,20 +31,24 @@ vim.ui.input = function(opts, on_confirm)
   vim.wo[winnr].wrap = false
   vim.wo[winnr].winhl = "FloatBorder:Normal,NormalFloat:Normal"
 
-  vim.fn.prompt_setprompt(bufnr, opts.prompt)
-  vim.fn.prompt_setcallback(bufnr, function(new_input)
+  -- Callback function to call once the user confirms or abort the input.
+  ---@param new_input string|nil
+  local function callback(new_input)
     input_cleanup()
-    on_confirm(#new_input > 0 and new_input or nil)
-  end)
+    on_confirm(new_input)
+  end
+
+  vim.fn.prompt_setprompt(bufnr, opts.prompt)
+  vim.fn.prompt_setcallback(bufnr, callback)
 
   -- Define the required set of mappings:
   --   - `<ESC>`: exit the rename prompt
   local map_opts = { buffer = bufnr, nowait = true }
-  vim.keymap.set("n", "<Esc>", input_cleanup, map_opts)
-  vim.keymap.set("i", "<Esc>", input_cleanup, map_opts)
+  vim.keymap.set("n", "<Esc>", callback, map_opts)
+  vim.keymap.set("i", "<Esc>", callback, map_opts)
 
   vim.cmd "startinsert!"
-  if opts.default then
+  if opts.default ~= "" then
     vim.api.nvim_feedkeys(opts.default, "i", true)
   end
 end
