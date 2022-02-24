@@ -45,7 +45,7 @@ end
 -- function using the `filetype` conditions.
 ---@param client table
 ---@param bufnr number
-local function custom_on_attach(client, bufnr)
+local function on_attach(client, bufnr)
   local lsp_autocmds = {}
   local capabilities = client.resolved_capabilities
   local opts = { buffer = bufnr }
@@ -130,14 +130,13 @@ do
   -- capabilities.
   for server, config in pairs(servers) do
     config = type(config) == "function" and config() or config
-    config.on_attach = custom_on_attach
-    config.flags = config.flags or {}
-    config.flags.debounce_text_changes = 500
-    config.capabilities = vim.tbl_deep_extend(
-      "keep",
-      config.capabilities or {},
-      capabilities
-    )
+    config = vim.tbl_deep_extend("keep", config, {
+      on_attach = on_attach,
+      capabilities = capabilities,
+      flags = {
+        debounce_text_changes = 500,
+      },
+    })
     lspconfig[server].setup(config)
   end
 end
