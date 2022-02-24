@@ -31,7 +31,15 @@ return {
   jsonls = function()
     return {
       settings = {
-        schemas = require("schemastore").json.schemas(),
+        json = {
+          schemas = vim.list_extend({
+            {
+              description = "Lua language server config file",
+              fileMatch = { ".luarc.json" },
+              url = "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+            },
+          }, require("schemastore").json.schemas()),
+        },
       },
     }
   end,
