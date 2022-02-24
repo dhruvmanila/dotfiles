@@ -48,42 +48,77 @@ end
 local function on_attach(client, bufnr)
   local lsp_autocmds = {}
   local capabilities = client.resolved_capabilities
-  local opts = { buffer = bufnr }
 
   if capabilities.hover then
-    keymap.set("n", "K", lsp.buf.hover, opts)
+    keymap.set("n", "K", lsp.buf.hover, {
+      buffer = bufnr,
+      desc = "LSP: Hover",
+    })
   end
 
   if capabilities.goto_definition then
-    keymap.set("n", "gd", lsp.buf.definition, opts)
-    keymap.set("n", "<leader>pd", preview.definition, opts)
+    keymap.set("n", "gd", lsp.buf.definition, {
+      buffer = bufnr,
+      desc = "LSP: Goto definition",
+    })
+    keymap.set("n", "<leader>pd", preview.definition, {
+      buffer = bufnr,
+      desc = "LSP: Preview definition",
+    })
   end
 
   if capabilities.declaration then
-    keymap.set("n", "gD", lsp.buf.declaration, opts)
-    keymap.set("n", "<leader>pD", preview.declaration, opts)
+    keymap.set("n", "gD", lsp.buf.declaration, {
+      buffer = bufnr,
+      desc = "LSP: Goto declaration",
+    })
+    keymap.set("n", "<leader>pD", preview.declaration, {
+      buffer = bufnr,
+      desc = "LSP: Preview declaration",
+    })
   end
 
   if capabilities.type_definition then
-    keymap.set("n", "gy", lsp.buf.type_definition, opts)
-    keymap.set("n", "<leader>py", preview.type_definition, opts)
+    keymap.set("n", "gy", lsp.buf.type_definition, {
+      buffer = bufnr,
+      desc = "LSP: Goto type definition",
+    })
+    keymap.set("n", "<leader>py", preview.type_definition, {
+      buffer = bufnr,
+      desc = "LSP: Preview type definition",
+    })
   end
 
   if capabilities.implementation then
-    keymap.set("n", "gi", lsp.buf.implementation, opts)
-    keymap.set("n", "<leader>pi", preview.implementation, opts)
+    keymap.set("n", "gi", lsp.buf.implementation, {
+      buffer = bufnr,
+      desc = "LSP: Goto implementation",
+    })
+    keymap.set("n", "<leader>pi", preview.implementation, {
+      buffer = bufnr,
+      desc = "LSP: Goto preview implementation",
+    })
   end
 
   if capabilities.find_references then
-    keymap.set("n", "gr", lsp.buf.references, opts)
+    keymap.set("n", "gr", lsp.buf.references, {
+      buffer = bufnr,
+      desc = "LSP: Goto references",
+    })
   end
 
   if capabilities.rename then
-    keymap.set("n", "<leader>rn", lsp.buf.rename, opts)
+    keymap.set("n", "<leader>rn", lsp.buf.rename, {
+      buffer = bufnr,
+      desc = "LSP: Rename",
+    })
   end
 
   if capabilities.signature_help then
-    keymap.set("n", "<C-s>", lsp.buf.signature_help, opts)
+    keymap.set("n", "<C-s>", lsp.buf.signature_help, {
+      buffer = bufnr,
+      desc = "LSP: Signature help",
+    })
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
@@ -107,8 +142,14 @@ local function on_attach(client, bufnr)
       command = require("dm.lsp.code_action").listener,
     })
 
-    keymap.set("n", "<leader>ca", lsp.buf.code_action, opts)
-    keymap.set("x", "<leader>ca", lsp.buf.range_code_action, opts)
+    keymap.set("n", "<leader>ca", lsp.buf.code_action, {
+      buffer = bufnr,
+      desc = "LSP: Code action",
+    })
+    keymap.set("x", "<leader>ca", lsp.buf.range_code_action, {
+      buffer = bufnr,
+      desc = "LSP: Code action (range)",
+    })
   end
 
   -- Set the LSP autocmds

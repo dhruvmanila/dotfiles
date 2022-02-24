@@ -55,12 +55,12 @@ keymap.set("n", "[d", function()
   vim.diagnostic.goto_prev {
     float = { focusable = false },
   }
-end)
+end, { desc = "Diagnostic: Goto prev" })
 keymap.set("n", "]d", function()
   vim.diagnostic.goto_next {
     float = { focusable = false },
   }
-end)
+end, { desc = "Diagnostic: Goto next" })
 
 -- For warning and error diagnostics: `[w`, `]w`
 keymap.set("n", "[w", function()
@@ -68,14 +68,14 @@ keymap.set("n", "[w", function()
     float = { focusable = false },
     severity = { min = vim.diagnostic.severity.WARN },
   }
-end)
+end, { desc = "Diagnostic: Goto prev (warning/error)" })
 keymap.set("n", "]w", function()
   vim.diagnostic.goto_next {
     float = { focusable = false },
     severity = { min = vim.diagnostic.severity.WARN },
   }
-end)
+end, { desc = "Diagnostic: Goto next (warning/error)" })
 
 keymap.set("n", "<leader>l", function()
   vim.diagnostic.open_float { scope = "line" }
-end)
+end, { desc = "Show line diagnostics" })
