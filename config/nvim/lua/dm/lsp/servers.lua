@@ -79,6 +79,11 @@ return {
     }
   end,
 
+  -- https://github.com/typescript-language-server/typescript-language-server
+  -- Install: `npm install --global typescript typescript-language-server`
+  -- Settings: https://github.com/typescript-language-server/typescript-language-server#initializationoptions
+  tsserver = {},
+
   -- https://github.com/iamcco/vim-language-server
   -- Install: `npm install --global vim-language-server`
   vimls = {},

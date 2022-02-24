@@ -35,10 +35,12 @@ register("go", {
   },
 })
 
--- json {{{1
+-- javascript, json, typescript {{{1
 
 register({
+  "javascript",
   "json",
+  "typescript",
 }, {
   lsp = {
     format = true,
