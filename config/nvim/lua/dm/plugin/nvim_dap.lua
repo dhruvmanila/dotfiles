@@ -7,9 +7,11 @@ local dap_python = require "dap-python"
 dap.set_log_level(vim.env.DEBUG and "debug" or "warn")
 
 vim.fn.sign_define {
-  { name = "DapBreakpoint", text = "", texthl = "Orange" },
   { name = "DapStopped", text = "", texthl = "" },
+  { name = "DapLogPoint", text = "", texthl = "" },
+  { name = "DapBreakpoint", text = "", texthl = "Orange" },
   { name = "DapBreakpointCondition", text = "", texthl = "Orange" },
+  { name = "DapBreakpointRejected", text = "", texthl = "Red" },
 }
 
 vim.keymap.set("n", "<F5>", dap.continue)
