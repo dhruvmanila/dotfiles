@@ -39,10 +39,8 @@ local function ignore_projects(...)
   return false
 end
 
-vim.api.nvim_add_user_command("ToggleAutoFormatting", toggle_auto_formatting, {
-  force = true,
-})
-vim.api.nvim_add_user_command("Format", format, { force = true })
+vim.api.nvim_add_user_command("ToggleAutoFormatting", toggle_auto_formatting, {})
+vim.api.nvim_add_user_command("Format", format, {})
 
 vim.keymap.set("n", ";f", "<Cmd>Format<CR>")
 

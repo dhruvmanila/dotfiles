@@ -33,12 +33,11 @@ end
 
 do
   local opts = {
-    force = true,
     nargs = 1,
     complete = session.list,
   }
 
-  api.nvim_add_user_command("SClose", session.close, { force = true })
+  api.nvim_add_user_command("SClose", session.close, {})
   api.nvim_add_user_command("SDelete", session_function_factory "delete", opts)
   api.nvim_add_user_command("SLoad", session_function_factory "load", opts)
   api.nvim_add_user_command("SRename", session_function_factory "rename", opts)

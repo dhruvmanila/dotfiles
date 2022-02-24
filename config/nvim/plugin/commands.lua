@@ -25,7 +25,6 @@ nvim_add_user_command("BufOnly", function()
     dm.notify("BufOnly", info)
   end
 end, {
-  force = true,
   desc = "Delete all but the current buffer (ignores terminal buffers)",
 })
 
@@ -73,7 +72,6 @@ nvim_add_user_command("LspClient", function(opts)
   end
   print(vim.inspect(info))
 end, {
-  force = true,
   nargs = "?",
   complete = function()
     -- https://github.com/neovim/nvim-lspconfig/blob/master/plugin/lspconfig.vim#L10
@@ -90,37 +88,22 @@ end, {
 nvim_add_user_command("LspLog", function()
   vim.cmd("botright split | resize 20 | edit + " .. vim.lsp.get_log_path())
 end, {
-  force = true,
   desc = "Open logs for the builtin LSP client",
 })
 
 -- Term / Vterm / Tterm {{{1
 
 nvim_add_user_command("Term", "new | wincmd J | resize -5 | term", {
-  force = true,
   desc = "Open the terminal on the bottom occupying full width of the editor",
 })
 
 nvim_add_user_command("Vterm", "vnew | wincmd L | term", {
-  force = true,
   desc = "Open the terminal on the right hand side occupying full height of the editor",
 })
 
 nvim_add_user_command("Tterm", "tabnew | term", {
-  force = true,
   desc = "Open the terminal in a new tab",
 })
-
--- Todo {{{1
-
-nvim_add_user_command(
-  "Todo",
-  [[noautocmd silent! grep! 'TODO\|FIXME\|BUG\|HACK' | copen]],
-  {
-    force = true,
-    desc = "List out all the location where todos and other related keywords are present in the current project",
-  }
-)
 
 -- TrimLines {{{1
 
@@ -136,7 +119,6 @@ nvim_add_user_command("TrimLines", function()
   api.nvim_win_set_cursor(0, pos)
 end, {
   bar = true,
-  force = true,
   desc = "Trim blank lines at the end of the current buffer, restoring the cursor position",
 })
 
@@ -150,6 +132,5 @@ nvim_add_user_command("TrimWhitespace", function()
   api.nvim_win_set_cursor(0, pos)
 end, {
   bar = true,
-  force = true,
   desc = "Trim trailing whitespace for the current buffer, restoring the cursor position",
 })
