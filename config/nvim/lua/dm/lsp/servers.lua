@@ -20,7 +20,14 @@ return {
   gopls = {
     settings = {
       gopls = {
+        analyses = {
+          nilness = true,
+          shadow = true,
+          unusedparams = true,
+          unusedwrite = true,
+        },
         gofumpt = true,
+        usePlaceholders = true,
       },
     },
   },
