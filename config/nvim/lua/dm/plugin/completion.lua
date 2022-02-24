@@ -31,12 +31,12 @@ cmp.config.compare.underscore = function(entry1, entry2)
   return entry1_under < entry2_under
 end
 
--- Use `<Tab>` to either:
+-- This function will either:
 --   - move to next item in the completion menu
 --   - jump to the next insertion node in snippets
 --   - pass raw <Tab> character
 ---@param fallback function
-local function tab(fallback)
+local function next(fallback)
   if cmp.visible() then
     return cmp.select_next_item()
   elseif luasnip.expand_or_jumpable() then
@@ -46,11 +46,11 @@ local function tab(fallback)
   end
 end
 
--- Use `<S-Tab>` to either:
+-- This function will either:
 --   - move to previous item in the completion menu
 --   - jump to the previous insertion node in snippets
 ---@param fallback function
-local function shift_tab(fallback)
+local function prev(fallback)
   if cmp.visible() then
     return cmp.select_prev_item()
   elseif luasnip.jumpable(-1) then
@@ -94,8 +94,8 @@ cmp.setup {
     end,
   },
   mapping = {
-    ["<C-n>"] = cmp.mapping(tab, { "i", "s" }),
-    ["<C-p>"] = cmp.mapping(shift_tab, { "i", "s" }),
+    ["<C-n>"] = cmp.mapping(next, { "i", "s" }),
+    ["<C-p>"] = cmp.mapping(prev, { "i", "s" }),
     ["<C-e>"] = cmp.mapping(c_e, { "i", "s" }),
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
