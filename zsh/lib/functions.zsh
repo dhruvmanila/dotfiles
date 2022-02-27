@@ -38,6 +38,22 @@ explain() { # {{{1
   fi
 }
 
+git-stats() { # {{{1
+  # Show the last month git stats for the current repository. This includes the
+  # number of lines added/removed and the total.
+  #
+  # Ref: https://twitter.com/thorstenball/status/1293181225280999431
+  git log \
+    --since "30 days ago" \
+    --author "$(git config --global user.name)" \
+    --pretty=tformat: --numstat |
+      awk '{
+        add += $1; subs += $2; loc += $1 - $2
+      } END {
+        printf "Lines: +\033[32m%s\033[0m -\033[31m%s\033[0m\nTotal: %s\n", add, subs, loc
+      }'
+}
+
 gld() { # {{{1
   # Get the latest master for the git repository and show the diff between then
   # and now.
