@@ -167,4 +167,4 @@ lir.setup {
   end,
 }
 
-vim.keymap.set("n", "-", require("lir.float").toggle)
+vim.keymap.set("n", "-", require("lir.float").toggle, { desc = "Lir: Toggle" })

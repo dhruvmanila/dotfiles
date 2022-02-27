@@ -12,20 +12,34 @@ local function on_attach(bufnr)
   -- Navigation
   map("n", "]c", "&diff ? ']c' : '<Cmd>Gitsigns next_hunk<CR>'", {
     expr = true,
+    desc = "Gitsigns: Goto next hunk",
   })
   map("n", "[c", "&diff ? '[c' : '<Cmd>Gitsigns prev_hunk<CR>'", {
     expr = true,
+    desc = "Gitsigns: Goto prev hunk",
   })
 
   -- Actions
-  map({ "n", "v" }, "<leader>hs", gitsigns.stage_hunk)
-  map({ "n", "v" }, "<leader>hr", gitsigns.reset_hunk)
-  map("n", "<leader>hu", gitsigns.undo_stage_hunk)
-  map("n", "<leader>hR", gitsigns.reset_buffer)
-  map("n", "<leader>hp", gitsigns.preview_hunk)
+  map({ "n", "v" }, "<leader>hs", gitsigns.stage_hunk, {
+    desc = "Gitsigns: Stage hunk",
+  })
+  map({ "n", "v" }, "<leader>hr", gitsigns.reset_hunk, {
+    desc = "Gitsigns: Reset hunk",
+  })
+  map("n", "<leader>hu", gitsigns.undo_stage_hunk, {
+    desc = "Gitsigns: Undo stage hunk",
+  })
+  map("n", "<leader>hR", gitsigns.reset_buffer, {
+    desc = "Gitsigns: Reset buffer",
+  })
+  map("n", "<leader>hp", gitsigns.preview_hunk, {
+    desc = "Gitsigns: Preview hunk",
+  })
 
   -- Text object
-  map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
+  map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", {
+    desc = "Gitsigns: Select hunk (text object)",
+  })
 end
 
 gitsigns.setup {

@@ -14,29 +14,33 @@ vim.fn.sign_define {
   { name = "DapBreakpointRejected", text = "", texthl = "Red" },
 }
 
-vim.keymap.set("n", "<F5>", dap.continue)
-vim.keymap.set("n", "<F10>", dap.step_over)
-vim.keymap.set("n", "<F11>", dap.step_into)
-vim.keymap.set("n", "<F12>", dap.step_out)
-vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint)
+vim.keymap.set("n", "<F5>", dap.continue, { desc = "DAP: Continue" })
+vim.keymap.set("n", "<F10>", dap.step_over, { desc = "DAP: Step over" })
+vim.keymap.set("n", "<F11>", dap.step_into, { desc = "DAP: Step into" })
+vim.keymap.set("n", "<F12>", dap.step_out, { desc = "DAP: Step out" })
+vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, {
+  desc = "DAP: Toggle breakpoint",
+})
 vim.keymap.set("n", "<leader>dB", function()
   vim.ui.input({ prompt = "Breakpoint Condition: " }, function(condition)
     if condition then
       dap.set_breakpoint(condition)
     end
   end)
-end)
-vim.keymap.set("n", "<leader>dl", dap.run_last)
-vim.keymap.set("n", "<leader>dc", dap.run_to_cursor)
-vim.keymap.set("n", "<leader>dx", dap.restart)
+end, { desc = "DAP: Set breakpoint with condition" })
+vim.keymap.set("n", "<leader>dl", dap.run_last, { desc = "DAP: Run last" })
+vim.keymap.set("n", "<leader>dc", dap.run_to_cursor, {
+  desc = "DAP: Run to cursor",
+})
+vim.keymap.set("n", "<leader>dx", dap.restart, { desc = "DAP: Restart" })
 vim.keymap.set("n", "<leader>ds", function()
   dap.terminate()
   dapui.close()
-end)
-vim.keymap.set("n", "<leader>du", dapui.toggle)
+end, { desc = "DAP: Terminate and close UI" })
+vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "DAP: Toggle UI" })
 vim.keymap.set("n", "<leader>dr", function()
   dap.repl.toggle { height = math.floor(vim.o.lines * 0.3) }
-end)
+end, { desc = "DAP: Toggle repl" })
 
 -- Default exception breakpoints as per the config/adapter type.
 ---@see https://github.com/microsoft/debugpy/blob/main/src/debugpy/adapter/clients.py#L145-L164

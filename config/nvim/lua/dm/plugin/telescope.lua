@@ -181,8 +181,12 @@ require("dm.gh").collect_stars()
 
 -- We cannot bind every builtin picker to a keymap and so this will help us
 -- when we are in need of a rarely used picker.
-vim.keymap.set("n", ";t", builtin.builtin)
-vim.keymap.set("n", "<leader>fr", builtin.resume)
+vim.keymap.set("n", ";t", builtin.builtin, {
+  desc = "Telescope: Builtin pickers",
+})
+vim.keymap.set("n", "<leader>fr", builtin.resume, {
+  desc = "Telescope: Resume last picker",
+})
 
 -- What's the difference between `git_files` and `find_files`? {{{
 --
@@ -204,11 +208,17 @@ local function find_files()
   end
 end
 
-vim.keymap.set("n", "<C-p>", find_files)
-vim.keymap.set("n", "<leader>;", builtin.buffers)
-vim.keymap.set("n", "<leader>fl", builtin.current_buffer_fuzzy_find)
+vim.keymap.set("n", "<C-p>", find_files, { desc = "Telescope: Find files" })
+vim.keymap.set("n", "<leader>;", builtin.buffers, {
+  desc = "Telescope: Buffers",
+})
+vim.keymap.set("n", "<leader>fl", builtin.current_buffer_fuzzy_find, {
+  desc = "Telescope: Current buffer fuzzy find",
+})
 
-vim.keymap.set("n", "<leader>rg", builtin.live_grep)
+vim.keymap.set("n", "<leader>rg", builtin.live_grep, {
+  desc = "Telescope: Live grep",
+})
 
 -- Smart tags picker which uses either the LSP symbols, treesitter symbols or
 -- buffer tags, whichever is available first.
@@ -220,16 +230,30 @@ vim.keymap.set("n", "<leader>ft", function()
   else
     builtin.current_buffer_tags()
   end
-end)
+end, { desc = "Telescope: LSP symbols / treesitter symbols / buffer tags" })
 
-vim.keymap.set("n", ";b", builtin.git_branches)
-vim.keymap.set("n", "<leader>gc", builtin.git_commits)
-vim.keymap.set("n", "<leader>bc", builtin.git_bcommits)
+vim.keymap.set("n", ";b", builtin.git_branches, {
+  desc = "Telescope: Git branches",
+})
+vim.keymap.set("n", "<leader>gc", builtin.git_commits, {
+  desc = "Telescope: Git commits",
+})
+vim.keymap.set("n", "<leader>bc", builtin.git_bcommits, {
+  desc = "Telescope: Git commits (buffer)",
+})
 
-vim.keymap.set("n", "<leader>fh", builtin.help_tags)
-vim.keymap.set("n", "<leader>fc", builtin.commands)
-vim.keymap.set("n", "<leader>:", builtin.command_history)
-vim.keymap.set("n", "<leader>/", builtin.search_history)
+vim.keymap.set("n", "<leader>fh", builtin.help_tags, {
+  desc = "Telescope: Help tags",
+})
+vim.keymap.set("n", "<leader>fc", builtin.commands, {
+  desc = "Telescope: Commands",
+})
+vim.keymap.set("n", "<leader>:", builtin.command_history, {
+  desc = "Telescope: Command history",
+})
+vim.keymap.set("n", "<leader>/", builtin.search_history, {
+  desc = "Telescope: Search history",
+})
 
 -- Custom pickers {{{2
 
@@ -238,7 +262,7 @@ vim.keymap.set("n", "<leader>fd", function()
     prompt_title = "Find dotfiles",
     cwd = "~/dotfiles",
   }
-end)
+end, { desc = "Telescope: Find dotfiles" })
 
 -- This is mainly to avoid .gitignore patterns.
 vim.keymap.set("n", "<leader>fa", function()
@@ -249,7 +273,7 @@ vim.keymap.set("n", "<leader>fa", function()
     no_ignore = true,
     file_ignore_patterns = { ".git/" },
   }
-end)
+end, { desc = "Telescope: Find all files" })
 
 vim.keymap.set("n", "<leader>rp", function()
   local pattern = vim.fn.input "Grep pattern ❯ "
@@ -260,7 +284,7 @@ vim.keymap.set("n", "<leader>rp", function()
       search = pattern,
     }
   end
-end)
+end, { desc = "Telescope: Grep given pattern" })
 
 vim.keymap.set("n", "<leader>rw", function()
   local word = vim.fn.expand "<cword>"
@@ -268,7 +292,7 @@ vim.keymap.set("n", "<leader>rw", function()
     prompt_title = ("Find word » %s «"):format(word),
     search = word,
   }
-end)
+end, { desc = "Telescope: Grep current word" })
 
 vim.keymap.set("n", "<leader>rw", function()
   -- TODO: grep for visual selection
@@ -280,36 +304,36 @@ vim.keymap.set("n", "<leader>rW", function()
     prompt_title = ("Find WORD » %s «"):format(word),
     search = word,
   }
-end)
+end, { desc = "Telescope: Grep current WORD" })
 
 -- Extensions {{{2
 
 -- Gaze the stars with the power of telescope.
 vim.keymap.set("n", "<leader>gs", function()
   telescope.extensions.github_stars.github_stars()
-end)
+end, { desc = "Telescope: GitHub stars" })
 
 -- List out all the installed plugins and provide action to either go to the
 -- GitHub page of the plugin or find files within the plugin using telescope.
 vim.keymap.set("n", "<leader>fp", function()
   telescope.extensions.installed_plugins.installed_plugins(dropdown_list)
-end)
+end, { desc = "Telescope: Installed plugins" })
 
 -- Fuzzy find over your browser bookmarks.
 vim.keymap.set("n", "<leader>fb", function()
   telescope.extensions.bookmarks.bookmarks()
-end)
+end, { desc = "Telescope: Browser bookmarks" })
 
 -- Using `ddgr/googler` search the web and fuzzy find through the results and
 -- open them up in the browser.
 vim.keymap.set("n", "<leader>fw", function()
   telescope.extensions.websearch.websearch()
-end)
+end, { desc = "Telescope: Websearch" })
 
 -- This is wrapped inside a function to avoid loading telescope modules.
 vim.keymap.set("n", "<leader>fi", function()
   telescope.extensions.icons.icons()
-end)
+end, { desc = "Telescope: Icons" })
 
 -- Start a telescope search to cd into any directory from the current one.
 -- The keybinding is defined only for the lir buffer.
@@ -325,7 +349,7 @@ local function sessions()
   telescope.extensions.sessions.sessions(dropdown_list)
 end
 
-vim.keymap.set("n", "<leader>fs", sessions)
+vim.keymap.set("n", "<leader>fs", sessions, { desc = "Telescope: Sessions" })
 
 -- }}}2
 -- }}}1
