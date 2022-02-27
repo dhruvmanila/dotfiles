@@ -16,6 +16,7 @@ declare -A SYMLINKS=(
   ["config/bat"]=".config/bat"
   ["config/bottom"]="Library/Application Support/bottom"
   ["config/bpytop"]=".config/bpytop"
+  ["config/gh/config.yml"]=".config/gh/config.yml"
   ["config/glow"]="Library/Preferences/glow"
   ["config/htop"]=".config/htop"
   ["config/ignore"]=".ignore"
