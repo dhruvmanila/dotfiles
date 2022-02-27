@@ -18,6 +18,7 @@ declare -A SYMLINKS=(
   ["config/bpytop"]=".config/bpytop"
   ["config/gh/config.yml"]=".config/gh/config.yml"
   ["config/glow"]="Library/Preferences/glow"
+  ["config/himalaya"]=".config/himalaya"
   ["config/htop"]=".config/htop"
   ["config/ignore"]=".ignore"
   ["config/kitty"]=".config/kitty"

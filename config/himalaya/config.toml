@@ -1,0 +1,20 @@
+name = "Dhruv Manilawala"
+downloads-dir = "$HOME/Downloads/email"
+signature = """
+Regards,
+Dhruv
+"""
+
+[gmail]
+default = true
+email = "dhruvmanila@gmail.com"
+
+imap-host = "imap.gmail.com"
+imap-port = 993
+imap-login = "dhruvmanila@gmail.com"
+imap-passwd-cmd = "pass show gmail/dhruvmanila"
+
+smtp-host = "smtp.gmail.com"
+smtp-port = 465
+smtp-login = "dhruvmanila@gmail.com"
+smtp-passwd-cmd = "pass show gmail/dhruvmanila"
