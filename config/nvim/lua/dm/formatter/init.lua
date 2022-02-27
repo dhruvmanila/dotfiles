@@ -3,9 +3,10 @@ local lsp_util = vim.lsp.util
 
 local register = require("dm.formatter.format").register
 local root_pattern = require("lspconfig.util").root_pattern
+local path = require("lspconfig.util").path
 
 local finder = {
-  stylua_config_file = root_pattern "stylua.toml",
+  stylua_config_file = root_pattern(".stylua.toml", "stylua.toml"),
   clang_format_config_file = root_pattern ".clang-format",
 }
 
@@ -51,11 +52,22 @@ register({
 
 do
   local stylua_config_dir
+  local possible_filenames = {
+    "stylua.toml",
+    ".stylua.toml",
+  }
 
   register("lua", {
     cmd = "stylua",
     args = function()
-      return { "--config-path", stylua_config_dir .. "/stylua.toml", "-" }
+      local stylua_config_path
+      for _, filename in ipairs(possible_filenames) do
+        stylua_config_path = stylua_config_dir .. "/" .. filename
+        if path.exists(stylua_config_path) then
+          break
+        end
+      end
+      return { "--config-path", stylua_config_path, "-" }
     end,
     enable = function()
       stylua_config_dir = finder.stylua_config_file(api.nvim_buf_get_name(0))
