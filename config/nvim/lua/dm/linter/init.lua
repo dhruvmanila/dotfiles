@@ -15,7 +15,13 @@ do
 
   register("python", {
     cmd = "flake8",
-    args = { "--format", "%(path)s:%(row)d:%(col)d:%(code)s:%(text)s", "-" },
+    args = {
+      "--format",
+      "%(path)s:%(row)d:%(col)d:%(code)s:%(text)s",
+      "--extend-ignore",
+      "E501", -- line too long
+      "-",
+    },
     ignore_exitcode = true,
     parser = function(output)
       local diagnostics = {}
