@@ -274,6 +274,11 @@ augroup("dm__auto_relative_number", {
 
 augroup("dm__terminal", {
   {
+    events = "TermOpen",
+    targets = "term://*",
+    command = "setfiletype terminal",
+  },
+  {
     events = {
       "TermOpen",
       "WinEnter",

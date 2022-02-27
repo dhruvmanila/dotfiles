@@ -23,17 +23,18 @@
 │   │   │   └── ...
 │   │   ├── plugin           # For loading plugins using require(...)
 │   │   │   └── ...
-│   │   ├── globals.lua      # Globals such as 'dm' namespace, lua interface to
-│   │   │                    # various vim commands (autocmd, nnoremap, etc.)
+│   │   ├── globals.lua      # Globals such as 'dm' namespace
 │   │   └── *.lua ...        # Lua utilities and more
 │   └── telescope
 │       └── _extensions
 │           └── ...          # Custom telescope extensions
 ├── plugin
+│   ├── mine                 # setup files for custom plugins
+│   │   └── ...
 │   ├── *.vim ...            # First all .vim files are loaded
 │   └── *.lua ...            # And then all .lua files are loaded
-├── init.lua                 # Global vars and require globals module
-├── filetype.vim             # Help filetype detection
+├── init.lua
+├── filetype.lua             # Help filetype detection
 └── minimal.lua              # Minimal bug repro template
 ```
 

@@ -11,6 +11,10 @@
 -------------------------------------------------------------------------------
 local g = vim.g
 
+-- Disable builtin filetype detection and switch to `filetype.lua`.
+g.did_load_filetypes = 0
+g.do_filetype_lua = 1
+
 require("impatient").enable_profile()
 
 -- Leader {{{
