@@ -166,7 +166,7 @@
   # the number of prompt lines. You'll probably want to set POWERLEVEL9K_SHOW_RULER=false
   # if using this. You might also like POWERLEVEL9K_PROMPT_ADD_NEWLINE=false for more compact
   # prompt.
-  typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR='·'
+  typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR=' '
   if [[ $POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_CHAR != ' ' ]]; then
     # The color of the filler.
     typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_GAP_FOREGROUND=242
@@ -207,7 +207,7 @@
 
   ##################################[ dir: current directory ]##################################
   # Default current directory color.
-  typeset -g POWERLEVEL9K_DIR_FOREGROUND=31
+  typeset -g POWERLEVEL9K_DIR_FOREGROUND='#a89984'
   # If directory is too long, shorten some of its segments to the shortest possible unique
   # prefix. The shortened directory can be tab-completed to the original.
   typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_to_unique
@@ -217,7 +217,7 @@
   typeset -g POWERLEVEL9K_DIR_SHORTENED_FOREGROUND=103
   # Color of the anchor directory segments. Anchor segments are never shortened. The first
   # segment is always an anchor.
-  typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND=39
+  typeset -g POWERLEVEL9K_DIR_ANCHOR_FOREGROUND='#ebdbb2'
   # Display anchor directory segments in bold.
   typeset -g POWERLEVEL9K_DIR_ANCHOR_BOLD=true
   # Don't shorten directories that contain any of these files. They are anchors.
@@ -873,7 +873,7 @@
   typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_PYTHON_VERSION=true
   # If set to "false", won't show virtualenv if pyenv is already shown.
   # If set to "if-different", won't show virtualenv if it's the same as pyenv.
-  typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV='if-different'
+  typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV='false'
   # Separate environment name from Python version only with a space.
   typeset -g POWERLEVEL9K_VIRTUALENV_LEFT_DELIMITER='('
   typeset -g POWERLEVEL9K_VIRTUALENV_RIGHT_DELIMITER=')'
@@ -1555,6 +1555,29 @@
   function prompt_example() {
     p10k segment -f 208 -i '⭐' -t 'hello, %n'
   }
+
+  # zmodload zsh/mapfile
+  # function prompt_python_venv_name() {
+  #   FLINES=( "${(f)mapfile[$VIRTUAL_ENV/pyvenv.cfg]}" )
+  #   # if [[ -z $FLINES ]]; then
+  #   #   return ""
+  #   # fi
+
+  #   local pyvenv_prompt, pyvenv_version
+  #   for line in $FLINES; do
+  #     case $line in
+  #       "prompt"*)
+  #         pyvenv_prompt=" (${${line#*\'}[0,-2]})"
+  #         ;;
+  #       "version"*)
+  #         pyvenv_version=" ${line[10,-2]}"
+  #         ;;
+  #   done
+  #   if [[ $pyvenv_prompt == "" ]]; then
+  #     pyvenv_prompt="${VIRTUAL_ENV:h:t}"
+  #   fi
+  #   p10k segment -f 37 -t "$pyvenv_version$pyvenv_prompt"
+  # }
 
   # User-defined prompt segments may optionally provide an instant_prompt_* function. Its job
   # is to generate the prompt segment for display in instant prompt. See
