@@ -31,6 +31,3 @@ cabbrev("so", "source %")
 -- For better readability (`tpope/vim-scriptease`)
 cabbrev("mes", "Message")
 cabbrev("veb", "Verbose")
-
-cmd "inoreabbrev ie i.e.,"
-cmd "inoreabbrev eg e.g.,"

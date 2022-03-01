@@ -1,6 +1,3 @@
----@see https://github.com/akinsho/dotfiles/tree/main/.config/nvim/lua/as/globals.lua
----@see https://github.com/tjdevries/config_manager/blob/master/xdg_config/nvim/lua/tj/globals.lua
-
 local api = vim.api
 
 -- Store all callbacks in one global table so they are able to survive

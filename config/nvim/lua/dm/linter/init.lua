@@ -1,4 +1,3 @@
-local vdiagnostic = vim.diagnostic
 local lint = require "dm.linter.lint"
 
 local register = lint.register
@@ -8,9 +7,9 @@ do
   local group = { "lnum", "col", "code", "severity", "message" }
 
   local severity_map = {
-    E = vdiagnostic.severity.ERROR,
-    W = vdiagnostic.severity.WARN,
-    F = vdiagnostic.severity.WARN,
+    E = vim.diagnostic.severity.ERROR,
+    W = vim.diagnostic.severity.WARN,
+    F = vim.diagnostic.severity.WARN,
   }
 
   register("python", {
@@ -26,7 +25,7 @@ do
     parser = function(output)
       local diagnostics = {}
       for line in vim.gsplit(output, "\n") do
-        local diagnostic = vdiagnostic.match(line, pat, group, severity_map)
+        local diagnostic = vim.diagnostic.match(line, pat, group, severity_map)
         if diagnostic then
           diagnostic.source = "flake8"
           table.insert(diagnostics, diagnostic)
@@ -42,9 +41,9 @@ do
   local groups = { "file", "lnum", "col", "severity", "message" }
 
   local severity_map = {
-    error = vdiagnostic.severity.ERROR,
-    warning = vdiagnostic.severity.WARN,
-    note = vdiagnostic.severity.HINT,
+    error = vim.diagnostic.severity.ERROR,
+    warning = vim.diagnostic.severity.WARN,
+    note = vim.diagnostic.severity.HINT,
   }
 
   register("python", {
@@ -63,7 +62,7 @@ do
     parser = function(output, bufnr)
       local diagnostics = {}
       for line in vim.gsplit(output, "\n") do
-        local diagnostic = vdiagnostic.match(line, pat, groups, severity_map)
+        local diagnostic = vim.diagnostic.match(line, pat, groups, severity_map)
         if
           diagnostic
           -- Use the `file` group to filter diagnostics related to other files.
@@ -83,10 +82,10 @@ end
 
 do
   local severity_map = {
-    error = vdiagnostic.severity.ERROR,
-    warning = vdiagnostic.severity.WARN,
-    note = vdiagnostic.severity.INFO,
-    style = vdiagnostic.severity.HINT,
+    error = vim.diagnostic.severity.ERROR,
+    warning = vim.diagnostic.severity.WARN,
+    note = vim.diagnostic.severity.INFO,
+    style = vim.diagnostic.severity.HINT,
   }
 
   register("sh", {
@@ -116,10 +115,10 @@ end
 
 do
   local severity_map = {
-    error = vdiagnostic.severity.ERROR,
-    warning = vdiagnostic.severity.WARN,
-    info = vdiagnostic.severity.INFO,
-    style = vdiagnostic.severity.HINT,
+    error = vim.diagnostic.severity.ERROR,
+    warning = vim.diagnostic.severity.WARN,
+    info = vim.diagnostic.severity.INFO,
+    style = vim.diagnostic.severity.HINT,
   }
 
   register("Dockerfile", {

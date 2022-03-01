@@ -31,8 +31,6 @@ opt.completeopt = {
   "menuone",
   -- do not select any text until the user selects a match from the menu
   "noinsert",
-  -- do not select a match in the menu, force the user to select one
-  "noselect",
 }
 
 -- Maxmimum number of items to show in the popup menu (|inc-completion-menu|)
