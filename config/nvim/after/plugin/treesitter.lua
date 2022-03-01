@@ -1,6 +1,11 @@
 vim.keymap.set("n", "<Leader>tp", "<Cmd>TSPlaygroundToggle<CR>")
 vim.keymap.set("n", "<Leader>th", "<Cmd>TSHighlightCapturesUnderCursor<CR>")
 
+-- Set custom capture groups defined in `highlights.scm`
+require("nvim-treesitter.highlight").set_custom_captures {
+  ["docstring"] = "TSComment",
+}
+
 require("nvim-treesitter.configs").setup {
   -- one of 'all', 'maintained', or a list of languages
   ensure_installed = {
@@ -30,10 +35,6 @@ require("nvim-treesitter.configs").setup {
 
   highlight = {
     enable = true,
-    -- Custom capture groups defined in highlights.scm
-    custom_captures = {
-      ["docstring"] = "TSComment",
-    },
   },
 
   playground = {
@@ -54,7 +55,6 @@ require("nvim-treesitter.configs").setup {
   textobjects = {
     select = {
       enable = true,
-      -- Custom capture groups defined in textobjects.scm
       keymaps = {
         ["aC"] = "@class.outer",
         ["iC"] = "@class.inner",
