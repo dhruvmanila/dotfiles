@@ -3,6 +3,7 @@ awsebcli
 black
 bpytop
 flake8
+grip
 httpie
 ipdb
 isort
