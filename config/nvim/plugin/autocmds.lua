@@ -276,15 +276,21 @@ augroup("dm__terminal", {
   {
     events = "TermOpen",
     targets = "term://*",
-    command = "setfiletype terminal",
+    command = "setfiletype terminal | startinsert",
   },
+  -- Enter insert mode only if the cursor is at the last prompt line.
   {
-    events = {
-      "TermOpen",
-      "WinEnter",
-    },
+    events = "WinEnter",
     targets = "term://*",
-    command = "startinsert",
+    command = function()
+      local lines = vim.api.nvim_buf_get_lines(0, vim.fn.line ".", -1, false)
+      lines = vim.tbl_filter(function(line)
+        return line ~= ""
+      end, lines)
+      if vim.tbl_isempty(lines) then
+        return vim.cmd "startinsert"
+      end
+    end,
   },
   {
     events = "TermClose",
