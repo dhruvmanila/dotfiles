@@ -33,11 +33,7 @@ vim.keymap.set("n", "<leader>dc", dap.run_to_cursor, {
   desc = "DAP: Run to cursor",
 })
 vim.keymap.set("n", "<leader>dx", dap.restart, { desc = "DAP: Restart" })
-vim.keymap.set("n", "<leader>ds", function()
-  dap.terminate()
-  dapui.close()
-end, { desc = "DAP: Terminate and close UI" })
-vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "DAP: Toggle UI" })
+vim.keymap.set("n", "<leader>ds", dap.terminate, { desc = "DAP: Terminate" })
 vim.keymap.set("n", "<leader>dr", function()
   dap.repl.toggle { height = math.floor(vim.o.lines * 0.3) }
 end, { desc = "DAP: Toggle repl" })
@@ -62,7 +58,6 @@ dm.augroup("dm__dap_repl", {
 })
 
 -- Automatically open/close the DAP UI.
--- FIXME: terminated/exited events are not being triggered?
 dap.listeners.after["event_initialized"]["dapui_config"] = function()
   dapui.open()
 end
