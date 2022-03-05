@@ -189,6 +189,20 @@ dap.configurations.python = {
     logToFile = log_to_file,
   },
   {
+    name = "Launch: file with arguments",
+    type = "python",
+    request = "launch",
+    program = "${file}",
+    args = function()
+      local args = vim.fn.input "Arguments: "
+      return vim.split(args, " +", { trimempty = true })
+    end,
+    console = "internalConsole",
+    justMyCode = false,
+    pythonPath = get_python_path,
+    logToFile = log_to_file,
+  },
+  {
     name = "Launch: module",
     type = "python",
     request = "launch",
