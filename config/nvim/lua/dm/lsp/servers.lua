@@ -86,7 +86,15 @@ return {
               preloadFileSize = 1000,
             },
             diagnostics = {
-              globals = { "packer_plugins" },
+              globals = {
+                "packer_plugins",
+                "describe",
+                "it",
+                "pending",
+                "before_each",
+                "after_each",
+                "assert",
+              },
             },
           },
         },

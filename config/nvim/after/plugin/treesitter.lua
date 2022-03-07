@@ -13,6 +13,7 @@ require("nvim-treesitter.configs").setup {
     "c",
     "cmake",
     "comment",
+    "cpp",
     "dockerfile",
     "go",
     "gomod",
