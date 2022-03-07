@@ -131,6 +131,9 @@ path=( # {{{
   # these packages, their bin directory needs to be added first in the PATH.
   "${HOMEBREW_PREFIX}"/opt/{ruby,sqlite,llvm}/bin
 
+  # GNU packages.
+  "${HOMEBREW_PREFIX}"/opt/make/libexec/gnubin
+
   # Previous path values.
   $path
 )
