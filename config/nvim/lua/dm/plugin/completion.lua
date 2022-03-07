@@ -152,5 +152,6 @@ cmp.setup {
       },
       keyword_length = 4,
     },
+    { name = "emoji" },
   },
 }

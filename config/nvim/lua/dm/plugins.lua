@@ -77,6 +77,7 @@ local function load_plugins()
       config = conf "completion",
       requires = {
         "hrsh7th/cmp-buffer",
+        "hrsh7th/cmp-emoji",
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-path",
         "saadparwaiz1/cmp_luasnip",
