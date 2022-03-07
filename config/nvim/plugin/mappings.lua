@@ -74,11 +74,11 @@ keymap.set("i", "<C-t>", "<esc>b~lea")
 --
 -- '<leader>w': Save only when the buffer is updated
 -- '<leader>q': Save the file if modified, and quit
--- 'Q': Save all the modified buffers and exit vim
+-- '<leader>Q': Save all the modified buffers and exit vim
 -- }}}
 keymap.set("n", "<leader>w", "<Cmd>silent update<CR>")
 keymap.set("n", "<leader>q", "<Cmd>silent xit<CR>")
-keymap.set("n", "Q", "<Cmd>xall<CR>")
+keymap.set("n", "<leader>Q", "<Cmd>xall<CR>")
 
 -- Rationale: {{{
 --
