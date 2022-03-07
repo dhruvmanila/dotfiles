@@ -48,6 +48,8 @@ brew "datamash"
 brew "ddgr"
 # Tool for managing dock items
 brew "dockutil"
+# Generate documentation for several programming languages
+brew "doxygen"
 # Maintain consistent coding style between multiple editors
 brew "editorconfig"
 # Simple, fast and user-friendly alternative to find
@@ -144,6 +146,10 @@ brew "openssl@3"
 brew "packer"
 # Paragraph reflow for email
 brew "par"
+# Display directories as trees (with optional color/HTML output)
+brew "tree"
+# Password manager
+brew "pass"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Object-relational database system
@@ -176,6 +182,8 @@ brew "shfmt"
 brew "starship"
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
+# Opinionated Lua code formatter
+brew "stylua"
 # Tool to build, change, and version infrastructure
 brew "terraform"
 # Simplified and community-driven man pages
@@ -184,8 +192,6 @@ brew "tldr"
 brew "tmux"
 # CLI tool that moves files or folder to the trash
 brew "trash"
-# Display directories as trees (with optional color/HTML output)
-brew "tree"
 # Maintained ctags implementation
 brew "universal-ctags"
 # Bash completion for Vagrant
@@ -235,8 +241,6 @@ cask "iterm2"
 cask "karabiner-elements"
 # GPU-based terminal emulator
 cask "kitty"
-# Provides updates to various Microsoft products
-cask "microsoft-auto-update"
 # Email client
 cask "microsoft-outlook"
 # Meet, chat, call, and collaborate in just one place
