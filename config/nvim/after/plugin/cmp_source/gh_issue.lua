@@ -78,5 +78,7 @@ function source:complete(params, callback)
   end
 end
 
--- Register the source with `nvim-cmp`.
-require("cmp").register_source("gh_issue", source:new())
+local ok, cmp = pcall(require, "cmp")
+if ok then
+  cmp.register_source("gh_issue", source:new())
+end

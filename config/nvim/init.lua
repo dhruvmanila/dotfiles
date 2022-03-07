@@ -11,7 +11,7 @@
 -------------------------------------------------------------------------------
 local g = vim.g
 
-require("impatient").enable_profile()
+pcall(require, "impatient")
 
 -- Leader bindings
 g.mapleader = " "
@@ -47,7 +47,5 @@ g.do_filetype_lua = 1
 ---@see https://en.wikipedia.org/wiki/Box-drawing_character
 g.border_style = "edge"
 
--- Setup global functions and variables. Most of the functions/variables are
--- available in the `dm` namespace. The rest can be accessed directly and are
--- mostly used for debugging purposes.
-require "dm.globals"
+require "dm.globals" -- Global functions and variables
+require "dm.plugins" -- Plugin configuration

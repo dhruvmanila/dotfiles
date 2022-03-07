@@ -144,7 +144,7 @@ lir.setup {
 
     -- Search and open Lir in any directory from the current one using Telescope
     -- Mapping is similar to `nnn`
-    [";c"] = require("dm.plugin.telescope").lir_cd,
+    [";c"] = require("dm.plugins.telescope").lir_cd,
   },
   on_init = function()
     -- These additional mappings allow us to visually select multiple items and

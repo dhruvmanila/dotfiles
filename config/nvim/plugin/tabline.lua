@@ -1,5 +1,5 @@
 local fn = vim.fn
-local devicons = require "nvim-web-devicons"
+local has_devicons, devicons = pcall(require, "nvim-web-devicons")
 
 ---File flags provider.
 ---Supported flags: Readonly, modified.
@@ -47,6 +47,9 @@ end
 ---@param ctx table
 ---@return string, string
 local function ft_icon(ctx)
+  if not has_devicons then
+    return ""
+  end
   local extension = fn.fnamemodify(ctx.bufname, ":e")
   return devicons.get_icon(
     --         lir/devicons:12 ┐

@@ -57,7 +57,7 @@ local entries = {
   {
     key = "s",
     description = "  Find sessions",
-    command = 'lua require("dm.plugin.telescope").sessions()',
+    command = 'lua require("dm.plugins.telescope").sessions()',
   },
   {
     key = "e",
@@ -72,7 +72,7 @@ local entries = {
   {
     key = "f",
     description = "  Find files",
-    command = 'lua require("dm.plugin.telescope").find_files()',
+    command = 'lua require("dm.plugins.telescope").find_files()',
   },
   {
     key = "u",
