@@ -176,20 +176,15 @@ end
 function Format:done()
   if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
     log.warn "Skipping formatting, buffer was changed"
-    return
-  end
-  if vim.deep_equal(self.input, self.output) then
-    return
-  end
-  if vim.tbl_isempty(self.output) then
+  elseif vim.tbl_isempty(self.output) then
     log.warn "Skipping formatting, received empty output"
+  elseif vim.deep_equal(self.input, self.output) then
+    log.debug "Skipping formatting, input left unchanged"
   else
-    -- Folds are removed when formatting is done, so we save the current state
-    -- of the view and re-apply it manually after formatting the buffer.
-    vim.cmd "mkview!"
+    local view = vim.fn.winsaveview()
     api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self.output)
+    vim.fn.winrestview(view)
     self:write()
-    vim.cmd "loadview"
   end
 end
 
