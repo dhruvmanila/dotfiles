@@ -111,11 +111,6 @@ local function load_plugins()
       event = "BufReadPre",
       config = conf "lsp",
     },
-    {
-      "norcalli/nvim-colorizer.lua",
-      keys = "<leader>cc",
-      config = conf "colorizer",
-    },
     { "nvim-lua/plenary.nvim" },
     {
       "nvim-telescope/telescope-fzf-native.nvim",
