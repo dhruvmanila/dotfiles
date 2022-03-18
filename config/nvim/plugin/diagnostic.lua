@@ -19,10 +19,8 @@ end
 ---@return string
 local function format_diagnostic(diagnostic)
   local message = diagnostic.message
-  local code = diagnostic.code
-    or (diagnostic.user_data and diagnostic.user_data.lsp.code)
-  if code then
-    message = ("%s (%s)"):format(message, code)
+  if diagnostic.code then
+    message = ("%s (%s)"):format(message, diagnostic.code)
   end
   return message
 end
