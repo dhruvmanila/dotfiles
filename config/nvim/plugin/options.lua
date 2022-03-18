@@ -274,6 +274,11 @@ opt.shortmess:append {
 --   - gitsigns.nvim
 opt.signcolumn = "yes:1"
 
+-- statusline {{{1
+
+-- Global statusline
+opt.laststatus = 3
+
 -- synmaxcol {{{1
 
 -- Don't syntax highlight long lines (Vim will become slow)

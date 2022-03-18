@@ -1,54 +1,5 @@
-local fn = vim.fn
-local api = vim.api
 local icons = dm.icons
 local job = require "dm.job"
-
-local function center(str)
-  return "%=" .. str .. "%="
-end
-
--- Custom statusline for special builtin/plugin buffers.
----@type table<string, string|function>
-local special_buffer_line = {
-  dashboard = function(ctx)
-    return center(" %<" .. fn.fnamemodify(ctx.bufname, ":~"))
-  end,
-
-  fugitive = center " Fugitive",
-
-  gitcommit = center " Commit message",
-
-  help = function(ctx)
-    return ctx.inactive and center "%t" or "%1* %l/%L %*%2* help %* %t"
-  end,
-
-  lir = function(ctx)
-    return center(" %<" .. fn.fnamemodify(ctx.bufname, ":~"))
-  end,
-
-  man = function(ctx)
-    return ctx.inactive and center "%t" or "%1* %l/%L %*%2* Man %* %t"
-  end,
-
-  packer = center " Packer",
-
-  qf = function(ctx)
-    local typ = fn.win_gettype(ctx.winnr)
-    typ = typ == "loclist" and "Location" or "Quickfix"
-    local ok, title = pcall(api.nvim_win_get_var, ctx.winnr, "quickfix_title")
-    title = ok and title or ""
-    if ctx.inactive then
-      return "%1* %l/%L %* " .. typ .. " List  " .. title
-    end
-    return "%1* %l/%L %*%2* " .. typ .. " List %* " .. title
-  end,
-
-  startuptime = center " Startup time",
-
-  terminal = center " %{b:term_title}",
-
-  tsplayground = center "侮Syntax Tree Playground",
-}
 
 -- Return the buffer information such as fileencoding, fileformat, indentation.
 ---@param ctx table
@@ -96,6 +47,21 @@ local function filetype(ctx)
     return python_version()
   end
   return " " .. ft .. " "
+end
+
+-- Return the type of quickfix list and the title of it.
+---@param ctx table
+---@return string
+local function quickfix_title(ctx)
+  if ctx.filetype ~= "qf" then
+    return ""
+  end
+  local list_type = "Quickfix"
+  if vim.fn.win_gettype(ctx.winnr) == "loclist" then
+    list_type = "Location"
+  end
+  local title = vim.w[ctx.winnr].quickfix_title
+  return (" %s List %%* %s"):format(list_type, title or "")
 end
 
 -- Return the currently active neovim LSP client(s) and the status message.
@@ -162,50 +128,27 @@ local function dap_status()
   return ""
 end
 
----@param ctx table
----@return string
-local function special_buffer_statusline(ctx)
-  local typ = ctx.filetype ~= "" and ctx.filetype or ctx.buftype
-  local line = special_buffer_line[typ]
-  if not line then
-    return
-  elseif type(line) == "function" then
-    return line(ctx)
-  else
-    return line
-  end
-end
-
--- Provide the statusline for different types of buffers including active,
--- inactive, special buffers such as Dashboard, Terminal, quickfix, etc.
+-- Provide the global statusline.
 ---@return string
 function _G.nvim_statusline()
-  local winnr = vim.g.statusline_winid or 0
-  local bufnr = api.nvim_win_get_buf(winnr)
-  local inactive = api.nvim_get_current_win() ~= winnr
+  local winnr = vim.api.nvim_get_current_win()
+  local bufnr = vim.api.nvim_win_get_buf(winnr)
 
   local ctx = {
     winnr = winnr,
     bufnr = bufnr,
-    bufname = fn.bufname(bufnr),
+    bufname = vim.fn.bufname(bufnr),
     filetype = vim.bo[bufnr].filetype,
     buftype = vim.bo[bufnr].buftype,
-    inactive = inactive,
   }
-
-  local line = special_buffer_statusline(ctx)
-  if line and line ~= "" then
-    return line
-  elseif inactive then
-    return center(fn.fnamemodify(ctx.bufname, ":~:."))
-  end
 
   -- The initial space is to compensate for the signcolumn.
   return "%1*  "
     .. "%L:%-2c " -- total:column
     .. "%*"
     .. "%2*"
-    .. git_branch()
+    .. git_branch() -- `git_branch` and `quickfix` are mutually exclusive
+    .. quickfix_title(ctx) -- for global statusline
     .. "%*"
     .. "%<"
     .. lsp_diagnostics(ctx)
@@ -257,7 +200,7 @@ local function set_python_venv_name()
     end
     -- Fallback to the directory name.
     if not vim.g.current_python_venv_name then
-      vim.g.current_python_venv_name = fn.fnamemodify(dir, ":t")
+      vim.g.current_python_venv_name = vim.fn.fnamemodify(dir, ":t")
     end
   end
 end
@@ -267,10 +210,10 @@ dm.augroup("dm__statusline", {
     events = "FileType",
     targets = "python",
     command = function()
-      if fn.executable "python" > 0 then
+      if vim.fn.executable "python" > 0 then
         set_interval_callback(5 * 1000, set_python_version)
+        set_interval_callback(5 * 1000, set_python_venv_name)
       end
-      set_interval_callback(5 * 1000, set_python_venv_name)
     end,
   },
 })
