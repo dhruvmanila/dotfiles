@@ -1,6 +1,16 @@
 local fn = vim.fn
 local has_devicons, devicons = pcall(require, "nvim-web-devicons")
 
+-- Return the currently active session name.
+---@return string
+local function current_session()
+  local session = vim.v.this_session
+  if session and session ~= "" then
+    return "  " .. vim.fn.fnamemodify(session, ":t") .. " "
+  end
+  return ""
+end
+
 ---File flags provider.
 ---Supported flags: Readonly, modified.
 ---@param ctx table
@@ -126,6 +136,7 @@ function _G.nvim_tabline()
     .. "%#TabLineFill#" -- After the last tab fill with TabLineFill
     .. "%T" -- Ends mouse click target region(s)
     .. "%="
+    .. current_session()
 end
 
 -- Show the tabline always
