@@ -131,7 +131,10 @@ packer.startup {
     -- Utilities
     use "airblade/vim-rooter"
     use "editorconfig/editorconfig-vim"
-    use "ggandor/lightspeed.nvim"
+    use {
+      "ggandor/lightspeed.nvim",
+      config = "require('dm.plugins.lightspeed')",
+    }
     use "itchyny/vim-external"
     use "jpalardy/vim-slime"
     use "junegunn/vim-easy-align"

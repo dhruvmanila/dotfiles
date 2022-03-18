@@ -2,21 +2,8 @@
 -- in the future, if I like the `s`/`S` behavior, I might enable it, but most
 -- likely remap it to a different key like `<leader>j`/`<leader>k`.
 
--- Why not `dm.xunmap "S"`? {{{
---
--- Short answer: `vim-surround` defines the 'S' map in visual mode.
---
--- Long answer: Alphabatically, `lightspeed` comes first and so it defines the
--- 'S' map and then `vim-surround` overrides with its own 'S' map. So, we don't
--- need to unmap it.
--- }}}
-
-vim.keymap.del("n", "s")
-vim.keymap.del("n", "S")
-vim.keymap.del("x", "s")
-vim.keymap.del("o", "z")
-vim.keymap.del("x", ";")
-vim.keymap.del("o", ";")
+-- Do NOT set any mappings by default.
+vim.g.lightspeed_no_default_keymaps = true
 
 -- Setting lightspeed options via the `opts` table directly
 local opts = require("lightspeed").opts
@@ -26,3 +13,8 @@ opts.limit_ft_matches = 10
 
 -- Timeout value (ms) after which the plugin should exit f/t-mode.
 opts.exit_after_idle_msecs.unlabeled = 2000
+
+vim.keymap.set({ "n", "x", "o" }, "f", "<Plug>Lightspeed_f")
+vim.keymap.set({ "n", "x", "o" }, "F", "<Plug>Lightspeed_F")
+vim.keymap.set({ "n", "x", "o" }, "t", "<Plug>Lightspeed_t")
+vim.keymap.set({ "n", "x", "o" }, "T", "<Plug>Lightspeed_T")
