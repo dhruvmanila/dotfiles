@@ -41,6 +41,7 @@ upgrade_mac() { # {{{1
   if [[ "$output" == "No new software available." ]]; then
     echo "No new software available."
   else
+    echo "$output"
     seek_confirmation "A system update is available. Do you wish to install it?"
     if is_confirmed; then
       softwareupdate --install --all
