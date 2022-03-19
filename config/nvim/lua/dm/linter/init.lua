@@ -72,7 +72,10 @@ do
             == vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":~:.")
         then
           diagnostic.source = "mypy"
-          if diagnostic.severity == vim.diagnostic.severity.HINT then
+          if
+            diagnostic.severity == vim.diagnostic.severity.HINT
+            and #diagnostics > 0
+          then
             diagnostics[#diagnostics].message = diagnostics[#diagnostics].message
               .. "\n"
               .. diagnostic.message
