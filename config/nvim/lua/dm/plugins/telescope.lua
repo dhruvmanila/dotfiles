@@ -294,10 +294,6 @@ vim.keymap.set("n", "<leader>rw", function()
   }
 end, { desc = "Telescope: Grep current word" })
 
-vim.keymap.set("n", "<leader>rw", function()
-  -- TODO: grep for visual selection
-end)
-
 vim.keymap.set("n", "<leader>rW", function()
   local word = vim.fn.expand "<cWORD>"
   builtin.grep_string {
