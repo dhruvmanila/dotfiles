@@ -1,23 +1,23 @@
-local has_telescope, telescope = pcall(require, "telescope")
+local has_telescope, telescope = pcall(require, 'telescope')
 
 if not has_telescope then
   return
 end
 
-local finders = require "telescope.finders"
-local pickers = require "telescope.pickers"
-local config = require("telescope.config").values
-local actions = require "telescope.actions"
-local action_state = require "telescope.actions.state"
-local entry_display = require "telescope.pickers.entry_display"
+local finders = require 'telescope.finders'
+local pickers = require 'telescope.pickers'
+local config = require('telescope.config').values
+local actions = require 'telescope.actions'
+local action_state = require 'telescope.actions.state'
+local entry_display = require 'telescope.pickers.entry_display'
 
-local session = require "dm.session"
+local session = require 'dm.session'
 
 --- Return the current session name.
 local function get_current_session_name()
-  local this_session = vim.api.nvim_get_vvar "this_session"
-  if this_session and this_session ~= "" then
-    return vim.fn.fnamemodify(vim.fn.resolve(this_session), ":t")
+  local this_session = vim.api.nvim_get_vvar 'this_session'
+  if this_session and this_session ~= '' then
+    return vim.fn.fnamemodify(vim.fn.resolve(this_session), ':t')
   end
 end
 
@@ -54,13 +54,13 @@ local function sessions(opts)
   for _, name in ipairs(session.list()) do
     table.insert(results, {
       value = name,
-      name = name == current_session and name .. " (*)" or name,
+      name = name == current_session and name .. ' (*)' or name,
       current = name == current_session,
     })
   end
 
   local displayer = entry_display.create {
-    separator = " ",
+    separator = ' ',
     items = { { remaining = true } },
   }
 
@@ -69,7 +69,7 @@ local function sessions(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Sessions",
+    prompt_title = 'Sessions',
     finder = finders.new_table {
       results = results,
       entry_maker = function(entry)
@@ -86,8 +86,8 @@ local function sessions(opts)
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(load_session)
-      map("i", "<C-x>", delete_session)
-      map("n", "<C-x>", delete_session)
+      map('i', '<C-x>', delete_session)
+      map('n', '<C-x>', delete_session)
       return true
     end,
   }):find()

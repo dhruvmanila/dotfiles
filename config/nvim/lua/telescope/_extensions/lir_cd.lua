@@ -1,20 +1,20 @@
-local has_telescope, telescope = pcall(require, "telescope")
+local has_telescope, telescope = pcall(require, 'telescope')
 
 if not has_telescope then
   return
 end
 
-local finders = require "telescope.finders"
-local pickers = require "telescope.pickers"
-local previewers = require "telescope.previewers"
-local putils = require "telescope.previewers.utils"
-local config = require("telescope.config").values
-local actions = require "telescope.actions"
-local action_state = require "telescope.actions.state"
-local entry_display = require "telescope.pickers.entry_display"
+local finders = require 'telescope.finders'
+local pickers = require 'telescope.pickers'
+local previewers = require 'telescope.previewers'
+local putils = require 'telescope.previewers.utils'
+local config = require('telescope.config').values
+local actions = require 'telescope.actions'
+local action_state = require 'telescope.actions.state'
+local entry_display = require 'telescope.pickers.entry_display'
 
-local lir = require "lir"
-local float = require "lir.float"
+local lir = require 'lir'
+local float = require 'lir.float'
 
 -- This flag is used to determine whether we were in a normal buffer or in a
 -- floating lir window and take the appropriate action when pressing '<CR>'.
@@ -31,7 +31,7 @@ local function open_dir_in_lir(prompt_bufnr)
   if state.lir_is_float then
     float.toggle(dir)
   else
-    vim.cmd("edit " .. dir)
+    vim.cmd('edit ' .. dir)
   end
 end
 
@@ -44,9 +44,9 @@ local function tree_previewer()
       return entry.value
     end,
     define_preview = function(self, entry, status)
-      vim.api.nvim_win_set_option(status.preview_win, "signcolumn", "yes:1")
+      vim.api.nvim_win_set_option(status.preview_win, 'signcolumn', 'yes:1')
       return putils.job_maker(
-        { "tree", "--dirsfirst", "--noreport", entry.value },
+        { 'tree', '--dirsfirst', '--noreport', entry.value },
         self.state.bufnr,
         {
           value = entry.value,
@@ -72,14 +72,14 @@ end
 local function lir_cd(opts)
   opts = opts or {}
 
-  if vim.bo.filetype ~= "lir" then
-    dm.notify("Telescope", "Not in a lir buffer", 3)
+  if vim.bo.filetype ~= 'lir' then
+    dm.notify('Telescope', 'Not in a lir buffer', 3)
     return nil
   end
 
-  local cwd = vim.fn.fnamemodify(lir.get_context().dir, ":~")
-  if cwd == "/" or cwd == "~/" then
-    dm.notify("Telescope", "Searching from root or home is expensive", 3)
+  local cwd = vim.fn.fnamemodify(lir.get_context().dir, ':~')
+  if cwd == '/' or cwd == '~/' then
+    dm.notify('Telescope', 'Searching from root or home is expensive', 3)
     return nil
   end
 
@@ -93,7 +93,7 @@ local function lir_cd(opts)
   end
 
   local displayer = entry_display.create {
-    separator = " ",
+    separator = ' ',
     items = { { remaining = true } },
   }
 
@@ -111,8 +111,8 @@ local function lir_cd(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Lir cd (" .. cwd .. ")",
-    finder = finders.new_oneshot_job({ "fd", "--type", "d" }, {
+    prompt_title = 'Lir cd (' .. cwd .. ')',
+    finder = finders.new_oneshot_job({ 'fd', '--type', 'd' }, {
       cwd = cwd,
       entry_maker = entry_maker,
     }),

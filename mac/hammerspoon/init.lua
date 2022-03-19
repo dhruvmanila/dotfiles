@@ -22,7 +22,7 @@ hs.window.animationDuration = 0
 --
 --     $ luarocks install inspect
 -- }}}
-local ok, inspect = pcall(require, "inspect")
+local ok, inspect = pcall(require, 'inspect')
 
 -- Enhanced version of the builtin `print`.
 --
@@ -31,20 +31,20 @@ local ok, inspect = pcall(require, "inspect")
 dump = function(...)
   return table.concat(
     hs.fnutils.imap({ ... }, function(value)
-      if type(value) == "table" then
+      if type(value) == 'table' then
         return inspect(hs.fnutils.imap(value, dump))
-      elseif ok and type(value) ~= "userdata" then
+      elseif ok and type(value) ~= 'userdata' then
         return inspect(value)
       else
         return tostring(value)
       end
     end),
-    "\n"
+    '\n'
   )
 end
 
 -- Console style changes {{{1
-hs.console.consoleFont { name = "JetBrains Mono", size = 14.0 }
+hs.console.consoleFont { name = 'JetBrains Mono', size = 14.0 }
 hs.console.darkMode(true)
 
 -- Keep the color of output and window background color the same.
@@ -56,7 +56,7 @@ hs.console.windowBackgroundColor { white = 0.12 }
 --    > command
 --    result
 hs.console.consoleCommandColor { white = 1 }
-hs.console.consoleResultColor(hs.drawing.color.asRGB { hex = "#8ec07c" })
+hs.console.consoleResultColor(hs.drawing.color.asRGB { hex = '#8ec07c' })
 
 -- Remove the space occupying toolbar.
 hs.console.toolbar(nil)
@@ -64,7 +64,7 @@ hs.console.toolbar(nil)
 -- Keybindings {{{1
 
 -- Toggle hammerspoon console.
-hs.hotkey.bind({ "cmd", "ctrl", "alt" }, "h", function()
+hs.hotkey.bind({ 'cmd', 'ctrl', 'alt' }, 'h', function()
   hs.toggleConsole()
 end)
 
@@ -76,7 +76,7 @@ end)
 -- Also, if you have multiple windows for an application, minimize/unminimize
 -- works on a specific window and not on the whole application. Use hide/unhide
 -- for all windows of an application.
-hs.hotkey.bind({ "cmd", "ctrl" }, "m", function()
+hs.hotkey.bind({ 'cmd', 'ctrl' }, 'm', function()
   for _, win in ipairs(hs.window.allWindows()) do
     if win:isMinimized() then
       win:unminimize()

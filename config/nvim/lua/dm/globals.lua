@@ -13,7 +13,7 @@ _G.dm = {
 -- return the string as it is.
 dm.border = setmetatable({
   -- https://en.wikipedia.org/wiki/Box-drawing_character
-  edge = { "🭽", "▔", "🭾", "▕", "🭿", "▁", "🭼", "▏" },
+  edge = { '🭽', '▔', '🭾', '▕', '🭿', '▁', '🭼', '▏' },
 }, {
   __index = function(_, key)
     return key
@@ -22,36 +22,36 @@ dm.border = setmetatable({
 
 dm.icons = {
   lsp_kind = {
-    Text = "",
-    Method = "",
-    Function = "",
-    Constructor = "",
-    Field = "",
-    Variable = "",
-    Class = "",
-    Interface = "",
-    Module = "",
-    Property = "",
-    Unit = "",
-    Value = "",
-    Enum = "",
-    Keyword = "",
-    Snippet = "",
-    Color = "",
-    File = "",
-    Reference = "",
-    Folder = "",
-    EnumMember = "",
-    Constant = "",
-    Struct = "",
-    Event = "",
-    Operator = "",
-    TypeParameter = "",
+    Text = '',
+    Method = '',
+    Function = '',
+    Constructor = '',
+    Field = '',
+    Variable = '',
+    Class = '',
+    Interface = '',
+    Module = '',
+    Property = '',
+    Unit = '',
+    Value = '',
+    Enum = '',
+    Keyword = '',
+    Snippet = '',
+    Color = '',
+    File = '',
+    Reference = '',
+    Folder = '',
+    EnumMember = '',
+    Constant = '',
+    Struct = '',
+    Event = '',
+    Operator = '',
+    TypeParameter = '',
   },
-  error = "",
-  warn = "",
-  info = "",
-  hint = "",
+  error = '',
+  warn = '',
+  info = '',
+  hint = '',
 }
 
 ---@generic T
@@ -64,7 +64,7 @@ end
 
 -- Clear the 'require' cache and 'luacache' for the module name.
 RELOAD = function(...)
-  require("plenary.reload").reload_module(...)
+  require('plenary.reload').reload_module(...)
 end
 
 -- Reload and require the given module name.
@@ -76,7 +76,7 @@ R = function(name)
 end
 
 do
-  local output = "[timer]%s: %fms"
+  local output = '[timer]%s: %fms'
   local hrtime = vim.loop.hrtime
   local start = {}
 
@@ -88,7 +88,7 @@ do
     stop = function(info)
       print(
         output:format(
-          info and " " .. info or "",
+          info and ' ' .. info or '',
           (hrtime() - table.remove(start)) / 1e6
         )
       )
@@ -100,15 +100,15 @@ do
   local notify
 
   local function setup()
-    notify = require "notify"
+    notify = require 'notify'
     notify.setup {
-      stages = "fade",
-      background_colour = "#282828",
+      stages = 'fade',
+      background_colour = '#282828',
       icons = {
         ERROR = dm.icons.error,
         WARN = dm.icons.warn,
         INFO = dm.icons.info,
-        DEBUG = "",
+        DEBUG = '',
       },
     }
   end
@@ -124,11 +124,11 @@ do
 
   -- Default values for the notification title as per the log level.
   local default_title = {
-    [levels.TRACE] = "Trace",
-    [levels.DEBUG] = "Debug",
-    [levels.INFO] = "Information",
-    [levels.WARN] = "Warning",
-    [levels.ERROR] = "Error",
+    [levels.TRACE] = 'Trace',
+    [levels.DEBUG] = 'Debug',
+    [levels.INFO] = 'Information',
+    [levels.WARN] = 'Warning',
+    [levels.ERROR] = 'Error',
   }
 
   -- Override the default `vim.notify` to open a floating window.
@@ -144,7 +144,7 @@ do
     log_level = log_level or levels.INFO
     opts = opts or {}
     opts.title = opts.title
-      or (type(log_level) == "string" and log_level)
+      or (type(log_level) == 'string' and log_level)
       or default_title[log_level]
     notify(msg, log_level, opts)
   end
@@ -165,7 +165,7 @@ end
 ---@param f function
 ---@return string
 local function create(f)
-  vim.validate { f = { f, "f" } }
+  vim.validate { f = { f, 'f' } }
   local id = #dm._store + 1
   dm._store[id] = f
   return id
@@ -200,7 +200,7 @@ do
   ---@param opt? string|string[]
   ---@return string[]
   local function resolve(opt)
-    return opt and (type(opt) == "string" and { opt } or opt) or {}
+    return opt and (type(opt) == 'string' and { opt } or opt) or {}
   end
 
   -- Lua interface to vim autocommands.
@@ -209,14 +209,14 @@ do
     local command = opts.command
     if vim.is_callable(command) then
       local fn_id = create(command)
-      command = ("lua dm._execute(%d)"):format(fn_id)
+      command = ('lua dm._execute(%d)'):format(fn_id)
     end
     vim.cmd(
-      ("autocmd %s %s %s %s %s"):format(
-        opts.group or "",
-        table.concat(resolve(opts.events), ","),
-        table.concat(resolve(opts.targets), ","),
-        table.concat(resolve(opts.modifiers), " "),
+      ('autocmd %s %s %s %s %s'):format(
+        opts.group or '',
+        table.concat(resolve(opts.events), ','),
+        table.concat(resolve(opts.targets), ','),
+        table.concat(resolve(opts.modifiers), ' '),
         command
       )
     )
@@ -227,10 +227,10 @@ end
 ---@param name string group name of the given autocmds
 ---@param commands AutocmdOpts[]
 function dm.augroup(name, commands)
-  vim.cmd("augroup " .. name)
-  vim.cmd "autocmd!"
+  vim.cmd('augroup ' .. name)
+  vim.cmd 'autocmd!'
   for _, c in ipairs(commands) do
     dm.autocmd(c)
   end
-  vim.cmd "augroup END"
+  vim.cmd 'augroup END'
 end

@@ -41,11 +41,11 @@ return {
         json = {
           schemas = vim.list_extend({
             {
-              description = "Lua language server config file",
-              fileMatch = { ".luarc.json" },
-              url = "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+              description = 'Lua language server config file',
+              fileMatch = { '.luarc.json' },
+              url = 'https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json',
             },
-          }, require("schemastore").json.schemas()),
+          }, require('schemastore').json.schemas()),
         },
       },
     }
@@ -61,7 +61,7 @@ return {
       },
       python = {
         analysis = {
-          typeCheckingMode = "off", -- Using mypy
+          typeCheckingMode = 'off', -- Using mypy
         },
       },
     },
@@ -71,7 +71,7 @@ return {
   -- Install: `brew install lua-language-server`
   -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#sumneko_lua
   sumneko_lua = function()
-    return require("lua-dev").setup {
+    return require('lua-dev').setup {
       library = {
         plugins = false,
       },
@@ -80,20 +80,20 @@ return {
           Lua = {
             completion = {
               -- Do NOT show contextual words, I got `cmp-buffer` for that.
-              showWord = "Disable",
+              showWord = 'Disable',
             },
             workspace = {
               preloadFileSize = 1000,
             },
             diagnostics = {
               globals = {
-                "packer_plugins",
-                "describe",
-                "it",
-                "pending",
-                "before_each",
-                "after_each",
-                "assert",
+                'packer_plugins',
+                'describe',
+                'it',
+                'pending',
+                'before_each',
+                'after_each',
+                'assert',
               },
             },
           },
@@ -120,7 +120,7 @@ return {
         schemas = {
           -- Specify this explicitly as the server gets confused with `hammerkit.json`
           ---@see https://github.com/redhat-developer/vscode-yaml/issues/565
-          ["https://json.schemastore.org/github-workflow.json"] = ".github/workflows/*",
+          ['https://json.schemastore.org/github-workflow.json'] = '.github/workflows/*',
         },
       },
     },

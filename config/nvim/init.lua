@@ -11,17 +11,17 @@
 -------------------------------------------------------------------------------
 local g = vim.g
 
-pcall(require, "impatient")
+pcall(require, 'impatient')
 
 -- Leader bindings
-g.mapleader = " "
-g.maplocalleader = " "
+g.mapleader = ' '
+g.maplocalleader = ' '
 
 -- Setup neovim providers (`:h provider`)
 g.loaded_ruby_provider = 0
 g.loaded_perl_provider = 0
-g.python3_host_prog = "~/.neovim/.venv/bin/python3"
-g.node_host_prog = "/usr/local/bin/neovim-node-host"
+g.python3_host_prog = '~/.neovim/.venv/bin/python3'
+g.node_host_prog = '/usr/local/bin/neovim-node-host'
 
 -- Disable built-in plugins (`:h standard-plugin-list`)
 g.loaded_2html_plugin = 1
@@ -45,7 +45,7 @@ g.do_filetype_lua = 1
 -- Global border style
 ---@type '"edge"'|'"single"'|'"double"'|'"shadow"'|'"rounded"'|'"solid"'
 ---@see https://en.wikipedia.org/wiki/Box-drawing_character
-g.border_style = "edge"
+g.border_style = 'edge'
 
-require "dm.globals" -- Global functions and variables
-require "dm.plugins" -- Plugin configuration
+require 'dm.globals' -- Global functions and variables
+require 'dm.plugins' -- Plugin configuration

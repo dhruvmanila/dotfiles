@@ -1,8 +1,8 @@
 local fn = vim.fn
 local api = vim.api
 
-local Text = require "dm.text"
-local session = require "dm.session"
+local Text = require 'dm.text'
+local session = require 'dm.session'
 
 -- Variables {{{1
 
@@ -11,25 +11,25 @@ local DESC_LENGTH = 50
 
 -- `guicursor` option value to hide the cursor using the `HiddenCursor`
 -- highlight group. This is defined in our colorscheme.
-local HIDDEN_CURSOR = "a:HiddenCursor/lCursor"
+local HIDDEN_CURSOR = 'a:HiddenCursor/lCursor'
 
 -- Dashboard namespace
 local dashboard = {}
 
 -- Dashboard buffer/window options
 dashboard.opts = {
-  bufhidden = "wipe",
+  bufhidden = 'wipe',
   buflisted = false,
-  colorcolumn = "",
+  colorcolumn = '',
   cursorcolumn = false,
   cursorline = false,
-  foldcolumn = "0",
+  foldcolumn = '0',
   list = false,
   modifiable = true,
   number = false,
   readonly = false,
   relativenumber = false,
-  signcolumn = "no",
+  signcolumn = 'no',
   spell = false,
   swapfile = false,
   wrap = false,
@@ -43,46 +43,46 @@ dashboard.opts = {
 ---@type DashboardEntry[]
 local entries = {
   {
-    key = "l",
+    key = 'l',
     description = function()
       -- Save the name of the last session in the dashboard namespace to be
       -- used to load the session.
       dashboard.last_session = session.last()
-      return "  Last session (" .. dashboard.last_session .. ")"
+      return '  Last session (' .. dashboard.last_session .. ')'
     end,
     command = function()
       session.load(dashboard.last_session)
     end,
   },
   {
-    key = "s",
-    description = "  Find sessions",
+    key = 's',
+    description = '  Find sessions',
     command = 'lua require("dm.plugins.telescope").sessions()',
   },
   {
-    key = "e",
-    description = "  New file",
-    command = "enew",
+    key = 'e',
+    description = '  New file',
+    command = 'enew',
   },
   {
-    key = "h",
-    description = "  Recently opened files",
+    key = 'h',
+    description = '  Recently opened files',
     command = 'lua require("telescope.builtin").oldfiles()',
   },
   {
-    key = "f",
-    description = "  Find files",
+    key = 'f',
+    description = '  Find files',
     command = 'lua require("dm.plugins.telescope").find_files()',
   },
   {
-    key = "u",
-    description = "  Sync packages",
-    command = "PackerSync",
+    key = 'u',
+    description = '  Sync packages',
+    command = 'PackerSync',
   },
   {
-    key = "p",
-    description = "  Startup time",
-    command = "StartupTime",
+    key = 'p',
+    description = '  Startup time',
+    command = 'StartupTime',
   },
 }
 
@@ -91,27 +91,27 @@ local entries = {
 ---@return string[]
 local function generate_header()
   return {
-    "",
-    "",
-    "",
-    "███╗   ██╗ ███████╗  ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗",
-    "████╗  ██║ ██╔════╝ ██╔═══██╗ ██║   ██║ ██║ ████╗ ████║",
-    "██╔██╗ ██║ █████╗   ██║   ██║ ██║   ██║ ██║ ██╔████╔██║",
-    "██║╚██╗██║ ██╔══╝   ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║",
-    "██║ ╚████║ ███████╗ ╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║",
-    "╚═╝  ╚═══╝ ╚══════╝  ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝",
+    '',
+    '',
+    '',
+    '███╗   ██╗ ███████╗  ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗',
+    '████╗  ██║ ██╔════╝ ██╔═══██╗ ██║   ██║ ██║ ████╗ ████║',
+    '██╔██╗ ██║ █████╗   ██║   ██║ ██║   ██║ ██║ ██╔████╔██║',
+    '██║╚██╗██║ ██╔══╝   ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║',
+    '██║ ╚████║ ███████╗ ╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║',
+    '╚═╝  ╚═══╝ ╚══════╝  ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝',
   }
 end
 
 ---@return string[]
 local function generate_sub_header()
-  local version = api.nvim_exec("version", true)
+  local version = api.nvim_exec('version', true)
   version = vim.split(
-    vim.split(version, "\n", { trimempty = true })[1],
-    " ",
+    vim.split(version, '\n', { trimempty = true })[1],
+    ' ',
     { trimempty = true }
   )[2]
-  return { version, "", "" }
+  return { version, '', '' }
 end
 
 ---@return string[]
@@ -125,7 +125,7 @@ local function generate_footer()
       loaded_plugins = loaded_plugins + 1
     end
   end
-  return { "", "", "Neovim loaded " .. loaded_plugins .. " plugins" }
+  return { '', '', 'Neovim loaded ' .. loaded_plugins .. ' plugins' }
 end
 
 -- Add the 'key' value to the right end of the given line with the appropriate
@@ -134,7 +134,7 @@ end
 ---@param key string
 ---@return string
 local function add_key(line, key)
-  return line .. string.rep(" ", DESC_LENGTH - #line) .. key
+  return line .. string.rep(' ', DESC_LENGTH - #line) .. key
 end
 
 -- Add paddings on the left side of every line to make it look like its in the
@@ -148,7 +148,7 @@ local function center(lines)
   end
   local shift = math.floor(api.nvim_win_get_width(0) / 2 - max_length / 2)
   return vim.tbl_map(function(line)
-    return string.rep(" ", shift) .. line
+    return string.rep(' ', shift) .. line
   end, lines)
 end
 
@@ -158,13 +158,13 @@ end
 ---@param opts table<string, any>
 ---@param process OptionProcess
 local function option_process(opts, process)
-  assert(process == "save" or process == "set", "Incorrect 'process' value")
+  assert(process == 'save' or process == 'set', "Incorrect 'process' value")
   for name, value in pairs(opts) do
-    if process == "set" then
+    if process == 'set' then
       -- FIXME: Currently `opt_local` is broken in Neovim as it leaks
       -- window options to other windows. It seems that `setlocal` is magical
       vim.opt_local[name] = value
-    elseif process == "save" then
+    elseif process == 'save' then
       dashboard.saved_opts[name] = vim.opt_local[name]:get()
     end
   end
@@ -175,17 +175,17 @@ local function render_text()
   local text = Text:new()
   --                        add a newline after the block ─┐
   --                                                       │
-  text:block(center(generate_header()), "DashboardHeader", true)
-  text:block(center(generate_sub_header()), "DashboardHeader", true)
+  text:block(center(generate_header()), 'DashboardHeader', true)
+  text:block(center(generate_sub_header()), 'DashboardHeader', true)
   for _, entry in ipairs(entries) do
     local description = entry.description
-    if type(description) == "function" then
+    if type(description) == 'function' then
       description = description()
     end
     description = add_key(description, entry.key)
-    text:block(center { description }, "DashboardEntry", true)
+    text:block(center { description }, 'DashboardEntry', true)
   end
-  text:block(center(generate_footer()), "DashboardFooter")
+  text:block(center(generate_footer()), 'DashboardFooter')
 end
 
 -- Close the dashboard buffer and either quit Neovim or move back to the
@@ -198,14 +198,14 @@ local function close()
   -- NOTE: If we have enabled the `buflisted` option for the dashboard buffer,
   -- then subtract 1 to this to get the correct number.
   if #listed_bufs == 0 then
-    vim.cmd "quit"
+    vim.cmd 'quit'
   else
     local current = api.nvim_get_current_buf()
-    local alternate = fn.bufnr "#"
+    local alternate = fn.bufnr '#'
     if api.nvim_buf_is_loaded(alternate) and alternate ~= current then
       api.nvim_set_current_buf(alternate)
     else
-      vim.cmd "bnext"
+      vim.cmd 'bnext'
     end
   end
 end
@@ -224,13 +224,13 @@ local cursor = {
 --   - `key`: open the entry for the registered entry
 local function setup_mappings()
   local opts = { buffer = true, nowait = true }
-  vim.keymap.set("n", "q", close, opts)
+  vim.keymap.set('n', 'q', close, opts)
   for _, entry in ipairs(entries) do
     local command = entry.command
-    if type(command) == "string" then
-      command = "<Cmd>" .. command .. "<CR>"
+    if type(command) == 'string' then
+      command = '<Cmd>' .. command .. '<CR>'
     end
-    vim.keymap.set("n", entry.key, command, opts)
+    vim.keymap.set('n', entry.key, command, opts)
   end
 end
 
@@ -240,22 +240,22 @@ end
 --   - Reset the options when deleting the dashboard buffer
 local function setup_autocmds()
   dm.autocmd {
-    events = { "BufEnter", "CmdlineLeave" },
-    targets = "<buffer>",
+    events = { 'BufEnter', 'CmdlineLeave' },
+    targets = '<buffer>',
     command = cursor.hide,
   }
   dm.autocmd {
-    events = { "BufLeave", "CmdlineEnter" },
-    targets = "<buffer>",
+    events = { 'BufLeave', 'CmdlineEnter' },
+    targets = '<buffer>',
     command = cursor.show,
   }
   -- TODO: This should not be needed once the options bug is fixed upstream
   dm.autocmd {
-    events = "BufWipeout",
-    targets = "<buffer>",
-    modifiers = "++once",
+    events = 'BufWipeout',
+    targets = '<buffer>',
+    modifiers = '++once',
     command = function()
-      option_process(dashboard.saved_opts, "set")
+      option_process(dashboard.saved_opts, 'set')
       dashboard.saved_opts = {}
     end,
   }
@@ -271,47 +271,47 @@ local function open(on_vimenter)
 
   -- We will ignore all events while creating the dashboard buffer as it might
   -- result in unintended effect when dashboard is called in a nested fashion.
-  vim.o.eventignore = "all"
+  vim.o.eventignore = 'all'
 
   -- Save the current window/buffer options
   -- If we are being called from a dashboard buffer, then we should not save
   -- the options as it will save the dashboard buffer specific options.
-  if vim.bo.filetype ~= "dashboard" then
+  if vim.bo.filetype ~= 'dashboard' then
     dashboard.saved_opts = {}
-    option_process(dashboard.opts, "save")
+    option_process(dashboard.opts, 'save')
     dashboard.guicursor = vim.o.guicursor
   end
 
   -- Create a new, unnamed buffer
-  if fn.line2byte "$" ~= -1 then
+  if fn.line2byte '$' ~= -1 then
     local bufnr = api.nvim_create_buf(true, true)
     -- If we are being called from a dashboard buffer in a nested fashion, we
     -- should keep the alternate buffer which is the one we go to when we
     -- quit the dashboard buffer.
-    if vim.bo.filetype == "dashboard" then
-      vim.cmd(("keepalt call nvim_win_set_buf(0, %d)"):format(bufnr))
+    if vim.bo.filetype == 'dashboard' then
+      vim.cmd(('keepalt call nvim_win_set_buf(0, %d)'):format(bufnr))
     else
       api.nvim_win_set_buf(0, bufnr)
     end
   end
 
   -- Set the dashboard buffer options
-  option_process(dashboard.opts, "set")
+  option_process(dashboard.opts, 'set')
 
   -- Render the text and lock the buffer
   render_text()
   option_process({
     modifiable = false,
     modified = false,
-    filetype = "dashboard",
-  }, "set")
+    filetype = 'dashboard',
+  }, 'set')
 
   setup_mappings()
   setup_autocmds()
 
   -- Hide the cursor as everything is invoked through keys
   cursor.hide()
-  vim.o.eventignore = ""
+  vim.o.eventignore = ''
 end
 
 -- }}}1

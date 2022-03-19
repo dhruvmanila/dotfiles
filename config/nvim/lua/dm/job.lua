@@ -1,5 +1,5 @@
 local uv = vim.loop
-local log = require "dm.log"
+local log = require 'dm.log'
 
 ---@class JobOpts
 ---@field cmd string
@@ -23,7 +23,7 @@ local log = require "dm.log"
 local function close_safely(...)
   -- `ipairs` cannot be used because it stops as soon as `nil` is reached and
   -- most likely the `stdin` handle will be `nil`.
-  for i = 1, select("#", ...) do
+  for i = 1, select('#', ...) do
     local handle = select(i, ...)
     if handle and not handle:is_closing() then
       handle:close()
@@ -37,10 +37,10 @@ end
 ---@return table
 local function reader(prefix, user_handler)
   prefix = prefix:upper()
-  return setmetatable({ data = "" }, {
+  return setmetatable({ data = '' }, {
     __call = function(self, err, chunk)
       if err then
-        log.fmt_error("Error while reading %s: %s", prefix, err)
+        log.fmt_error('Error while reading %s: %s', prefix, err)
       elseif chunk then
         if user_handler then
           vim.schedule(function()
@@ -48,9 +48,9 @@ local function reader(prefix, user_handler)
           end)
         end
         self.data = self.data .. chunk
-        log.fmt_debug("Read %s: %s", prefix, chunk)
+        log.fmt_debug('Read %s: %s', prefix, chunk)
       else
-        log.fmt_debug("Buffer size for %s: %s", prefix, #self.data)
+        log.fmt_debug('Buffer size for %s: %s', prefix, #self.data)
       end
     end,
   })
@@ -59,14 +59,14 @@ end
 ---@param opts JobOpts
 return function(opts)
   opts = opts or {}
-  vim.validate { cmd = { opts.cmd, "s" } }
+  vim.validate { cmd = { opts.cmd, 's' } }
 
   -- We cannot initialize this to an empty table because it would reset the
   -- environment for the process even if `opts.env` is `nil`.
   local env
   local cmd = opts.cmd
   local args = opts.args or {}
-  if type(args) == "function" then
+  if type(args) == 'function' then
     args = args()
   end
 
@@ -78,12 +78,12 @@ return function(opts)
     -- which are passed in by the user.
     env = {}
     for k, v in pairs(opts.env) do
-      table.insert(env, ("%s=%s"):format(k, v))
+      table.insert(env, ('%s=%s'):format(k, v))
     end
   end
 
-  local stdout_handler = reader("stdout", opts.on_stdout)
-  local stderr_handler = reader("stderr", opts.on_stderr)
+  local stdout_handler = reader('stdout', opts.on_stdout)
+  local stderr_handler = reader('stderr', opts.on_stderr)
 
   local stdin = opts.writer and uv.new_pipe()
   local stdout = uv.new_pipe()
@@ -95,7 +95,7 @@ return function(opts)
   ---@param code number
   ---@param signal number
   local function on_exit(code, signal)
-    log.fmt_debug("Process exited (code: %d, signal: %d)", code, signal)
+    log.fmt_debug('Process exited (code: %d, signal: %d)', code, signal)
     stdout:read_stop()
     stderr:read_stop()
     close_safely(handle, stdin, stdout, stderr)
@@ -112,7 +112,7 @@ return function(opts)
     end
   end
 
-  log.fmt_debug("Spawning process: %s %s", cmd, args)
+  log.fmt_debug('Spawning process: %s %s', cmd, args)
   handle, pid_or_err = uv.spawn(cmd, {
     args = args,
     stdio = { stdin, stdout, stderr },
@@ -123,20 +123,20 @@ return function(opts)
 
   if not handle then
     close_safely(stdin, stdout, stderr)
-    log.fmt_error("Failed to spawn process: %s", pid_or_err)
+    log.fmt_error('Failed to spawn process: %s', pid_or_err)
     return
   end
 
-  log.fmt_debug("Process spawned with PID: %d", pid_or_err)
+  log.fmt_debug('Process spawned with PID: %d', pid_or_err)
   stdout:read_start(stdout_handler)
   stderr:read_start(stderr_handler)
 
   if stdin then
     local writer = opts.writer
-    if type(writer) == "table" then
-      writer = table.concat(writer, "\n") .. "\n"
+    if type(writer) == 'table' then
+      writer = table.concat(writer, '\n') .. '\n'
     end
-    log.fmt_debug("Writing to STDIN: %s", writer)
+    log.fmt_debug('Writing to STDIN: %s', writer)
     stdin:write(writer)
     stdin:shutdown()
   end

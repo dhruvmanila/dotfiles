@@ -12,7 +12,7 @@
 local default_config = {
   -- Should print the output to neovim while running
   ---@type "'sync'"|"'async'"|"false"
-  use_console = "async",
+  use_console = 'async',
 
   -- Should highlighting be used in console (using echohl)
   ---@type boolean
@@ -24,17 +24,17 @@ local default_config = {
 
   -- Any messages above this level will be logged.
   ---@type string|number
-  level = vim.env.DEBUG and "debug" or "info",
+  level = vim.env.DEBUG and 'debug' or 'info',
 
   -- Level configuration
   ---@type { name: string, hl: string }[]
   modes = {
-    { name = "trace", hl = "Comment" },
-    { name = "debug", hl = "Comment" },
-    { name = "info", hl = "None" },
-    { name = "warn", hl = "WarningMsg" },
-    { name = "error", hl = "ErrorMsg" },
-    { name = "fatal", hl = "ErrorMsg" },
+    { name = 'trace', hl = 'Comment' },
+    { name = 'debug', hl = 'Comment' },
+    { name = 'info', hl = 'None' },
+    { name = 'warn', hl = 'WarningMsg' },
+    { name = 'error', hl = 'ErrorMsg' },
+    { name = 'fatal', hl = 'ErrorMsg' },
   },
 
   -- Limit the number of decimals displayed for floats
@@ -50,9 +50,9 @@ local unpack = unpack or table.unpack
 ---@param standalone? boolean
 ---@return table
 log.new = function(config, standalone)
-  config = vim.tbl_deep_extend("force", default_config, config or {})
+  config = vim.tbl_deep_extend('force', default_config, config or {})
 
-  local outfile = vim.fn.stdpath "cache" .. "/dm.log"
+  local outfile = vim.fn.stdpath 'cache' .. '/dm.log'
   local obj = standalone and log or config
 
   local levels = {}
@@ -75,40 +75,40 @@ log.new = function(config, standalone)
   ---@return string
   local function make_string(...)
     local result = {}
-    for i = 1, select("#", ...) do
+    for i = 1, select('#', ...) do
       local item = select(i, ...)
-      if type(item) == "number" and config.float_precision then
+      if type(item) == 'number' and config.float_precision then
         item = tostring(round(item, config.float_precision))
-      elseif type(item) == "table" then
+      elseif type(item) == 'table' then
         item = vim.inspect(item)
       else
         item = tostring(item)
       end
       result[#result + 1] = item
     end
-    return table.concat(result, " ")
+    return table.concat(result, ' ')
   end
 
   local console_output = vim.schedule_wrap(
     function(level_config, nameupper, msg, info)
-      local lineinfo = ("%s:%s"):format(
-        vim.fn.fnamemodify(info.short_src, ":t"),
+      local lineinfo = ('%s:%s'):format(
+        vim.fn.fnamemodify(info.short_src, ':t'),
         info.currentline
       )
-      local console_string = ("%s [%s] .../%s: %s"):format(
-        os.date "%H:%M:%S",
+      local console_string = ('%s [%s] .../%s: %s'):format(
+        os.date '%H:%M:%S',
         nameupper,
         lineinfo,
         msg
       )
 
       if config.highlights and level_config.hl then
-        vim.cmd("echohl " .. level_config.hl)
+        vim.cmd('echohl ' .. level_config.hl)
       end
 
       local split_console = vim.split(
         console_string,
-        "\n",
+        '\n',
         { trimempty = true }
       )
       for _, v in ipairs(split_console) do
@@ -116,25 +116,25 @@ log.new = function(config, standalone)
 
         local ok = pcall(vim.cmd, string.format([[echom "%s"]], formatted_msg))
         if not ok then
-          vim.api.nvim_out_write(msg .. "\n")
+          vim.api.nvim_out_write(msg .. '\n')
         end
       end
 
       if config.highlights and level_config.hl then
-        vim.cmd "echohl NONE"
+        vim.cmd 'echohl NONE'
       end
     end
   )
 
   local file_output = vim.schedule_wrap(function(nameupper, msg, info)
-    local lineinfo = ("%s:%s"):format(
-      vim.fn.fnamemodify(info.short_src, ":t"),
+    local lineinfo = ('%s:%s'):format(
+      vim.fn.fnamemodify(info.short_src, ':t'),
       info.currentline
     )
-    local fp = assert(io.open(outfile, "a"))
+    local fp = assert(io.open(outfile, 'a'))
     fp:write(
-      ("%s [%s] .../%s: %s\n"):format(
-        os.date "%Y/%m/%d %H:%M:%S",
+      ('%s [%s] .../%s: %s\n'):format(
+        os.date '%Y/%m/%d %H:%M:%S',
         nameupper,
         lineinfo,
         msg
@@ -150,8 +150,8 @@ log.new = function(config, standalone)
     end
 
     local nameupper = level_config.name:upper()
-    local msg = message_maker(...):gsub("\n$", "")
-    local info = debug.getinfo(config.info_level or 2, "Sl")
+    local msg = message_maker(...):gsub('\n$', '')
+    local info = debug.getinfo(config.info_level or 2, 'Sl')
 
     -- Output to console
     if config.use_console then
@@ -171,7 +171,7 @@ log.new = function(config, standalone)
     end
 
     -- log.fmt_info("These are %s strings", "formatted")
-    obj[("fmt_%s"):format(x.name)] = function(...)
+    obj[('fmt_%s'):format(x.name)] = function(...)
       return log_at_level(i, x, function(...)
         local passed = { ... }
         local fmt = table.remove(passed, 1)
@@ -184,14 +184,14 @@ log.new = function(config, standalone)
     end
 
     -- log.lazy_info(expensive_to_calculate)
-    obj[("lazy_%s"):format(x.name)] = function(f)
+    obj[('lazy_%s'):format(x.name)] = function(f)
       return log_at_level(i, x, function()
         return f()
       end)
     end
 
     -- log.file_info("do not print")
-    obj[("file_%s"):format(x.name)] = function(vals, override)
+    obj[('file_%s'):format(x.name)] = function(vals, override)
       local original_console = config.use_console
       config.use_console = false
       config.info_level = override.info_level

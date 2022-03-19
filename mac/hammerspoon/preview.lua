@@ -20,7 +20,7 @@
 
 local kitty = hs.window.focusedWindow()
 
-if kitty:application():name() ~= "kitty" then
+if kitty:application():name() ~= 'kitty' then
   return
 end
 
@@ -44,13 +44,13 @@ end
 
 kitty:move(hs.layout.left50)
 
-local brave = hs.application.get "Brave Browser"
+local brave = hs.application.get 'Brave Browser'
 if not brave then
   --     maximum number of seconds to wait
   --     for the application to be launched ───┐
   --                                           │
   --                                           │
-  brave = hs.application.open("Brave Browser", 2, true)
+  brave = hs.application.open('Brave Browser', 2, true)
   --                                              │
   --                                              │
   --    additionally wait until the app has       │
@@ -69,13 +69,13 @@ end
 -- `spaces` is a third party library and remains undocumented for now.
 -- Source: https://github.com/asmagill/hs._asm.undocumented.spaces
 -- }}}
-brave:selectMenuItem { "File", "New Window" }
+brave:selectMenuItem { 'File', 'New Window' }
 
 -- Is there any other way to get the window object? {{{
 --
 --   hs.window.find(hint)
 -- }}}
-brave:getWindow("New Tab - Brave"):move(hs.layout.right50)
+brave:getWindow('New Tab - Brave'):move(hs.layout.right50)
 
 -- This will open the web address in the currently focused window.
 hs.osascript.applescript [[

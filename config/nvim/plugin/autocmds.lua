@@ -11,16 +11,16 @@ do
 
   -- Automatically clear command-line messages after a few seconds delay
   -- Source: https://unix.stackexchange.com/a/613645
-  augroup("dm__clear_cmdline_messages", {
+  augroup('dm__clear_cmdline_messages', {
     {
-      events = "CmdlineLeave",
-      targets = ":",
+      events = 'CmdlineLeave',
+      targets = ':',
       command = function()
         if timer then
           timer:stop()
         end
         timer = vim.defer_fn(function()
-          if fn.mode() == "n" then
+          if fn.mode() == 'n' then
             api.nvim_echo({}, false, {})
           end
         end, timeout)
@@ -31,12 +31,12 @@ end
 
 -- Highlighted yank {{{1
 
-augroup("dm__highlighted_yank", {
+augroup('dm__highlighted_yank', {
   {
-    events = "TextYankPost",
-    targets = "*",
+    events = 'TextYankPost',
+    targets = '*',
     command = function()
-      vim.highlight.on_yank { higroup = "Substitute", timeout = 200 }
+      vim.highlight.on_yank { higroup = 'Substitute', timeout = 200 }
     end,
   },
 })
@@ -55,20 +55,20 @@ augroup("dm__highlighted_yank", {
 -- only in the GUI, or in a terminal which supports the focus event tracking
 -- feature. For `tmux`, the `focus-events` option needs to be turned on.
 -- }}}
-augroup("dm__auto_reload_file", {
+augroup('dm__auto_reload_file', {
   {
     events = {
-      "BufEnter",
-      "CursorHold",
+      'BufEnter',
+      'CursorHold',
     },
-    targets = "*",
+    targets = '*',
     command = function()
-      local bufnr = tonumber(fn.expand "<abuf>")
+      local bufnr = tonumber(fn.expand '<abuf>')
       local name = api.nvim_buf_get_name(bufnr)
       if
-        name == ""
+        name == ''
         -- Only check for normal files
-        or vim.bo[bufnr].buftype ~= ""
+        or vim.bo[bufnr].buftype ~= ''
         -- To avoid: E211: File "..." no longer available
         or not fn.filereadable(name)
       then
@@ -90,7 +90,7 @@ augroup("dm__auto_reload_file", {
       -- without specifiying a buffer, Vim would check *all* buffers. This could
       -- be too time-consuming.
       -- }}}
-      vim.cmd(bufnr .. "checktime")
+      vim.cmd(bufnr .. 'checktime')
     end,
   },
 })
@@ -99,16 +99,16 @@ augroup("dm__auto_reload_file", {
 
 -- When editing a file, always jump to the last known cursor position.
 -- Source: `:h last-position-jump`
-augroup("dm__restore_cursor", {
+augroup('dm__restore_cursor', {
   {
-    events = "BufReadPost",
-    targets = "*",
+    events = 'BufReadPost',
+    targets = '*',
     command = function()
       -- Cursor position when last exiting the current buffer.
       -- See :h 'quote
       local line, col = unpack(api.nvim_buf_get_mark(0, '"'))
       if
-        o.filetype ~= "gitcommit"
+        o.filetype ~= 'gitcommit'
         and line > 0
         and line < api.nvim_buf_line_count(0)
       then
@@ -123,28 +123,28 @@ augroup("dm__restore_cursor", {
 do
   -- 'colorcolumn' value for specific filetypes
   local ft_colorcolumn = {
-    gitcommit = "72",
-    python = "88",
+    gitcommit = '72',
+    python = '88',
   }
 
   ---@param leaving boolean indicating whether we are leaving insert mode
   local function set_colorcolumn(leaving)
-    if leaving or o.buftype == "prompt" then
-      o.colorcolumn = ""
-    elseif o.colorcolumn == "" then
-      o.colorcolumn = ft_colorcolumn[o.filetype] or "80"
+    if leaving or o.buftype == 'prompt' then
+      o.colorcolumn = ''
+    elseif o.colorcolumn == '' then
+      o.colorcolumn = ft_colorcolumn[o.filetype] or '80'
     end
   end
 
-  augroup("dm__auto_colorcolumn", {
+  augroup('dm__auto_colorcolumn', {
     {
-      events = "InsertEnter",
-      targets = "*",
+      events = 'InsertEnter',
+      targets = '*',
       command = set_colorcolumn,
     },
     {
-      events = "InsertLeave",
-      targets = "*",
+      events = 'InsertLeave',
+      targets = '*',
       command = function()
         set_colorcolumn(true)
       end,
@@ -164,10 +164,10 @@ do
 
   ---@param leaving boolean indicating whether we are leaving insert mode
   local function set_cursorline(leaving)
-    if leaving and o.buftype ~= "prompt" then
-      if o.filetype ~= "dashboard" then
+    if leaving and o.buftype ~= 'prompt' then
+      if o.filetype ~= 'dashboard' then
         o.cursorline = true
-        o.cursorlineopt = "screenline,number"
+        o.cursorlineopt = 'screenline,number'
       end
     else
       o.cursorline = false
@@ -206,25 +206,25 @@ do
   -- the window. If we set the option only on `BufLeave`, it won't affect the
   -- window. The same can be explained for `*Enter` events.
   -- }}}
-  augroup("dm__auto_cursorline", {
+  augroup('dm__auto_cursorline', {
     {
       events = {
-        "BufEnter",
-        "InsertLeave",
-        "WinEnter",
+        'BufEnter',
+        'InsertLeave',
+        'WinEnter',
       },
-      targets = "*",
+      targets = '*',
       command = function()
         set_cursorline(true)
       end,
     },
     {
       events = {
-        "BufLeave",
-        "InsertEnter",
-        "WinLeave",
+        'BufLeave',
+        'InsertEnter',
+        'WinLeave',
       },
-      targets = "*",
+      targets = '*',
       command = set_cursorline,
     },
   })
@@ -239,31 +239,31 @@ end
 --   - Ignore quickfix window
 --   - Disable in insert mode
 -- }}}
-augroup("dm__auto_relative_number", {
+augroup('dm__auto_relative_number', {
   {
     events = {
-      "BufEnter",
-      "FocusGained",
-      "InsertLeave",
-      "WinEnter",
+      'BufEnter',
+      'FocusGained',
+      'InsertLeave',
+      'WinEnter',
     },
-    targets = "*",
+    targets = '*',
     command = function()
-      if o.number and o.filetype ~= "qf" then
+      if o.number and o.filetype ~= 'qf' then
         o.relativenumber = true
       end
     end,
   },
   {
     events = {
-      "BufLeave",
-      "FocusLost",
-      "InsertEnter",
-      "WinLeave",
+      'BufLeave',
+      'FocusLost',
+      'InsertEnter',
+      'WinLeave',
     },
-    targets = "*",
+    targets = '*',
     command = function()
-      if o.number and o.filetype ~= "qf" then
+      if o.number and o.filetype ~= 'qf' then
         o.relativenumber = false
       end
     end,
@@ -272,54 +272,54 @@ augroup("dm__auto_relative_number", {
 
 -- Terminal {{{1
 
-augroup("dm__terminal", {
+augroup('dm__terminal', {
   {
-    events = "TermOpen",
-    targets = "term://*",
-    command = "setfiletype terminal | startinsert",
+    events = 'TermOpen',
+    targets = 'term://*',
+    command = 'setfiletype terminal | startinsert',
   },
   -- Enter insert mode only if the cursor is at the last prompt line.
   {
-    events = "WinEnter",
-    targets = "term://*",
+    events = 'WinEnter',
+    targets = 'term://*',
     command = function()
-      local lines = vim.api.nvim_buf_get_lines(0, vim.fn.line ".", -1, false)
+      local lines = vim.api.nvim_buf_get_lines(0, vim.fn.line '.', -1, false)
       lines = vim.tbl_filter(function(line)
-        return line ~= ""
+        return line ~= ''
       end, lines)
       if vim.tbl_isempty(lines) then
-        return vim.cmd "startinsert"
+        return vim.cmd 'startinsert'
       end
     end,
   },
   {
-    events = "TermClose",
-    targets = "term://*",
+    events = 'TermClose',
+    targets = 'term://*',
     command = function()
       -- Avoid the annoying '[Process exited 0]' prompt
-      api.nvim_input "<CR>"
+      api.nvim_input '<CR>'
     end,
   },
 })
 
 -- VimResized {{{1
 
-augroup("dm__vim_resized", {
+augroup('dm__vim_resized', {
   {
-    events = "VimResized",
-    targets = "*",
+    events = 'VimResized',
+    targets = '*',
     command = function()
       local last_tab = api.nvim_get_current_tabpage()
-      vim.cmd "tabdo wincmd ="
+      vim.cmd 'tabdo wincmd ='
       api.nvim_set_current_tabpage(last_tab)
     end,
   },
   {
     events = {
-      "VimEnter",
-      "VimResized",
+      'VimEnter',
+      'VimResized',
     },
-    targets = "*",
+    targets = '*',
     command = function()
       o.previewheight = math.floor(o.lines / 3)
     end,

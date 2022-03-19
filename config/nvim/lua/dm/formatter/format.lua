@@ -1,8 +1,8 @@
 local M = {}
 
 local api = vim.api
-local log = require "dm.log"
-local job = require "dm.job"
+local log = require 'dm.log'
+local job = require 'dm.job'
 
 -- Types {{{
 
@@ -65,7 +65,7 @@ function Format:run(formatter)
         log.error(result.stderr)
         return self:step()
       end
-      self.output = vim.split(result.stdout, "\n", { trimempty = true })
+      self.output = vim.split(result.stdout, '\n', { trimempty = true })
       return self:step()
     end,
   }
@@ -81,7 +81,7 @@ end
 function Format:run_lsp(formatter)
   vim.lsp.buf_request(
     self.bufnr,
-    "textDocument/formatting",
+    'textDocument/formatting',
     vim.lsp.util.make_formatting_params(formatter.lsp.opts),
     function(err, result, ctx)
       if err then
@@ -89,7 +89,7 @@ function Format:run_lsp(formatter)
         return
       end
       if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
-        log.warn "Skipping formatting, buffer was changed"
+        log.warn 'Skipping formatting, buffer was changed'
         return
       end
       if result then
@@ -114,7 +114,7 @@ function Format:run_code_actions(code_actions)
   params.context = { only = code_actions }
   local responses, err = vim.lsp.buf_request_sync(
     self.bufnr,
-    "textDocument/codeAction",
+    'textDocument/codeAction',
     params,
     1000 -- timeout (ms)
   )
@@ -175,11 +175,11 @@ end
 
 function Format:done()
   if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
-    log.warn "Skipping formatting, buffer was changed"
+    log.warn 'Skipping formatting, buffer was changed'
   elseif vim.tbl_isempty(self.output) then
-    log.warn "Skipping formatting, received empty output"
+    log.warn 'Skipping formatting, received empty output'
   elseif vim.deep_equal(self.input, self.output) then
-    log.debug "Skipping formatting, input left unchanged"
+    log.debug 'Skipping formatting, input left unchanged'
   else
     local view = vim.fn.winsaveview()
     api.nvim_buf_set_lines(self.bufnr, 0, -1, false, self.output)
@@ -193,7 +193,7 @@ end
 -- Write the output to the buffer without triggering the formatter again.
 function Format:write()
   format_write = true
-  api.nvim_command "update"
+  api.nvim_command 'update'
   format_write = false
 end
 
@@ -227,13 +227,13 @@ function M.register(filetypes, formatters)
       formatter.lsp.format = vim.F.if_nil(formatter.lsp.format, false)
       if formatter.cmd and formatter.lsp.format then
         log.fmt_warn(
-          "LSP client and external command cannot be used in the same formatter "
+          'LSP client and external command cannot be used in the same formatter '
             .. "spec in '%s'. Please separate them out.",
           filetype
         )
       elseif not (formatter.cmd or formatter.lsp.format) then
         log.fmt_warn(
-          "Please provide either an external command to run or enable formatting "
+          'Please provide either an external command to run or enable formatting '
             .. "through the LSP client. Both are disabled for '%s'.",
           filetype
         )
@@ -254,7 +254,7 @@ function M.format()
   end
   local bufnr = api.nvim_get_current_buf()
   local input = api.nvim_buf_get_lines(bufnr, 0, -1, false)
-  if #input == 1 and input[1] == "" then
+  if #input == 1 and input[1] == '' then
     return
   end
   return Format:new(bufnr, input, formatters):step()

@@ -9,10 +9,10 @@ local function format_data(data)
   if data.progress then
     message = data.title
     if data.message then
-      message = message .. " " .. data.message
+      message = message .. ' ' .. data.message
     end
     if data.percentage then
-      message = message .. (" (%.0f%%%%)"):format(data.percentage)
+      message = message .. (' (%.0f%%%%)'):format(data.percentage)
     end
   else
     message = data.content
@@ -36,8 +36,8 @@ local function on_progress_update()
 end
 
 dm.autocmd {
-  group = "dm__statusline",
-  events = "User",
-  targets = "LspProgressUpdate",
+  group = 'dm__statusline',
+  events = 'User',
+  targets = 'LspProgressUpdate',
   command = on_progress_update,
 }

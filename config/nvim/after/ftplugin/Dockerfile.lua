@@ -1,6 +1,6 @@
 ---@type number
 local namespace =
-  vim.api.nvim_get_namespaces()["dm__diagnostics_Dockerfile_hadolint"]
+  vim.api.nvim_get_namespaces()['dm__diagnostics_Dockerfile_hadolint']
 
 -- Return a list of diagnostic codes of the current buffer for shellcheck.
 ---@return string[]
@@ -12,9 +12,9 @@ local function buf_hadolint_error_codes()
   return errorcodes
 end
 
-vim.api.nvim_buf_add_user_command(0, "HadolintWiki", function(opts)
-  vim.fn["external#browser"](
-    "https://github.com/hadolint/hadolint/wiki/" .. opts.args
+vim.api.nvim_buf_add_user_command(0, 'HadolintWiki', function(opts)
+  vim.fn['external#browser'](
+    'https://github.com/hadolint/hadolint/wiki/' .. opts.args
   )
 end, {
   nargs = 1,

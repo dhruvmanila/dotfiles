@@ -12,22 +12,22 @@ local function cabbrev(short, long)
 end
 
 -- Packer commands (`wbthomason/packer.nvim`)
-cabbrev("pc", "PackerClean")
-cabbrev("po", "PackerCompile")
-cabbrev("pi", "PackerInstall")
-cabbrev("ps", "PackerSync")
-cabbrev("pu", "PackerUpdate")
+cabbrev('pc', 'PackerClean')
+cabbrev('po', 'PackerCompile')
+cabbrev('pi', 'PackerInstall')
+cabbrev('ps', 'PackerSync')
+cabbrev('pu', 'PackerUpdate')
 
 -- Session commands
-cabbrev("sc", "SClose")
-cabbrev("sd", "SDelete")
-cabbrev("sl", "SLoad")
-cabbrev("sr", "SRename")
-cabbrev("ss", "SSave")
+cabbrev('sc', 'SClose')
+cabbrev('sd', 'SDelete')
+cabbrev('sl', 'SLoad')
+cabbrev('sr', 'SRename')
+cabbrev('ss', 'SSave')
 
 -- :so -> :source %
-cabbrev("so", "source %")
+cabbrev('so', 'source %')
 
 -- For better readability (`tpope/vim-scriptease`)
-cabbrev("mes", "Message")
-cabbrev("veb", "Verbose")
+cabbrev('mes', 'Message')
+cabbrev('veb', 'Verbose')

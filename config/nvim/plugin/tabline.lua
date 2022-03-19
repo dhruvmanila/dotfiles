@@ -1,14 +1,14 @@
 local fn = vim.fn
-local has_devicons, devicons = pcall(require, "nvim-web-devicons")
+local has_devicons, devicons = pcall(require, 'nvim-web-devicons')
 
 -- Return the currently active session name.
 ---@return string
 local function current_session()
   local session = vim.v.this_session
-  if session and session ~= "" then
-    return "  " .. vim.fn.fnamemodify(session, ":t") .. " "
+  if session and session ~= '' then
+    return '  ' .. vim.fn.fnamemodify(session, ':t') .. ' '
   end
-  return ""
+  return ''
 end
 
 ---File flags provider.
@@ -16,12 +16,12 @@ end
 ---@param ctx table
 ---@return string
 local function buf_flags(ctx)
-  local icon = ""
+  local icon = ''
   if ctx.readonly then
-    icon = ""
-  elseif ctx.modifiable and ctx.buftype ~= "prompt" then
+    icon = ''
+  elseif ctx.modifiable and ctx.buftype ~= 'prompt' then
     if ctx.modified then
-      icon = "●"
+      icon = '●'
     end
   end
   return icon
@@ -38,18 +38,18 @@ end
 local function filename(ctx, is_active)
   if ctx.bufname and #ctx.bufname > 0 then
     local modifier
-    if is_active and ctx.filetype ~= "help" and ctx.buftype ~= "terminal" then
-      modifier = ":~:."
+    if is_active and ctx.filetype ~= 'help' and ctx.buftype ~= 'terminal' then
+      modifier = ':~:.'
     else
-      modifier = ":p:t"
+      modifier = ':p:t'
     end
     return fn.fnamemodify(ctx.bufname, modifier)
-  elseif ctx.buftype == "prompt" then
-    return ctx.filetype == "TelescopePrompt" and ctx.filetype or "[Prompt]"
-  elseif ctx.filetype == "dashboard" then
-    return "Dashboard"
+  elseif ctx.buftype == 'prompt' then
+    return ctx.filetype == 'TelescopePrompt' and ctx.filetype or '[Prompt]'
+  elseif ctx.filetype == 'dashboard' then
+    return 'Dashboard'
   else
-    return "[No Name]"
+    return '[No Name]'
   end
 end
 
@@ -58,13 +58,13 @@ end
 ---@return string, string
 local function ft_icon(ctx)
   if not has_devicons then
-    return ""
+    return ''
   end
-  local extension = fn.fnamemodify(ctx.bufname, ":e")
+  local extension = fn.fnamemodify(ctx.bufname, ':e')
   return devicons.get_icon(
     --         lir/devicons:12 ┐
     --                         │
-    ctx.filetype == "lir" and "lir_folder_icon" or ctx.filename,
+    ctx.filetype == 'lir' and 'lir_folder_icon' or ctx.filename,
     extension,
     { default = true }
   )
@@ -93,49 +93,49 @@ local function tabline_label(tabnr, is_active)
 
   local flags = buf_flags(ctx)
   local icon, icon_hl = ft_icon(ctx)
-  icon_hl = is_active and icon_hl or "TabLine"
-  local flag_hl = is_active and "Yellow" or "TabLine"
-  local tab_hl = is_active and "%#TabLineSel#" or "%#TabLine#"
+  icon_hl = is_active and icon_hl or 'TabLine'
+  local flag_hl = is_active and 'Yellow' or 'TabLine'
+  local tab_hl = is_active and '%#TabLineSel#' or '%#TabLine#'
   -- Ref: https://en.wikipedia.org/wiki/Block_Elements
-  local sep = is_active and "▌" or " "
+  local sep = is_active and '▌' or ' '
 
   return tab_hl
-    .. "%"
+    .. '%'
     .. tabnr
-    .. "T" -- Starts mouse click target region
+    .. 'T' -- Starts mouse click target region
     .. sep
-    .. " "
+    .. ' '
     .. tabnr
-    .. ".  "
-    .. "%#"
+    .. '.  '
+    .. '%#'
     .. icon_hl
-    .. "#"
+    .. '#'
     .. icon
     .. tab_hl
-    .. " "
+    .. ' '
     .. ctx.filename
-    .. "  "
-    .. "%#"
+    .. '  '
+    .. '%#'
     .. flag_hl
-    .. "#"
+    .. '#'
     .. flags
     .. tab_hl
-    .. " "
+    .. ' '
 end
 
 ---Provide the tabline
 ---@return string
 function _G.nvim_tabline()
-  local line = ""
+  local line = ''
   local current_tabpage = fn.tabpagenr()
-  for i = 1, fn.tabpagenr "$" do
+  for i = 1, fn.tabpagenr '$' do
     local is_active = i == current_tabpage
     line = line .. tabline_label(i, is_active)
   end
   return line
-    .. "%#TabLineFill#" -- After the last tab fill with TabLineFill
-    .. "%T" -- Ends mouse click target region(s)
-    .. "%="
+    .. '%#TabLineFill#' -- After the last tab fill with TabLineFill
+    .. '%T' -- Ends mouse click target region(s)
+    .. '%='
     .. current_session()
 end
 
@@ -143,4 +143,4 @@ end
 vim.o.showtabline = 2
 
 -- Set the tabline
-vim.o.tabline = "%!v:lua.nvim_tabline()"
+vim.o.tabline = '%!v:lua.nvim_tabline()'

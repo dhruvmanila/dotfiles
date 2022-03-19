@@ -11,18 +11,18 @@ vim.cmd [[set runtimepath=$VIMRUNTIME]]
 --     $ nvim -nu minimal.lua
 vim.cmd [[set packpath=/tmp/nvim/site]]
 
-local package_root = "/tmp/nvim/site/pack"
-local packer_install_path = package_root .. "/packer/start/packer.nvim"
+local package_root = '/tmp/nvim/site/pack'
+local packer_install_path = package_root .. '/packer/start/packer.nvim'
 
 local function load_plugins()
-  require("packer").startup {
+  require('packer').startup {
     {
-      "wbthomason/packer.nvim",
+      'wbthomason/packer.nvim',
       -- Add plugins to test...
     },
     config = {
       package_root = package_root,
-      compile_path = packer_install_path .. "/plugin/packer_compiled.lua",
+      compile_path = packer_install_path .. '/plugin/packer_compiled.lua',
       display = { non_interactive = true },
     },
   }
@@ -34,16 +34,16 @@ _G.load_config = function()
 end
 
 if vim.fn.isdirectory(packer_install_path) == 0 then
-  print "Installing plugins and dependencies..."
+  print 'Installing plugins and dependencies...'
   vim.fn.system {
-    "git",
-    "clone",
-    "--depth=1",
-    "https://github.com/wbthomason/packer.nvim",
+    'git',
+    'clone',
+    '--depth=1',
+    'https://github.com/wbthomason/packer.nvim',
     packer_install_path,
   }
 end
 
 load_plugins()
-require("packer").sync()
+require('packer').sync()
 vim.cmd [[autocmd User PackerComplete ++once echo "Ready!" | lua load_config()]]

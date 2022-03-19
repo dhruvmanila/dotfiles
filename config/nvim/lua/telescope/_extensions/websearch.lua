@@ -4,54 +4,54 @@
 -- Refer:
 --   - https://github.com/jarun/ddgr
 --   - https://github.com/jarun/googler
-local has_telescope, telescope = pcall(require, "telescope")
+local has_telescope, telescope = pcall(require, 'telescope')
 
 if not has_telescope then
   return
 end
 
-local finders = require "telescope.finders"
-local pickers = require "telescope.pickers"
-local config = require("telescope.config").values
-local actions = require "telescope.actions"
-local action_state = require "telescope.actions.state"
-local action_utils = require "telescope.actions.utils"
-local entry_display = require "telescope.pickers.entry_display"
+local finders = require 'telescope.finders'
+local pickers = require 'telescope.pickers'
+local config = require('telescope.config').values
+local actions = require 'telescope.actions'
+local action_state = require 'telescope.actions.state'
+local action_utils = require 'telescope.actions.utils'
+local entry_display = require 'telescope.pickers.entry_display'
 
-local job = require "dm.job"
+local job = require 'dm.job'
 
 local state = {}
 
 -- Executable for the selected search engine.
 local executable = {
-  duckduckgo = "ddgr",
-  google = "googler",
+  duckduckgo = 'ddgr',
+  google = 'googler',
 }
 
 -- Aliases to be displayed in the prompt title.
 local aliases = {
-  duckduckgo = "DuckDuckGo",
-  google = "Google",
+  duckduckgo = 'DuckDuckGo',
+  google = 'Google',
 }
 
 local mode = {
-  QUERY = "QUERY",
-  RESULT = "RESULT",
+  QUERY = 'QUERY',
+  RESULT = 'RESULT',
 }
 
 local prompt_prefix = {
-  query = " ",
-  result = " ",
+  query = ' ',
+  result = ' ',
 }
 
 -- Simple animation frames displayed as the prompt prefix.
-local anim_frames = { "- ", "\\ ", "| ", "/ " }
+local anim_frames = { '- ', '\\ ', '| ', '/ ' }
 
 -- Callback for setting the prompt animation frame appropriately.
 local function in_progress_animation()
   state.current_frame = state.current_frame >= #anim_frames and 1
     or state.current_frame + 1
-  state.picker:change_prompt_prefix(anim_frames[state.current_frame], "Comment")
+  state.picker:change_prompt_prefix(anim_frames[state.current_frame], 'Comment')
   state.picker:reset_prompt()
 end
 
@@ -64,7 +64,7 @@ local function set_config_state(opt_name, value, default)
 end
 
 local displayer = entry_display.create {
-  separator = " ",
+  separator = ' ',
   items = {
     { width = 65 },
     { remaining = true },
@@ -74,7 +74,7 @@ local displayer = entry_display.create {
 local function make_display(entry)
   return displayer {
     entry.title,
-    { entry.url, "Comment" },
+    { entry.url, 'Comment' },
   }
 end
 
@@ -87,7 +87,7 @@ local function entry_maker(entry)
     abstract = entry.abstract,
     title = entry.title,
     url = entry.url,
-    ordinal = entry.title .. " " .. entry.url,
+    ordinal = entry.title .. ' ' .. entry.url,
   }
 end
 
@@ -111,7 +111,7 @@ local function set_finder(new_mode, results)
     reset_prompt = true,
     new_prefix = {
       state.mode == mode.QUERY and prompt_prefix.query or prompt_prefix.result,
-      "TelescopePromptPrefix",
+      'TelescopePromptPrefix',
     },
   })
 end
@@ -119,7 +119,7 @@ end
 -- Perform the search with the prompt query.
 local function do_search()
   local query_text = state.picker:_get_prompt()
-  if query_text == "" then
+  if query_text == '' then
     return
   end
 
@@ -130,13 +130,13 @@ local function do_search()
     state.anim_timer = vim.fn.timer_start(
       100,
       in_progress_animation,
-      { ["repeat"] = -1 }
+      { ['repeat'] = -1 }
     )
   end
 
   local function on_exit(result)
     if result.code > 0 then
-      vim.api.nvim_err_writeln("Telescope (websearch): " .. result.stderr)
+      vim.api.nvim_err_writeln('Telescope (websearch): ' .. result.stderr)
       return
     end
     local data = vim.json.decode(result.stdout)
@@ -154,11 +154,11 @@ local function do_search()
   job {
     cmd = executable[state.search_engine],
     args = {
-      "--nocolor",
-      "-n",
+      '--nocolor',
+      '-n',
       state.max_results,
-      "--json",
-      "--noprompt",
+      '--json',
+      '--noprompt',
       query_text,
     },
     on_exit = on_exit,
@@ -172,15 +172,15 @@ local function search_or_select(prompt_bufnr)
   if state.mode == mode.QUERY then
     do_search()
   else
-    local urls = ""
+    local urls = ''
     action_utils.map_selections(prompt_bufnr, function(selection)
       urls = ('%s "%s"'):format(urls, selection.value)
     end)
-    if urls == "" then
+    if urls == '' then
       urls = action_state.get_selected_entry().value
     end
     actions.close(prompt_bufnr)
-    os.execute(("%s %s"):format(state.open_command, urls))
+    os.execute(('%s %s'):format(state.open_command, urls))
   end
 end
 
@@ -191,7 +191,7 @@ local function websearch(opts)
 
   if vim.fn.executable(executable[search_engine]) <= 0 then
     dm.notify(
-      "Telescope",
+      'Telescope',
       ("'websearch' requires the `%s` executable for searching on '%s'"):format(
         executable[search_engine],
         search_engine
@@ -202,7 +202,7 @@ local function websearch(opts)
   end
 
   state.picker = pickers.new(opts, {
-    prompt_title = aliases[search_engine] .. " Search",
+    prompt_title = aliases[search_engine] .. ' Search',
     prompt_prefix = prompt_prefix.query,
     finder = finders.new_table {
       results = {},
@@ -212,7 +212,7 @@ local function websearch(opts)
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(search_or_select)
-      map("i", "<C-f>", function()
+      map('i', '<C-f>', function()
         set_finder()
       end)
       return true
@@ -227,18 +227,18 @@ return telescope.register_extension {
     local search_engine = ext_config.search_engine
     local max_results = ext_config.max_results or 25
 
-    if search_engine == "duckduckgo" and max_results > 25 then
+    if search_engine == 'duckduckgo' and max_results > 25 then
       dm.notify(
-        "Telescope",
-        "duckduckgo (ddgr) supports a maximum of 25 results",
+        'Telescope',
+        'duckduckgo (ddgr) supports a maximum of 25 results',
         3
       )
       max_results = 25
     end
 
-    set_config_state("search_engine", search_engine, "duckduckgo")
-    set_config_state("max_results", math.min(max_results, 50))
-    set_config_state("open_command", ext_config.open_command, "open")
+    set_config_state('search_engine', search_engine, 'duckduckgo')
+    set_config_state('max_results', math.min(max_results, 50))
+    set_config_state('open_command', ext_config.open_command, 'open')
   end,
   exports = { websearch = websearch },
 }

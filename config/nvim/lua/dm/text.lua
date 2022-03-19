@@ -37,7 +37,7 @@ function Text:new(bufnr)
     bufnr = bufnr or api.nvim_get_current_buf(),
     longest_line = 0,
     line = 0,
-    current = "",
+    current = '',
     linehl = {},
   }, self)
 end
@@ -65,7 +65,7 @@ end
 ---@param block string[]
 ---@param hl_group? string
 function Text:block(block, hl_group, newline)
-  assert(self.current == "", "cannot add block while in between a line")
+  assert(self.current == '', 'cannot add block while in between a line')
   for _, line in ipairs(block) do
     self.current = line
     if hl_group then
@@ -88,7 +88,7 @@ function Text:newline()
   self:_render()
   self.longest_line = math.max(self.longest_line, string.len(self.current))
   self.line = self.line + 1
-  self.current = ""
+  self.current = ''
   self.linehl = {}
 end
 

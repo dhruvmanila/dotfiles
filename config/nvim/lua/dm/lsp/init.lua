@@ -1,17 +1,17 @@
 local lsp = vim.lsp
 local keymap = vim.keymap
 
-local lspconfig = require "lspconfig"
-local servers = require "dm.lsp.servers"
-local preview = require "dm.lsp.preview"
+local lspconfig = require 'lspconfig'
+local servers = require 'dm.lsp.servers'
+local preview = require 'dm.lsp.preview'
 
-require "dm.formatter"
-require "dm.lsp.handlers"
-require "dm.lsp.progress"
+require 'dm.formatter'
+require 'dm.lsp.handlers'
+require 'dm.lsp.progress'
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-lsp.set_log_level(vim.env.DEBUG and "debug" or "warn")
-require("vim.lsp.log").set_format_func(vim.inspect)
+lsp.set_log_level(vim.env.DEBUG and 'debug' or 'warn')
+require('vim.lsp.log').set_format_func(vim.inspect)
 
 -- Set the default options for all LSP floating windows.
 --   - Default border according to `vim.g.border_style`
@@ -20,18 +20,18 @@ do
   local default = lsp.util.open_floating_preview
 
   lsp.util.open_floating_preview = function(contents, syntax, opts)
-    opts = vim.tbl_deep_extend("force", opts, {
+    opts = vim.tbl_deep_extend('force', opts, {
       border = dm.border[vim.g.border_style],
       max_width = math.min(math.floor(vim.o.columns * 0.7), 100),
       max_height = math.min(math.floor(vim.o.lines * 0.3), 30),
     })
     local bufnr, winnr = default(contents, syntax, opts)
-    keymap.set("n", "q", "<Cmd>bdelete<CR>", {
+    keymap.set('n', 'q', '<Cmd>bdelete<CR>', {
       buffer = bufnr,
       nowait = true,
     })
     -- As per `:h 'showbreak'`, the value should be a literal "NONE".
-    vim.wo[winnr].showbreak = "NONE"
+    vim.wo[winnr].showbreak = 'NONE'
     return bufnr, winnr
   end
 end
@@ -50,114 +50,114 @@ local function on_attach(client, bufnr)
   local capabilities = client.resolved_capabilities
 
   if capabilities.hover then
-    keymap.set("n", "K", lsp.buf.hover, {
+    keymap.set('n', 'K', lsp.buf.hover, {
       buffer = bufnr,
-      desc = "LSP: Hover",
+      desc = 'LSP: Hover',
     })
   end
 
   if capabilities.goto_definition then
-    keymap.set("n", "gd", lsp.buf.definition, {
+    keymap.set('n', 'gd', lsp.buf.definition, {
       buffer = bufnr,
-      desc = "LSP: Goto definition",
+      desc = 'LSP: Goto definition',
     })
-    keymap.set("n", "<leader>pd", preview.definition, {
+    keymap.set('n', '<leader>pd', preview.definition, {
       buffer = bufnr,
-      desc = "LSP: Preview definition",
+      desc = 'LSP: Preview definition',
     })
   end
 
   if capabilities.declaration then
-    keymap.set("n", "gD", lsp.buf.declaration, {
+    keymap.set('n', 'gD', lsp.buf.declaration, {
       buffer = bufnr,
-      desc = "LSP: Goto declaration",
+      desc = 'LSP: Goto declaration',
     })
-    keymap.set("n", "<leader>pD", preview.declaration, {
+    keymap.set('n', '<leader>pD', preview.declaration, {
       buffer = bufnr,
-      desc = "LSP: Preview declaration",
+      desc = 'LSP: Preview declaration',
     })
   end
 
   if capabilities.type_definition then
-    keymap.set("n", "gy", lsp.buf.type_definition, {
+    keymap.set('n', 'gy', lsp.buf.type_definition, {
       buffer = bufnr,
-      desc = "LSP: Goto type definition",
+      desc = 'LSP: Goto type definition',
     })
-    keymap.set("n", "<leader>py", preview.type_definition, {
+    keymap.set('n', '<leader>py', preview.type_definition, {
       buffer = bufnr,
-      desc = "LSP: Preview type definition",
+      desc = 'LSP: Preview type definition',
     })
   end
 
   if capabilities.implementation then
-    keymap.set("n", "gi", lsp.buf.implementation, {
+    keymap.set('n', 'gi', lsp.buf.implementation, {
       buffer = bufnr,
-      desc = "LSP: Goto implementation",
+      desc = 'LSP: Goto implementation',
     })
-    keymap.set("n", "<leader>pi", preview.implementation, {
+    keymap.set('n', '<leader>pi', preview.implementation, {
       buffer = bufnr,
-      desc = "LSP: Goto preview implementation",
+      desc = 'LSP: Goto preview implementation',
     })
   end
 
   if capabilities.find_references then
-    keymap.set("n", "gr", lsp.buf.references, {
+    keymap.set('n', 'gr', lsp.buf.references, {
       buffer = bufnr,
-      desc = "LSP: Goto references",
+      desc = 'LSP: Goto references',
     })
   end
 
   if capabilities.rename then
-    keymap.set("n", "<leader>rn", lsp.buf.rename, {
+    keymap.set('n', '<leader>rn', lsp.buf.rename, {
       buffer = bufnr,
-      desc = "LSP: Rename",
+      desc = 'LSP: Rename',
     })
   end
 
   if capabilities.signature_help then
-    keymap.set("n", "<C-s>", lsp.buf.signature_help, {
+    keymap.set('n', '<C-s>', lsp.buf.signature_help, {
       buffer = bufnr,
-      desc = "LSP: Signature help",
+      desc = 'LSP: Signature help',
     })
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
   if capabilities.document_highlight then
     table.insert(lsp_autocmds, {
-      events = "CursorHold",
-      targets = "<buffer>",
+      events = 'CursorHold',
+      targets = '<buffer>',
       command = lsp.buf.document_highlight,
     })
     table.insert(lsp_autocmds, {
-      events = "CursorMoved",
-      targets = "<buffer>",
+      events = 'CursorMoved',
+      targets = '<buffer>',
       command = lsp.buf.clear_references,
     })
   end
 
   if capabilities.code_action then
     table.insert(lsp_autocmds, {
-      events = { "CursorHold", "CursorHoldI" },
-      targets = "<buffer>",
-      command = require("dm.lsp.code_action").listener,
+      events = { 'CursorHold', 'CursorHoldI' },
+      targets = '<buffer>',
+      command = require('dm.lsp.code_action').listener,
     })
 
-    keymap.set("n", "<leader>ca", lsp.buf.code_action, {
+    keymap.set('n', '<leader>ca', lsp.buf.code_action, {
       buffer = bufnr,
-      desc = "LSP: Code action",
+      desc = 'LSP: Code action',
     })
-    keymap.set("x", "<leader>ca", lsp.buf.range_code_action, {
+    keymap.set('x', '<leader>ca', lsp.buf.range_code_action, {
       buffer = bufnr,
-      desc = "LSP: Code action (range)",
+      desc = 'LSP: Code action (range)',
     })
   end
 
   -- Set the LSP autocmds
   if not vim.tbl_isempty(lsp_autocmds) then
-    dm.augroup("custom_lsp_autocmds", lsp_autocmds)
+    dm.augroup('custom_lsp_autocmds', lsp_autocmds)
   end
 
-  vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
+  vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 end
 
 do
@@ -165,13 +165,13 @@ do
   ---@see https://github.com/hrsh7th/cmp-nvim-lsp#setup
   ---@see https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#completionClientCapabilities
   local capabilities = lsp.protocol.make_client_capabilities()
-  require("cmp_nvim_lsp").update_capabilities(capabilities)
+  require('cmp_nvim_lsp').update_capabilities(capabilities)
 
   -- Setting up the servers with the provided configuration and additional
   -- capabilities.
   for server, config in pairs(servers) do
-    config = type(config) == "function" and config() or config
-    config = vim.tbl_deep_extend("keep", config, {
+    config = type(config) == 'function' and config() or config
+    config = vim.tbl_deep_extend('keep', config, {
       on_attach = on_attach,
       capabilities = capabilities,
       flags = {

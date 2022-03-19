@@ -1,15 +1,15 @@
-local has_telescope, telescope = pcall(require, "telescope")
+local has_telescope, telescope = pcall(require, 'telescope')
 
 if not has_telescope then
   return
 end
 
-local finders = require "telescope.finders"
-local pickers = require "telescope.pickers"
-local config = require("telescope.config").values
-local actions = require "telescope.actions"
-local action_state = require "telescope.actions.state"
-local entry_display = require "telescope.pickers.entry_display"
+local finders = require 'telescope.finders'
+local pickers = require 'telescope.pickers'
+local config = require('telescope.config').values
+local actions = require 'telescope.actions'
+local action_state = require 'telescope.actions.state'
+local entry_display = require 'telescope.pickers.entry_display'
 
 ---Defines the action to open the selection in the browser.
 local function open_in_browser(prompt_bufnr)
@@ -20,7 +20,7 @@ local function open_in_browser(prompt_bufnr)
   end
 
   actions.close(prompt_bufnr)
-  os.execute("open" .. ' "' .. selection.url .. '" &> /dev/null')
+  os.execute('open' .. ' "' .. selection.url .. '" &> /dev/null')
 end
 
 ---Defines the action to open the selection in a new Telescope finder with the
@@ -30,7 +30,7 @@ local function find_files_in_plugin(prompt_bufnr)
   actions.close(prompt_bufnr)
 
   vim.schedule(function()
-    require("telescope.builtin").find_files { cwd = selection.path }
+    require('telescope.builtin').find_files { cwd = selection.path }
   end)
 end
 
@@ -57,12 +57,12 @@ local function installed_plugins(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_PackerPluginInfo) then
-    dm.notify("Telescope", "Plugin information was not cached", 3)
+    dm.notify('Telescope', 'Plugin information was not cached', 3)
     return nil
   end
 
   local displayer = entry_display.create {
-    separator = " ",
+    separator = ' ',
     items = {
       { remaining = true },
     },
@@ -75,7 +75,7 @@ local function installed_plugins(opts)
   end
 
   pickers.new(opts, {
-    prompt_title = "Installed Plugins",
+    prompt_title = 'Installed Plugins',
     finder = finders.new_table {
       results = _PackerPluginInfo,
       entry_maker = function(entry)
@@ -92,8 +92,8 @@ local function installed_plugins(opts)
     sorter = config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(open_in_browser)
-      map("i", "<C-f>", find_files_in_plugin)
-      map("n", "<C-f>", find_files_in_plugin)
+      map('i', '<C-f>', find_files_in_plugin)
+      map('n', '<C-f>', find_files_in_plugin)
       return true
     end,
   }):find()

@@ -1,25 +1,25 @@
-local nvim_web_devicons = require "nvim-web-devicons"
+local nvim_web_devicons = require 'nvim-web-devicons'
 
 local custom_icons = {
   TelescopePrompt = {
-    icon = "",
-    color = "#f38019",
-    name = "TelescopePrompt",
+    icon = '',
+    color = '#f38019',
+    name = 'TelescopePrompt',
   },
   Dashboard = {
-    icon = "",
-    color = "#787878",
-    name = "Dashboard",
+    icon = '',
+    color = '#787878',
+    name = 'Dashboard',
   },
-  ["[packer]"] = {
-    icon = "",
-    color = "#787878",
-    name = "Packer",
+  ['[packer]'] = {
+    icon = '',
+    color = '#787878',
+    name = 'Packer',
   },
   lir_folder_icon = {
-    icon = "",
-    color = "#7ebae4",
-    name = "LirFolderNode",
+    icon = '',
+    color = '#7ebae4',
+    name = 'LirFolderNode',
   },
 }
 

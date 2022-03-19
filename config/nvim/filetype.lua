@@ -2,9 +2,9 @@ vim.filetype.add {
   extension = {},
 
   filename = {
-    Brewfile = "ruby",
-    Vagrantfile = "ruby",
-    [".gitignore"] = "conf",
+    Brewfile = 'ruby',
+    Vagrantfile = 'ruby',
+    ['.gitignore'] = 'conf',
   },
 
   -- Similar to |autocmd-pattern|, the file pattern is tested for a match

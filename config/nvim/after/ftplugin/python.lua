@@ -1,10 +1,10 @@
 local opt_local = vim.opt_local
 
 -- To make it compatible with jupytext percent format
-vim.b.slime_cell_delimiter = "# %%"
+vim.b.slime_cell_delimiter = '# %%'
 
-opt_local.makeprg = "python3 %"
-opt_local.formatprg = "black --quiet - | isort --quiet --profile=black -"
+opt_local.makeprg = 'python3 %'
+opt_local.formatprg = 'black --quiet - | isort --quiet --profile=black -'
 
 -- PyDoc {{{
 
@@ -48,16 +48,16 @@ local function fully_qualified_name(import_name)
   local parser = vim.treesitter.get_parser(0)
   local tree = parser:parse()[1]
   if not tree then
-    return dm.notify("PyDoc", "Failed to parse the tree", 4)
+    return dm.notify('PyDoc', 'Failed to parse the tree', 4)
   end
 
   local ok, pydoc_query = pcall(
     vim.treesitter.parse_query,
-    "python",
+    'python',
     construct_pydoc_query(import_name)
   )
   if not ok then
-    return dm.notify("PyDoc", "Failed to parse the PyDoc query", 4)
+    return dm.notify('PyDoc', 'Failed to parse the PyDoc query', 4)
   end
 
   local root = tree:root()
@@ -65,9 +65,9 @@ local function fully_qualified_name(import_name)
   local qualname = {}
   for id, node in pydoc_query:iter_captures(root, 0, start_row, end_row) do
     local name = pydoc_query.captures[id]
-    if name == "module" then
+    if name == 'module' then
       table.insert(qualname, vim.treesitter.get_node_text(node, 0))
-    elseif name == "alias" then
+    elseif name == 'alias' then
       table.insert(qualname, vim.treesitter.get_node_text(node, 0))
     end
   end
@@ -75,7 +75,7 @@ local function fully_qualified_name(import_name)
   return qualname
 end
 
-vim.api.nvim_buf_add_user_command(0, "PyDoc", function(opts)
+vim.api.nvim_buf_add_user_command(0, 'PyDoc', function(opts)
   local word = opts.args
 
   -- Extract the 'word' at the cursor {{{
@@ -89,12 +89,12 @@ vim.api.nvim_buf_add_user_command(0, "PyDoc", function(opts)
   --
   -- With the cursor at ^ this returns 'xml'; at ! it returns 'xml.dom'.
   -- }}}
-  if word == "" then
+  if word == '' then
     local _, col = unpack(vim.api.nvim_win_get_cursor(0))
     local line = vim.api.nvim_get_current_line()
     local names = vim.split(
-      line:sub(0, col):match "[%w_.]*$" .. line:match("^[%w_]*", col + 1),
-      ".",
+      line:sub(0, col):match '[%w_.]*$' .. line:match('^[%w_]*', col + 1),
+      '.',
       { plain = true, trimempty = true }
     )
     local import_name = table.remove(names, 1)
@@ -103,11 +103,11 @@ vim.api.nvim_buf_add_user_command(0, "PyDoc", function(opts)
       table.insert(qualname, import_name)
     end
     vim.list_extend(qualname, names)
-    word = table.concat(qualname, ".")
+    word = table.concat(qualname, '.')
   end
 
   local lines = {}
-  local fd = io.popen("python -m pydoc " .. word)
+  local fd = io.popen('python -m pydoc ' .. word)
   for line in fd:lines() do
     lines[#lines + 1] = line
   end
@@ -124,36 +124,36 @@ vim.api.nvim_buf_add_user_command(0, "PyDoc", function(opts)
   -- We are only interested in the first line.
   -- }}}
   if #lines < 5 then
-    return dm.notify("PyDoc", lines[1])
+    return dm.notify('PyDoc', lines[1])
   end
 
-  vim.cmd(opts.mods .. " split __doc__")
+  vim.cmd(opts.mods .. ' split __doc__')
   vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
   vim.bo.readonly = true
   vim.bo.modifiable = false
-  vim.bo.buftype = "nofile"
-  vim.bo.filetype = "man"
-  vim.bo.bufhidden = "wipe"
+  vim.bo.buftype = 'nofile'
+  vim.bo.filetype = 'man'
+  vim.bo.bufhidden = 'wipe'
 end, {
-  nargs = "?",
+  nargs = '?',
 })
 
 -- }}}
 
 -- Similar to how `gf` works with a different keymap of `gK` for vertical split.
-vim.keymap.set("n", "gk", "<Cmd>PyDoc<CR>", { buffer = true })
-vim.keymap.set("n", "gK", "<Cmd>vertical PyDoc<CR>", { buffer = true })
-vim.keymap.set("n", "<C-w>gk", "<Cmd>tab PyDoc<CR>", { buffer = true })
+vim.keymap.set('n', 'gk', '<Cmd>PyDoc<CR>', { buffer = true })
+vim.keymap.set('n', 'gK', '<Cmd>vertical PyDoc<CR>', { buffer = true })
+vim.keymap.set('n', '<C-w>gk', '<Cmd>tab PyDoc<CR>', { buffer = true })
 
-vim.keymap.set("n", "<leader>dm", ":lua require('dap-python').test_method()<CR>", {
+vim.keymap.set('n', '<leader>dm', ":lua require('dap-python').test_method()<CR>", {
   buffer = true,
 })
-vim.keymap.set("n", "<leader>dC", ":lua require('dap-python').test_class()<CR>", {
+vim.keymap.set('n', '<leader>dC', ":lua require('dap-python').test_class()<CR>", {
   buffer = true,
 })
 vim.keymap.set(
-  "x",
-  "<leader>ds",
+  'x',
+  '<leader>ds',
   "<Esc>:lua require('dap-python').test_selection()<CR>",
   { buffer = true }
 )

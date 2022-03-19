@@ -4,10 +4,10 @@ local keymap = vim.keymap
 -- Icon and highlight information for each diagnostic severity.
 ---@type { icon: string, hl: string }[]
 local severity_info = {
-  { icon = icons.error, hl = "DiagnosticSignError" },
-  { icon = icons.warn, hl = "DiagnosticSignWarn" },
-  { icon = icons.info, hl = "DiagnosticSignInfo" },
-  { icon = icons.hint, hl = "DiagnosticSignHint" },
+  { icon = icons.error, hl = 'DiagnosticSignError' },
+  { icon = icons.warn, hl = 'DiagnosticSignWarn' },
+  { icon = icons.info, hl = 'DiagnosticSignInfo' },
+  { icon = icons.hint, hl = 'DiagnosticSignHint' },
 }
 
 for _, info in ipairs(severity_info) do
@@ -20,7 +20,7 @@ end
 local function format_diagnostic(diagnostic)
   local message = diagnostic.message
   if diagnostic.code then
-    message = ("%s (%s)"):format(message, diagnostic.code)
+    message = ('%s (%s)'):format(message, diagnostic.code)
   end
   return message
 end
@@ -31,7 +31,7 @@ end
 ---@return string #highlight group as per the diagnostic severity
 local function prefix_diagnostic(diagnostic)
   local info = severity_info[diagnostic.severity]
-  return info.icon .. " ", info.hl
+  return info.icon .. ' ', info.hl
 end
 
 -- Global diagnostic configuration.
@@ -42,38 +42,38 @@ vim.diagnostic.config {
   severity_sort = true,
   float = {
     header = false,
-    source = "always",
+    source = 'always',
     format = format_diagnostic,
     prefix = prefix_diagnostic,
   },
 }
 
 -- For all types of diagnostics: `[d`, `]d`
-keymap.set("n", "[d", function()
+keymap.set('n', '[d', function()
   vim.diagnostic.goto_prev {
     float = { focusable = false },
   }
-end, { desc = "Diagnostic: Goto prev" })
-keymap.set("n", "]d", function()
+end, { desc = 'Diagnostic: Goto prev' })
+keymap.set('n', ']d', function()
   vim.diagnostic.goto_next {
     float = { focusable = false },
   }
-end, { desc = "Diagnostic: Goto next" })
+end, { desc = 'Diagnostic: Goto next' })
 
 -- For warning and error diagnostics: `[w`, `]w`
-keymap.set("n", "[w", function()
+keymap.set('n', '[w', function()
   vim.diagnostic.goto_prev {
     float = { focusable = false },
     severity = { min = vim.diagnostic.severity.WARN },
   }
-end, { desc = "Diagnostic: Goto prev (warning/error)" })
-keymap.set("n", "]w", function()
+end, { desc = 'Diagnostic: Goto prev (warning/error)' })
+keymap.set('n', ']w', function()
   vim.diagnostic.goto_next {
     float = { focusable = false },
     severity = { min = vim.diagnostic.severity.WARN },
   }
-end, { desc = "Diagnostic: Goto next (warning/error)" })
+end, { desc = 'Diagnostic: Goto next (warning/error)' })
 
-keymap.set("n", "<leader>l", function()
-  vim.diagnostic.open_float { scope = "line" }
-end, { desc = "Show line diagnostics" })
+keymap.set('n', '<leader>l', function()
+  vim.diagnostic.open_float { scope = 'line' }
+end, { desc = 'Show line diagnostics' })

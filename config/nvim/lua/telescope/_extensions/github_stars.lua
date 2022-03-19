@@ -1,15 +1,15 @@
-local has_telescope, telescope = pcall(require, "telescope")
+local has_telescope, telescope = pcall(require, 'telescope')
 
 if not has_telescope then
   return
 end
 
-local finders = require "telescope.finders"
-local pickers = require "telescope.pickers"
-local config = require("telescope.config").values
-local actions = require "telescope.actions"
-local action_state = require "telescope.actions.state"
-local entry_display = require "telescope.pickers.entry_display"
+local finders = require 'telescope.finders'
+local pickers = require 'telescope.pickers'
+local config = require('telescope.config').values
+local actions = require 'telescope.actions'
+local action_state = require 'telescope.actions.state'
+local entry_display = require 'telescope.pickers.entry_display'
 
 -- Defines the action to open the selection in the browser.
 local function open_in_browser(prompt_bufnr)
@@ -37,11 +37,11 @@ local function github_stars(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedGithubStars.stars) then
-    return dm.notify("Telescope", "GitHub stars are not cached yet", 3)
+    return dm.notify('Telescope', 'GitHub stars are not cached yet', 3)
   end
 
   local displayer = entry_display.create {
-    separator = " ",
+    separator = ' ',
     items = {
       { width = _CachedGithubStars.max_length + 2 },
       { remaining = true },
@@ -51,12 +51,12 @@ local function github_stars(opts)
   local function make_display(entry)
     return displayer {
       entry.value,
-      { entry.description, "Comment" },
+      { entry.description, 'Comment' },
     }
   end
 
   pickers.new(opts, {
-    prompt_title = "Search GitHub Stars",
+    prompt_title = 'Search GitHub Stars',
     finder = finders.new_table {
       results = _CachedGithubStars.stars,
       entry_maker = function(entry)
@@ -65,7 +65,7 @@ local function github_stars(opts)
           value = entry.name,
           description = entry.description,
           url = entry.url,
-          ordinal = entry.name .. " " .. entry.description,
+          ordinal = entry.name .. ' ' .. entry.description,
         }
       end,
     },

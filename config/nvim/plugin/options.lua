@@ -22,15 +22,15 @@ opt.showmode = false
 --   >    `set clipboard+=unnamedplus`
 --
 -- `:h provider-clipboard`
-opt.clipboard:append "unnamedplus"
+opt.clipboard:append 'unnamedplus'
 
 -- completion {{{1
 
 opt.completeopt = {
   -- show menu even if there is only one match
-  "menuone",
+  'menuone',
   -- do not select any text until the user selects a match from the menu
-  "noinsert",
+  'noinsert',
 }
 
 -- Maxmimum number of items to show in the popup menu (|inc-completion-menu|)
@@ -44,7 +44,7 @@ vim.opt.termguicolors = true
 
 -- Custom colorscheme providing only the required highlight groups and thus
 -- reducing the startup time.
-vim.cmd "colorscheme gruvbox"
+vim.cmd 'colorscheme gruvbox'
 
 -- diffopt {{{1
 
@@ -52,10 +52,10 @@ opt.diffopt:append {
   -- Use the indent heuristic for the  internal diff library, because it gives
   -- more readable diffs.
   -- See: https://vimways.org/2018/the-power-of-diff/
-  "indent-heuristic",
+  'indent-heuristic',
 
   -- Start diff mode with vertical splits (unless explicitly specified otherwise)
-  "vertical",
+  'vertical',
 }
 
 -- emoji {{{1
@@ -69,20 +69,20 @@ opt.emoji = false
 
 opt.fillchars = {
   -- Don't print '~' at the start of the lines after the last buffer line
-  eob = " ",
+  eob = ' ',
 
   -- Fill 'foldtext' with simple dots instead of hyphens
-  fold = "·",
+  fold = '·',
 
   -- Replace the ugly default icons '+' and '-' with prettier utf8 characters.
   -- These are only visible in the `foldcolumn`
-  foldclose = "▸",
-  foldopen = "▾",
-  foldsep = "│",
+  foldclose = '▸',
+  foldopen = '▾',
+  foldsep = '│',
 
   -- Used for vertical splits
   -- Alternatives: "┃", "│", "▕"
-  vert = "│",
+  vert = '│',
 }
 
 -- format: options, listpat {{{1
@@ -120,7 +120,7 @@ opt.formatlistpat = [[^\s*\%(\d\+[\]:.)}\t ]\|[-*+]\)\s*]]
 -- opt.foldexpr = "nvim_treesitter#foldexpr()"
 
 -- Default fold method is marker for now.
-opt.foldmethod = "marker"
+opt.foldmethod = 'marker'
 
 -- Close a fold even if it doesn't contain any line.
 opt.foldminlines = 0
@@ -128,7 +128,7 @@ opt.foldminlines = 0
 -- grep {{{1
 
 -- Define rg as the program to call when using the Ex commands: `:[l]grep[add]`.
-opt.grepprg = "rg --vimgrep"
+opt.grepprg = 'rg --vimgrep'
 
 -- Define how the output of rg must be parsed:
 --
@@ -137,7 +137,7 @@ opt.grepprg = "rg --vimgrep"
 --                         │  │  ┌ column number
 --                         │  │  │  ┌ error message
 --                         │  │  │  │
-opt.grepformat:prepend { "%f:%l:%c:%m" }
+opt.grepformat:prepend { '%f:%l:%c:%m' }
 
 -- indentation {{{1
 
@@ -194,13 +194,13 @@ opt.listchars = {
   --
   --     ┌ always used
   --     │┌ as many times as will fit
-  tab = "▸ ",
+  tab = '▸ ',
 
   -- no-break space
-  nbsp = "∅",
+  nbsp = '∅',
 
   -- trailing whitespace
-  trail = "·",
+  trail = '·',
 
   -- end of line (it's annoying to display all the time)
   -- eol = "↴",
@@ -219,7 +219,7 @@ opt.lazyredraw = true
 -- mouse {{{1
 
 -- Enable mouse in all modes
-opt.mouse = "a"
+opt.mouse = 'a'
 
 -- number {{{1
 
@@ -272,7 +272,7 @@ opt.shortmess:append {
 --
 --   - builtin-in lsp
 --   - gitsigns.nvim
-opt.signcolumn = "yes:1"
+opt.signcolumn = 'yes:1'
 
 -- statusline {{{1
 
@@ -331,10 +331,10 @@ opt.wildcharm = 26
 -- 1st/2nd/3rd/4th time.
 opt.wildmode = {
   -- complete longest common string : show the wildmenu
-  "longest:full",
+  'longest:full',
 
   -- start completing each full match
-  "full",
+  'full',
 }
 
 -- window {{{1
@@ -359,7 +359,7 @@ opt.breakindent = true
 
 opt.breakindentopt = {
   -- Display the 'showbreak' value before applying the additional indent
-  "sbr",
+  'sbr',
 }
 
 -- soft-wrap long lines at a character in 'breakat' (punctuation, math operators,
@@ -367,7 +367,7 @@ opt.breakindentopt = {
 opt.linebreak = true
 
 -- Alternatives: "↳ ", "››› ", "↪ "
-opt.showbreak = "↳ "
+opt.showbreak = '↳ '
 
 -- do not automatically wrap text
 opt.textwidth = 0

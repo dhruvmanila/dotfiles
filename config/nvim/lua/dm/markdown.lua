@@ -5,24 +5,24 @@
 --     $ npm -g install
 -- }}}
 
-local job = require "dm.job"
+local job = require 'dm.job'
 
 -- Variables {{{1
 
 -- Default request url.
-local API_URL = "http://localhost:8090"
+local API_URL = 'http://localhost:8090'
 
 -- Path to the executable
-local SERVER_EXEC = "instant-markdown-d"
+local SERVER_EXEC = 'instant-markdown-d'
 
 -- The server can be configured via several environment variables.
 -- Source: https://github.com/suan/instant-markdown-d#environment-variables
-local SERVER_ENV = "INSTANT_MARKDOWN_ALLOW_UNSAFE_CONTENT=1"
+local SERVER_ENV = 'INSTANT_MARKDOWN_ALLOW_UNSAFE_CONTENT=1'
 
 -- `stdout` and `stderr` of the server will be redirected to this file.
 local SERVER_LOG_FILE = vim.env.DEBUG
-    and vim.fn.stdpath "cache" .. "/instant_markdown_d.log"
-  or "/dev/null"
+    and vim.fn.stdpath 'cache' .. '/instant_markdown_d.log'
+  or '/dev/null'
 
 -- Command to start the server {{{
 --                                 ┌─ do not open the browser window by default
@@ -32,7 +32,7 @@ local SERVER_LOG_FILE = vim.env.DEBUG
 --                                 │            │
 --                                 │            │ ┌─ start the process in the background
 --                                 │     ┌──────┤ │ }}}
-local START_SERVER_CMD = ("%s %s --debug >%s 2>&1 &"):format(
+local START_SERVER_CMD = ('%s %s --debug >%s 2>&1 &'):format(
   SERVER_ENV,
   SERVER_EXEC,
   SERVER_LOG_FILE
@@ -48,7 +48,7 @@ local START_SERVER_CMD = ("%s %s --debug >%s 2>&1 &"):format(
 --                                   │  ┌─ enable print mirroring from this
 --                                   │  │  instance to the hammerspoon console
 --                                   │  │
-local HS_ACTIVATE_BROWSER_CMD = "hs -A -P ~/.hammerspoon/preview.lua"
+local HS_ACTIVATE_BROWSER_CMD = 'hs -A -P ~/.hammerspoon/preview.lua'
 
 -- The browser will be automatically closed by the server so the only task
 -- remaining is to resize the terminal window.
@@ -56,7 +56,7 @@ local HS_ACTIVATE_BROWSER_CMD = "hs -A -P ~/.hammerspoon/preview.lua"
 -- This requires the `allow_remote_control` and `listen_on` option to be set
 -- in your kitty config.
 local RESIZE_KITTY_WINDOW_CMD =
-  "kitty @ --to=$KITTY_LISTEN_ON resize-os-window --action=toggle-maximized"
+  'kitty @ --to=$KITTY_LISTEN_ON resize-os-window --action=toggle-maximized'
 
 -- State of the previewer.
 local state = { active = false }
@@ -72,7 +72,7 @@ local function cleanup()
   --
   -- Source: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
   -- }}}
-  job { cmd = "curl", args = { "-X", "DELETE", API_URL } }
+  job { cmd = 'curl', args = { '-X', 'DELETE', API_URL } }
   state.active = false
   os.execute(RESIZE_KITTY_WINDOW_CMD)
 end
@@ -93,9 +93,9 @@ local function get_lines()
   --    https://github.com/suan/vim-instant-markdown/pull/74#issue-37422001
   --    https://github.com/suan/instant-markdown-d/pull/26
   -- }}}
-  local linenr = vim.fn.line "."
+  local linenr = vim.fn.line '.'
   lines[linenr] = lines[linenr] .. ' <a name="#marker" id="marker"></a>'
-  return table.concat(lines, "\n")
+  return table.concat(lines, '\n')
 end
 
 local function toggle_preview()
@@ -108,28 +108,28 @@ local function toggle_preview()
     vim.list_extend(autocmds, {
       {
         events = {
-          "BufWrite",
-          "CursorHold",
-          "InsertLeave",
+          'BufWrite',
+          'CursorHold',
+          'InsertLeave',
         },
-        targets = "<buffer>",
+        targets = '<buffer>',
         command = function()
           job {
-            cmd = "curl",
-            args = { "-X", "PUT", "--data-raw", get_lines(), API_URL },
+            cmd = 'curl',
+            args = { '-X', 'PUT', '--data-raw', get_lines(), API_URL },
           }
         end,
       },
       {
-        events = "BufUnload",
-        targets = "<buffer>",
+        events = 'BufUnload',
+        targets = '<buffer>',
         command = cleanup,
       },
     })
     state.active = true
     os.execute(HS_ACTIVATE_BROWSER_CMD)
   end
-  dm.augroup("dm__markdown_previewer", autocmds)
+  dm.augroup('dm__markdown_previewer', autocmds)
 end
 
 -- }}}1

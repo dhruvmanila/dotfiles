@@ -16,15 +16,15 @@ local session = {}
 -- Variables {{{1
 
 -- Notification title for the plugin
-local TITLE = "Session"
+local TITLE = 'Session'
 
 -- Default session directory.
-local SESSION_DIR = fn.stdpath "data" .. "/session"
+local SESSION_DIR = fn.stdpath 'data' .. '/session'
 
 do
   -- Create the directory if it does not exist.
   local info = uv.fs_stat(SESSION_DIR)
-  if not info or info.type ~= "directory" then
+  if not info or info.type ~= 'directory' then
     --                       ┌ read(4), write(2) and execute(1) by owner
     --                       │┌ read(4) and execute(1) by group
     --                       ││┌ read(4) and execute(1) by others
@@ -38,7 +38,7 @@ end
 -- Delete all the buffers. This is useful when switching between sessions or
 -- closing the current session.
 local function delete_buffers()
-  vim.cmd "%bdelete!"
+  vim.cmd '%bdelete!'
 end
 
 -- Cleanup performed before saving the session. This includes:
@@ -47,15 +47,15 @@ end
 --   - Stop all the active LSP clients
 local function session_cleanup()
   for _, winnr in ipairs(api.nvim_list_wins()) do
-    if fn.win_gettype(winnr) == "popup" then
+    if fn.win_gettype(winnr) == 'popup' then
       api.nvim_win_close(winnr, true)
     end
   end
 
   -- We don't want to save the dashboard buffer as it is a scratch buffer.
   -- See: `:h scratch-buffer`
-  if vim.o.filetype == "dashboard" then
-    local calling_buffer = fn.bufnr "#"
+  if vim.o.filetype == 'dashboard' then
+    local calling_buffer = fn.bufnr '#'
     if calling_buffer > 0 then
       api.nvim_set_current_buf(calling_buffer)
     end
@@ -74,15 +74,15 @@ end
 function session.close()
   local current_session = vim.v.this_session
   if not current_session then
-    dm.notify(TITLE, "No active session to close")
+    dm.notify(TITLE, 'No active session to close')
     return
   end
   if fn.filewritable(current_session) then
     session.write(current_session)
-    vim.v.this_session = ""
+    vim.v.this_session = ''
   end
   delete_buffers()
-  vim.cmd "Dashboard"
+  vim.cmd 'Dashboard'
 end
 
 -- session.delete {{{2
@@ -94,22 +94,22 @@ end
 ---@param name string
 ---@return boolean
 function session.delete(name)
-  local session_file = SESSION_DIR .. "/" .. name
+  local session_file = SESSION_DIR .. '/' .. name
   if fn.filereadable(session_file) == 0 then
-    dm.notify(TITLE, "No such session exist: " .. name, 3)
-  elseif fn.confirm("Really delete " .. name .. "?", "&Yes\n&No") == 1 then
+    dm.notify(TITLE, 'No such session exist: ' .. name, 3)
+  elseif fn.confirm('Really delete ' .. name .. '?', '&Yes\n&No') == 1 then
     local ok, err = uv.fs_unlink(session_file)
     if ok then
       if session_file == vim.v.this_session then
-        vim.v.this_session = ""
+        vim.v.this_session = ''
       end
-      dm.notify(TITLE, "Deleted session " .. name)
+      dm.notify(TITLE, 'Deleted session ' .. name)
       return true
     else
-      dm.notify(TITLE, { "Failed to delete session: " .. name, err }, 4)
+      dm.notify(TITLE, { 'Failed to delete session: ' .. name, err }, 4)
     end
   else
-    dm.notify(TITLE, "Deletion aborted")
+    dm.notify(TITLE, 'Deletion aborted')
   end
   return false
 end
@@ -123,8 +123,8 @@ function session.last()
   -- in-place sorting.
   local sessions = session.list()
   table.sort(sessions, function(a, b)
-    a = SESSION_DIR .. "/" .. a
-    b = SESSION_DIR .. "/" .. b
+    a = SESSION_DIR .. '/' .. a
+    b = SESSION_DIR .. '/' .. b
     -- From `man stat(2)`
     --                           ┌ time (sec) of last data modification
     --                           │
@@ -143,7 +143,7 @@ end
 ---@param arglead? string
 ---@return string[]
 function session.list(arglead)
-  arglead = "^[%a%-_]*" .. (arglead or "") .. "[%a%-_]*$"
+  arglead = '^[%a%-_]*' .. (arglead or '') .. '[%a%-_]*$'
   return fn.readdir(SESSION_DIR, function(filename)
     return arglead and (filename:match(arglead) and 1 or 0) or 1
   end)
@@ -155,18 +155,18 @@ end
 -- that first and then open the requested one.
 ---@param name string
 function session.load(name)
-  local session_file = SESSION_DIR .. "/" .. name
+  local session_file = SESSION_DIR .. '/' .. name
   local current_session = vim.v.this_session
   if fn.filereadable(session_file) == 0 then
-    dm.notify(TITLE, "No such session exist: " .. name, 4)
+    dm.notify(TITLE, 'No such session exist: ' .. name, 4)
   elseif session_file == current_session then
-    dm.notify(TITLE, name .. " is already the current session")
+    dm.notify(TITLE, name .. ' is already the current session')
   else
     if fn.filewritable(current_session) == 1 then
       session.write(current_session)
     end
     delete_buffers()
-    vim.cmd("source " .. session_file)
+    vim.cmd('source ' .. session_file)
   end
 end
 
@@ -174,10 +174,10 @@ end
 
 ---@param new_name string
 function session.rename(new_name)
-  local session_file = SESSION_DIR .. "/" .. new_name
+  local session_file = SESSION_DIR .. '/' .. new_name
   local current_session = vim.v.this_session
   if not current_session then
-    dm.notify(TITLE, "No active session to rename")
+    dm.notify(TITLE, 'No active session to rename')
     return
   elseif current_session == session_file then
     return
@@ -186,11 +186,11 @@ function session.rename(new_name)
   if ok then
     dm.notify(
       TITLE,
-      "Renamed " .. fn.fnamemodify(current_session, ":t") .. " -> " .. new_name
+      'Renamed ' .. fn.fnamemodify(current_session, ':t') .. ' -> ' .. new_name
     )
     vim.v.this_session = session_file
   else
-    dm.notify(TITLE, { "Failed to rename to " .. new_name, err }, 4)
+    dm.notify(TITLE, { 'Failed to rename to ' .. new_name, err }, 4)
   end
 end
 
@@ -200,16 +200,16 @@ end
 -- overwrite the session.
 ---@param name string
 function session.save(name)
-  local session_file = SESSION_DIR .. "/" .. name
+  local session_file = SESSION_DIR .. '/' .. name
   if
     fn.filereadable(session_file) == 0
-    or fn.confirm("Session already exists. Overwrite?", "&Yes\n&No") == 1
+    or fn.confirm('Session already exists. Overwrite?', '&Yes\n&No') == 1
   then
     session.write(session_file)
-    dm.notify(TITLE, "Session saved under: " .. name)
+    dm.notify(TITLE, 'Session saved under: ' .. name)
     return
   else
-    dm.notify(TITLE, "Did NOT save the session")
+    dm.notify(TITLE, 'Did NOT save the session')
   end
 end
 
@@ -221,7 +221,7 @@ function session.write(path)
   session_cleanup()
   --                ┌ overwrite any existing file
   --                │
-  vim.cmd("mksession! " .. path)
+  vim.cmd('mksession! ' .. path)
 end
 
 -- }}}1

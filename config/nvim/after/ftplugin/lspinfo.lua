@@ -3,4 +3,4 @@ vim.api.nvim_win_set_config(
   { border = dm.border[vim.g.border_style] }
 )
 
-vim.keymap.set("n", "q", "<Cmd>bdelete<CR>", { nowait = true, buffer = true })
+vim.keymap.set('n', 'q', '<Cmd>bdelete<CR>', { nowait = true, buffer = true })

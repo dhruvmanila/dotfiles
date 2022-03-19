@@ -18,7 +18,7 @@ local hl_id
 ---@return number
 local function get_preview_winid()
   for _, winid in ipairs(api.nvim_tabpage_list_wins(0)) do
-    if api.nvim_win_get_option(winid, "previewwindow") then
+    if api.nvim_win_get_option(winid, 'previewwindow') then
       return winid
     end
   end
@@ -51,7 +51,7 @@ local function highlight_tag()
     --                  in given `lnum`       in given `col`     │
     --                ┌─────────────────┐┌──────────────────────┐├──┐ }}}
     local pattern = [[\%]] .. lnum .. [[l\%]] .. (col + 1) .. [[c\S\+]]
-    hl_id = fn.matchadd("Search", pattern)
+    hl_id = fn.matchadd('Search', pattern)
   end)
 end
 
@@ -59,14 +59,14 @@ end
 
 local opts = { buffer = true, nowait = true }
 
-vim.keymap.set("n", "q", "<Cmd>quit<CR>", opts)
-vim.keymap.set("n", "<CR>", "<C-]>", opts)
-vim.keymap.set("n", "<BS>", "<C-T>", opts)
+vim.keymap.set('n', 'q', '<Cmd>quit<CR>', opts)
+vim.keymap.set('n', '<CR>', '<C-]>', opts)
+vim.keymap.set('n', '<BS>', '<C-T>', opts)
 
-vim.keymap.set("n", "p", function()
-  local ok, err = pcall(vim.cmd, "wincmd }")
+vim.keymap.set('n', 'p', function()
+  local ok, err = pcall(vim.cmd, 'wincmd }')
   if not ok then
-    dm.notify("Help Preview", err, 4)
+    dm.notify('Help Preview', err, 4)
     return
   end
   highlight_tag()
@@ -77,9 +77,9 @@ vim.keymap.set("n", "p", function()
   -- fired in the new buffer.
   -- }}}
   autocmd {
-    events = "CursorMoved",
-    targets = "*",
-    modifiers = "++once",
-    command = "pclose",
+    events = 'CursorMoved',
+    targets = '*',
+    modifiers = '++once',
+    command = 'pclose',
   }
 end, opts)

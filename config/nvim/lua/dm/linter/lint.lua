@@ -2,8 +2,8 @@ local M = {}
 
 local api = vim.api
 local if_nil = vim.F.if_nil
-local log = require "dm.log"
-local job = require "dm.job"
+local log = require 'dm.log'
+local job = require 'dm.job'
 
 -- Types {{{
 
@@ -27,7 +27,7 @@ local registered_linters = {}
 local function run_linter(bufnr, linter)
   local writer
   local args = linter.args
-  if type(args) == "function" then
+  if type(args) == 'function' then
     args = args()
   end
 
@@ -40,9 +40,9 @@ local function run_linter(bufnr, linter)
   end
 
   if linter.env then
-    if not linter.env["PATH"] then
+    if not linter.env['PATH'] then
       -- Always include PATH as we need it to execute the linter command.
-      linter.env["PATH"] = os.getenv "PATH"
+      linter.env['PATH'] = os.getenv 'PATH'
     end
   end
 
@@ -53,7 +53,7 @@ local function run_linter(bufnr, linter)
     writer = writer,
     on_exit = function(result)
       if not linter.ignore_exitcode and result.code > 0 then
-        log.fmt_error("%s exited with exit code: %d", linter.cmd, result.code)
+        log.fmt_error('%s exited with exit code: %d', linter.cmd, result.code)
         return
       end
       local output = result[linter.stream]
@@ -72,7 +72,7 @@ function M.register(filetype, linter)
   end
 
   linter.stdin = if_nil(linter.stdin, true)
-  linter.stream = linter.stream or "stdout"
+  linter.stream = linter.stream or 'stdout'
   linter.ignore_exitcode = if_nil(linter.ignore_exitcode, false)
 
   -- Every linter will have its own namespace {{{
@@ -87,7 +87,7 @@ function M.register(filetype, linter)
   -- setting an empty diagnostics from linter B will reset the ones from
   -- linter A.
   -- }}}
-  linter.namespace = api.nvim_create_namespace("dm__linter_" .. linter.cmd)
+  linter.namespace = api.nvim_create_namespace('dm__linter_' .. linter.cmd)
 
   table.insert(registered_linters[filetype], linter)
 end

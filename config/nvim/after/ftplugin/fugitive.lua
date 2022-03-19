@@ -23,7 +23,7 @@ local function has_vertical_space()
   end
   local layout = vim.fn.winlayout()
   layout = layout[2][1]
-  return layout[1] ~= "row"
+  return layout[1] ~= 'row'
 end
 
 -- Determine whether we are in a vertical fugitive window. This is determined
@@ -36,7 +36,7 @@ end
 
 local vertical_fugitive = is_vertical_fugitive()
 if not vertical_fugitive and has_vertical_space() then
-  vim.cmd "wincmd L"
+  vim.cmd 'wincmd L'
   vertical_fugitive = true
 end
 
@@ -45,13 +45,13 @@ local ropts = { buffer = true, nowait = true, remap = true }
 
 -- Setup the keybindings to open the window in the correct split.
 if vertical_fugitive or vim.o.columns <= 140 then
-  vim.keymap.set("n", "gh", "g?", ropts)
+  vim.keymap.set('n', 'gh', 'g?', ropts)
 else
-  vim.keymap.set("n", "gh", "<Cmd>vertical help fugitive-map<CR>", opts)
-  vim.keymap.set("n", "cc", "<Cmd>vertical Git commit<CR>", opts)
+  vim.keymap.set('n', 'gh', '<Cmd>vertical help fugitive-map<CR>', opts)
+  vim.keymap.set('n', 'cc', '<Cmd>vertical Git commit<CR>', opts)
 end
 
-vim.keymap.set("n", "q", "gq", ropts)
+vim.keymap.set('n', 'q', 'gq', ropts)
 
 -- Easy toggle for inline diff
-vim.keymap.set("n", "<Tab>", "=", ropts)
+vim.keymap.set('n', '<Tab>', '=', ropts)

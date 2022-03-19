@@ -4,27 +4,27 @@ local M = {}
 local api = vim.api
 local lsp = vim.lsp
 
-local highlighter = require "nvim-treesitter.highlight"
+local highlighter = require 'nvim-treesitter.highlight'
 
 -- Table consisting of treesitter node types to use for preview.
 local node_types = {
   -- go
-  "function_declaration",
-  "method_declaration",
-  "type_declaration",
-  "var_declaration",
+  'function_declaration',
+  'method_declaration',
+  'type_declaration',
+  'var_declaration',
 
   -- lua
-  "program", -- preview the entire module
-  "function", -- for method nodes like `class:method()`
-  "local_function",
-  "variable_declaration", -- `f = function(...) ... end`
-  "local_variable_declaration", -- `local f = function(...) ... end`
+  'program', -- preview the entire module
+  'function', -- for method nodes like `class:method()`
+  'local_function',
+  'variable_declaration', -- `f = function(...) ... end`
+  'local_variable_declaration', -- `local f = function(...) ... end`
 
   -- python
-  "module", -- preview the entire module
-  "class_definition",
-  "function_definition",
+  'module', -- preview the entire module
+  'class_definition',
+  'function_definition',
 }
 
 -- Determine whether this is the node to be used for treesitter range.
@@ -54,11 +54,11 @@ local function ts_range(location)
   -- This will add the buffer to the buffer list. We don't want to attach the
   -- language server to that buffer, so we will ignore all events when setting
   -- the filetype and getting the parser for the buffer.
-  vim.o.eventignore = "all"
+  vim.o.eventignore = 'all'
   local bufnr = vim.uri_to_bufnr(uri)
   vim.bo[bufnr].filetype = vim.bo.filetype
   local parser = vim.treesitter.get_parser(bufnr)
-  vim.o.eventignore = ""
+  vim.o.eventignore = ''
 
   -- This will return a table of trees.
   local tree = parser:parse()[1]
@@ -68,7 +68,7 @@ local function ts_range(location)
 
   local root = tree:root()
   local lsp_start_pos = range.start
-  local lsp_end_pos = range["end"]
+  local lsp_end_pos = range['end']
   local node = root:named_descendant_for_range(
     lsp_start_pos.line,
     lsp_start_pos.character,
@@ -85,8 +85,8 @@ local function ts_range(location)
     if should_use_ts(node) then
       range.start.line = ts_start_line
       range.start.character = ts_start_col
-      range["end"].line = ts_end_line
-      range["end"].character = ts_end_col
+      range['end'].line = ts_end_line
+      range['end'].character = ts_end_col
       break
     end
     node = node:parent()
@@ -105,7 +105,7 @@ end
 ---@param ctx table
 local function preview_location_handler(_, result, ctx)
   if not result or vim.tbl_isempty(result) then
-    dm.notify("LSP Preview (" .. ctx.method .. ")", "No results found")
+    dm.notify('LSP Preview (' .. ctx.method .. ')', 'No results found')
     return
   end
 
@@ -142,9 +142,9 @@ local function make_lsp_preview_action(method)
   end
 end
 
-M.definition = make_lsp_preview_action "textDocument/definition"
-M.declaration = make_lsp_preview_action "textDocument/declaration"
-M.implementation = make_lsp_preview_action "textDocument/implementation"
-M.type_definition = make_lsp_preview_action "textDocument/typeDefinition"
+M.definition = make_lsp_preview_action 'textDocument/definition'
+M.declaration = make_lsp_preview_action 'textDocument/declaration'
+M.implementation = make_lsp_preview_action 'textDocument/implementation'
+M.type_definition = make_lsp_preview_action 'textDocument/typeDefinition'
 
 return M

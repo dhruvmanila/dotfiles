@@ -1,10 +1,10 @@
-local lint = require "dm.linter.lint"
+local lint = require 'dm.linter.lint'
 
 local register = lint.register
 
 do
-  local pat = "[^:]+:(%d+):(%d+):(([EWF])%w+):(.+)"
-  local group = { "lnum", "col", "code", "severity", "message" }
+  local pat = '[^:]+:(%d+):(%d+):(([EWF])%w+):(.+)'
+  local group = { 'lnum', 'col', 'code', 'severity', 'message' }
 
   local severity_map = {
     E = vim.diagnostic.severity.ERROR,
@@ -12,22 +12,22 @@ do
     F = vim.diagnostic.severity.WARN,
   }
 
-  register("python", {
-    cmd = "flake8",
+  register('python', {
+    cmd = 'flake8',
     args = {
-      "--format",
-      "%(path)s:%(row)d:%(col)d:%(code)s:%(text)s",
-      "--extend-ignore",
-      "E501", -- line too long
-      "-",
+      '--format',
+      '%(path)s:%(row)d:%(col)d:%(code)s:%(text)s',
+      '--extend-ignore',
+      'E501', -- line too long
+      '-',
     },
     ignore_exitcode = true,
     parser = function(output)
       local diagnostics = {}
-      for line in vim.gsplit(output, "\n") do
+      for line in vim.gsplit(output, '\n') do
         local diagnostic = vim.diagnostic.match(line, pat, group, severity_map)
         if diagnostic then
-          diagnostic.source = "flake8"
+          diagnostic.source = 'flake8'
           table.insert(diagnostics, diagnostic)
         end
       end
@@ -37,8 +37,8 @@ do
 end
 
 do
-  local pat = "([^:]+):(%d+):(%d+): (%a+): (.*)"
-  local groups = { "file", "lnum", "col", "severity", "message" }
+  local pat = '([^:]+):(%d+):(%d+): (%a+): (.*)'
+  local groups = { 'file', 'lnum', 'col', 'severity', 'message' }
 
   local severity_map = {
     error = vim.diagnostic.severity.ERROR,
@@ -46,22 +46,22 @@ do
     note = vim.diagnostic.severity.HINT,
   }
 
-  register("python", {
-    cmd = "mypy",
+  register('python', {
+    cmd = 'mypy',
     args = {
-      "--ignore-missing-imports",
-      "--show-column-numbers",
-      "--hide-error-codes",
-      "--hide-error-context",
-      "--no-color-output",
-      "--no-error-summary",
-      "--no-pretty",
+      '--ignore-missing-imports',
+      '--show-column-numbers',
+      '--hide-error-codes',
+      '--hide-error-context',
+      '--no-color-output',
+      '--no-error-summary',
+      '--no-pretty',
     },
     stdin = false,
     ignore_exitcode = true,
     parser = function(output, bufnr)
       local diagnostics = {}
-      for line in vim.gsplit(output, "\n") do
+      for line in vim.gsplit(output, '\n') do
         local diagnostic = vim.diagnostic.match(line, pat, groups, severity_map)
         if
           diagnostic
@@ -69,15 +69,15 @@ do
           -- This is done because `mypy` can follow imports and report errors
           -- from other files which will be displayed in the current buffer.
           and diagnostic.file
-            == vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":~:.")
+            == vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':~:.')
         then
-          diagnostic.source = "mypy"
+          diagnostic.source = 'mypy'
           if
             diagnostic.severity == vim.diagnostic.severity.HINT
             and #diagnostics > 0
           then
             diagnostics[#diagnostics].message = diagnostics[#diagnostics].message
-              .. "\n"
+              .. '\n'
               .. diagnostic.message
           else
             table.insert(diagnostics, diagnostic)
@@ -97,15 +97,15 @@ do
     style = vim.diagnostic.severity.HINT,
   }
 
-  register("sh", {
-    cmd = "shellcheck",
-    args = { "--format", "json", "-" },
+  register('sh', {
+    cmd = 'shellcheck',
+    args = { '--format', 'json', '-' },
     ignore_exitcode = true,
     parser = function(output)
       local diagnostics = {}
       for _, item in ipairs(vim.json.decode(output)) do
         table.insert(diagnostics, {
-          source = "shellcheck",
+          source = 'shellcheck',
           lnum = item.line - 1,
           end_lnum = item.endLine - 1,
           col = item.column - 1,
@@ -128,15 +128,15 @@ do
     style = vim.diagnostic.severity.HINT,
   }
 
-  register("Dockerfile", {
-    cmd = "hadolint",
-    args = { "--format", "json", "-" },
+  register('Dockerfile', {
+    cmd = 'hadolint',
+    args = { '--format', 'json', '-' },
     ignore_exitcode = true,
     parser = function(output)
       local diagnostics = {}
       for _, item in ipairs(vim.json.decode(output)) do
         table.insert(diagnostics, {
-          source = "hadolint",
+          source = 'hadolint',
           lnum = item.line - 1,
           end_lnum = item.line,
           col = item.column - 1,
@@ -151,15 +151,15 @@ do
   })
 end
 
-register("yaml", {
-  cmd = "actionlint",
-  args = { "-no-color", "-format", "{{json .}}", "-" },
+register('yaml', {
+  cmd = 'actionlint',
+  args = { '-no-color', '-format', '{{json .}}', '-' },
   ignore_exitcode = true,
   parser = function(output)
     local diagnostics = {}
     for _, item in ipairs(vim.json.decode(output)) do
       table.insert(diagnostics, {
-        source = "actionlint",
+        source = 'actionlint',
         lnum = item.line - 1,
         end_lnum = item.line,
         col = item.column - 1,
