@@ -85,7 +85,7 @@ register("python", {
   },
   {
     cmd = "isort",
-    args = { "--profile", "black", "-" },
+    args = { "-" },
   },
 })
 
