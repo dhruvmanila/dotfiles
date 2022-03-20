@@ -60,7 +60,7 @@ packer.startup {
       },
     }
 
-    -- Debugging (DAP)
+    -- Debugging (DAP) & Testing
     use {
       'mfussenegger/nvim-dap',
       keys = {
@@ -75,6 +75,16 @@ packer.startup {
         'rcarriga/nvim-dap-ui',
         'theHamsta/nvim-dap-virtual-text',
       },
+    }
+    use {
+      'rcarriga/vim-ultest',
+      keys = {
+        '<Plug>(ultest-summary-toggle)',
+        '<Plug>(ultest-run-nearest)',
+        '<Plug>(ultest-run-file)',
+      },
+      requires = { 'vim-test/vim-test' },
+      run = ':UpdateRemotePlugins',
     }
 
     -- Treesitter

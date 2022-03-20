@@ -470,6 +470,14 @@ link('TSVariableBuiltin', 'BlueItalic') -- check
 link('TelescopeMatching', 'Blue')
 link('TelescopePromptPrefix', 'Yellow')
 
+-- vim-ultest {{{2
+link('UltestPass', 'Green')
+link('UltestFail', 'Red')
+link('UltestRunning', 'Aqua')
+link('UltestDefault', 'Grey')
+link('UltestBorder', 'Fg')
+link('UltestSummaryInfo', 'BlueBold')
+
 -- Extended File Types {{{1
 -- diff {{{2
 -- Used in `git` filetype showing the diff, e.g., fugitive.
