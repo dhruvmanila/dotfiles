@@ -10,6 +10,7 @@ local job = require 'dm.job'
 ---@class Linter
 ---@field cmd string
 ---@field args string[]|function
+---@field enable? fun(bufnr: number):boolean (default: nil)
 ---@field stdin? boolean (default: true)
 ---@field stream? '"stdout"'|'"stderr"' (default: "stdout")
 ---@field ignore_exitcode? boolean (default: false)
@@ -25,6 +26,10 @@ local registered_linters = {}
 ---@param bufnr number
 ---@param linter Linter
 local function run_linter(bufnr, linter)
+  if linter.enable ~= nil and not linter.enable(bufnr) then
+    return
+  end
+
   local writer
   local args = linter.args
   if type(args) == 'function' then
