@@ -1,7 +1,8 @@
 local o = vim.o
 local fn = vim.fn
 local api = vim.api
-local augroup = dm.augroup
+local nvim_create_augroup = api.nvim_create_augroup
+local nvim_create_autocmd = api.nvim_create_autocmd
 
 -- Clear command-line messages {{{1
 
@@ -11,34 +12,33 @@ do
 
   -- Automatically clear command-line messages after a few seconds delay
   -- Source: https://unix.stackexchange.com/a/613645
-  augroup('dm__clear_cmdline_messages', {
-    {
-      events = 'CmdlineLeave',
-      targets = ':',
-      command = function()
-        if timer then
-          timer:stop()
+  nvim_create_autocmd('CmdlineLeave', {
+    group = nvim_create_augroup('dm__clear_cmdline_messages', { clear = true }),
+    pattern = ':',
+    callback = function()
+      if timer then
+        timer:stop()
+      end
+      timer = vim.defer_fn(function()
+        if fn.mode() == 'n' then
+          api.nvim_echo({}, false, {})
         end
-        timer = vim.defer_fn(function()
-          if fn.mode() == 'n' then
-            api.nvim_echo({}, false, {})
-          end
-        end, timeout)
-      end,
-    },
+      end, timeout)
+    end,
+    desc = ('Clear command-line messages after %d seconds'):format(
+      timeout / 1000
+    ),
   })
 end
 
 -- Highlighted yank {{{1
 
-augroup('dm__highlighted_yank', {
-  {
-    events = 'TextYankPost',
-    targets = '*',
-    command = function()
-      vim.highlight.on_yank { higroup = 'Substitute', timeout = 200 }
-    end,
-  },
+nvim_create_autocmd('TextYankPost', {
+  group = nvim_create_augroup('dm__highlighted_yank', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank { higroup = 'Substitute', timeout = 200 }
+  end,
+  desc = 'Highlight a selection on yank',
 })
 
 -- Reload file when modified outside Vim {{{1
@@ -55,67 +55,60 @@ augroup('dm__highlighted_yank', {
 -- only in the GUI, or in a terminal which supports the focus event tracking
 -- feature. For `tmux`, the `focus-events` option needs to be turned on.
 -- }}}
-augroup('dm__auto_reload_file', {
-  {
-    events = {
-      'BufEnter',
-      'CursorHold',
-    },
-    targets = '*',
-    command = function()
-      local bufnr = tonumber(fn.expand '<abuf>')
-      local name = api.nvim_buf_get_name(bufnr)
-      if
-        name == ''
-        -- Only check for normal files
-        or vim.bo[bufnr].buftype ~= ''
-        -- To avoid: E211: File "..." no longer available
-        or not fn.filereadable(name)
-      then
-        return
-      end
-      -- What does it do? {{{
-      --
-      -- Check whether the current file has been modified outside of Vim. If it
-      -- has, Vim will automatically re-read it because we've set 'autoread'.
-      --
-      -- A modification does not necessarily involve the *contents* of the file.
-      -- Changing its *permissions* is *also* a modification.
-      --
-      -- Ref: https://unix.stackexchange.com/a/383044
-      -- }}}
-      -- Why `bufnr`? {{{
-      --
-      -- This function will be called frequently, and if we have many buffers,
-      -- without specifiying a buffer, Vim would check *all* buffers. This could
-      -- be too time-consuming.
-      -- }}}
-      vim.cmd(bufnr .. 'checktime')
-    end,
-  },
+nvim_create_autocmd({ 'BufEnter', 'CursorHold' }, {
+  group = nvim_create_augroup('dm__auto_reload_file', { clear = true }),
+  callback = function()
+    local bufnr = tonumber(fn.expand '<abuf>')
+    local name = api.nvim_buf_get_name(bufnr)
+    if
+      name == ''
+      -- Only check for normal files
+      or vim.bo[bufnr].buftype ~= ''
+      -- To avoid: E211: File "..." no longer available
+      or not fn.filereadable(name)
+    then
+      return
+    end
+    -- What does it do? {{{
+    --
+    -- Check whether the current file has been modified outside of Vim. If it
+    -- has, Vim will automatically re-read it because we've set 'autoread'.
+    --
+    -- A modification does not necessarily involve the *contents* of the file.
+    -- Changing its *permissions* is *also* a modification.
+    --
+    -- Ref: https://unix.stackexchange.com/a/383044
+    -- }}}
+    -- Why `bufnr`? {{{
+    --
+    -- This function will be called frequently, and if we have many buffers,
+    -- without specifiying a buffer, Vim would check *all* buffers. This could
+    -- be too time-consuming.
+    -- }}}
+    vim.cmd(bufnr .. 'checktime')
+  end,
+  desc = 'Reload file when modified outside Neovim',
 })
 
 -- Restore cursor to last position {{{1
 
 -- When editing a file, always jump to the last known cursor position.
 -- Source: `:h last-position-jump`
-augroup('dm__restore_cursor', {
-  {
-    events = 'BufReadPost',
-    targets = '*',
-    command = function()
-      -- Cursor position when last exiting the current buffer.
-      -- See :h 'quote
-      local line, col = unpack(api.nvim_buf_get_mark(0, '"'))
-      if
-        o.filetype ~= 'gitcommit'
-        and line > 0
-        and line < api.nvim_buf_line_count(0)
-      then
-        api.nvim_win_set_cursor(0, { line, col })
-      end
-    end,
-  },
+nvim_create_autocmd('BufReadPost', {
+  group = nvim_create_augroup('dm__restore_cursor', { clear = true }),
+  callback = function()
+    -- Cursor position when last exiting the current buffer.
+    ---@see :h 'quote
+    local line, col = unpack(api.nvim_buf_get_mark(0, '"'))
+    if
+      o.filetype ~= 'gitcommit'
+      and line > 0
+      and line < api.nvim_buf_line_count(0)
+    then
+      api.nvim_win_set_cursor(0, { line, col })
+    end
+  end,
+  desc = 'Restore cursor to the last position',
 })
 
 -- Set 'colorcolumn' {{{1
@@ -136,19 +129,20 @@ do
     end
   end
 
-  augroup('dm__auto_colorcolumn', {
-    {
-      events = 'InsertEnter',
-      targets = '*',
-      command = set_colorcolumn,
-    },
-    {
-      events = 'InsertLeave',
-      targets = '*',
-      command = function()
-        set_colorcolumn(true)
-      end,
-    },
+  local id = nvim_create_augroup('dm__auto_colorcolumn', { clear = true })
+
+  nvim_create_autocmd('InsertEnter', {
+    group = id,
+    callback = set_colorcolumn,
+    desc = 'Set colorcolumn',
+  })
+
+  nvim_create_autocmd('InsertLeave', {
+    group = id,
+    callback = function()
+      set_colorcolumn(true)
+    end,
+    desc = 'Unset colorcolumn',
   })
 end
 
@@ -174,6 +168,8 @@ do
       o.cursorlineopt = cursorlineopt_save
     end
   end
+
+  local id = nvim_create_augroup('dm__auto_cursorline', { clear = true })
 
   -- Do NOT include `FocusGained`/`FocusLost` events {{{
   --
@@ -206,83 +202,66 @@ do
   -- the window. If we set the option only on `BufLeave`, it won't affect the
   -- window. The same can be explained for `*Enter` events.
   -- }}}
-  augroup('dm__auto_cursorline', {
-    {
-      events = {
-        'BufEnter',
-        'InsertLeave',
-        'WinEnter',
-      },
-      targets = '*',
-      command = function()
-        set_cursorline(true)
-      end,
-    },
-    {
-      events = {
-        'BufLeave',
-        'InsertEnter',
-        'WinLeave',
-      },
-      targets = '*',
-      command = set_cursorline,
-    },
+  nvim_create_autocmd({ 'BufEnter', 'InsertLeave', 'WinEnter' }, {
+    group = id,
+    callback = function()
+      set_cursorline(true)
+    end,
+    desc = 'Unset cursorline',
+  })
+  nvim_create_autocmd({ 'BufLeave', 'InsertEnter', 'WinLeave' }, {
+    group = id,
+    callback = set_cursorline,
+    desc = 'Set cursorline',
   })
 end
 
 -- Set 'relativenumber' {{{1
 
--- What does it do? {{{
---
 -- Enable/Disable relative number:
 --   - Only in the active window
 --   - Ignore quickfix window
 --   - Disable in insert mode
--- }}}
-augroup('dm__auto_relative_number', {
-  {
-    events = {
-      'BufEnter',
-      'FocusGained',
-      'InsertLeave',
-      'WinEnter',
-    },
-    targets = '*',
-    command = function()
+
+do
+  local id = nvim_create_augroup('dm__auto_relative_number', { clear = true })
+
+  nvim_create_autocmd({ 'BufEnter', 'FocusGained', 'InsertLeave', 'WinEnter' }, {
+    group = id,
+    callback = function()
       if o.number and o.filetype ~= 'qf' then
         o.relativenumber = true
       end
     end,
-  },
-  {
-    events = {
-      'BufLeave',
-      'FocusLost',
-      'InsertEnter',
-      'WinLeave',
-    },
-    targets = '*',
-    command = function()
+    desc = 'Set relativenumber',
+  })
+
+  nvim_create_autocmd({ 'BufLeave', 'FocusLost', 'InsertEnter', 'WinLeave' }, {
+    group = id,
+    callback = function()
       if o.number and o.filetype ~= 'qf' then
         o.relativenumber = false
       end
     end,
-  },
-})
+    desc = 'Unset relativenumber',
+  })
+end
 
 -- Terminal {{{1
 
-augroup('dm__terminal', {
-  {
-    events = 'TermOpen',
-    targets = 'term://*',
+do
+  local id = nvim_create_augroup('dm__terminal', { clear = true })
+
+  nvim_create_autocmd('TermOpen', {
+    group = id,
+    pattern = 'term://*',
     command = 'setfiletype terminal | startinsert',
-  },
-  -- Enter insert mode only if the cursor is at the last prompt line.
-  {
-    events = 'WinEnter',
-    targets = 'term://*',
-    command = function()
+  })
+
+  nvim_create_autocmd('WinEnter', {
+    group = id,
+    pattern = 'term://*',
+    callback = function()
       local lines = vim.api.nvim_buf_get_lines(0, vim.fn.line '.', -1, false)
       lines = vim.tbl_filter(function(line)
         return line ~= ''
@@ -291,37 +270,39 @@ augroup('dm__terminal', {
         return vim.cmd 'startinsert'
       end
     end,
-  },
-  {
-    events = 'TermClose',
-    targets = 'term://*',
-    command = function()
-      -- Avoid the annoying '[Process exited 0]' prompt
+    desc = 'Enter insert mode only if the cursor is at the last prompt line',
+  })
+
+  nvim_create_autocmd('TermClose', {
+    group = id,
+    pattern = 'term://*',
+    callback = function()
       api.nvim_input '<CR>'
     end,
-  },
-})
+    desc = "Avoid the annoying '[Process exited 0]' prompt",
+  })
+end
 
 -- VimResized {{{1
 
-augroup('dm__vim_resized', {
-  {
-    events = 'VimResized',
-    targets = '*',
-    command = function()
+do
+  local id = nvim_create_augroup('dm__vim_resized', { clear = true })
+
+  nvim_create_autocmd('VimResized', {
+    group = id,
+    callback = function()
       local last_tab = api.nvim_get_current_tabpage()
       vim.cmd 'tabdo wincmd ='
       api.nvim_set_current_tabpage(last_tab)
     end,
-  },
-  {
-    events = {
-      'VimEnter',
-      'VimResized',
-    },
-    targets = '*',
-    command = function()
+    desc = 'Equalize windows across tabs',
+  })
+
+  nvim_create_autocmd({ 'VimEnter', 'VimResized' }, {
+    group = id,
+    callback = function()
       o.previewheight = math.floor(o.lines / 3)
     end,
-  },
-})
+    desc = 'Update previewheight as per the new Vim size',
+  })
+end

@@ -1,9 +1,7 @@
 local lint = require('dm.linter').lint
 
-dm.augroup('dm__auto_linting', {
-  {
-    events = { 'BufEnter', 'BufWritePost' },
-    targets = '*',
-    command = lint,
-  },
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost' }, {
+  group = vim.api.nvim_create_augroup('dm__auto_linting', { clear = true }),
+  callback = lint,
+  desc = 'Lint the buffer',
 })

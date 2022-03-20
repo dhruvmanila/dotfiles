@@ -35,9 +35,8 @@ local function on_progress_update()
   end, timeout)
 end
 
-dm.autocmd {
+vim.api.nvim_create_autocmd('User', {
   group = 'dm__statusline',
-  events = 'User',
-  targets = 'LspProgressUpdate',
-  command = on_progress_update,
-}
+  pattern = 'LspProgressUpdate',
+  callback = on_progress_update,
+})

@@ -46,8 +46,10 @@ end
 ---@param client table
 ---@param bufnr number
 local function on_attach(client, bufnr)
-  local lsp_autocmds = {}
   local capabilities = client.resolved_capabilities
+
+  -- LSP augroup id.
+  local id = vim.api.nvim_create_augroup('dm__lsp', { clear = true })
 
   if capabilities.hover then
     keymap.set('n', 'K', lsp.buf.hover, {
@@ -123,23 +125,26 @@ local function on_attach(client, bufnr)
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
   if capabilities.document_highlight then
-    table.insert(lsp_autocmds, {
-      events = 'CursorHold',
-      targets = '<buffer>',
-      command = lsp.buf.document_highlight,
+    vim.api.nvim_create_autocmd('CursorHold', {
+      group = id,
+      buffer = bufnr,
+      callback = lsp.buf.document_highlight,
+      desc = 'LSP: Document highlight',
     })
-    table.insert(lsp_autocmds, {
-      events = 'CursorMoved',
-      targets = '<buffer>',
-      command = lsp.buf.clear_references,
+    vim.api.nvim_create_autocmd('CursorMoved', {
+      group = id,
+      buffer = bufnr,
+      callback = lsp.buf.clear_references,
+      desc = 'LSP: Clear references',
     })
   end
 
   if capabilities.code_action then
-    table.insert(lsp_autocmds, {
-      events = { 'CursorHold', 'CursorHoldI' },
-      targets = '<buffer>',
-      command = require('dm.lsp.code_action').listener,
+    vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+      group = id,
+      buffer = bufnr,
+      callback = require('dm.lsp.code_action').listener,
+      desc = 'LSP: Code action (bulb)',
     })
 
     keymap.set('n', '<leader>ca', lsp.buf.code_action, {
@@ -150,11 +155,6 @@ local function on_attach(client, bufnr)
       buffer = bufnr,
       desc = 'LSP: Code action (range)',
     })
-  end
-
-  -- Set the LSP autocmds
-  if not vim.tbl_isempty(lsp_autocmds) then
-    dm.augroup('custom_lsp_autocmds', lsp_autocmds)
   end
 
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'

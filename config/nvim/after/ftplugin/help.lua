@@ -1,6 +1,5 @@
 local fn = vim.fn
 local api = vim.api
-local autocmd = dm.autocmd
 
 -- Options {{{1
 
@@ -76,10 +75,8 @@ vim.keymap.set('n', 'p', function()
   -- because – if the tag is defined in another file – `CursorMoved` would be
   -- fired in the new buffer.
   -- }}}
-  autocmd {
-    events = 'CursorMoved',
-    targets = '*',
-    modifiers = '++once',
+  api.nvim_create_autocmd('CursorMoved', {
+    once = true,
     command = 'pclose',
-  }
+  })
 end, opts)

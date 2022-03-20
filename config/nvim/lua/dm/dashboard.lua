@@ -239,26 +239,23 @@ end
 --   - Show the cursor on the command-line or leaving the dashboard buffer
 --   - Reset the options when deleting the dashboard buffer
 local function setup_autocmds()
-  dm.autocmd {
-    events = { 'BufEnter', 'CmdlineLeave' },
-    targets = '<buffer>',
-    command = cursor.hide,
-  }
-  dm.autocmd {
-    events = { 'BufLeave', 'CmdlineEnter' },
-    targets = '<buffer>',
-    command = cursor.show,
-  }
+  api.nvim_create_autocmd({ 'BufEnter', 'CmdlineLeave' }, {
+    pattern = '<buffer>',
+    callback = cursor.hide,
+  })
+  api.nvim_create_autocmd({ 'BufLeave', 'CmdlineEnter' }, {
+    pattern = '<buffer>',
+    callback = cursor.show,
+  })
   -- TODO: This should not be needed once the options bug is fixed upstream
-  dm.autocmd {
-    events = 'BufWipeout',
-    targets = '<buffer>',
-    modifiers = '++once',
-    command = function()
+  api.nvim_create_autocmd('BufWipeout', {
+    pattern = '<buffer>',
+    once = true,
+    callback = function()
       option_process(dashboard.saved_opts, 'set')
       dashboard.saved_opts = {}
     end,
-  }
+  })
 end
 
 --- Open the dashboard buffer in the current buffer if it is empty or create

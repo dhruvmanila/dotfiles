@@ -13,16 +13,18 @@ local auto_formatting = false
 
 -- Toggle between the two states of auto formatting.
 local function toggle_auto_formatting()
-  local commands = {}
   auto_formatting = not auto_formatting
+  -- Clear the autocmds for the auto formatting group.
+  local id = vim.api.nvim_create_augroup('dm__auto_formatting', {
+    clear = true,
+  })
   if auto_formatting then
-    table.insert(commands, {
-      events = 'BufWritePost',
-      targets = '*',
-      command = format,
+    vim.api.nvim_create_autocmd('BufWritePost', {
+      group = id,
+      callback = format,
+      desc = 'Format the buffer',
     })
   end
-  dm.augroup('dm__auto_formatting', commands)
 end
 
 -- Return true if the current filepath is in any of the given project names,

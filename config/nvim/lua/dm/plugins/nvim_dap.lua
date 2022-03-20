@@ -42,20 +42,24 @@ end, { desc = 'DAP: Toggle repl' })
 ---@see https://github.com/microsoft/debugpy/blob/main/src/debugpy/adapter/clients.py#L145-L164
 dap.defaults.python.exception_breakpoints = { 'uncaught', 'userUnhandled' }
 
--- REPL completion to trigger automatically on any of the completion trigger
--- characters reported by the debug adapter or on '.' if none are reported.
-dm.augroup('dm__dap_repl', {
-  {
-    events = 'FileType',
-    targets = 'dap-repl',
-    command = require('dap.ext.autocompl').attach,
-  },
-  {
-    events = 'BufEnter',
+do
+  local id = vim.api.nvim_create_augroup('dm__dap_repl', { clear = true })
+
+  -- REPL completion to trigger automatically on any of the completion trigger
+  -- characters reported by the debug adapter or on '.' if none are reported.
+  vim.api.nvim_create_autocmd('FileType', {
+    group = id,
+    pattern = 'dap-repl',
+    callback = require('dap.ext.autocompl').attach,
+    desc = 'DAP REPL completion',
+  })
+
+  vim.api.nvim_create_autocmd('BufEnter', {
+    group = id,
     targets = '\\[dap-repl\\]',
     command = 'startinsert',
-  },
-})
+  })
+end
 
 -- Automatically open/close the DAP UI.
 dap.listeners.after['event_initialized']['dapui_config'] = function()

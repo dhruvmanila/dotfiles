@@ -205,17 +205,15 @@ local function set_python_venv_name()
   end
 end
 
-dm.augroup('dm__statusline', {
-  {
-    events = 'FileType',
-    targets = 'python',
-    command = function()
-      if vim.fn.executable 'python' > 0 then
-        set_interval_callback(5 * 1000, set_python_version)
-        set_interval_callback(5 * 1000, set_python_venv_name)
-      end
-    end,
-  },
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('dm__statusline', { clear = true }),
+  pattern = 'python',
+  callback = function()
+    if vim.fn.executable 'python' > 0 then
+      set_interval_callback(5 * 1000, set_python_version)
+      set_interval_callback(5 * 1000, set_python_venv_name)
+    end
+  end,
 })
 
 -- :h qf.vim, disable quickfix statusline

@@ -12,17 +12,15 @@ local session = require 'dm.session'
 --
 -- If there's any need to stop *tracking* a session, we can add that
 -- functionality then.
-dm.augroup('dm__session_persistence', {
-  {
-    events = 'VimLeavePre',
-    targets = '*',
-    command = function()
-      local current_session = vim.v.this_session
-      if current_session ~= '' and fn.filewritable(current_session) == 1 then
-        session.write(current_session)
-      end
-    end,
-  },
+api.nvim_create_autocmd('VimLeavePre', {
+  group = api.nvim_create_augroup('dm__session_persistence', { clear = true }),
+  callback = function()
+    local current_session = vim.v.this_session
+    if current_session ~= '' and fn.filewritable(current_session) == 1 then
+      session.write(current_session)
+    end
+  end,
+  desc = 'Save the session when exiting Neovim',
 })
 
 local function session_function_factory(function_name)

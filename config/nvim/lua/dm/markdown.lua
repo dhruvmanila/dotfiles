@@ -99,37 +99,31 @@ local function get_lines()
 end
 
 local function toggle_preview()
-  -- If there are splits in the current tab, then open the buffer in a new tab
-  local autocmds = {}
+  local id = vim.api.nvim_create_augroup('dm__markdown_previewer', {
+    clear = true,
+  })
   if state.active then
     cleanup()
   else
     os.execute(START_SERVER_CMD)
-    vim.list_extend(autocmds, {
-      {
-        events = {
-          'BufWrite',
-          'CursorHold',
-          'InsertLeave',
-        },
-        targets = '<buffer>',
-        command = function()
-          job {
-            cmd = 'curl',
-            args = { '-X', 'PUT', '--data-raw', get_lines(), API_URL },
-          }
-        end,
-      },
-      {
-        events = 'BufUnload',
-        targets = '<buffer>',
-        command = cleanup,
-      },
+    vim.api.nvim_create_autocmd({ 'BufWrite', 'CursorHold', 'InsertLeave' }, {
+      group = id,
+      pattern = '<buffer>',
+      callback = function()
+        job {
+          cmd = 'curl',
+          args = { '-X', 'PUT', '--data-raw', get_lines(), API_URL },
+        }
+      end,
+    })
+    vim.api.nvim_create_autocmd('BufUnload', {
+      group = id,
+      pattern = '<buffer>',
+      callback = cleanup,
     })
     state.active = true
     os.execute(HS_ACTIVATE_BROWSER_CMD)
   end
-  dm.augroup('dm__markdown_previewer', autocmds)
 end
 
 -- }}}1
