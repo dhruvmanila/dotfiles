@@ -80,9 +80,14 @@ opt.fillchars = {
   foldopen = '▾',
   foldsep = '│',
 
-  -- Used for vertical splits
-  -- Alternatives: "┃", "│", "▕"
-  vert = '│',
+  -- Use thick lines for window separators.
+  horiz = '━',
+  horizup = '┻',
+  horizdown = '┳',
+  vert = '┃',
+  vertleft = '┫',
+  vertright = '┣',
+  verthoriz = '╋',
 }
 
 -- format: options, listpat {{{1
