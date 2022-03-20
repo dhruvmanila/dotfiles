@@ -21,19 +21,6 @@ end
 
 local packer = require 'packer'
 
-_PackerPluginInfo = _PackerPluginInfo or {}
-
--- Extending packer with a custom handler to store plugin information to be
--- used by `:Telescope installed_plugins`
-packer.set_handler('type', function(_, plugin, type)
-  local name = type == 'local' and 'local/' .. plugin.short_name or plugin.name
-  table.insert(_PackerPluginInfo, {
-    name = name,
-    path = plugin.install_path,
-    url = type == 'git' and plugin.url or nil,
-  })
-end)
-
 packer.startup {
   function(use)
     use 'wbthomason/packer.nvim'
@@ -181,9 +168,3 @@ vim.api.nvim_add_user_command(
   '$tabedit ' .. packer_compiled_path,
   { desc = 'Open the packer compiled file in a new tab' }
 )
-
--- Manual workaround until #405 is fixed and #402 is merged.
--- This function contains the main logic of adding a plugin to the managed set
--- and is not called during startup. We will call it manually so that the
--- handlers get called and store the plugin information.
-pcall(packer.__manage_all)
