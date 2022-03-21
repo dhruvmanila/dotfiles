@@ -24,7 +24,7 @@ ls.config.set_config {
   updateevents = 'TextChanged,TextChangedI',
 }
 
-ls.snippets.all = { -- {{{1
+ls.add_snippets('all', { -- {{{1
   s({ trig = 'todo', dscr = 'Insert TODO comment with username' }, {
     f(function()
       return vim.bo.commentstring:gsub('%%s', 'TODO(dhruvmanila): ')
@@ -37,9 +37,9 @@ ls.snippets.all = { -- {{{1
     end, {}),
     i(0),
   }),
-}
+})
 
-ls.snippets.go = { -- {{{1
+ls.add_snippets('go', { -- {{{1
   s({ trig = 'main', dscr = 'main function' }, {
     t { 'func main() {', '\t' },
     i(0),
@@ -63,9 +63,9 @@ ls.snippets.go = { -- {{{1
     }),
     t { '', '}' },
   }),
-}
+})
 
-ls.snippets.lua = { -- {{{1
+ls.add_snippets('lua', { -- {{{1
   parse(
     { trig = 'fmt', dscr = 'Format string' },
     'string.format("${1:formatstring}", $2)$0'
@@ -86,11 +86,11 @@ ls.snippets.lua = { -- {{{1
     c(1, { t '', t ' start', t ' end' }),
     i(0),
   }),
-}
+})
 
-ls.snippets.python = { -- {{{1
+ls.add_snippets('python', { -- {{{1
   s({ trig = 'ifmain', dscr = 'if __name__ == "__main__":' }, {
     t { 'if __name__ == "__main__":', '\t' },
     i(1, 'pass'),
   }),
-}
+})
