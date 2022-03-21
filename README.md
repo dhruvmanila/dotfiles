@@ -1,20 +1,25 @@
-<h1 align="center">
+<div align="center">
 
-<img alt="dotfiles" width=300 src="https://camo.githubusercontent.com/1b1a8b1dca974e2949a1bef313dd439754f71bec9bfaafe434fca84b4e7db8d3/68747470733a2f2f63646e2e7261776769742e636f6d2f64617669646f736f6d657468696e672f646f7466696c65732f6d61737465722f6d6574612f646f7466696c65732d6c6f676f2e706e67">
+# ~/dotfiles
 
-</h1>
+_Magical objects that make certain computers extremely usa-able for me._
 
-Download the dot script and run it in bash:
+</div>
+
+## Installation
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bin/dot setup)"
 ```
 
-**WARNING:** The above script is not fully upto date and do not run it without taking a look at what it actually does. I am probably going to be moving away to another way of managing the dotfiles. Some of my options: Ansible, dotbot, etc.
+The installation script is auto-generated using
+[bashly](https://github.com/DannyBen/bashly) whose source code resides in the
+`src/` directory. Currently, this is only compatible on a mac machine, but
+should work mostly on Linux as well.
 
-<img alt="Neovim dashboard in tmux in the kitty terminal" src="https://user-images.githubusercontent.com/67177269/130901548-1f81d2b7-f67c-406f-b4dc-1583c47478f3.png">
+***I would not recommend running the above script without fully understanding
+what it actually does.***
 
-**TODO:**
+## License
 
-- [ ] Documentation for my future self
-- [ ] Write down a list of topics for documentation
+The contents of this repository are licensed under [the MIT license](./LICENSE).
