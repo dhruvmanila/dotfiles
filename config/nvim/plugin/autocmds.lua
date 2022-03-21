@@ -275,7 +275,7 @@ do
 
   nvim_create_autocmd('TermClose', {
     group = id,
-    pattern = 'term://*',
+    pattern = 'term://*/zsh',
     callback = function()
       api.nvim_input '<CR>'
     end,
