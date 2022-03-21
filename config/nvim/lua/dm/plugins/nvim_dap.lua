@@ -102,10 +102,7 @@ dapui.setup {
   },
 }
 
--- require("nvim-dap-virtual-text").setup {
---   enabled = true,
---   commented = true, -- prefix virtual text with `commentstring`
--- }
+require('nvim-dap-virtual-text').setup()
 
 -- Adapters {{{1
 
