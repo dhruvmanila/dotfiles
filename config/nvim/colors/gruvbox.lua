@@ -21,7 +21,7 @@ local bold = 'bold'
 --     │ Enable  │ 'italic'  │
 --     └─────────┴───────────┘
 -- }}}
-local italic_comment = nil
+local italic_comment = 'italic'
 
 local palette = {
   bg0 = '#282828',
