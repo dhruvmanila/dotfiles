@@ -56,7 +56,7 @@ do
 
   vim.api.nvim_create_autocmd('BufEnter', {
     group = id,
-    targets = '\\[dap-repl\\]',
+    pattern = '\\[dap-repl\\]',
     command = 'startinsert',
   })
 end
