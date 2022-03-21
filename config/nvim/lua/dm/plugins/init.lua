@@ -76,15 +76,6 @@ packer.startup {
         'theHamsta/nvim-dap-virtual-text',
       },
     }
-    use {
-      'rcarriga/vim-ultest',
-      keys = {
-        '<Plug>(ultest-summary-toggle)',
-        '<Plug>(ultest-run-nearest)',
-        '<Plug>(ultest-run-file)',
-      },
-      requires = { 'vim-test/vim-test' },
-    }
 
     -- Treesitter
     use {
