@@ -7,8 +7,13 @@ g.ultest_use_pty = true
 -- Do not show output popup automatically.
 g.ultest_output_on_line = false
 
-g.ultest_pass_sign = ' '
-g.ultest_fail_sign = ' '
+g.ultest_not_run_sign = ''
+g.ultest_pass_sign = ''
+g.ultest_fail_sign = ''
+
+-- Set default runner per language.
+g['test#go#runner'] = 'gotest'
+g['test#python#runner'] = 'pytest'
 
 vim.keymap.set('n', '<leader>ts', '<Plug>(ultest-summary-toggle)')
 vim.keymap.set('n', '<leader>tn', '<Plug>(ultest-run-nearest)')

@@ -762,7 +762,7 @@ local function icons()
   local results = collect_icons()
   local opts = themes.get_dropdown {
     layout_config = {
-      width = max_length + 8,
+      width = max_length + 9,
       height = 0.8,
     },
   }
