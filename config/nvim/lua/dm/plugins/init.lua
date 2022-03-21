@@ -76,6 +76,7 @@ packer.startup {
         'theHamsta/nvim-dap-virtual-text',
       },
     }
+    use { 'klen/nvim-test', config = "require('dm.plugins.nvim_test')" }
 
     -- Treesitter
     use {
