@@ -136,13 +136,19 @@ packer.startup {
     use 'jpalardy/vim-slime'
     use 'junegunn/vim-easy-align'
     use 'lambdalisue/vim-protocol'
-    use 'lewis6991/impatient.nvim'
-    use 'milisims/nvim-luaref'
-    use 'nanotee/luv-vimdocs'
     use 'rcarriga/nvim-notify'
     use 'romainl/vim-cool'
+
+    -- Docs
+    use 'milisims/nvim-luaref'
+    use 'nanotee/luv-vimdocs'
+
+    -- Icons
     use 'kyazdani42/nvim-web-devicons'
     use 'yamatsum/nvim-nonicons'
+
+    -- Startup & Profiling
+    use 'lewis6991/impatient.nvim'
     use { 'dstein64/vim-startuptime', cmd = 'StartupTime' }
 
     -- Install every package on boostrap.
