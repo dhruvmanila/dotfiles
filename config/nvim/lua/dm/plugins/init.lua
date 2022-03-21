@@ -136,6 +136,7 @@ packer.startup {
     use 'jpalardy/vim-slime'
     use 'junegunn/vim-easy-align'
     use 'lambdalisue/vim-protocol'
+    use 'lukas-reineke/indent-blankline.nvim'
     use 'rcarriga/nvim-notify'
     use 'romainl/vim-cool'
 
