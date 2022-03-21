@@ -84,7 +84,6 @@ packer.startup {
         '<Plug>(ultest-run-file)',
       },
       requires = { 'vim-test/vim-test' },
-      run = ':UpdateRemotePlugins',
     }
 
     -- Treesitter
