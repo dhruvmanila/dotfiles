@@ -17,6 +17,7 @@ cabbrev('po', 'PackerCompile')
 cabbrev('pi', 'PackerInstall')
 cabbrev('ps', 'PackerSync')
 cabbrev('pu', 'PackerUpdate')
+cabbrev('pp', 'PackerProfile')
 
 -- Session commands
 cabbrev('sc', 'SClose')
