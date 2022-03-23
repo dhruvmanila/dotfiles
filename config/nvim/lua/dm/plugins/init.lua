@@ -21,6 +21,13 @@ end
 
 local packer = require 'packer'
 
+-- Helper function to generate the `config` key value for plugin spec.
+---@param plugin_name string
+---@return string
+local function conf(plugin_name)
+  return ('require("dm.plugins.%s")'):format(plugin_name)
+end
+
 packer.startup {
   function(use)
     use 'wbthomason/packer.nvim'
@@ -37,7 +44,7 @@ packer.startup {
     }
     use {
       'hrsh7th/nvim-cmp',
-      config = "require('dm.plugins.completion')",
+      config = conf 'completion',
       requires = {
         'hrsh7th/cmp-buffer',
         'hrsh7th/cmp-emoji',
@@ -46,12 +53,12 @@ packer.startup {
         'saadparwaiz1/cmp_luasnip',
       },
     }
-    use { 'L3MON4D3/LuaSnip', config = "require('dm.plugins.luasnip')" }
+    use { 'L3MON4D3/LuaSnip', config = conf 'luasnip' }
 
     -- Fuzzy finder (Telescope)
     use {
       'nvim-telescope/telescope.nvim',
-      config = "require('dm.plugins.telescope')",
+      config = conf 'telescope',
       requires = {
         'nvim-lua/plenary.nvim',
         'nvim-telescope/telescope-ui-select.nvim',
@@ -69,20 +76,20 @@ packer.startup {
         { 'n', '<leader>dB' }, -- set_breakpoint (with condition)
         { 'n', '<leader>dl' }, -- run_last
       },
-      config = "require('dm.plugins.nvim_dap')",
+      config = conf 'nvim_dap',
       requires = {
         'mfussenegger/nvim-dap-python',
         'rcarriga/nvim-dap-ui',
         'theHamsta/nvim-dap-virtual-text',
       },
     }
-    use { 'klen/nvim-test', config = "require('dm.plugins.nvim_test')" }
+    use { 'klen/nvim-test', config = conf 'nvim_test' }
 
     -- Treesitter
     use {
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate',
-      config = "require('dm.plugins.treesitter')",
+      config = conf 'treesitter',
       requires = {
         'nvim-treesitter/nvim-treesitter-textobjects',
         'nvim-treesitter/playground',
@@ -101,7 +108,7 @@ packer.startup {
     -- Git
     use 'rhysd/committia.vim'
     use 'rhysd/git-messenger.vim'
-    use { 'lewis6991/gitsigns.nvim', config = "require('dm.plugins.gitsigns')" }
+    use { 'lewis6991/gitsigns.nvim', config = conf 'gitsigns' }
 
     -- Filetype
     use 'MTDL9/vim-log-highlighting'
@@ -113,16 +120,13 @@ packer.startup {
     use {
       'tamago324/lir.nvim',
       keys = '-',
-      config = "require('dm.plugins.lir')",
+      config = conf 'lir',
     }
 
     -- Utilities
     use 'airblade/vim-rooter'
     use 'editorconfig/editorconfig-vim'
-    use {
-      'ggandor/lightspeed.nvim',
-      config = "require('dm.plugins.lightspeed')",
-    }
+    use { 'ggandor/lightspeed.nvim', config = conf 'lightspeed' }
     use 'itchyny/vim-external'
     use 'jpalardy/vim-slime'
     use 'junegunn/vim-easy-align'
