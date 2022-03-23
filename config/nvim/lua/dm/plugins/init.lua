@@ -74,7 +74,6 @@ packer.startup {
         { 'n', '<F5>' }, -- continue
         { 'n', '<leader>db' }, -- toggle_breakpoint
         { 'n', '<leader>dB' }, -- set_breakpoint (with condition)
-        { 'n', '<leader>dl' }, -- run_last
       },
       config = conf 'nvim_dap',
       requires = {
@@ -119,14 +118,13 @@ packer.startup {
     -- File explorer
     use {
       'tamago324/lir.nvim',
-      keys = '-',
+      keys = { { 'n', '-' } },
       config = conf 'lir',
     }
 
     -- Utilities
     use 'airblade/vim-rooter'
     use 'editorconfig/editorconfig-vim'
-    use { 'ggandor/lightspeed.nvim', config = conf 'lightspeed' }
     use 'itchyny/vim-external'
     use 'jpalardy/vim-slime'
     use 'junegunn/vim-easy-align'
@@ -134,6 +132,7 @@ packer.startup {
     use 'lukas-reineke/indent-blankline.nvim'
     use 'rcarriga/nvim-notify'
     use 'romainl/vim-cool'
+    use { 'ggandor/lightspeed.nvim', config = conf 'lightspeed' }
 
     -- Docs
     use 'milisims/nvim-luaref'
