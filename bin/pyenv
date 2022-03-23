@@ -6,7 +6,7 @@
 set -e
 [[ -n "$PYENV_DEBUG" ]] && set -x
 
-version="v0.3.0"
+version="v0.4.0"
 
 : "${CMD:=$(basename "$0")}"
 : "${PYENV_ROOT:="$HOME/.pyenv"}"
@@ -29,6 +29,7 @@ function usage() {
   echo "  install      install Python version using python-build"
   echo "  uninstall    uninstall a specific Python version"
   echo "  versions     list all the installed Python versions"
+  echo "  link         link all available Python versions to '$HOME/.local/bin'"
   echo "  root         display root directory where versions are kept"
 }
 
@@ -165,6 +166,35 @@ case "$1" in
         fi
       fi
     done
+    ;;
+
+  link)
+    case "$2" in
+      -h | --help)
+        echo "Usage: $CMD link [-f | --force]"
+        exit 0
+        ;;
+      -f | --force)
+        FORCE=1
+        ;&
+      "")
+        for path in "$PYENV_ROOT/versions"/*; do
+          if [[ -d "$path" ]]; then
+            version="${path##*/}"
+            # Extract out the "major.minor" part from the version string and
+            # concatenate it to the end to make it valid pythonX.Y string.
+            symlink="$HOME/.local/bin/python${version%.*}"
+            if ((FORCE)) || [[ ! -e "$symlink" ]]; then
+              ln -vsf "$path/bin/python" "$symlink"
+            fi
+          fi
+        done
+        ;;
+      *)
+        echo "$CMD: invalid argument: $2"
+        exit 1
+        ;;
+    esac
     ;;
 
   root)
