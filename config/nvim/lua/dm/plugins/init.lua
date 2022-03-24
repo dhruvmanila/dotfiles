@@ -139,8 +139,8 @@ packer.startup {
     use 'nanotee/luv-vimdocs'
 
     -- Icons
-    use 'kyazdani42/nvim-web-devicons'
     use 'yamatsum/nvim-nonicons'
+    use { 'kyazdani42/nvim-web-devicons', config = conf 'nvim_web_devicons' }
 
     -- Startup & Profiling
     use 'lewis6991/impatient.nvim'
