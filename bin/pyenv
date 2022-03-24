@@ -6,7 +6,7 @@
 set -e
 [[ -n "$PYENV_DEBUG" ]] && set -x
 
-version="v0.4.0"
+version="v0.5.0"
 
 : "${CMD:=$(basename "$0")}"
 : "${PYENV_ROOT:="$HOME/.pyenv"}"
@@ -142,10 +142,18 @@ case "$1" in
           echo "$CMD: version '$DEFINITION' not installed"
           exit 1
         fi
-        read -rp "$CMD: remove $PREFIX? [y/n] "
+        echo "$CMD: remove $PREFIX"
+        SYMLINK="$HOME/.local/bin/python${DEFINITION%.*}"
+        if [[ -L "$SYMLINK" ]]; then
+          echo "$CMD: unlink $SYMLINK"
+        fi
+        read -rp "$CMD: Continue? [y/n] "
         case "$REPLY" in
           y | Y)
             rm -rf "$PREFIX"
+            if [[ -L "$SYMLINK" ]]; then
+              rm "$SYMLINK"
+            fi
             echo "$CMD: $DEFINITION uninstalled"
             ;;
           *) exit 1 ;;
