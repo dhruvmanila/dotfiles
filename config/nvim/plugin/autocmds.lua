@@ -255,7 +255,16 @@ do
   nvim_create_autocmd('TermOpen', {
     group = id,
     pattern = 'term://*',
-    command = 'setfiletype terminal | startinsert',
+    command = 'setfiletype terminal',
+  })
+
+  -- Start insert mode when opening a new terminal buffer. This cannot be
+  -- included in the previous autocmd because we only want this behavior when
+  -- opening a "shell" terminal.
+  nvim_create_autocmd('TermOpen', {
+    group = id,
+    pattern = 'zsh',
+    command = 'startinsert',
   })
 
   nvim_create_autocmd('WinEnter', {
@@ -275,7 +284,7 @@ do
 
   nvim_create_autocmd('TermClose', {
     group = id,
-    pattern = 'term://*/zsh',
+    pattern = 'zsh',
     callback = function()
       api.nvim_input '<CR>'
     end,
