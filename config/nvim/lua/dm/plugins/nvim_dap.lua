@@ -38,6 +38,11 @@ vim.keymap.set('n', '<leader>dr', function()
   dap.repl.toggle { height = math.floor(vim.o.lines * 0.3) }
 end, { desc = 'DAP: Toggle repl' })
 
+-- Default command to create a split window when using the integrated terminal.
+dap.defaults.fallback.terminal_win_cmd = string.format(
+  'belowright %dnew | set winfixheight',
+  math.floor(vim.o.lines * 0.3)
+)
 
 do
   local id = vim.api.nvim_create_augroup('dm__dap_repl', { clear = true })
