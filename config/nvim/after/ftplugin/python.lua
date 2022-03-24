@@ -145,15 +145,8 @@ vim.keymap.set('n', 'gk', '<Cmd>PyDoc<CR>', { buffer = true })
 vim.keymap.set('n', 'gK', '<Cmd>vertical PyDoc<CR>', { buffer = true })
 vim.keymap.set('n', '<C-w>gk', '<Cmd>tab PyDoc<CR>', { buffer = true })
 
+-- Debug the current function/method.
 vim.keymap.set('n', '<leader>dm', ":lua require('dap-python').test_method()<CR>", {
   buffer = true,
+  silent = true,
 })
-vim.keymap.set('n', '<leader>dC', ":lua require('dap-python').test_class()<CR>", {
-  buffer = true,
-})
-vim.keymap.set(
-  'x',
-  '<leader>ds',
-  "<Esc>:lua require('dap-python').test_selection()<CR>",
-  { buffer = true }
-)
