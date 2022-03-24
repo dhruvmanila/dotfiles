@@ -38,9 +38,6 @@ vim.keymap.set('n', '<leader>dr', function()
   dap.repl.toggle { height = math.floor(vim.o.lines * 0.3) }
 end, { desc = 'DAP: Toggle repl' })
 
--- Default exception breakpoints as per the config/adapter type.
----@see https://github.com/microsoft/debugpy/blob/main/src/debugpy/adapter/clients.py#L145-L164
-dap.defaults.python.exception_breakpoints = { 'uncaught', 'userUnhandled' }
 
 do
   local id = vim.api.nvim_create_augroup('dm__dap_repl', { clear = true })
