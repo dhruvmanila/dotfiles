@@ -5,6 +5,7 @@ vim.filetype.add {
     Brewfile = 'ruby',
     Vagrantfile = 'ruby',
     ['.gitignore'] = 'conf',
+    ['.gitattributes'] = 'conf',
   },
 
   -- Similar to |autocmd-pattern|, the file pattern is tested for a match
