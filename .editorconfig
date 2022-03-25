@@ -9,6 +9,9 @@ indent_style = space
 insert_final_line = true
 trim_trailing_whitespace = true
 
+[*.bat]
+end_of_line = crlf
+
 [*.{py,pyi}]
 indent_size = 4
 
