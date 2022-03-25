@@ -4,14 +4,27 @@ local gitsigns = require 'gitsigns'
 ---@param bufnr number
 local function on_attach(bufnr)
   -- Navigation
-  vim.keymap.set('n', ']c', "&diff ? ']c' : '<Cmd>Gitsigns next_hunk<CR>'", {
-    expr = true,
-    buffer = bufnr,
-  })
-  vim.keymap.set('n', '[c', "&diff ? '[c' : '<Cmd>Gitsigns prev_hunk<CR>'", {
-    expr = true,
-    buffer = bufnr,
-  })
+  vim.keymap.set('n', ']c', function()
+    if vim.wo.diff then
+      return ']c'
+    else
+      vim.schedule(function()
+        gitsigns.next_hunk { preview = true }
+      end)
+      return '<Ignore>'
+    end
+  end, { expr = true })
+
+  vim.keymap.set('n', '[c', function()
+    if vim.wo.diff then
+      return '[c'
+    else
+      vim.schedule(function()
+        gitsigns.prev_hunk { preview = true }
+      end)
+      return '<Ignore>'
+    end
+  end, { expr = true })
 
   -- Actions
   vim.keymap.set({ 'n', 'v' }, '<leader>hs', gitsigns.stage_hunk, {
