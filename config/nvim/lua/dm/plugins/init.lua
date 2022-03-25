@@ -94,6 +94,14 @@ packer.startup {
         'nvim-treesitter/playground',
       },
     }
+    use {
+      'danymat/neogen',
+      keys = {
+        { 'n', '<leader>nf' }, -- Neogen func
+        { 'n', '<leader>nc' }, -- Neogen class
+      },
+      config = conf 'neogen',
+    }
 
     -- Tpope
     use 'tpope/vim-commentary'
