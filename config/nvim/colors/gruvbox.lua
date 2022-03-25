@@ -406,9 +406,9 @@ link('LirSymlink', 'GreyItalic')
 link('LirEmptyDirText', 'LirSymlink')
 
 -- nvim-cmp {{{2
-link('CmpItemAbbr', 'Comment')
+link('CmpItemAbbr', 'Grey')
 link('CmpItemAbbrDeprecated', 'Error')
-link('CmpItemMenu', 'NonText')
+link('CmpItemMenu', 'GreyItalic')
 
 -- Kind highlights
 link('CmpItemKind', 'Yellow')
