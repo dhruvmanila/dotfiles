@@ -6,14 +6,6 @@ local lsp_kind = dm.icons.lsp_kind
 local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 
-local source_name = {
-  buffer = '[Buf]',
-  gh_issue = '[Gh]',
-  luasnip = '[Snip]',
-  nvim_lsp = '[LSP]',
-  path = '[Path]',
-}
-
 -- A tiny function to better sort completion items that start with one or more
 -- underscore characters.
 --
@@ -88,8 +80,8 @@ cmp.setup {
     --                        ┌ `:help complete-items`
     --                        │
     format = function(entry, item)
+      item.menu = item.kind:lower()
       item.kind = lsp_kind[item.kind]
-      item.menu = source_name[entry.source.name]
       return item
     end,
   },
