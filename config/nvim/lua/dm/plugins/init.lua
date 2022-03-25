@@ -100,7 +100,6 @@ packer.startup {
     use 'tpope/vim-eunuch'
     use 'tpope/vim-fugitive'
     use 'tpope/vim-repeat'
-    use 'tpope/vim-rhubarb'
     use 'tpope/vim-scriptease'
     use 'tpope/vim-surround'
 
@@ -108,6 +107,7 @@ packer.startup {
     use 'rhysd/committia.vim'
     use 'rhysd/git-messenger.vim'
     use { 'lewis6991/gitsigns.nvim', config = conf 'gitsigns' }
+    use { 'ruifm/gitlinker.nvim', config = conf 'gitlinker' }
 
     -- Filetype
     use 'MTDL9/vim-log-highlighting'
