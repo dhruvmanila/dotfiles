@@ -138,7 +138,8 @@ do
     opts.title = opts.title
       or (type(level) == 'string' and level)
       or default_title[level]
-    notify(msg, level, opts)
+    -- Provide a space between the text and the border.
+    notify(' ' .. msg:gsub('\n', '\n '), level, opts)
   end
 
   -- Wrapper around `vim.notify` to simplify passing the `title` value.
