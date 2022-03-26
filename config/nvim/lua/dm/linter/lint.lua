@@ -9,7 +9,7 @@ local job = require 'dm.job'
 
 ---@class Linter
 ---@field cmd string
----@field args string[]|function
+---@field args string[]|fun(bufnr: number):string[] (default: {})
 ---@field enable? fun(bufnr: number):boolean (default: nil)
 ---@field stdin? boolean (default: true)
 ---@field stream? '"stdout"'|'"stderr"' (default: "stdout")
@@ -33,7 +33,7 @@ local function run_linter(bufnr, linter)
   local writer
   local args = linter.args
   if type(args) == 'function' then
-    args = args()
+    args = args(bufnr)
   end
 
   if not linter.stdin then
