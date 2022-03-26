@@ -38,7 +38,7 @@ is_git_repo() { # {{{1
 }
 
 link() { # {{{1
-  local source_file="${DOTFILES_DIRECTORY}/${1}"
+  local source_file="${DOTFILES_DIRECTORY}/config/${1}"
   local target_file="${HOME}/${2}"
   if ! [[ -e "$target_file" ]]; then
     echo "==> $target_file -> $source_file"

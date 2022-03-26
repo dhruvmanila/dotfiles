@@ -146,7 +146,7 @@ path=( # {{{
 # Plugins {{{1
 
 # https://github.com/zsh-users/zsh-autosuggestions
-source $DOTFILES/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
+source $DOTFILES/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
 
 # Configure the style that the suggestion is shown with.
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
@@ -159,10 +159,10 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
 
 # Powerlevel10k prompt
 # https://github.com/romkatv/powerlevel10k
-# source $DOTFILES/zsh/plugins/powerlevel10k/powerlevel10k.zsh-theme
+# source $DOTFILES/config/zsh/plugins/powerlevel10k/powerlevel10k.zsh-theme
 
-# To customize prompt, run `p10k configure` or edit $DOTFILES/zsh/lib/p10k.zsh.
-# [[ ! -f $DOTFILES/zsh/lib/p10k.zsh ]] || source $DOTFILES/zsh/lib/p10k.zsh
+# To customize prompt, run `p10k configure` or edit $DOTFILES/config/zsh/lib/p10k.zsh.
+# [[ ! -f $DOTFILES/config/zsh/lib/p10k.zsh ]] || source $DOTFILES/config/zsh/lib/p10k.zsh
 
 # Starship prompt
 # https://github.com/starship/starship
@@ -406,9 +406,9 @@ setopt SHARE_HISTORY
 
 # There's no point in having {ba,z}sh compatibility which would not allow us to
 # use the set of features specific to zsh.
-source $DOTFILES/zsh/lib/functions.zsh
-source $DOTFILES/zsh/lib/aliases.zsh
-source $DOTFILES/zsh/lib/exports.zsh
+source $DOTFILES/config/zsh/lib/functions.zsh
+source $DOTFILES/config/zsh/lib/aliases.zsh
+source $DOTFILES/config/zsh/lib/exports.zsh
 
 # Hooks {{{1
 #

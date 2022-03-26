@@ -7,7 +7,10 @@ tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
 tap "mongodb/brew"
+tap "rhysd/git-brws", "https://github.com/rhysd/git-brws"
 tap "romkatv/gitstatus"
+# Static checker for GitHub Actions workflow files
+brew "actionlint"
 # Tool for generating GNU Standards-compliant Makefiles
 brew "automake"
 # Command-line interface for SQLite
@@ -214,16 +217,18 @@ brew "clementtsang/bottom/bottom"
 brew "heroku/brew/heroku"
 # High-performance, schema-free, document-oriented database
 brew "mongodb/brew/mongodb-community"
+# Command line tool to open repository, file, commit, diff, pull request or issue in browser
+brew "rhysd/git-brws/git-brws"
 # Git status for Bash/Zsh prompt
 brew "romkatv/gitstatus/gitstatus"
 # Web browser focusing on privacy
 cask "brave-browser"
-# E-books management software
-cask "calibre"
 # Voice and text chat software
 cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
+# Draw.io is free online diagram software
+cask "drawio"
 # Web browser
 cask "firefox"
 # Screenshot software
@@ -241,6 +246,8 @@ cask "iterm2"
 cask "karabiner-elements"
 # GPU-based terminal emulator
 cask "kitty"
+# Provides updates to various Microsoft products
+cask "microsoft-auto-update"
 # Email client
 cask "microsoft-outlook"
 # Meet, chat, call, and collaborate in just one place

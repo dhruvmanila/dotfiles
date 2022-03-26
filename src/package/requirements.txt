@@ -13,5 +13,7 @@ mypy
 pipenv
 poetry
 pre-commit
+pyupgrade
+remove-print-statements
 speedtest-cli
 visidata

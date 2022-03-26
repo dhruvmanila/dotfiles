@@ -1,15 +1,13 @@
 *.DS_Store
 local/
 .vagrant
-/mac/karabiner/automatic_backups/
 
+config/karabiner/automatic_backups/
 config/bpytop/error.log
 config/nvim/scratch/
-config/nvim/plugin/packer_compiled.vim
-
-vim/undo/*
-vim/swaps/*
-vim/plugged
-vim/session
-vim/autoload/plug.vim
-vim/.netrwhist
+config/vim/undo/*
+config/vim/swaps/*
+config/vim/plugged
+config/vim/session
+config/vim/autoload/plug.vim
+config/vim/.netrwhist
