@@ -286,7 +286,7 @@ setup_tmux_plugins() { # {{{1
 
 update_macos_settings() { # {{{1
   header "Updating macOS settings..."
-  bash "${DOTFILES_DIRECTORY}/mac/osxdefaults"
+  bash "${DOTFILES_DIRECTORY}/src/mac/osxdefaults"
 }
 
 update_macos_dock() { # {{{1
