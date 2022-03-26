@@ -120,6 +120,10 @@ path=( # {{{
   # Local scripts and `pipx` installed executables.
   "${HOME}/.local/bin"
 
+  # Luarocks bin directory for Lua 5.1. This is the version used by Neovim, so
+  # we will be installing the packages for that version only.
+  "$HOME/.luarocks/bin"
+
   # MacOS ships with an older version of Ruby, so replace the system ruby with
   # an updated one from Homebrew.
   "${HOMEBREW_PREFIX}"/lib/ruby/gems/*/bin
