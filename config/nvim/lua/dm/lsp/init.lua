@@ -157,6 +157,19 @@ local function on_attach(client, bufnr)
     })
   end
 
+  if capabilities.code_lens then
+    vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+      group = id,
+      buffer = bufnr,
+      callback = lsp.codelens.refresh,
+      desc = 'LSP: Refresh codelens',
+    })
+    keymap.set('n', '<leader>cl', lsp.codelens.run, {
+      buffer = bufnr,
+      desc = 'LSP: Run codelens for current line',
+    })
+  end
+
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 end
 
