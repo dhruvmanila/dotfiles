@@ -91,6 +91,7 @@ end
 do
   local notify
 
+  -- Setup `nvim-notify` plugin.
   local function setup()
     notify = require 'notify'
     notify.setup {
@@ -102,43 +103,42 @@ do
         INFO = dm.icons.info,
         DEBUG = '',
       },
+      on_open = function(winnr)
+        vim.keymap.set('n', 'q', '<Cmd>bdelete<CR>', {
+          buffer = vim.api.nvim_win_get_buf(winnr),
+          nowait = true,
+        })
+        vim.wo[winnr].wrap = true
+        vim.wo[winnr].showbreak = 'NONE'
+      end,
+      max_width = math.floor(vim.o.columns * 0.4),
     }
   end
 
-  ---@class NotifyOpts
-  ---@field timeout number
-  ---@field title string
-  ---@field icon string
-  ---@field on_open function
-  ---@field on_close function
-
-  local levels = vim.log.levels
-
   -- Default values for the notification title as per the log level.
   local default_title = {
-    [levels.TRACE] = 'Trace',
-    [levels.DEBUG] = 'Debug',
-    [levels.INFO] = 'Information',
-    [levels.WARN] = 'Warning',
-    [levels.ERROR] = 'Error',
+    [vim.log.levels.TRACE] = 'Trace',
+    [vim.log.levels.DEBUG] = 'Debug',
+    [vim.log.levels.INFO] = 'Information',
+    [vim.log.levels.WARN] = 'Warning',
+    [vim.log.levels.ERROR] = 'Error',
   }
 
   -- Override the default `vim.notify` to open a floating window.
   ---@param msg string|string[]
-  ---@param log_level? number|string
-  ---@param opts? NotifyOpts
-  vim.notify = function(msg, log_level, opts)
-    -- Defer the plugin setup until the first notification call because
-    -- it takes around 12ms to load.
+  ---@param level? number|string
+  ---@param opts? table `:help NotifyOptions`
+  vim.notify = function(msg, level, opts)
+    -- Defer the plugin setup until the first notification call.
     if not notify then
       setup()
     end
-    log_level = log_level or levels.INFO
+    level = level or vim.log.levels.INFO
     opts = opts or {}
     opts.title = opts.title
-      or (type(log_level) == 'string' and log_level)
-      or default_title[log_level]
-    notify(msg, log_level, opts)
+      or (type(level) == 'string' and level)
+      or default_title[level]
+    notify(msg, level, opts)
   end
 
   -- Wrapper around `vim.notify` to simplify passing the `title` value.
@@ -146,9 +146,9 @@ do
   -- Use `vim.notify` directly to use the default `title` values.
   ---@param title string
   ---@param msg string|string[]
-  ---@param log_level? number|string
-  dm.notify = function(title, msg, log_level)
-    vim.notify(msg, log_level, { title = title })
+  ---@param level? number|string
+  dm.notify = function(title, msg, level)
+    vim.notify(msg, level, { title = title })
   end
 end
 
