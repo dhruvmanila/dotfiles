@@ -56,9 +56,14 @@ end
 -- Run the given formatter asynchronously.
 ---@param formatter Formatter
 function Format:run(formatter)
+  local args = formatter.args
+  if type(args) == 'function' then
+    args = args(self.bufnr)
+  end
+
   job {
     cmd = formatter.cmd,
-    args = formatter.args,
+    args = args,
     writer = self.output,
     on_exit = function(result)
       if result.code > 0 then
@@ -155,7 +160,7 @@ function Format:step()
   ---@type Formatter
   local formatter = table.remove(self.formatters, 1)
   -- By default, every formatter is on.
-  if formatter.enable == nil or formatter.enable() then
+  if formatter.enable == nil or formatter.enable(self.bufnr) then
     if formatter.cmd == nil then
       if formatter.lsp.code_actions ~= nil then
         self:run_code_actions(formatter.lsp.code_actions)

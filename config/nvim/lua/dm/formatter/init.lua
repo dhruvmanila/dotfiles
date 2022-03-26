@@ -14,16 +14,16 @@ local finder = {
 
 register({ 'c', 'cpp' }, {
   cmd = 'clang-format',
-  args = function()
+  args = function(bufnr)
     return {
       '--assume-filename',
-      api.nvim_buf_get_name(0),
+      api.nvim_buf_get_name(bufnr),
       '--style',
       'file',
     }
   end,
-  enable = function()
-    return finder.clang_format_config_file(api.nvim_buf_get_name(0)) ~= nil
+  enable = function(bufnr)
+    return finder.clang_format_config_file(api.nvim_buf_get_name(bufnr)) ~= nil
   end,
 })
 
@@ -69,8 +69,10 @@ do
       end
       return { '--config-path', stylua_config_path, '-' }
     end,
-    enable = function()
-      stylua_config_dir = finder.stylua_config_file(api.nvim_buf_get_name(0))
+    enable = function(bufnr)
+      stylua_config_dir = finder.stylua_config_file(
+        api.nvim_buf_get_name(bufnr)
+      )
       return stylua_config_dir ~= nil
     end,
   })
@@ -93,8 +95,9 @@ register('python', {
 
 register('sh', {
   cmd = 'shfmt',
-  args = function()
-    local indent_size = vim.bo.expandtab and lsp_util.get_effective_tabstop()
+  args = function(bufnr)
+    local indent_size = vim.bo.expandtab
+        and lsp_util.get_effective_tabstop(bufnr)
       or 0
     return { '-i', indent_size, '-bn', '-ci', '-sr', '-' }
   end,
@@ -111,8 +114,8 @@ register('sql', {
 
 register('yaml', {
   cmd = 'prettier',
-  args = function()
-    local tabwidth = lsp_util.get_effective_tabstop()
+  args = function(bufnr)
+    local tabwidth = lsp_util.get_effective_tabstop(bufnr)
     return { '--parser', 'yaml', '--tab-width', tabwidth }
   end,
 })
