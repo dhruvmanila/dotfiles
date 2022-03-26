@@ -23,11 +23,11 @@ esac
 source /usr/local/opt/gitstatus/gitstatus.prompt.sh
 
 # Source the environment variables
-source ~/dotfiles/assets/env
+source ~/dotfiles/bash/lib/env
 
 # Source the common aliases and functions for bash and zsh
-source ~/dotfiles/assets/aliases
-source ~/dotfiles/assets/functions
+source ~/dotfiles/bash/lib/aliases
+source ~/dotfiles/bash/lib/functions
 
 # Install programmable completion functions for the most common Unix commands.
 # This requires the 'bash-completion@v2' package.
