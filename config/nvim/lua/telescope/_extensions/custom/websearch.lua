@@ -4,15 +4,10 @@
 -- Refer:
 --   - https://github.com/jarun/ddgr
 --   - https://github.com/jarun/googler
-local has_telescope, telescope = pcall(require, 'telescope')
-
-if not has_telescope then
-  return
-end
 
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
-local config = require('telescope.config').values
+local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 local action_utils = require 'telescope.actions.utils'
@@ -22,14 +17,24 @@ local job = require 'dm.job'
 
 local state = {}
 
+-- Default config.
+local config = {
+  search_engine = 'duckduckgo',
+  -- For DuckDuckGo max results can be either [1, 25] which is the actual
+  -- number of results to fetch or 0 which means to fetch all the results
+  -- from the first page.
+  max_results = 0,
+  open_command = 'open',
+}
+
 -- Executable for the selected search engine.
 local executable = {
   duckduckgo = 'ddgr',
   google = 'googler',
 }
 
--- Aliases to be displayed in the prompt title.
-local aliases = {
+-- Prompt title
+local title = {
   duckduckgo = 'DuckDuckGo',
   google = 'Google',
 }
@@ -53,14 +58,6 @@ local function in_progress_animation()
     or state.current_frame + 1
   state.picker:change_prompt_prefix(anim_frames[state.current_frame], 'Comment')
   state.picker:reset_prompt()
-end
-
----Set the configuration state.
----@param opt_name string
----@param value any
----@param default any
-local function set_config_state(opt_name, value, default)
-  state[opt_name] = value == nil and default or value
 end
 
 local displayer = entry_display.create {
@@ -152,11 +149,11 @@ local function do_search()
   end
 
   job {
-    cmd = executable[state.search_engine],
+    cmd = executable[config.search_engine],
     args = {
       '--nocolor',
       '-n',
-      state.max_results,
+      config.max_results,
       '--json',
       '--noprompt',
       query_text,
@@ -180,14 +177,14 @@ local function search_or_select(prompt_bufnr)
       urls = action_state.get_selected_entry().value
     end
     actions.close(prompt_bufnr)
-    os.execute(('%s %s'):format(state.open_command, urls))
+    os.execute(('%s %s'):format(config.open_command, urls))
   end
 end
 
 -- Open the telescope browser with the provided options.
-local function websearch(opts)
+return function(opts)
   opts = opts or {}
-  local search_engine = state.search_engine
+  local search_engine = config.search_engine
 
   if vim.fn.executable(executable[search_engine]) <= 0 then
     dm.notify(
@@ -202,14 +199,14 @@ local function websearch(opts)
   end
 
   state.picker = pickers.new(opts, {
-    prompt_title = aliases[search_engine] .. ' Search',
+    prompt_title = title[search_engine] .. ' Search',
     prompt_prefix = prompt_prefix.query,
     finder = finders.new_table {
       results = {},
       entry_maker = entry_maker,
     },
     previewer = false,
-    sorter = config.generic_sorter(opts),
+    sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(search_or_select)
       map('i', '<C-f>', function()
@@ -221,24 +218,3 @@ local function websearch(opts)
   state.picker:find()
   set_finder(mode.QUERY)
 end
-
-return telescope.register_extension {
-  setup = function(ext_config)
-    local search_engine = ext_config.search_engine
-    local max_results = ext_config.max_results or 25
-
-    if search_engine == 'duckduckgo' and max_results > 25 then
-      dm.notify(
-        'Telescope',
-        'duckduckgo (ddgr) supports a maximum of 25 results',
-        3
-      )
-      max_results = 25
-    end
-
-    set_config_state('search_engine', search_engine, 'duckduckgo')
-    set_config_state('max_results', math.min(max_results, 50))
-    set_config_state('open_command', ext_config.open_command, 'open')
-  end,
-  exports = { websearch = websearch },
-}

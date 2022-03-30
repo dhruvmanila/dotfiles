@@ -1,12 +1,6 @@
-local has_telescope, telescope = pcall(require, 'telescope')
-
-if not has_telescope then
-  return
-end
-
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
-local config = require('telescope.config').values
+local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 local entry_display = require 'telescope.pickers.entry_display'
@@ -46,7 +40,7 @@ end
 ---   - Default action (<CR>) will load the selected session.
 ---   - <C-x> will delete the selected session.
 ---@param opts table
-local function sessions(opts)
+return function(opts)
   opts = opts or {}
 
   local results = {}
@@ -83,7 +77,7 @@ local function sessions(opts)
       end,
     },
     previewer = false,
-    sorter = config.generic_sorter(opts),
+    sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(load_session)
       map('i', '<C-x>', delete_session)
@@ -92,7 +86,3 @@ local function sessions(opts)
     end,
   }):find()
 end
-
-return telescope.register_extension {
-  exports = { sessions = sessions },
-}

@@ -1,14 +1,8 @@
-local has_telescope, telescope = pcall(require, 'telescope')
-
-if not has_telescope then
-  return
-end
-
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
 local previewers = require 'telescope.previewers'
 local putils = require 'telescope.previewers.utils'
-local config = require('telescope.config').values
+local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 local entry_display = require 'telescope.pickers.entry_display'
@@ -69,7 +63,7 @@ end
 -- directory replacing the current one.
 ---@param opts table
 ---@return nil
-local function lir_cd(opts)
+return function(opts)
   opts = opts or {}
 
   if vim.bo.filetype ~= 'lir' then
@@ -117,14 +111,10 @@ local function lir_cd(opts)
       entry_maker = entry_maker,
     }),
     previewer = tree_previewer(),
-    sorter = config.generic_sorter(opts),
+    sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function()
       actions.select_default:replace(open_dir_in_lir)
       return true
     end,
   }):find()
 end
-
-return telescope.register_extension {
-  exports = { lir_cd = lir_cd },
-}

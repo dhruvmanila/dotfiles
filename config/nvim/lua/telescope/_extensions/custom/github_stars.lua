@@ -1,12 +1,6 @@
-local has_telescope, telescope = pcall(require, 'telescope')
-
-if not has_telescope then
-  return
-end
-
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
-local config = require('telescope.config').values
+local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 local entry_display = require 'telescope.pickers.entry_display'
@@ -31,9 +25,9 @@ end
 --   - `max_length`: Maximum length of the `name` field from above
 --
 -- Default action (<CR>) will open the GitHub URL in the default browser.
----@opts table
+---@param opts table
 ---@return nil
-local function github_stars(opts)
+return function(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedGithubStars.stars) then
@@ -70,14 +64,10 @@ local function github_stars(opts)
       end,
     },
     previewer = false,
-    sorter = config.generic_sorter(opts),
+    sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function()
       actions.select_default:replace(open_in_browser)
       return true
     end,
   }):find()
 end
-
-return telescope.register_extension {
-  exports = { github_stars = github_stars },
-}

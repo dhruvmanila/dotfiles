@@ -1,12 +1,6 @@
-local has_telescope, telescope = pcall(require, 'telescope')
-
-if not has_telescope then
-  return
-end
-
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
-local config = require('telescope.config').values
+local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 local entry_display = require 'telescope.pickers.entry_display'
@@ -69,7 +63,7 @@ end
 --     set to the plugin installation path.
 ---@param opts table
 ---@return nil
-local function installed_plugins(opts)
+return function(opts)
   opts = opts or {}
 
   local plugins = collect_plugin_info()
@@ -106,7 +100,7 @@ local function installed_plugins(opts)
       end,
     },
     previewer = false,
-    sorter = config.generic_sorter(opts),
+    sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function(_, map)
       actions.select_default:replace(open_in_browser)
       map('i', '<C-f>', find_files_in_plugin)
@@ -115,7 +109,3 @@ local function installed_plugins(opts)
     end,
   }):find()
 end
-
-return telescope.register_extension {
-  exports = { installed_plugins = installed_plugins },
-}

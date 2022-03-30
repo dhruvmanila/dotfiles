@@ -1,13 +1,8 @@
-local has_telescope, telescope = pcall(require, 'telescope')
-
-if not has_telescope then
-  return
-end
-
 local nr2char = vim.fn.nr2char
+
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
-local config = require('telescope.config').values
+local telescope_config = require('telescope.config').values
 local entry_display = require 'telescope.pickers.entry_display'
 local themes = require 'telescope.themes'
 
@@ -758,7 +753,8 @@ end
 
 -- This extension will display a list of icons from the codicons and nonicons
 -- set and the user can copy the icon using `<C-y>`.
-local function icons()
+---@return nil
+return function()
   local results = collect_icons()
   local opts = themes.get_dropdown {
     layout_config = {
@@ -794,12 +790,6 @@ local function icons()
       end,
     },
     previewer = false,
-    sorter = config.generic_sorter(opts),
+    sorter = telescope_config.generic_sorter(opts),
   }):find()
 end
-
-return telescope.register_extension {
-  exports = { icons = icons },
-}
-
--- vim: foldmethod=marker:

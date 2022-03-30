@@ -163,23 +163,17 @@ telescope.setup {
       url_open_command = 'open',
       full_path = false,
     },
-    websearch = {
-      search_engine = 'duckduckgo',
-      url_open_command = 'open',
-      -- For DuckDuckGo max results can be either [1, 25] which is the actual
-      -- number of results to fetch or 0 which means to fetch all the results
-      -- from the first page.
-      max_results = 0,
-    },
     ['ui-select'] = { dropdown_list },
   },
 } -- }}}2
 
 -- Extensions {{{1
 
--- Load the telescope extensions without blowing up. Only the required extensions
--- are loaded, the others will be loaded lazily by telescope.
+-- Load the telescope extensions without blowing up.
 pcall(telescope.load_extension, 'fzf')
+
+-- Custom extensions. The extensions are lazily loaded whenever they're called.
+pcall(telescope.load_extension, 'custom')
 
 -- Loading the extension will increase the startuptime, so defer it when the
 -- function is called.
@@ -321,45 +315,28 @@ end, { desc = 'Telescope: Grep current WORD' })
 
 -- Extensions {{{2
 
--- Gaze the stars with the power of telescope.
-vim.keymap.set('n', '<leader>gs', function()
-  telescope.extensions.github_stars.github_stars()
-end, { desc = 'Telescope: GitHub stars' })
+vim.keymap.set('n', '<leader>gs', telescope.extensions.custom.github_stars, {
+  desc = 'Telescope: GitHub stars',
+})
 
--- List out all the installed plugins and provide action to either go to the
--- GitHub page of the plugin or find files within the plugin using telescope.
+vim.keymap.set('n', '<leader>fw', telescope.extensions.custom.websearch, {
+  desc = 'Telescope: Websearch',
+})
+
+vim.keymap.set('n', '<leader>fi', telescope.extensions.custom.icons, {
+  desc = 'Telescope: Icons',
+})
+
 vim.keymap.set('n', '<leader>fp', function()
-  telescope.extensions.installed_plugins.installed_plugins(dropdown_list)
+  telescope.extensions.custom.installed_plugins(dropdown_list)
 end, { desc = 'Telescope: Installed plugins' })
 
--- Fuzzy find over your browser bookmarks.
 vim.keymap.set('n', '<leader>fb', function()
   telescope.extensions.bookmarks.bookmarks()
 end, { desc = 'Telescope: Browser bookmarks' })
 
--- Using `ddgr/googler` search the web and fuzzy find through the results and
--- open them up in the browser.
-vim.keymap.set('n', '<leader>fw', function()
-  telescope.extensions.websearch.websearch()
-end, { desc = 'Telescope: Websearch' })
-
--- This is wrapped inside a function to avoid loading telescope modules.
-vim.keymap.set('n', '<leader>fi', function()
-  telescope.extensions.icons.icons()
-end, { desc = 'Telescope: Icons' })
-
--- Start a telescope search to cd into any directory from the current one.
--- The keybinding is defined only for the lir buffer.
-local function lir_cd()
-  -- Previewer is turned off by default. If it is enabled, then use the
-  -- horizontal layout with wider results window and narrow preview window.
-  telescope.extensions.lir_cd.lir_cd()
-end
-
--- List out all the saved sessions and provide action to either open them or
--- delete them.
 local function sessions()
-  telescope.extensions.sessions.sessions(dropdown_list)
+  telescope.extensions.custom.sessions(dropdown_list)
 end
 
 vim.keymap.set('n', '<leader>fs', sessions, { desc = 'Telescope: Sessions' })
@@ -367,9 +344,8 @@ vim.keymap.set('n', '<leader>fs', sessions, { desc = 'Telescope: Sessions' })
 -- }}}2
 -- }}}1
 
--- Used in Lir and Dashboard
+-- Used Dashboard
 return {
   find_files = find_files,
-  lir_cd = lir_cd,
   sessions = sessions,
 }
