@@ -44,6 +44,16 @@ custom_actions.qflist_tab_session = function(prompt_bufnr)
   vim.cmd 'tabnew | copen | cfirst'
 end
 
+-- Create a new branch if nothing is selected, else checkout the selected branch.
+custom_actions.git_create_or_checkout_branch = function(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
+  if selection == nil then
+    actions.git_create_branch(prompt_bufnr)
+  else
+    actions.git_checkout(prompt_bufnr)
+  end
+end
+
 -- Default theme options {{{1
 
 local dropdown_list = themes.get_dropdown {
@@ -123,7 +133,14 @@ telescope.setup {
       },
       include_extensions = true,
     },
-    git_branches = { theme = 'dropdown' },
+    git_branches = {
+      theme = 'dropdown',
+      mappings = {
+        i = {
+          ['<CR>'] = custom_actions.git_create_or_checkout_branch,
+        },
+      },
+    },
     grep_string = {
       path_display = { 'tail' },
     },
