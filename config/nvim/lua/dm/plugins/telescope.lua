@@ -315,17 +315,17 @@ end, { desc = 'Telescope: Grep current WORD' })
 
 -- Extensions {{{2
 
-vim.keymap.set('n', '<leader>gs', telescope.extensions.custom.github_stars, {
-  desc = 'Telescope: GitHub stars',
-})
+vim.keymap.set('n', '<leader>gs', function()
+  telescope.extensions.custom.github_stars()
+end, { desc = 'Telescope: GitHub stars', })
 
-vim.keymap.set('n', '<leader>fw', telescope.extensions.custom.websearch, {
-  desc = 'Telescope: Websearch',
-})
+vim.keymap.set('n', '<leader>fw', function()
+  telescope.extensions.custom.websearch()
+end, { desc = 'Telescope: Websearch', })
 
-vim.keymap.set('n', '<leader>fi', telescope.extensions.custom.icons, {
-  desc = 'Telescope: Icons',
-})
+vim.keymap.set('n', '<leader>fi', function()
+  telescope.extensions.custom.icons()
+end, { desc = 'Telescope: Icons', })
 
 vim.keymap.set('n', '<leader>fp', function()
   telescope.extensions.custom.installed_plugins(dropdown_list)
