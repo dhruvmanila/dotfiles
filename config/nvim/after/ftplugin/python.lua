@@ -1,8 +1,5 @@
 local opt_local = vim.opt_local
 
--- To make it compatible with jupytext percent format
-vim.b.slime_cell_delimiter = '# %%'
-
 opt_local.makeprg = 'python3 %'
 opt_local.formatprg = 'black --quiet - | isort --quiet --profile=black -'
 

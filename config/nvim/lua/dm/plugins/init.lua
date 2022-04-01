@@ -134,7 +134,6 @@ packer.startup {
     use 'airblade/vim-rooter'
     use 'editorconfig/editorconfig-vim'
     use 'itchyny/vim-external'
-    use 'jpalardy/vim-slime'
     use 'junegunn/vim-easy-align'
     use 'lambdalisue/vim-protocol'
     use 'lukas-reineke/indent-blankline.nvim'
