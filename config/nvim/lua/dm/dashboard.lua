@@ -303,6 +303,7 @@ local function open(on_vimenter)
     filetype = 'dashboard',
   }, 'set')
 
+  api.nvim_buf_set_name(0, '[Dashboard]')
   setup_mappings()
   setup_autocmds()
 

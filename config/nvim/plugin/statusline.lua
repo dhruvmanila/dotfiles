@@ -1,83 +1,85 @@
 local icons = dm.icons
+
 local job = require 'dm.job'
+local provider = require 'dm.provider'
 
--- Return the buffer information such as fileencoding, fileformat, indentation.
----@param ctx table
+-- Pad the given component with a space on both sides, if it's given.
+---@param component string
 ---@return string
-local function buffer_info(ctx)
-  local bo = vim.bo[ctx.bufnr]
-  local encoding = bo.fileencoding ~= '' and bo.fileencoding or vim.o.encoding
-  local fileinfo = ('%s%s')
-    :format(
-      encoding ~= 'utf-8' and encoding .. ' ' or '',
-      bo.fileformat ~= 'unix' and bo.fileformat .. ' ' or ''
-    )
-    :upper()
-  local indent = (bo.expandtab and 'S:' or 'T:') .. bo.shiftwidth
-  return ' ' .. indent .. (fileinfo ~= '' and ' | ' .. fileinfo or '') .. ' '
-end
-
----@see b:gitsigns_head g:gitsigns_head
----@return string
-local function git_branch()
-  local head = vim.b.gitsigns_head
-  if head and head ~= '' then
-    return '  ' .. head .. ' '
+local function pad(component)
+  if component ~= nil and component ~= '' then
+    return ' ' .. component .. ' '
   end
   return ''
+end
+
+-- Return the buffer information which includes indent style, indent size,
+-- fileencoding and fileformat.
+---@return string
+local function buffer_info()
+  local encoding = vim.bo.fileencoding
+  if encoding == '' then
+    encoding = vim.o.encoding
+  end
+  return (' %s:%d  %s %s ')
+    :format(
+      vim.bo.expandtab and 'S' or 'T',
+      vim.bo.shiftwidth,
+      encoding,
+      vim.bo.fileformat == 'unix' and 'lf' or 'crlf'
+    )
+    :upper()
+end
+
+-- Return information regarding the current git repository which includes the
+-- branch name and diff count.
+---@see g:gitsigns_head b:gitsigns_head b:gitsigns_status
+---@return string
+local function git_info()
+  local info = ''
+  local head = vim.b.gitsigns_head
+  if head and head ~= '' then
+    info = ' ' .. head
+  end
+  local status = vim.b.gitsigns_status
+  if status and status ~= '' then
+    info = info .. ' ' .. status
+  end
+  return info
 end
 
 -- Return the Python version and virtual environment name if we are in any.
 ---@return string
 local function python_version()
-  local env = vim.g.current_python_venv_name
   local version = vim.g.current_python_version
-  env = env and '(' .. env .. ') ' or ''
-  version = version and ' ' .. version .. ' ' or ''
-  return version .. env
+  local env = vim.g.current_python_venv_name
+  env = env and ' (' .. env .. ')' or ''
+  return (version or '') .. env
 end
 
----@param ctx table
+-- Return the filetype related information.
 ---@return string
-local function filetype(ctx)
-  local ft = ctx.filetype
-  if ft == '' then
-    return ''
-  elseif ft == 'python' then
+local function filetype()
+  local ft = vim.bo.filetype
+  if ft == 'python' then
     return python_version()
   end
-  return ' ' .. ft .. ' '
-end
-
--- Return the type of quickfix list and the title of it.
----@param ctx table
----@return string
-local function quickfix_title(ctx)
-  if ctx.filetype ~= 'qf' then
-    return ''
-  end
-  local list_type = 'Quickfix'
-  if vim.fn.win_gettype(ctx.winnr) == 'loclist' then
-    list_type = 'Location'
-  end
-  local title = vim.w[ctx.winnr].quickfix_title
-  return (' %s List %%* %s'):format(list_type, title or '')
+  return ft
 end
 
 -- Return the currently active neovim LSP client(s) and the status message.
----@param ctx table
 ---@return string
-local function lsp_clients_and_messages(ctx)
+local function lsp_clients_and_messages()
   local result = {}
-  local clients = vim.lsp.buf_get_clients(ctx.bufnr)
-  for id, client in pairs(clients) do
-    table.insert(result, client.name .. ':' .. id)
+  local clients = vim.lsp.buf_get_clients(0)
+  for _, client in pairs(clients) do
+    table.insert(result, client.name)
   end
   if not vim.tbl_isempty(result) then
-    result = '  ' .. table.concat(result, ' ') .. ' '
+    result = ' ' .. table.concat(result, ' ')
     local message = vim.g.lsp_progress_message
     if message and message ~= '' then
-      result = result .. '| ' .. message .. ' '
+      result = result .. ' | ' .. message
     end
     return result
   end
@@ -97,21 +99,18 @@ local DIAGNOSTIC_OPTS = {
 }
 
 -- Return the diagnostics information if > 0.
----@param ctx table
 ---@return string
-local function lsp_diagnostics(ctx)
-  local bufnr = ctx.bufnr
+local function lsp_diagnostics()
   local result = {}
   for _, opt in ipairs(DIAGNOSTIC_OPTS) do
     local count = vim.tbl_count(
-      vim.diagnostic.get(bufnr, { severity = opt.severity })
+      vim.diagnostic.get(0, { severity = opt.severity })
     )
     if count > 0 then
       table.insert(result, opt.hl .. opt.icon .. ' ' .. count)
     end
   end
-  result = table.concat(result, ' %*')
-  return result ~= '' and ' ' .. result or ''
+  return table.concat(result, ' %*')
 end
 
 -- Return the current status of the DAP client.
@@ -123,7 +122,7 @@ local function dap_status()
   end
   local status = dap.status()
   if status and status ~= '' then
-    return ' ' .. status .. ' |'
+    return ' ' .. status
   end
   return ''
 end
@@ -131,37 +130,25 @@ end
 -- Provide the global statusline.
 ---@return string
 function _G.nvim_statusline()
-  local winnr = vim.api.nvim_get_current_win()
-  local bufnr = vim.api.nvim_win_get_buf(winnr)
-
-  local ctx = {
-    winnr = winnr,
-    bufnr = bufnr,
-    bufname = vim.fn.bufname(bufnr),
-    filetype = vim.bo[bufnr].filetype,
-    buftype = vim.bo[bufnr].buftype,
-  }
-
-  -- The initial space is to compensate for the signcolumn.
-  return '%1*  '
-    .. '%L:%-2c ' -- total:column
-    .. '%*'
-    .. '%2*'
-    .. git_branch() -- `git_branch` and `quickfix` are mutually exclusive
-    .. quickfix_title(ctx) -- for global statusline
+  return '%1* '
+    .. provider.buffer_name(nil, ':~:.')
+    .. provider.buffer_flags()
+    .. ' %2*'
+    .. pad(git_info())
     .. '%*'
     .. '%<'
-    .. lsp_diagnostics(ctx)
+    .. pad(vim.w.quickfix_title)
+    .. pad(vim.b.term_title)
+    .. pad(lsp_diagnostics())
     .. '%*'
     .. '%='
-    .. dap_status()
-    .. lsp_clients_and_messages(ctx)
+    .. pad(dap_status())
+    .. pad(lsp_clients_and_messages())
     .. '%2*'
-    .. filetype(ctx)
-    .. '%*'
+    .. pad(filetype())
     .. '%1*'
-    .. buffer_info(ctx)
-    .. '%*'
+    .. ' %2p%%  %2l/%L:%-2c '
+    .. buffer_info()
 end
 
 -- Create a timer for the given callback to be invoked every `interval` ms.
@@ -219,4 +206,4 @@ vim.api.nvim_create_autocmd('FileType', {
 -- :h qf.vim, disable quickfix statusline
 vim.g.qf_disable_statusline = 1
 
-vim.o.statusline = '%!v:lua.nvim_statusline()'
+vim.opt.statusline = '%!v:lua.nvim_statusline()'

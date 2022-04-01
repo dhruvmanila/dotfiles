@@ -275,7 +275,11 @@ highlight('User8', { fg = palette.yellow, bg = palette.bg_statusline2 })
 highlight('User9', { fg = palette.red, bg = palette.bg_statusline2 })
 
 -- Tabline {{{2
-highlight('TabLineSel', { fg = palette.fg, bg = palette.bg0, gui = 'bold' })
+highlight('TabLineSel', {
+  fg = palette.fg,
+  bg = palette.bg0,
+  gui = 'bold,underline',
+})
 highlight('TabLine', { fg = '#928374', bg = '#242424' })
 highlight('TabLineFill', { fg = '#928374', bg = '#1e1e1e' })
 
