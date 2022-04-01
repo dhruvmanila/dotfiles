@@ -7,15 +7,8 @@ local entry_display = require 'telescope.pickers.entry_display'
 
 local session = require 'dm.session'
 
---- Return the current session name.
-local function get_current_session_name()
-  local this_session = vim.api.nvim_get_vvar 'this_session'
-  if this_session and this_session ~= '' then
-    return vim.fn.fnamemodify(vim.fn.resolve(this_session), ':t')
-  end
-end
-
---- Load the selected startify session.
+-- Load the selected session.
+---@param prompt_bufnr number
 local function load_session(prompt_bufnr)
   local selection = action_state.get_selected_entry()
   if selection.current then
@@ -25,7 +18,8 @@ local function load_session(prompt_bufnr)
   session.load(selection.value)
 end
 
---- Delete the selected startify session.
+-- Delete the selected session.
+---@param prompt_bufnr number
 local function delete_session(prompt_bufnr)
   local current_picker = action_state.get_current_picker(prompt_bufnr)
   current_picker:delete_selection(function(selection)
@@ -44,7 +38,7 @@ return function(opts)
   opts = opts or {}
 
   local results = {}
-  local current_session = get_current_session_name()
+  local current_session = session.current()
   for _, name in ipairs(session.list()) do
     table.insert(results, {
       value = name,

@@ -85,6 +85,18 @@ function session.close()
   vim.cmd 'Dashboard'
 end
 
+-- session.current {{{2
+
+-- Return the name of the active session name, if any, otherwise an empty string.
+---@return string
+function session.current()
+  local current_session = vim.v.this_session
+  if current_session and current_session ~= '' then
+    return fn.fnamemodify(current_session, ':t')
+  end
+  return ''
+end
+
 -- session.delete {{{2
 
 -- Delete the given session after prompting for confirmation.
