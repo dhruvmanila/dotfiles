@@ -135,6 +135,9 @@ telescope.setup {
     },
     git_branches = {
       theme = 'dropdown',
+      layout_config = {
+        width = 0.5,
+      },
       mappings = {
         i = {
           ['<CR>'] = custom_actions.git_create_or_checkout_branch,
@@ -142,10 +145,10 @@ telescope.setup {
       },
     },
     grep_string = {
-      path_display = { 'tail' },
+      path_display = { truncate = 3 },
     },
     live_grep = {
-      path_display = { 'tail' },
+      path_display = { truncate = 3 },
     },
     lsp_code_actions = { theme = 'cursor' },
     lsp_range_code_actions = { theme = 'cursor' },
@@ -317,15 +320,15 @@ end, { desc = 'Telescope: Grep current WORD' })
 
 vim.keymap.set('n', '<leader>gs', function()
   telescope.extensions.custom.github_stars()
-end, { desc = 'Telescope: GitHub stars', })
+end, { desc = 'Telescope: GitHub stars' })
 
 vim.keymap.set('n', '<leader>fw', function()
   telescope.extensions.custom.websearch()
-end, { desc = 'Telescope: Websearch', })
+end, { desc = 'Telescope: Websearch' })
 
 vim.keymap.set('n', '<leader>fi', function()
   telescope.extensions.custom.icons()
-end, { desc = 'Telescope: Icons', })
+end, { desc = 'Telescope: Icons' })
 
 vim.keymap.set('n', '<leader>fp', function()
   telescope.extensions.custom.installed_plugins(dropdown_list)
