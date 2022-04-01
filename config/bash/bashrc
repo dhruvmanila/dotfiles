@@ -23,11 +23,11 @@ esac
 source /usr/local/opt/gitstatus/gitstatus.prompt.sh
 
 # Source the environment variables
-source ~/dotfiles/bash/lib/env
+source ~/dotfiles/config/bash/lib/env
 
 # Source the common aliases and functions for bash and zsh
-source ~/dotfiles/bash/lib/aliases
-source ~/dotfiles/bash/lib/functions
+source ~/dotfiles/config/bash/lib/aliases
+source ~/dotfiles/config/bash/lib/functions
 
 # Install programmable completion functions for the most common Unix commands.
 # This requires the 'bash-completion@v2' package.
@@ -40,14 +40,6 @@ source ~/dotfiles/bash/lib/functions
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 # Plugins {{{1
-
-# Initialize pyenv.
-#
-# The path initialization of pyenv (`pyenv init --path`) takes place in the
-# `env` file to avoid duplicate entries in PATH.
-if command -v pyenv &> /dev/null; then
-  eval "$(pyenv init -)"
-fi
 
 # Prompt {{{1
 

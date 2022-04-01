@@ -278,7 +278,7 @@ pathmunge "${HOME}/neovim/bin"
 #
 # The output of `pyenv init --path` is:
 #
-#   export PATH="/Users/dhruvmanilawala/.pyenv/shims:${PATH}"
+#   export PATH="/Users/dhruv/.pyenv/shims:${PATH}"
 #
 # As you can see, pyenv adds the shims directory at the start of PATH without
 # checking if it is already present. So, if we reload the shell or enter a
