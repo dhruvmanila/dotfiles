@@ -47,5 +47,15 @@ g.do_filetype_lua = 1
 ---@see https://en.wikipedia.org/wiki/Box-drawing_character
 g.border_style = 'edge'
 
+-- Operating system name
+---@type "'Darwin'"|"'Linux'"|"'Windows_NT'"
+g.os = vim.loop.os_uname().sysname
+
+-- Shell command used to open URL, files, etc.
+---@type "'open'"|"'xdg-open'"
+g.open_command = (g.os == 'Darwin' and 'open')
+  or (g.os == 'Linux' and 'xdg-open')
+  or nil
+
 require 'dm.globals' -- Global functions and variables
 require 'dm.plugins' -- Plugin configuration

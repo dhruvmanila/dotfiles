@@ -24,7 +24,7 @@ local config = {
   -- number of results to fetch or 0 which means to fetch all the results
   -- from the first page.
   max_results = 0,
-  open_command = 'open',
+  open_command = vim.g.open_command,
 }
 
 -- Executable for the selected search engine.

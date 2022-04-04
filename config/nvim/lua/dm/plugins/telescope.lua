@@ -163,7 +163,7 @@ telescope.setup {
     },
     bookmarks = {
       selected_browser = 'brave',
-      url_open_command = 'open',
+      url_open_command = vim.g.open_command,
       full_path = false,
     },
     ['ui-select'] = { dropdown_list },
