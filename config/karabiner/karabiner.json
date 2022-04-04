@@ -160,7 +160,7 @@
                                 },
                                 "to": [
                                     {
-                                        "shell_command": "osascript ~/dotfiles/mac/karabiner/remove_seleced_files.scpt"
+                                        "shell_command": "osascript ~/dotfiles/config/karabiner/remove_seleced_files.scpt"
                                     }
                                 ],
                                 "type": "basic"
