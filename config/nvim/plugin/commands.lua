@@ -64,13 +64,14 @@ end, {
 -- LspClient {{{1
 
 nvim_add_user_command('LspClient', function(opts)
-  local info
+  local client
   if opts.args ~= '' then
-    info = vim.lsp.get_client_by_id(opts.args)
+    local client_id = opts.args:match '(%d+)%s-.-'
+    client = vim.lsp.get_client_by_id(tonumber(client_id))
   else
-    info = vim.lsp.buf_get_clients()
+    client = vim.lsp.buf_get_clients()
   end
-  print(vim.inspect(info))
+  print(vim.inspect(client))
 end, {
   nargs = '?',
   complete = function()
