@@ -124,11 +124,7 @@ packer.startup {
     use 'vim-scripts/applescript.vim'
 
     -- File explorer
-    use {
-      'tamago324/lir.nvim',
-      keys = { { 'n', '-' } },
-      config = conf 'lir',
-    }
+    use { 'tamago324/lir.nvim', keys = { { 'n', '-' } }, config = conf 'lir' }
 
     -- Utilities
     use 'airblade/vim-rooter'

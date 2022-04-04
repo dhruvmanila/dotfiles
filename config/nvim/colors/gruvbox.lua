@@ -385,6 +385,11 @@ highlight('LspReferenceText', { bg = palette.bg_current_word })
 highlight('LspReferenceRead', { bg = palette.bg_current_word })
 highlight('LspReferenceWrite', { bg = palette.bg_current_word })
 
+-- Codelens {{{2
+link('LspCodeLens', 'Grey')
+
+-- }}}2
+
 -- Dashboard {{{1
 link('DashboardHeader', 'Yellow')
 link('DashboardEntry', 'AquaBold')

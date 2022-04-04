@@ -8,6 +8,7 @@ g.indent_blankline_filetype_exclude = {
   'dap-repl',
   'dashboard',
   'fugitive',
+  'git',
   'gitcommit',
   'help',
   'log',
