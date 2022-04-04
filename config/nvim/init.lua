@@ -18,10 +18,10 @@ g.mapleader = ' '
 g.maplocalleader = ' '
 
 -- Setup neovim providers (`:h provider`)
-g.loaded_ruby_provider = 0
+g.loaded_node_provider = 0
 g.loaded_perl_provider = 0
-g.python3_host_prog = '~/.neovim/.venv/bin/python3'
-g.node_host_prog = '/usr/local/bin/neovim-node-host'
+g.loaded_ruby_provider = 0
+g.loaded_python3_provider = 0
 
 -- Disable built-in plugins (`:h standard-plugin-list`)
 g.loaded_2html_plugin = 1
