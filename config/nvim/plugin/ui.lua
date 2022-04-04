@@ -1,13 +1,5 @@
 -- Neovim UI overrides
 
--- Cleanup tasks performed:
---   - Exit from insert mode
---   - Delete the prompt buffer
-local function input_cleanup()
-  vim.cmd 'stopinsert'
-  vim.api.nvim_buf_delete(0, { force = true })
-end
-
 ---@param opts table
 ---@param on_confirm fun(input?: string): nil
 vim.ui.input = function(opts, on_confirm)
@@ -34,12 +26,20 @@ vim.ui.input = function(opts, on_confirm)
   -- Callback function to call once the user confirms or abort the input.
   ---@param new_input string|nil
   local function callback(new_input)
-    input_cleanup()
+    vim.api.nvim_win_close(winnr, true)
+    -- After closing the window, the cursor gets moved back by 1 column. So,
+    -- reset the cursor back to where it was before the window was opened.
+    local position = vim.api.nvim_win_get_cursor(0)
+    position[2] = position[2] + 1
+    vim.api.nvim_win_set_cursor(0, position)
     on_confirm(new_input)
   end
 
   vim.fn.prompt_setprompt(bufnr, opts.prompt)
-  vim.fn.prompt_setcallback(bufnr, callback)
+  -- This needs to be schedule wrapped for some reason, otherwise Neovim gets
+  -- into a very weird and bad state. I was seeing text get deleted from the
+  -- buffer and "NewLine" text being added to random places.
+  vim.fn.prompt_setcallback(bufnr, vim.schedule_wrap(callback))
 
   -- Define the required set of mappings:
   --   - `<ESC>`: exit the rename prompt
