@@ -33,6 +33,11 @@
 
 export DOTFILES="${HOME}/dotfiles"
 
+if [[ "$OSTYPE" = "darwin"* ]]; then
+  # Override insanely low open file limits on macOS.
+  ulimit -n 65536
+fi
+
 # Use emacs keybindings, set to -v for vi bindings.
 # Warning: {{{
 #
