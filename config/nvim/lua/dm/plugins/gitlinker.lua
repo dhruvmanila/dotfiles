@@ -6,9 +6,10 @@ local gitlinker = require 'gitlinker'
 local function get_azure_devops_url(url_data)
   if url_data.host == 'ssh.dev.azure.com' then
     -- Add the `_git` value right before the repository which is after the last
-    -- forward slash and remove the `v3/` part at the beginning which is the
-    -- ssh version for Azure DevOps.
-    url_data.repo = url_data.repo:gsub('(/[^/]+)$', '/_git%1'):gsub('^v3/', '')
+    -- forward slash. This is already present if the host is `https`. Also,
+    -- remove the `v3/` part at the beginning which is the ssh version for
+    -- Azure DevOps.
+    url_data.repo = url_data.repo:gsub('/([^/]+)$', '/_git/%1'):gsub('^v3/', '')
   end
 
   local url = 'https://dev.azure.com/' .. url_data.repo
@@ -49,3 +50,7 @@ gitlinker.setup {
   -- Default mapping to call url generation with `action_callback`.
   mappings = '<leader>go',
 }
+
+vim.keymap.set('n', '<leader>gr', gitlinker.get_repo_url, {
+  desc = 'gitlinker: Open the current repository url in the browser',
+})
