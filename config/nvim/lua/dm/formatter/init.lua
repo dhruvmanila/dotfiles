@@ -110,6 +110,13 @@ register('sql', {
   args = { '--reindent', '--keywords', 'upper', '--wrap_after', '80', '-' },
 })
 
+-- xml {{{1
+
+register('xml', {
+  cmd = 'xmllint',
+  args = { '--format', '-' },
+})
+
 -- yaml {{{1
 
 register('yaml', {
