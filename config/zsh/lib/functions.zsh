@@ -197,7 +197,7 @@ py-upgrade-venv() { # {{{1
   fi
   DEFINITION="$1"
   PYTHON_EXEC="$PYENV_ROOT/versions/$DEFINITION/bin/python"
-  if [[ ! -e $python_exec ]]; then
+  if [[ ! -e $PYTHON_EXEC ]]; then
     echo "$0: version '$DEFINITION' not installed"
     echo "$0: Use 'pyenv install $DEFINITION' to install it"
     return 1
