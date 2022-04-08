@@ -75,7 +75,7 @@ packer.startup {
         { 'n', '<leader>db' }, -- toggle_breakpoint
         { 'n', '<leader>dB' }, -- set_breakpoint (with condition)
       },
-      config = conf 'nvim_dap',
+      config = conf 'dap',
       requires = {
         'mfussenegger/nvim-dap-python',
         'rcarriga/nvim-dap-ui',
