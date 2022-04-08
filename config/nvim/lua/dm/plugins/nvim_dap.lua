@@ -226,8 +226,23 @@ dap.configurations.python = {
     name = 'Launch: module',
     type = 'python',
     request = 'launch',
-    module = '${fileBasenameNoExtension}',
-    cwd = '${fileDirname}',
+    module = '${relativeFileDirname}',
+    cwd = '${workspaceFolder}',
+    console = 'internalConsole',
+    justMyCode = false,
+    pythonPath = get_python_path,
+    logToFile = log_to_file,
+  },
+  {
+    name = 'Launch: module with arguments',
+    type = 'python',
+    request = 'launch',
+    module = '${relativeFileDirname}',
+    cwd = '${workspaceFolder}',
+    args = function()
+      local args = vim.fn.input 'Arguments: '
+      return vim.split(args, ' +', { trimempty = true })
+    end,
     console = 'internalConsole',
     justMyCode = false,
     pythonPath = get_python_path,
