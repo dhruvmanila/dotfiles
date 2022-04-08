@@ -3,13 +3,13 @@ local dapui = require 'dapui'
 local dap_python = require 'dap-python'
 
 -- Automatically open and close the DAP UI.
-dap.listeners.after['event_initialized']['dap_win_config'] = function()
+dap.listeners.after['event_initialized']['dap_ui'] = function()
   dapui.open()
 end
-dap.listeners.before['event_terminated']['dap_win_config'] = function()
+dap.listeners.before['event_terminated']['dap_ui'] = function()
   dapui.close()
 end
-dap.listeners.before['event_exited']['dap_win_config'] = function()
+dap.listeners.before['event_exited']['dap_ui'] = function()
   dapui.close()
 end
 

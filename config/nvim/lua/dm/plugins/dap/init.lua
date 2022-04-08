@@ -78,11 +78,11 @@ local function close_terminal()
 end
 
 -- Automatically close the DAP repl and terminal buffer, if present.
-dap.listeners.before['event_terminated']['dap_win_config'] = function()
+dap.listeners.before['event_terminated']['dap_repl_terminal'] = function()
   dap.repl.close()
   close_terminal()
 end
-dap.listeners.before['event_exited']['dap_win_config'] = function()
+dap.listeners.before['event_exited']['dap_repl_terminal'] = function()
   dap.repl.close()
   close_terminal()
 end
