@@ -53,7 +53,7 @@ do
     group = id,
     pattern = 'dap-repl',
     callback = require('dap.ext.autocompl').attach,
-    desc = 'DAP REPL completion',
+    desc = 'DAP: REPL completion',
   })
 
   vim.api.nvim_create_autocmd('BufEnter', {
@@ -63,15 +63,34 @@ do
   })
 end
 
--- Automatically open/close the DAP UI.
-dap.listeners.after['event_initialized']['dapui_config'] = function()
+-- Helper function to close the terminal buffer opened during a debugging
+-- session. This will basically find a terminal buffer in the current tabpage
+-- and delete the buffer. This relies on an autocmd which sets the terminal
+-- buffer to be of filetype 'terminal'.
+local function close_terminal()
+  for _, winnr in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    local bufnr = vim.api.nvim_win_get_buf(winnr)
+    if vim.api.nvim_buf_get_option(bufnr, 'filetype') == 'terminal' then
+      vim.api.nvim_buf_delete(bufnr, { force = true })
+    end
+  end
+end
+
+-- Automatically open the DAP UI.
+dap.listeners.after['event_initialized']['dap_win_config'] = function()
   dapui.open()
 end
-dap.listeners.before['event_terminated']['dapui_config'] = function()
+
+-- Automatically close all the DAP UI windows, DAP repl and the terminal buffer.
+dap.listeners.before['event_terminated']['dap_win_config'] = function()
   dapui.close()
+  dap.repl.close()
+  close_terminal()
 end
-dap.listeners.before['event_exited']['dapui_config'] = function()
+dap.listeners.before['event_exited']['dap_win_config'] = function()
   dapui.close()
+  dap.repl.close()
+  close_terminal()
 end
 
 -- Extensions {{{1
@@ -91,13 +110,11 @@ dapui.setup {
     size = math.floor(vim.o.columns * 0.4),
     elements = {
       { id = 'scopes', size = 0.8 },
-      -- { id = "watches", size = 0.2 },
-      -- { id = "breakpoints", size = 0.1 },
       { id = 'stacks', size = 0.2 },
     },
   },
   tray = {
-    size = math.floor(vim.o.lines * 0.3),
+    elements = {},
   },
   floating = {
     border = dm.border[vim.g.border_style],
