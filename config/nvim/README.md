@@ -37,11 +37,3 @@
 ├── filetype.lua             # Help filetype detection
 └── minimal.lua              # Minimal bug repro template
 ```
-
-### Packer related files:
-
-```bash
-.local/share/nvim/site/pack/loader/start/meta/plugin/
-├── packer_compiled.lua
-└── packer_plugin_info.lua   # For `:Telescope installed_plugins`
-```
