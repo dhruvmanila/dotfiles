@@ -1,10 +1,10 @@
 local fn = vim.fn
 local api = vim.api
-local nvim_add_user_command = api.nvim_add_user_command
+local nvim_create_user_command = api.nvim_create_user_command
 
 -- BufOnly {{{1
 
-nvim_add_user_command('BufOnly', function()
+nvim_create_user_command('BufOnly', function()
   local deleted, modified = 0, 0
   local curr_buf = api.nvim_get_current_buf()
   for _, bufnr in ipairs(api.nvim_list_bufs()) do
@@ -48,7 +48,7 @@ local dap_functions = {
   'toggle_breakpoint',
 }
 
-nvim_add_user_command('Dap', function(opts)
+nvim_create_user_command('Dap', function(opts)
   require('dap')[opts.args]()
 end, {
   nargs = 1,
@@ -63,7 +63,7 @@ end, {
 
 -- LspClient {{{1
 
-nvim_add_user_command('LspClient', function(opts)
+nvim_create_user_command('LspClient', function(opts)
   local client
   if opts.args ~= '' then
     local client_id = opts.args:match '(%d+)%s-.-'
@@ -86,7 +86,7 @@ end, {
 -- Do NOT define the command as plain string because the module `vim.lsp` is
 -- expensive to load on startup.
 
-nvim_add_user_command('LspLog', function()
+nvim_create_user_command('LspLog', function()
   vim.cmd('botright split | resize 20 | edit + ' .. vim.lsp.get_log_path())
 end, {
   desc = 'Open logs for the builtin LSP client',
@@ -94,21 +94,21 @@ end, {
 
 -- Term / Vterm / Tterm {{{1
 
-nvim_add_user_command('Term', 'new | wincmd J | resize -5 | term', {
+nvim_create_user_command('Term', 'new | wincmd J | resize -5 | term', {
   desc = 'Open the terminal on the bottom occupying full width of the editor',
 })
 
-nvim_add_user_command('Vterm', 'vnew | wincmd L | term', {
+nvim_create_user_command('Vterm', 'vnew | wincmd L | term', {
   desc = 'Open the terminal on the right hand side occupying full height of the editor',
 })
 
-nvim_add_user_command('Tterm', 'tabnew | term', {
+nvim_create_user_command('Tterm', 'tabnew | term', {
   desc = 'Open the terminal in a new tab',
 })
 
 -- TrimLines {{{1
 
-nvim_add_user_command('TrimLines', function()
+nvim_create_user_command('TrimLines', function()
   local pos = api.nvim_win_get_cursor(0)
   local last_line = api.nvim_buf_line_count(0)
   local last_non_blank_line = fn.prevnonblank(last_line)
@@ -127,7 +127,7 @@ end, {
 
 -- Purpose: Trim trailing whitespace for the current buffer, restoring the
 -- cursor position. This command can be followed by another command.
-nvim_add_user_command('TrimWhitespace', function()
+nvim_create_user_command('TrimWhitespace', function()
   local pos = api.nvim_win_get_cursor(0)
   vim.cmd [[keeppatterns keepjumps %s/\s\+$//e]]
   api.nvim_win_set_cursor(0, pos)

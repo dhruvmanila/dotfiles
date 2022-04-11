@@ -11,7 +11,7 @@ local function buf_shellcheck_error_codes()
   return errorcodes
 end
 
-vim.api.nvim_buf_add_user_command(0, 'ShellCheckWiki', function(opts)
+vim.api.nvim_buf_create_user_command(0, 'ShellCheckWiki', function(opts)
   vim.fn['external#browser'](
     'https://github.com/koalaman/shellcheck/wiki/SC' .. opts.args
   )

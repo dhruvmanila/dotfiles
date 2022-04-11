@@ -28,7 +28,7 @@ vim.api.nvim_create_autocmd('VimResized', {
   desc = 'Redraw the dashboard buffer',
 })
 
-vim.api.nvim_add_user_command('Dashboard', dashboard.open, {
+vim.api.nvim_create_user_command('Dashboard', dashboard.open, {
   bar = true,
   desc = 'Open dashboard',
 })

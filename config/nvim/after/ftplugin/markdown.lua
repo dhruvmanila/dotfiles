@@ -2,7 +2,7 @@ vim.cmd [[
 setlocal textwidth=80
 ]]
 
-vim.api.nvim_buf_add_user_command(
+vim.api.nvim_buf_create_user_command(
   0,
   'Preview',
   require('dm.markdown').preview,

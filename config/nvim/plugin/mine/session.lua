@@ -35,11 +35,13 @@ do
     complete = session.list,
   }
 
-  api.nvim_add_user_command('SClose', session.close, {})
-  api.nvim_add_user_command('SDelete', session_function_factory 'delete', opts)
-  api.nvim_add_user_command('SLoad', session_function_factory 'load', opts)
-  api.nvim_add_user_command('SRename', session_function_factory 'rename', opts)
-  api.nvim_add_user_command('SSave', session_function_factory 'save', opts)
+  -- stylua: ignore start
+  api.nvim_create_user_command('SClose', session.close, {})
+  api.nvim_create_user_command('SDelete', session_function_factory 'delete', opts)
+  api.nvim_create_user_command('SLoad', session_function_factory 'load', opts)
+  api.nvim_create_user_command('SRename', session_function_factory 'rename', opts)
+  api.nvim_create_user_command('SSave', session_function_factory 'save', opts)
+  -- stylua: ignore end
 end
 
 -- One caveat for storing 'curdir': {{{

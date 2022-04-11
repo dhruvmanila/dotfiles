@@ -177,7 +177,7 @@ then
   vim.g.packer_compiled_loaded = true
 end
 
-vim.api.nvim_add_user_command(
+vim.api.nvim_create_user_command(
   'PackerCompiledEdit',
   '$tabedit ' .. packer_compiled_path,
   { desc = 'Open the packer compiled file in a new tab' }

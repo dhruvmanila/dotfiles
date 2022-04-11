@@ -72,7 +72,7 @@ local function fully_qualified_name(import_name)
   return qualname
 end
 
-vim.api.nvim_buf_add_user_command(0, 'PyDoc', function(opts)
+vim.api.nvim_buf_create_user_command(0, 'PyDoc', function(opts)
   local word = opts.args
 
   -- Extract the 'word' at the cursor {{{
