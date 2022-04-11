@@ -1,7 +1,7 @@
 -- log.lua
 --
 -- Inspired by rxi/log.lua
--- Modified by tjdevries and can be found at github.com/tjdevries/vlog.nvim
+-- Modified by tjdevries and can be found at https://github.com/tjdevries/vlog.nvim
 --
 -- This library is free software; you can redistribute it and/or modify it
 -- under the terms of the MIT license. See LICENSE for details.
@@ -10,6 +10,9 @@
 ---@alias LogConfig table
 ---@type LogConfig
 local default_config = {
+  -- Name of the plugin. Prepended to log messages and used as the filename.
+  plugin = 'dm',
+
   -- Should print the output to neovim while running
   ---@type "'sync'"|"'async'"|"false"
   use_console = 'async',
@@ -52,7 +55,7 @@ local unpack = unpack or table.unpack
 log.new = function(config, standalone)
   config = vim.tbl_deep_extend('force', default_config, config or {})
 
-  local outfile = vim.fn.stdpath 'cache' .. '/dm.log'
+  local outfile = ('%s/%s.log'):format(vim.fn.stdpath 'cache', config.plugin)
   local obj = standalone and log or config
 
   local levels = {}
@@ -114,7 +117,10 @@ log.new = function(config, standalone)
       for _, v in ipairs(split_console) do
         local formatted_msg = vim.fn.escape(v, [["\]])
 
-        local ok = pcall(vim.cmd, string.format([[echom "%s"]], formatted_msg))
+        local ok = pcall(
+          vim.cmd,
+          ([[echom "[%s] %s"]]):format(config.plugin, formatted_msg)
+        )
         if not ok then
           vim.api.nvim_out_write(msg .. '\n')
         end
