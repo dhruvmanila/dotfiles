@@ -31,6 +31,7 @@ declare -A SYMLINKS=(
   ["kitty"]=".config/kitty"
   ["nvim"]=".config/nvim"
   ["pip"]=".config/pip"
+  ["pypoetry"]="Library/Application Support/pypoetry"
   ["ssh/config"]=".ssh/config"
   ["starship.toml"]=".config/starship.toml"
   ["tmux/tmux.conf"]=".tmux.conf"
