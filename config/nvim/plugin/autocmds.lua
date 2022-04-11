@@ -57,8 +57,8 @@ nvim_create_autocmd('TextYankPost', {
 -- }}}
 nvim_create_autocmd({ 'BufEnter', 'CursorHold' }, {
   group = nvim_create_augroup('dm__auto_reload_file', { clear = true }),
-  callback = function()
-    local bufnr = tonumber(fn.expand '<abuf>')
+  callback = function(args)
+    local bufnr = args.buf
     local name = api.nvim_buf_get_name(bufnr)
     if
       name == ''
@@ -133,7 +133,9 @@ do
 
   nvim_create_autocmd('InsertEnter', {
     group = id,
-    callback = set_colorcolumn,
+    callback = function()
+      set_colorcolumn(false)
+    end,
     desc = 'Set colorcolumn',
   })
 
@@ -211,7 +213,9 @@ do
   })
   nvim_create_autocmd({ 'BufLeave', 'InsertEnter', 'WinLeave' }, {
     group = id,
-    callback = set_cursorline,
+    callback = function()
+      set_cursorline(false)
+    end,
     desc = 'Set cursorline',
   })
 end
