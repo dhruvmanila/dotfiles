@@ -31,7 +31,7 @@
 #   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 # fi
 
-export DOTFILES="${HOME}/dotfiles"
+export DOTFILES="$HOME/dotfiles"
 
 if [[ "$OSTYPE" = "darwin"* ]]; then
   # Override insanely low open file limits on macOS.
@@ -63,7 +63,16 @@ autoload -Uz run-help
 
 # Path {{{1
 
-# fpath {{{
+# https://github.com/golang/go/wiki/SettingGOPATH#bash
+export GOPATH="$HOME/go"
+
+# https://www.rust-lang.org/tools/install
+export CARGO_HOME="$HOME/.cargo"
+
+# Custom tool for managing multiple Python versions (smaller version of `pyenv`)
+export PYENV_ROOT="$HOME/.pyenv"
+
+# fpath {{{2
 
 # An array (colon separated list) of directories specifying the search path
 # for function definitions. This path is searched when a function with the `-u`
@@ -81,8 +90,7 @@ fpath=(
   $fpath
 )
 
-# }}}
-# cdpath {{{
+# cdpath {{{2
 
 # An array of directories specifying the search path for the `cd` command.
 #
@@ -96,62 +104,60 @@ cdpath=(
   "$DOTFILES"
 )
 
-# }}}
+# path {{{2
 
-# Add this installation of Homebrew to PATH, MANPATH and INFOPATH. Also, export
-# some HOMEBREW* variables to avoid querying them multiple times.
-eval "$(/usr/local/bin/brew shellenv)"
+if [[ -x /usr/local/bin/brew ]]; then
+  # Add this installation of Homebrew to PATH, MANPATH and INFOPATH. Also, export
+  # some HOMEBREW* variables to avoid querying them multiple times.
+  eval "$(/usr/local/bin/brew shellenv)"
 
-# https://github.com/golang/go/wiki/SettingGOPATH#bash
-export GOPATH="${HOME}/go"
+  path=(
+    # MacOS ships with an older version of Ruby, so replace the system ruby with
+    # an updated one from Homebrew.
+    "$HOMEBREW_PREFIX"/lib/ruby/gems/*/bin
 
-# https://www.rust-lang.org/tools/install
-export CARGO_HOME="${HOME}/.cargo"
+    # Brew installed packages which are not symlinked into /usr/local because a
+    # similar software is already provided by the system.
+    #
+    # In other words, these are keg-only and if we want to use the binaries from
+    # these packages, their bin directory needs to be added first in the PATH.
+    "$HOMEBREW_PREFIX"/opt/{ruby,sqlite,llvm}/bin
 
-# Custom tool for managing multiple Python versions (smaller version of `pyenv`)
-export PYENV_ROOT="$HOME/.pyenv"
+    # GNU packages.
+    "$HOMEBREW_PREFIX"/opt/make/libexec/gnubin
 
-path=( # {{{
+    $path
+  )
+fi
+
+path=(
   # Global Python version bin directory.
   "$PYENV_ROOT/bin"
 
   # Local build of Neovim nightly.
-  "${HOME}/neovim/bin"
+  "$HOME/neovim/bin"
 
   # Language specific bin directory.
-  "${CARGO_HOME}/bin"
-  "${GOPATH}/bin"
+  "$CARGO_HOME/bin"
+  "$GOPATH/bin"
 
   # Local scripts and `pipx` installed executables.
-  "${HOME}/.local/bin"
+  "$HOME/.local/bin"
 
   # Luarocks bin directory for Lua 5.1. This is the version used by Neovim, so
   # we will be installing the packages for that version only.
   "$HOME/.luarocks/bin"
 
-  # MacOS ships with an older version of Ruby, so replace the system ruby with
-  # an updated one from Homebrew.
-  "${HOMEBREW_PREFIX}"/lib/ruby/gems/*/bin
-
-  # Brew installed packages which are not symlinked into /usr/local because a
-  # similar software is already provided by the system.
-  #
-  # In other words, these are keg-only and if we want to use the binaries from
-  # these packages, their bin directory needs to be added first in the PATH.
-  "${HOMEBREW_PREFIX}"/opt/{ruby,sqlite,llvm}/bin
-
-  # GNU packages.
-  "${HOMEBREW_PREFIX}"/opt/make/libexec/gnubin
-
-  # Previous path values.
   $path
 )
-# }}}
+# }}}2
 
 # Plugins {{{1
 
 # https://github.com/zsh-users/zsh-autosuggestions
-source $DOTFILES/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
+if [[ -f $DOTFILES/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh ]]; then
+  source $DOTFILES/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
+fi
 
 # Configure the style that the suggestion is shown with.
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
@@ -214,11 +220,10 @@ bashcompinit
 compdef viw=which
 compdef o=open
 
-# Activate third-party completions.
-source <(pip completion --zsh)
-
 # These requires `bashcompinit`.
-source /usr/local/etc/bash_completion.d/dot-completion.bash
+if [[ -f /usr/local/etc/bash_completion.d/dot-completion.bash ]]; then
+  source /usr/local/etc/bash_completion.d/dot-completion.bash
+fi
 
 # source <(register-python-argcomplete pipx)
 # complete -C aws_completer aws

@@ -26,13 +26,15 @@ alias -- -='cd -'
 
 # defaults {{{1
 
-# Show/hide all desktop icons.
-alias show='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
-alias hide='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
+if [[ "$OSTYPE" = "darwin"* ]]; then
+  # Show/hide all desktop icons.
+  alias show='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
+  alias hide='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
 
-# Show/hide hidden files in Finder.
-alias showhidden='defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder'
-alias hidehidden='defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder'
+  # Show/hide hidden files in Finder.
+  alias showhidden='defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder'
+  alias hidehidden='defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder'
+fi
 
 # docker {{{1
 

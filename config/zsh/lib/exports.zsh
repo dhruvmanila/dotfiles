@@ -10,16 +10,18 @@
 #
 #     $ clang -x c -v -E /dev/null
 
-export CFLAGS="\
--I$HOMEBREW_PREFIX/include \
--I$HOMEBREW_PREFIX/opt/openssl@3/include \
-"
-export CPPFLAGS="$CFLAGS"
+if [[ -n "$HOMEBREW_PREFIX" ]]; then
+  export CFLAGS="\
+  -I$HOMEBREW_PREFIX/include \
+  -I$HOMEBREW_PREFIX/opt/openssl@3/include \
+  "
+  export CPPFLAGS="$CFLAGS"
 
-export LDFLAGS="\
--L$HOMEBREW_PREFIX/lib \
--L$HOMEBREW_PREFIX/opt/openssl@3/lib \
-"
+  export LDFLAGS="\
+  -L$HOMEBREW_PREFIX/lib \
+  -L$HOMEBREW_PREFIX/opt/openssl@3/lib \
+  "
+fi
 
 # EDITOR {{{1
 
@@ -73,7 +75,7 @@ export GPG_TTY="$(tty)"
 
 # The variable is already set by system rc file but that can change and without
 # this, the history is not saved.
-export HISTFILE="${HOME}/.zsh_history"
+export HISTFILE="$HOME/.zsh_history"
 
 # Infinite history
 export HISTSIZE=999999999
@@ -86,7 +88,7 @@ export HOMEBREW_NO_ANALYTICS=1
 
 # Do not create the lock file on `brew bundle`
 export HOMEBREW_BUNDLE_NO_LOCK=1
-export HOMEBREW_BUNDLE_FILE="${HOME}/dotfiles/lib/Brewfile"
+export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/lib/Brewfile"
 
 # Disable auto-update after every `HOMEBREW_AUTO_UPDATE_SECS` before some commands.
 export HOMEBREW_NO_AUTO_UPDATE=1
@@ -184,4 +186,4 @@ export PYTHONIOENCODING='UTF-8'
 # ripgrep {{{1
 
 # https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
-export RIPGREP_CONFIG_PATH="${HOME}/dotfiles/config/ripgreprc"
+export RIPGREP_CONFIG_PATH="$HOME/dotfiles/config/ripgreprc"
