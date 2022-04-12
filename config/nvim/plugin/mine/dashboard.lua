@@ -11,7 +11,12 @@ local id = vim.api.nvim_create_augroup('dm__dashboard', { clear = true })
 vim.api.nvim_create_autocmd('VimEnter', {
   group = id,
   callback = function()
-    if vim.fn.argc() == 0 and vim.fn.line2byte '$' == -1 then
+    if
+      vim.fn.argc() == 0
+      and vim.fn.line2byte '$' == -1
+      -- Do NOT open the dashboard when started without UI (`--headless`).
+      and not vim.tbl_isempty(vim.api.nvim_list_uis())
+    then
       dashboard.open(true)
     end
   end,
