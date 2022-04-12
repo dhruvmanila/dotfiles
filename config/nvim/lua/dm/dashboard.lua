@@ -41,19 +41,24 @@ dashboard.opts = {
 ---@field command string|function execute the string/function on `key`
 
 ---@type DashboardEntry[]
-local entries = {
-  {
-    key = 'l',
-    description = function()
-      -- Save the name of the last session in the dashboard namespace to be
-      -- used to load the session.
-      dashboard.last_session = session.last()
-      return '  Last session (' .. dashboard.last_session .. ')'
-    end,
-    command = function()
-      session.load(dashboard.last_session)
-    end,
-  },
+local entries = {}
+
+do
+  local last_session = session.last()
+
+  -- Add the entry only if there is any last session.
+  if last_session then
+    table.insert(entries, {
+      key = 'l',
+      description = '  Last session (' .. last_session .. ')',
+      command = function()
+        session.load(last_session)
+      end,
+    })
+  end
+end
+
+vim.list_extend(entries, {
   {
     key = 's',
     description = '  Find sessions',
@@ -84,7 +89,7 @@ local entries = {
     description = '  Startup time',
     command = 'StartupTime',
   },
-}
+})
 
 -- Functions {{{1
 
