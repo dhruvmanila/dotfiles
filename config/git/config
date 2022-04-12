@@ -1,8 +1,10 @@
-# vim: set ft=gitconfig:
 [user]
 	name = Dhruv Manilawala
 	email = dhruvmanila@gmail.com
 	signingkey = 9601911DE8797432
+
+[include]
+	path = ~/.gitconfig.local
 
 [core]
 	editor = nvim
@@ -70,9 +72,6 @@
 [init]
 	defaultBranch = main
 
-[url "git@github.com:"]
-	insteadOf = https://github.com/
-
 [delta]
 	syntax-theme = gruvbox-dark
 	line-numbers = true
@@ -85,3 +84,5 @@
 	file-style = bold yellow ul
 	file-decoration-style = none
 	hunk-header-decoration-style = cyan box ul
+
+# vim: set ft=gitconfig:
