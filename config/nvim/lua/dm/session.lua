@@ -128,12 +128,16 @@ end
 
 -- session.last {{{2
 
--- Return the name of the last *saved* session.
----@return string
+-- Return the name of the last *saved* session, nil if there is none.
+---@return string|nil
 function session.last()
   -- We need to store the list in a variable because `table.sort` does an
   -- in-place sorting.
   local sessions = session.list()
+  if vim.tbl_isempty(sessions) then
+    return nil
+  end
+
   table.sort(sessions, function(a, b)
     a = SESSION_DIR .. '/' .. a
     b = SESSION_DIR .. '/' .. b
