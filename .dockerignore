@@ -1,0 +1,14 @@
+.DS_Store
+
+.git
+.github
+local
+setup
+src
+
+Makefile
+Dockerfile
+.dockerignore
+.gitignore
+
+.mypy_cache
