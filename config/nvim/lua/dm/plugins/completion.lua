@@ -70,9 +70,11 @@ cmp.setup {
   confirmation = {
     default_behavior = cmp.ConfirmBehavior.Replace,
   },
-  documentation = {
-    border = dm.border[vim.g.border_style],
-    winhighlight = 'NormalFloat:NormalFloat,FloatBorder:FloatBorder',
+  window = {
+    documentation = {
+      border = dm.border[vim.g.border_style],
+      winhighlight = 'NormalFloat:NormalFloat,FloatBorder:FloatBorder',
+    },
   },
   formatting = {
     -- Order of item's fields for completion menu.
@@ -93,15 +95,6 @@ cmp.setup {
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
     ['<CR>'] = cmp.mapping.confirm(),
-
-    -- Disable some default mappings which comes in the way on the command-line.
-    -- This is most likely temporary as I haven't yet experimented with the
-    -- command-line completion feature.
-    ['<Tab>'] = cmp.config.disable,
-    ['<S-Tab>'] = cmp.config.disable,
-    ['<C-y>'] = cmp.config.disable,
-    ['<Up>'] = cmp.config.disable,
-    ['<Down>'] = cmp.config.disable,
   },
   snippet = {
     expand = function(args)
