@@ -8,8 +8,8 @@ local job = require 'dm.job'
 ---@field url string
 
 -- Keep the values around between reloads.
----@type { stars: GitHubStar[], max_length: number }
-_CachedGithubStars = _CachedGithubStars or { stars = {}, max_length = 0 }
+---@type GitHubStar[]
+_CachedGithubStars = _CachedGithubStars or {}
 
 -- Parse the data received from running the GitHub stars job.
 ---@param data string
@@ -19,16 +19,13 @@ local function parse_gh_stars_data(data)
   -- Replace the middle "][" with a "," to make it a valid JSON string.
   data = data:gsub('%]%[', ',')
   local json_data = vim.json.decode(data)
-  local max_length = 0
   for _, repo in ipairs(json_data) do
-    max_length = math.max(max_length, #repo.full_name)
-    table.insert(_CachedGithubStars.stars, {
+    table.insert(_CachedGithubStars, {
       name = repo.full_name,
       description = repo.description ~= vim.NIL and repo.description or '',
       url = repo.html_url,
     })
   end
-  _CachedGithubStars.max_length = max_length
 end
 
 -- Start a new asynchronous job to collect the user GitHub stars using

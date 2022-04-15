@@ -30,14 +30,14 @@ end
 return function(opts)
   opts = opts or {}
 
-  if vim.tbl_isempty(_CachedGithubStars.stars) then
+  if vim.tbl_isempty(_CachedGithubStars) then
     return dm.notify('Telescope', 'GitHub stars are not cached yet', 3)
   end
 
   local displayer = entry_display.create {
     separator = ' ',
     items = {
-      { width = _CachedGithubStars.max_length + 2 },
+      { width = 0.3 },
       { remaining = true },
     },
   }
@@ -52,7 +52,7 @@ return function(opts)
   pickers.new(opts, {
     prompt_title = 'Search GitHub Stars',
     finder = finders.new_table {
-      results = _CachedGithubStars.stars,
+      results = _CachedGithubStars,
       entry_maker = function(entry)
         return {
           display = make_display,
