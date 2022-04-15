@@ -5,21 +5,24 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
-indent_style = space
 insert_final_line = true
 trim_trailing_whitespace = true
 
 [*.bat]
 end_of_line = crlf
+indent_style = space
 
 [*.{py,pyi}]
 indent_size = 4
+indent_style = space
 
 [*.{c,json,lua,rb,rkt,sh,sml,toml,yaml,yml}]
 indent_size = 2
+indent_style = space
 
 [karabiner.json]
 indent_size = 4
+indent_style = space
 
 [*{gitconfig,Makefile,go}]
 indent_size = 4
@@ -27,3 +30,4 @@ indent_style = tab
 
 [*/cs50/**{.c,.html,.css,.js}]
 indent_size = 4
+indent_style = space
