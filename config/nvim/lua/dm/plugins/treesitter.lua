@@ -7,7 +7,10 @@ require('nvim-treesitter.highlight').set_custom_captures {
 }
 
 require('nvim-treesitter.configs').setup {
-  -- one of 'all', 'maintained', or a list of languages
+  -- Install the parsers synchronously on a fresh setup
+  sync_install = vim.env.NVIM_BOOTSTRAP and true or false,
+
+  -- A list of parser names, or "all"
   ensure_installed = {
     'bash',
     'c',
@@ -15,6 +18,7 @@ require('nvim-treesitter.configs').setup {
     'comment',
     'cpp',
     'dockerfile',
+    'fish',
     'go',
     'gomod',
     'gowork',
@@ -28,6 +32,7 @@ require('nvim-treesitter.configs').setup {
     'python',
     'query',
     'rust',
+    'scheme',
     'toml',
     'typescript',
     'vim',
