@@ -19,11 +19,6 @@ g.indent_blankline_filetype_exclude = {
   'txt',
 }
 
-g.indent_blankline_buftype_exclude = {
-  'nofile',
-  'terminal',
-}
-
 -- Do not display the indentation level in the first column.
 g.indent_blankline_show_first_indent_level = false
 
