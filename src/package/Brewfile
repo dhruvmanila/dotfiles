@@ -7,12 +7,9 @@ tap "homebrew/cask-versions"
 tap "homebrew/core"
 tap "homebrew/services"
 tap "mongodb/brew"
-tap "rhysd/git-brws", "https://github.com/rhysd/git-brws"
 tap "romkatv/gitstatus"
 # Static checker for GitHub Actions workflow files
 brew "actionlint"
-# Tool for generating GNU Standards-compliant Makefiles
-brew "automake"
 # Command-line interface for SQLite
 brew "sqlite"
 # General-purpose data compression with high compression ratio
@@ -49,8 +46,8 @@ brew "coreutils"
 brew "datamash"
 # DuckDuckGo from the terminal
 brew "ddgr"
-# Tool for managing dock items
-brew "dockutil"
+# Tool for exploring each layer in a docker image
+brew "dive"
 # Generate documentation for several programming languages
 brew "doxygen"
 # Maintain consistent coding style between multiple editors
@@ -71,10 +68,6 @@ brew "srt"
 brew "ffmpeg"
 # Collection of GNU find, xargs, and locate
 brew "findutils"
-# Framework for layout and rendering of i18n text
-brew "pango"
-# Command-line outline and bitmap font editor/converter
-brew "fontforge"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GNU debugger
@@ -87,10 +80,6 @@ brew "git"
 brew "git-delta"
 # GNU Pretty Good Privacy (PGP) package
 brew "gnupg"
-# Google Search and News from the command-line
-brew "googler"
-# Graph visualization software from AT&T and Bell Labs
-brew "graphviz"
 # Smarter Dockerfile linter to validate best practices
 brew "hadolint"
 # CLI email client written in Rust
@@ -107,26 +96,18 @@ brew "jq"
 brew "keychain"
 # Pager program similar to more
 brew "less"
-# Implementation of the file(1) command
-brew "libmagic"
-# LLVM's OpenMP runtime library
-brew "libomp"
+# Framework for layout and rendering of i18n text
+brew "pango"
 # Next-gen compiler infrastructure
 brew "llvm"
 # Curses-based tool for viewing and analyzing log files
 brew "lnav"
 # Language Server for the Lua language
 brew "lua-language-server"
-# Powerful, lightweight programming language (v5.1.5)
-brew "lua@5.1"
-# OpenResty's Branch of LuaJIT 2
-brew "luajit-openresty"
 # Package manager for the Lua programming language
 brew "luarocks"
 # Utility for directing compilation
 brew "make"
-# Unix documentation system
-brew "man-db"
 # Mac App Store command-line interface
 brew "mas"
 # MongoDB CLI enables you to manage your MongoDB in the Cloud
@@ -135,8 +116,6 @@ brew "mongocli"
 brew "moreutils"
 # Open source relational database management system
 brew "mysql"
-# HTTP/2 C Library
-brew "nghttp2"
 # HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server
 brew "nginx"
 # Small build system for use with gyp or CMake
@@ -159,12 +138,6 @@ brew "pinentry-mac"
 brew "postgresql"
 # Coreutils progress viewer
 brew "progress"
-# Parse HTML at the command-line
-brew "pup"
-# Monitor data's progress through a pipe
-brew "pv"
-# Software environment for statistical computing
-brew "r"
 # Persistent key-value database, with built-in net interface
 brew "redis"
 # Perl-powered file rename script with many helpful built-ins
@@ -173,8 +146,6 @@ brew "rename"
 brew "ripgrep"
 # Powerful, clean, object-oriented scripting language
 brew "ruby"
-# Install various Ruby versions and implementations
-brew "ruby-build"
 # Safe, concurrent, practical language
 brew "rust"
 # Static analysis and lint tool, for (ba)sh scripts
@@ -183,14 +154,12 @@ brew "shellcheck"
 brew "shfmt"
 # Cross-shell prompt for astronauts
 brew "starship"
-# Organize software neatly under a single directory tree (e.g. /usr/local)
-brew "stow"
 # Opinionated Lua code formatter
 brew "stylua"
+# Very fast implementation of tldr in Rust
+brew "tealdeer"
 # Tool to build, change, and version infrastructure
 brew "terraform"
-# Simplified and community-driven man pages
-brew "tldr"
 # Terminal multiplexer
 brew "tmux"
 # CLI tool that moves files or folder to the trash
@@ -201,12 +170,10 @@ brew "universal-ctags"
 brew "vagrant-completion"
 # Vi 'workalike' with many additional features
 brew "vim"
-# Download YouTube videos from the command-line
-brew "youtube-dl"
 # Process YAML documents from the CLI
 brew "yq"
-# General-purpose lossless data-compression library
-brew "zlib"
+# Fork of youtube-dl with additional features and fixes
+brew "yt-dlp"
 # UNIX shell (command interpreter)
 brew "zsh"
 # Additional completion definitions for zsh
@@ -217,12 +184,12 @@ brew "clementtsang/bottom/bottom"
 brew "heroku/brew/heroku"
 # High-performance, schema-free, document-oriented database
 brew "mongodb/brew/mongodb-community"
-# Command line tool to open repository, file, commit, diff, pull request or issue in browser
-brew "rhysd/git-brws/git-brws"
 # Git status for Bash/Zsh prompt
 brew "romkatv/gitstatus/gitstatus"
 # Web browser focusing on privacy
 cask "brave-browser"
+# Browser for SQLite databases
+cask "db-browser-for-sqlite"
 # Voice and text chat software
 cask "discord"
 # App to build and share containerized applications and microservices
@@ -231,8 +198,6 @@ cask "docker"
 cask "drawio"
 # Web browser
 cask "firefox"
-# Screenshot software
-cask "flameshot"
 cask "font-fira-code"
 # Typeface made for developers
 cask "font-jetbrains-mono"
@@ -246,8 +211,6 @@ cask "iterm2"
 cask "karabiner-elements"
 # GPU-based terminal emulator
 cask "kitty"
-# Provides updates to various Microsoft products
-cask "microsoft-auto-update"
 # Email client
 cask "microsoft-outlook"
 # Meet, chat, call, and collaborate in just one place
@@ -268,8 +231,6 @@ cask "postman"
 cask "qbittorrent"
 # Move and resize windows using keyboard shortcuts or snap areas
 cask "rectangle"
-# Data science software focusing on R and Python
-cask "rstudio"
 # Team communication and collaboration software
 cask "slack"
 # Development environment

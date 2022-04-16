@@ -1,7 +1,6 @@
 asciinema
 awsebcli
 black
-bpytop
 flake8
 grip
 httpie
@@ -10,6 +9,7 @@ isort
 jupyter
 line-profiler
 mypy
+pgcli
 pipenv
 poetry
 pre-commit
