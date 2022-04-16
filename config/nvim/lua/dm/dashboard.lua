@@ -62,7 +62,11 @@ vim.list_extend(entries, {
   {
     key = 's',
     description = '  Find sessions',
-    command = 'lua require("dm.plugins.telescope").sessions()',
+    command = function()
+      require('telescope').extensions.custom.sessions(
+        require('dm.plugins.telescope.themes').dropdown_list
+      )
+    end,
   },
   {
     key = 'e',
@@ -72,12 +76,16 @@ vim.list_extend(entries, {
   {
     key = 'h',
     description = '  Recently opened files',
-    command = 'lua require("telescope.builtin").oldfiles()',
+    command = function()
+      require('telescope.builtin').oldfiles()
+    end,
   },
   {
     key = 'f',
     description = '  Find files',
-    command = 'lua require("dm.plugins.telescope").find_files()',
+    command = function()
+      require('dm.plugins.telescope.pickers').find_files()
+    end,
   },
   {
     key = 'u',
