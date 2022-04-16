@@ -1,11 +1,3 @@
-dock-apps() { # {{{1
-  # List out the bundle identifier of all the current dock applications.
-  # Used for `MACOS_DOCK_APPLICATIONS` in `~/dotfiles/src/initialize.sh`
-  defaults read com.apple.dock persistent-apps \
-    | rg --only-matching '\s*"_CFURLString" = "file://(.*)/";' --replace '"$1"' \
-    | sed 's/%20/ /g'
-}
-
 dsh() { # {{{1
   # Start a bash shell for the given docker container.
   if (( $# == 0 )); then
