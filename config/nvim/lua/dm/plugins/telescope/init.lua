@@ -105,6 +105,16 @@ telescope.setup {
       url_open_command = vim.g.open_command,
       full_path = false,
     },
+    custom = {
+      websearch = {
+        search_engine = 'duckduckgo',
+        -- For DuckDuckGo max results can be either [1, 25] which is the actual
+        -- number of results to fetch or 0 which means to fetch all the results
+        -- from the first page.
+        max_results = 0,
+        open_command = vim.g.open_command,
+      },
+    },
     ['ui-select'] = { themes.dropdown_list },
   },
 }

@@ -4,6 +4,11 @@ if not has_telescope then
   return
 end
 
+-- Global variable to hold the config values for all of my custom pickers.
+-- This is a map from custom picker name to the config table.
+---@type table<string, table>
+_TelescopeCustomExtensionsConfig = _TelescopeCustomExtensionsConfig or {}
+
 -- Requires only when the module is called.
 --
 -- This is specifically for the custom telescope extensions module as the given
@@ -18,6 +23,13 @@ local function require_on_module_call(custom_module_name)
 end
 
 return telescope.register_extension {
+  setup = function(ext_config)
+    _TelescopeCustomExtensionsConfig = vim.tbl_deep_extend(
+      'force',
+      _TelescopeCustomExtensionsConfig,
+      ext_config
+    )
+  end,
   exports = {
     github_stars = require_on_module_call 'github_stars',
     icons = require_on_module_call 'icons',
