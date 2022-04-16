@@ -1,0 +1,56 @@
+#!/Users/dhruv/.pyenv/bin/python3
+
+import os.path
+
+try:
+    from docklib import Dock
+except ModuleNotFoundError as err:
+    import sys
+
+    module = None
+    if err.name == "docklib":
+        module = "docklib"
+    elif err.name == "Foundation":
+        module = "pyobjc-framework-cocoa"
+
+    print(f"{os.path.basename(sys.argv[0])}: {err.msg}", end="")
+    if module is not None:
+        print(f", install with 'pip install {module}'")
+    sys.exit(1)
+
+# Dock applications ordered from left to right.
+DOCK_APPS = [
+    "/Applications/Safari.app",
+    "/Applications/Brave Browser.app",
+    "/Applications/kitty.app",
+    "/Applications/Docker.app/Contents/MacOS/Docker Desktop.app",
+    "/System/Applications/Notes.app",
+    "/System/Applications/Music.app",
+    "/System/Applications/Books.app",
+    "/Applications/Microsoft Word.app",
+    "/Applications/Microsoft Excel.app",
+    "/Applications/Microsoft Teams.app",
+    "/Applications/Microsoft Outlook.app",
+    "/Applications/MongoDB Compass.app",
+    "/Applications/pgAdmin 4.app",
+    "/Applications/Azure VPN Client.app",
+]
+
+dock = Dock()
+dock.items["persistent-apps"] = []
+
+for item in DOCK_APPS:
+    if os.path.exists(item):
+        item = dock.makeDockAppEntry(item)
+        dock.items["persistent-apps"].append(item)
+
+dock.items["persistent-others"] = [
+    dock.makeDockOtherEntry(
+        os.path.expanduser("~/Downloads"),
+        arrangement=2,  # sort by date added
+        displayas=1,  # display as folder
+        showas=2,  # show as grid
+    )
+]
+
+dock.save()
