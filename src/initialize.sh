@@ -68,22 +68,4 @@ BACKUP_DOTFILES=(
   ~/.vim
 )
 
-# MacOS dock applications
-# Keep everything quoted due to spaces. Order: left to right
-MACOS_DOCK_APPLICATIONS=(
-  "/Applications/Safari.app"
-  "/Applications/Brave Browser.app"
-  "/Applications/kitty.app"
-  "/Applications/Docker.app/Contents/MacOS/Docker Desktop.app"
-  "/Applications/pgAdmin 4.app"
-  "/System/Applications/Notes.app"
-  "/System/Applications/Music.app"
-  "/System/Applications/Books.app"
-  "/Applications/Microsoft Excel.app"
-  "/Applications/Microsoft Teams.app"
-  "/Applications/Microsoft Outlook.app"
-  "/Applications/Slack.app"
-  "/Applications/Azure VPN Client.app"
-)
-
 setup_required_directories silent

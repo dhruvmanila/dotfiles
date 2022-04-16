@@ -32,7 +32,6 @@ dot_usage() {
   echo
   # :command.usage_commands
   printf "Commands:\n"
-  echo "  mac       update macOS related stuff"
   echo "  link      symlink dotfiles after backing up the existing ones"
   echo "  shell     setup the default shell for the current user"
   echo "  setup     setup a new mac machine the way I like it"
@@ -48,43 +47,6 @@ dot_usage() {
     echo
     echo "  --version, -v"
     printf "    Show version number\n"
-    echo
-
-  fi
-}
-
-# :command.usage
-dot_mac_usage() {
-  if [[ -n $long_usage ]]; then
-    printf "dot mac - update macOS related stuff\n"
-    echo
-
-  else
-    printf "dot mac - update macOS related stuff\n"
-    echo
-
-  fi
-
-  printf "Usage:\n"
-  printf "  dot mac [options]\n"
-  printf "  dot mac --help | -h\n"
-  echo
-
-  if [[ -n $long_usage ]]; then
-    printf "Options:\n"
-    # :command.usage_fixed_flags
-    echo "  --help, -h"
-    printf "    Show this help\n"
-    echo
-    # :command.usage_flags
-    # :flag.usage
-    echo "  --dock, -d"
-    printf "    update macOS dock applications\n"
-    echo
-
-    # :flag.usage
-    echo "  --settings, -s"
-    printf "    update macOS settings\n"
     echo
 
   fi
@@ -647,32 +609,6 @@ setup_tmux_plugins() { # {{{1
   ~/.tmux/plugins/tpm/bin/install_plugins
 }
 
-update_macos_settings() { # {{{1
-  header "Updating macOS settings..."
-  bash "${DOTFILES_DIRECTORY}/src/mac/osxdefaults"
-}
-
-update_macos_dock() { # {{{1
-  header "Updating macOS dock applications..."
-  dockutil --remove all --no-restart
-  for app in "${MACOS_DOCK_APPLICATIONS[@]}"; do
-    echo "    Adding '$app'..."
-    dockutil --add "$app" --section apps --no-restart
-  done
-
-  echo "    Adding '${HOME}/Downloads'..."
-  dockutil \
-    --add "${HOME}/Downloads" \
-    --view grid \
-    --display folder \
-    --sort dateadded \
-    --section others \
-    --no-restart
-
-  header "Restarting the dock..."
-  killall Dock &> /dev/null
-}
-
 # }}}1
 
 # :src/lib/upgrade.sh
@@ -876,25 +812,6 @@ setup_required_directories() { # {{{1
 
 # :command.command_functions
 # :command.function
-dot_mac_command() {
-  # :src/mac_command.sh
-  # shellcheck disable=SC2154
-  dock=${args[--dock]}
-  settings=${args[--settings]}
-
-  if [[ $dock ]]; then
-    update_macos_dock
-  fi
-
-  if [[ $settings ]]; then
-    seek_confirmation "This will override your macOS settings"
-    if is_confirmed; then
-      update_macos_settings
-    fi
-  fi
-}
-
-# :command.function
 dot_link_command() {
   # :src/link_command.sh
   # shellcheck disable=SC2154
@@ -1075,14 +992,7 @@ parse_requirements() {
     -*) ;;
 
     \
-      mac)
-      action="mac"
-      shift
-      dot_mac_parse_requirements "$@"
-      shift $#
-      ;;
-
-    link)
+      link)
       action="link"
       shift
       dot_link_parse_requirements "$@"
@@ -1128,65 +1038,6 @@ parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
-
-      -?*)
-        printf "invalid option: %s\n" "$key"
-        exit 1
-        ;;
-
-      *)
-        # :command.parse_requirements_case
-        printf "invalid argument: %s\n" "$key"
-        exit 1
-        ;;
-
-    esac
-  done
-  # :command.required_args_filter
-  # :command.required_flags_filter
-  # :command.catch_all_filter
-  # :command.default_assignments
-  # :command.whitelist_filter
-  # :command.user_filter
-}
-
-# :command.parse_requirements
-dot_mac_parse_requirements() {
-  # :command.fixed_flag_filter
-  case "${1:-}" in
-    --version | -v)
-      version_command
-      exit
-      ;;
-
-    --help | -h)
-      long_usage=yes
-      dot_mac_usage
-      exit
-      ;;
-
-  esac
-  # :command.environment_variables_filter
-  # :command.dependencies_filter
-  # :command.command_filter
-  action="mac"
-  # :command.parse_requirements_while
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-      # :flag.case
-      --dock | -d)
-        # :flag.conflicts
-        args[--dock]=1
-        shift
-        ;;
-
-      # :flag.case
-      --settings | -s)
-        # :flag.conflicts
-        args[--settings]=1
-        shift
-        ;;
 
       -?*)
         printf "invalid option: %s\n" "$key"
@@ -1573,24 +1424,6 @@ initialize() {
     ~/.vim
   )
 
-  # MacOS dock applications
-  # Keep everything quoted due to spaces. Order: left to right
-  MACOS_DOCK_APPLICATIONS=(
-    "/Applications/Safari.app"
-    "/Applications/Brave Browser.app"
-    "/Applications/kitty.app"
-    "/Applications/Docker.app/Contents/MacOS/Docker Desktop.app"
-    "/Applications/pgAdmin 4.app"
-    "/System/Applications/Notes.app"
-    "/System/Applications/Music.app"
-    "/System/Applications/Books.app"
-    "/Applications/Microsoft Excel.app"
-    "/Applications/Microsoft Teams.app"
-    "/Applications/Microsoft Outlook.app"
-    "/Applications/Slack.app"
-    "/Applications/Azure VPN Client.app"
-  )
-
   setup_required_directories silent
 }
 
@@ -1602,15 +1435,7 @@ run() {
   normalize_input "$@"
   parse_requirements "${input[@]}"
 
-  if [[ $action == "mac" ]]; then
-    if [[ ${args[--help]:-} ]]; then
-      long_usage=yes
-      dot_mac_usage
-    else
-      dot_mac_command
-    fi
-
-  elif [[ $action == "link" ]]; then
+  if [[ $action == "link" ]]; then
     if [[ ${args[--help]:-} ]]; then
       long_usage=yes
       dot_link_usage

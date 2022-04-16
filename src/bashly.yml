@@ -3,20 +3,6 @@ help: Personal tool for managing dotfiles and packages
 version: 1.0.0
 
 commands:
-  - name: mac
-    help: update macOS related stuff
-
-    flags:
-      - long: --dock
-        short: -d
-        help: update macOS dock applications
-        dependencies:
-          - dockutil
-
-      - long: --settings
-        short: -s
-        help: update macOS settings
-
   - name: link
     help: symlink dotfiles after backing up the existing ones
 
