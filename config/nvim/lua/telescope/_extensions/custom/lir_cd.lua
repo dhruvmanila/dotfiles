@@ -5,7 +5,6 @@ local putils = require 'telescope.previewers.utils'
 local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
-local entry_display = require 'telescope.pickers.entry_display'
 
 local lir = require 'lir'
 local float = require 'lir.float'
@@ -86,29 +85,18 @@ return function(opts)
     float.toggle()
   end
 
-  local displayer = entry_display.create {
-    separator = ' ',
-    items = { { remaining = true } },
-  }
-
-  local function make_display(entry)
-    return displayer { entry.value }
-  end
-
-  local function entry_maker(line)
-    return {
-      display = make_display,
-      value = line,
-      cwd = cwd,
-      ordinal = line,
-    }
-  end
-
   pickers.new(opts, {
     prompt_title = 'Lir cd (' .. cwd .. ')',
     finder = finders.new_oneshot_job({ 'fd', '--type', 'd' }, {
       cwd = cwd,
-      entry_maker = entry_maker,
+      entry_maker = function(line)
+        return {
+          display = line,
+          value = line,
+          cwd = cwd,
+          ordinal = line,
+        }
+      end,
     }),
     previewer = tree_previewer(),
     sorter = telescope_config.generic_sorter(opts),

@@ -3,7 +3,6 @@ local pickers = require 'telescope.pickers'
 local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
-local entry_display = require 'telescope.pickers.entry_display'
 
 local session = require 'dm.session'
 
@@ -47,22 +46,13 @@ return function(opts)
     })
   end
 
-  local displayer = entry_display.create {
-    separator = ' ',
-    items = { { remaining = true } },
-  }
-
-  local function make_display(entry)
-    return displayer { entry.name }
-  end
-
   pickers.new(opts, {
     prompt_title = 'Sessions',
     finder = finders.new_table {
       results = results,
       entry_maker = function(entry)
         return {
-          display = make_display,
+          display = entry.name,
           value = entry.value,
           name = entry.name,
           current = entry.current,

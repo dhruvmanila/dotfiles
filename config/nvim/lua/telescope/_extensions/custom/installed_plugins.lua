@@ -3,7 +3,6 @@ local pickers = require 'telescope.pickers'
 local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
-local entry_display = require 'telescope.pickers.entry_display'
 
 -- Defines the action to open the selection in the browser.
 ---@param prompt_bufnr number
@@ -72,26 +71,13 @@ return function(opts)
     return nil
   end
 
-  local displayer = entry_display.create {
-    separator = ' ',
-    items = {
-      { remaining = true },
-    },
-  }
-
-  local function make_display(entry)
-    return displayer {
-      entry.value,
-    }
-  end
-
   pickers.new(opts, {
     prompt_title = 'Installed Plugins',
     finder = finders.new_table {
       results = plugins,
       entry_maker = function(entry)
         return {
-          display = make_display,
+          display = entry.name,
           value = entry.name,
           path = entry.path,
           url = entry.url,
