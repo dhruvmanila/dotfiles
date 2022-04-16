@@ -49,4 +49,22 @@ function M.git_create_or_checkout_branch(prompt_bufnr)
   end
 end
 
+-- Open the current selection or all the selections made using multi-select
+-- in the default browser using `vim.g.open_command`.
+---@param prompt_bufnr number
+function M.open_in_browser(prompt_bufnr)
+  local urls = ''
+  action_utils.map_selections(prompt_bufnr, function(selection)
+    urls = ('%s "%s"'):format(urls, selection.url)
+  end)
+  if urls == '' then
+    urls = (' "%s"'):format(action_state.get_selected_entry().url)
+  end
+  if urls == '' then
+    return
+  end
+  actions.close(prompt_bufnr)
+  os.execute(vim.g.open_command .. urls)
+end
+
 return M

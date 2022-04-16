@@ -4,19 +4,7 @@ local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 
--- Defines the action to open the selection in the browser.
----@param prompt_bufnr number
----@return nil
-local function open_in_browser(prompt_bufnr)
-  local selection = action_state.get_selected_entry()
-
-  if not selection.url then
-    return nil
-  end
-
-  actions.close(prompt_bufnr)
-  os.execute('open' .. ' "' .. selection.url .. '" &> /dev/null')
-end
+local custom_actions = require 'dm.plugins.telescope.actions'
 
 -- Defines the action to open the selection in a new Telescope finder with the
 -- current working directory being set to the selected plugin installation path.
@@ -25,7 +13,6 @@ end
 local function find_files_in_plugin(prompt_bufnr)
   local selection = action_state.get_selected_entry()
   actions.close(prompt_bufnr)
-
   vim.schedule(function()
     require('telescope.builtin').find_files { cwd = selection.path }
   end)
@@ -88,7 +75,7 @@ return function(opts)
     previewer = false,
     sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function(_, map)
-      actions.select_default:replace(open_in_browser)
+      actions.select_default:replace(custom_actions.open_in_browser)
       map('i', '<C-f>', find_files_in_plugin)
       map('n', '<C-f>', find_files_in_plugin)
       return true

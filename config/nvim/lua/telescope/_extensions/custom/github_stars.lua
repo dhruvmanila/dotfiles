@@ -2,15 +2,9 @@ local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
 local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
-local action_state = require 'telescope.actions.state'
 local entry_display = require 'telescope.pickers.entry_display'
 
--- Defines the action to open the selection in the browser.
-local function open_in_browser(prompt_bufnr)
-  local selection = action_state.get_selected_entry()
-  actions.close(prompt_bufnr)
-  os.execute(('open "%s"'):format(selection.url))
-end
+local custom_actions = require 'dm.plugins.telescope.actions'
 
 -- This extension will show the users GitHub stars with the repository
 -- description and provide an action to open it in the default browser.
@@ -66,7 +60,7 @@ return function(opts)
     previewer = false,
     sorter = telescope_config.generic_sorter(opts),
     attach_mappings = function()
-      actions.select_default:replace(open_in_browser)
+      actions.select_default:replace(custom_actions.open_in_browser)
       return true
     end,
   }):find()

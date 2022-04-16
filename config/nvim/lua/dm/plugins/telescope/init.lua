@@ -112,7 +112,6 @@ telescope.setup {
         -- number of results to fetch or 0 which means to fetch all the results
         -- from the first page.
         max_results = 0,
-        open_command = vim.g.open_command,
       },
     },
     ['ui-select'] = { themes.dropdown_list },

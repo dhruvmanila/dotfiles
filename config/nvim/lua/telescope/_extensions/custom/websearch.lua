@@ -9,11 +9,10 @@ local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
 local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
-local action_state = require 'telescope.actions.state'
-local action_utils = require 'telescope.actions.utils'
 local entry_display = require 'telescope.pickers.entry_display'
 
 local job = require 'dm.job'
+local custom_actions = require 'dm.plugins.telescope.actions'
 
 local state = {}
 
@@ -162,15 +161,7 @@ local function search_or_select(prompt_bufnr)
   if state.mode == mode.QUERY then
     do_search()
   else
-    local urls = ''
-    action_utils.map_selections(prompt_bufnr, function(selection)
-      urls = ('%s "%s"'):format(urls, selection.value)
-    end)
-    if urls == '' then
-      urls = action_state.get_selected_entry().value
-    end
-    actions.close(prompt_bufnr)
-    os.execute(('%s %s'):format(config.open_command, urls))
+    custom_actions.open_in_browser(prompt_bufnr)
   end
 end
 
