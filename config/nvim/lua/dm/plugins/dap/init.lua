@@ -53,7 +53,9 @@ do
   vim.api.nvim_create_autocmd('FileType', {
     group = id,
     pattern = 'dap-repl',
-    callback = require('dap.ext.autocompl').attach,
+    callback = function(args)
+      require('dap.ext.autocompl').attach(args.buf)
+    end,
     desc = 'DAP: REPL completion',
   })
 
