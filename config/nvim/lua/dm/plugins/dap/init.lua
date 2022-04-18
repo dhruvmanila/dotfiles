@@ -66,25 +66,10 @@ do
   })
 end
 
--- Helper function to close the terminal buffer opened during a debugging
--- session. This will basically find a terminal buffer in the current tabpage
--- and delete the buffer. This relies on an autocmd which sets the terminal
--- buffer to be of filetype 'terminal'.
-local function close_terminal()
-  for _, winnr in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-    local bufnr = vim.api.nvim_win_get_buf(winnr)
-    if vim.api.nvim_buf_get_option(bufnr, 'filetype') == 'terminal' then
-      vim.api.nvim_buf_delete(bufnr, { force = true })
-    end
-  end
-end
-
 -- Automatically close the DAP repl and terminal buffer, if present.
 dap.listeners.before['event_terminated']['dap_repl_terminal'] = function()
   dap.repl.close()
-  close_terminal()
 end
 dap.listeners.before['event_exited']['dap_repl_terminal'] = function()
   dap.repl.close()
-  close_terminal()
 end
