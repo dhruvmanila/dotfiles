@@ -73,7 +73,7 @@ if __name__ == "__main__":
     if args.list:
         for app in dock.items["persistent-apps"]:
             path: str = app["tile-data"]["file-data"]["_CFURLString"]
-            path = path.removeprefix("file://").replace("%20", " ")
+            path = path.removeprefix("file://").replace("%20", " ").removesuffix("/")
             print(repr(path))
     else:
         refresh(dock)
