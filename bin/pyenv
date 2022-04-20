@@ -6,7 +6,7 @@
 set -e
 [[ -n "$PYENV_DEBUG" ]] && set -x
 
-version="v0.5.0"
+version="v0.5.1"
 
 : "${CMD:=$(basename "$0")}"
 : "${PYENV_ROOT:="$HOME/.pyenv"}"
@@ -14,6 +14,7 @@ version="v0.5.0"
 
 if [[ ! -d "$PYENV_ROOT" ]]; then
   mkdir -p "$PYENV_ROOT/"{versions,cache}
+  touch "$PYENV_ROOT/version"
 fi
 
 function usage() {
