@@ -138,8 +138,15 @@ do
     opts.title = opts.title
       or (type(level) == 'string' and level)
       or default_title[level]
-    -- Provide a space between the text and the border.
-    notify(' ' .. msg:gsub('\n', '\n '), level, opts)
+    -- Provide a padding between the text and the border on both sides.
+    if type(msg) == 'table' then
+      msg = vim.tbl_map(function(line)
+        return ' ' .. line .. ' '
+      end, msg)
+    else
+      msg = ' ' .. msg:gsub('\n', ' \n ')
+    end
+    notify(msg, level, opts)
   end
 
   -- Wrapper around `vim.notify` to simplify passing the `title` value.
