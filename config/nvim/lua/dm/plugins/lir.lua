@@ -18,21 +18,24 @@ end
 -- in the file system and puts the cursor above the file, similar to `mkdir`.
 -- Original implementation just creates a vim buffer and opens it.
 local function newfile()
-  local name = vim.fn.input 'Create file: '
-  if name == '' then
-    return
-  end
-  local ctx = lir.get_context()
-  local path = Path:new(ctx.dir .. name)
-  if path:exists() then
-    dm.notify('Lir', { 'File already exists', tostring(path) }, 3)
-    cursor_jump(name)
-    return
-  end
-  path:touch()
-  actions.reload()
-  vim.schedule(function()
-    cursor_jump(name)
+  vim.ui.input({
+    prompt = 'Create file: ',
+  }, function(name)
+    if not name or name == '' then
+      return
+    end
+    local ctx = lir.get_context()
+    local path = Path:new(ctx.dir .. name)
+    if path:exists() then
+      dm.notify('Lir', { 'File already exists', tostring(path) }, 3)
+      cursor_jump(name)
+      return
+    end
+    path:touch()
+    actions.reload()
+    vim.schedule(function()
+      cursor_jump(name)
+    end)
   end)
 end
 
