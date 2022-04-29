@@ -80,20 +80,9 @@ keymap.set('n', '<leader>w', '<Cmd>silent update<CR>')
 keymap.set('n', '<leader>q', '<Cmd>silent xit<CR>')
 keymap.set('n', '<leader>Q', '<Cmd>xall<CR>')
 
--- Rationale: {{{
---
--- In the terminal, `<Tab>` and `<C-i>` is seen as the same thing by Vim. To
--- avoid collision between the two keys, we will map any unused key (`<F6>`)
--- to `<C-i>` and program the terminal to send `<F6>` on `<C-i>`.
---
--- This will allow us to use `<Tab>` for toggling folds.
---
--- For kitty, it is configured in `~/.config/kitty/kitty.conf`.
--- For Terminal and iTerm2, it is configured via Karabiner-elements.
--- }}}
-keymap.set('n', '<F6>', '<C-i>')
-
 -- Toggle fold at current position.
+---@see https://github.com/neovim/neovim/issues/14090#issuecomment-1113090354
+keymap.set('n', '<C-i>', '<C-i>')
 keymap.set('n', '<Tab>', 'za')
 
 -- Easy way to do `:make`
