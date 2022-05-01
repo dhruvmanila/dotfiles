@@ -170,7 +170,9 @@ local function set_python_version()
     args = { '--version' },
     ---@param result JobResult
     on_exit = function(result)
-      vim.g.current_python_version = result.stdout:gsub('\n', '')
+      vim.g.current_python_version = result.stdout
+        :gsub('\r\n', '')
+        :gsub('\n', '')
     end,
   }
 end
