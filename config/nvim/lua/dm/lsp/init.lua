@@ -46,19 +46,19 @@ end
 ---@param client table
 ---@param bufnr number
 local function on_attach(client, bufnr)
-  local capabilities = client.resolved_capabilities
+  local capabilities = client.server_capabilities
 
   -- LSP augroup id.
   local id = vim.api.nvim_create_augroup('dm__lsp', { clear = true })
 
-  if capabilities.hover then
+  if capabilities.hoverProvider then
     keymap.set('n', 'K', lsp.buf.hover, {
       buffer = bufnr,
       desc = 'LSP: Hover',
     })
   end
 
-  if capabilities.goto_definition then
+  if capabilities.definitionProvider then
     keymap.set('n', 'gd', lsp.buf.definition, {
       buffer = bufnr,
       desc = 'LSP: Goto definition',
@@ -69,7 +69,7 @@ local function on_attach(client, bufnr)
     })
   end
 
-  if capabilities.declaration then
+  if capabilities.declarationProvider then
     keymap.set('n', 'gD', lsp.buf.declaration, {
       buffer = bufnr,
       desc = 'LSP: Goto declaration',
@@ -80,7 +80,7 @@ local function on_attach(client, bufnr)
     })
   end
 
-  if capabilities.type_definition then
+  if capabilities.typeDefinitionProvider then
     keymap.set('n', 'gy', lsp.buf.type_definition, {
       buffer = bufnr,
       desc = 'LSP: Goto type definition',
@@ -91,7 +91,7 @@ local function on_attach(client, bufnr)
     })
   end
 
-  if capabilities.implementation then
+  if capabilities.implementationProvider then
     keymap.set('n', 'gi', lsp.buf.implementation, {
       buffer = bufnr,
       desc = 'LSP: Goto implementation',
@@ -102,21 +102,21 @@ local function on_attach(client, bufnr)
     })
   end
 
-  if capabilities.find_references then
+  if capabilities.referencesProvider then
     keymap.set('n', 'gr', lsp.buf.references, {
       buffer = bufnr,
       desc = 'LSP: Goto references',
     })
   end
 
-  if capabilities.rename then
+  if capabilities.renameProvider then
     keymap.set('n', '<leader>rn', lsp.buf.rename, {
       buffer = bufnr,
       desc = 'LSP: Rename',
     })
   end
 
-  if capabilities.signature_help then
+  if capabilities.signatureHelpProvider then
     keymap.set('n', '<C-s>', lsp.buf.signature_help, {
       buffer = bufnr,
       desc = 'LSP: Signature help',
@@ -124,7 +124,7 @@ local function on_attach(client, bufnr)
   end
 
   -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
-  if capabilities.document_highlight then
+  if capabilities.documentHighlightProvider then
     vim.api.nvim_create_autocmd('CursorHold', {
       group = id,
       buffer = bufnr,
@@ -139,7 +139,7 @@ local function on_attach(client, bufnr)
     })
   end
 
-  if capabilities.code_action then
+  if capabilities.codeActionProvider then
     vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
       group = id,
       buffer = bufnr,
@@ -157,7 +157,7 @@ local function on_attach(client, bufnr)
     })
   end
 
-  if capabilities.code_lens then
+  if capabilities.codeLensProvider then
     vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
       group = id,
       buffer = bufnr,
