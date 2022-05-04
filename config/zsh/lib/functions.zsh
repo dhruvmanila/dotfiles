@@ -134,6 +134,26 @@ py-activate-venv() { # {{{1
   fi
 }
 
+py-cleanup() { # {{{1
+  # Remove all the cache files generated for a Python project.
+  if ! (( $+commands[fd] )) {
+    echo "$0: 'fd' command not found"
+    return 1
+  }
+  for pattern in "pytest_cache" "mypy_cache" "__pycache__"; do
+    echo "==> removing '$pattern'"
+    # TODO: Update once this commit is in the release version
+    # https://github.com/sharkdp/fd/commit/0aee9b0fd950fbe4862f92e1445966a995ca06ee
+    fd \
+      --hidden \
+      --no-ignore \
+      --type="directory" \
+      --exclude="*venv" \
+      "$pattern" \
+      --exec bash -c 'echo "    {}"; rm -rf {}'
+  done
+}
+
 py-make-venv() { # {{{1
   # Create/rename a Python virtual environment in the current directory.
   #
