@@ -52,10 +52,10 @@ g.border_style = 'edge'
 g.os = vim.loop.os_uname().sysname
 
 -- Shell command used to open URL, files, etc.
----@type "'open'"|"'xdg-open'"
+---@type "'open'"|"'xdg-open'"|"'start'"
 g.open_command = (g.os == 'Darwin' and 'open')
   or (g.os == 'Linux' and 'xdg-open')
-  or nil
+  or (g.os == 'Windows_NT' and 'start')
 
 require 'dm.globals' -- Global functions and variables
 require 'dm.plugins' -- Plugin configuration
