@@ -127,6 +127,6 @@ fi
 # Default to using Finder for trash.
 alias trash='trash -F'
 
-# youtube-dl {{{1
+# yt-dlp {{{1
 
-alias yt='youtube-dl'
+alias yt='yt-dlp'

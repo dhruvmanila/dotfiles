@@ -12,7 +12,9 @@
 # Output format:
 # Also acts as a way to specify a default download location
 # https://github.com/ytdl-org/youtube-dl#output-template
---output '~/Downloads/youtube-dl/%(title)s.%(ext)s'
+--output '~/Downloads/youtube/%(title)s.%(ext)s'
 
 # Restrict filenames to only ASCII characters, and avoid "&" and spaces in filenames
 --restrict-filenames
+
+# vim: ft=conf
