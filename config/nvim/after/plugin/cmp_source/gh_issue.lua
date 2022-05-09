@@ -20,7 +20,7 @@ end
 ---@return boolean
 function source:is_available()
   return vim.bo.filetype == 'gitcommit'
-    and not vim.loop.cwd():find('thoucentric', 1, true) -- uses Azure
+    and not vim.loop.cwd():lower():find('thoucentric', 1, true) -- uses Azure DevOps
 end
 
 -- Return a list of characters which will trigger the source completion.

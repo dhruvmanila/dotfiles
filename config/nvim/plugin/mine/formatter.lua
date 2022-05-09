@@ -32,7 +32,7 @@ end
 ---@param ... string
 ---@return boolean
 local function ignore_projects(...)
-  local cwd = vim.loop.cwd()
+  local cwd = vim.loop.cwd():lower()
   for i = 1, select('#', ...) do
     if cwd:find(select(i, ...), 1, true) then
       return true
@@ -51,6 +51,6 @@ vim.api.nvim_create_user_command('Format', format, {})
 vim.keymap.set('n', ';f', '<Cmd>Format<CR>')
 
 -- Auto formatting is ON except for some projects.
-if not ignore_projects('infogami', 'openlibrary', 'thoucentric') then
+if not ignore_projects 'thoucentric' then
   toggle_auto_formatting()
 end
