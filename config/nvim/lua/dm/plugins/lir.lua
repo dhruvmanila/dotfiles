@@ -5,7 +5,8 @@ local mark_actions = require 'lir.mark.actions'
 
 local Path = require 'plenary.path'
 
--- Helper function to jump the cursor to the given name (file/directory)
+-- Helper function to jump the cursor to the given entry (file/directory)
+-- in the Lir buffer.
 ---@param name string
 local function cursor_jump(name)
   local lnum = lir.get_context():indexof(name)
@@ -59,7 +60,6 @@ end
 local clipboard_actions = setmetatable({}, {
   __index = function(_, action)
     return function(mode)
-      mode = mode or 'n'
       mark_actions.mark(mode)
       require('lir.clipboard.actions')[action]()
     end
@@ -158,14 +158,14 @@ lir.setup {
       clipboard_actions.copy 'v'
     end, {
       buffer = true,
-      silent = true,
+      desc = 'Lir: Copy visual selection',
     })
 
     vim.keymap.set('x', 'X', function()
       clipboard_actions.cut 'v'
     end, {
       buffer = true,
-      silent = true,
+      desc = 'Lir: Cut visual selection',
     })
   end,
 }
