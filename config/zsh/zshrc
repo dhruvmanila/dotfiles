@@ -454,7 +454,7 @@ _python_auto_venv() { # {{{2
   if ! typeset -f deactivate &> /dev/null; then
     # This function is defined in `./lib/functions.zsh` so that it can be used
     # from the command-line if needed.
-    py-activate-venv
+    py-venv-activate
   elif [[ -n "$VIRTUAL_ENV" ]]; then
     # Why '/' ? {{{
     #
@@ -474,7 +474,7 @@ _python_auto_venv() { # {{{2
       # If we're changing a directory containing a virtual environment to
       # another directory with a virtual environment, then we should deactivate
       # the first one and activate the current one.
-      py-activate-venv
+      py-venv-activate
     fi
   fi
 }

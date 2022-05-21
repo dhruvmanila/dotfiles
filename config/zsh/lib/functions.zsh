@@ -119,19 +119,42 @@ pip-upgrade() { # {{{1
     | xargs python -m pip install --upgrade
 }
 
-py-activate-venv() { # {{{1
-  # Activate the Python virtual environment. This is mainly used for the
-  # `_python_auto_venv` hook, but is defined here to be used from the
-  # command-line if needed.
-  local project_root="$PWD"
-  # Check for the `.venv` directory by climbing up the path until we find it
-  # or we reach the root directory.
-  while [[ "$project_root" != "/" && ! -e "$project_root/.venv" ]]; do
-    project_root="${project_root:h}"
-  done
-  if [[ -e "$project_root/.venv/bin/activate" ]]; then
-    source "$project_root/.venv/bin/activate"
-  fi
+py-venv-activate() { # {{{1
+  # Activate the Python virtual environment built using the `pyvenv` command.
+  #
+  # This is used for the `_python_auto_venv` hook, but can be used from the
+  # command-line as well. If the name of the environment is not provided, the
+  # tail part of the current working directory will be used.
+  #
+  # The activation part cannot be a script as that is executed in a subshell
+  # and so the `source` part will also be executed in the subshell instead of
+  # the current shell.
+  PYVENV_DIR="$HOME/Library/Application Support/pyvenv"
+  case "$2" in
+    -h | --help)
+      echo "Usage: $0 $1 [<name>]"
+      ;;
+    "")
+      PROJECT_ROOT="$PWD"
+      VENV_NAME="${PROJECT_ROOT:t}"
+      while [[ ! -d "$PYVENV_DIR/$VENV_NAME" && "$PROJECT_ROOT" != "/" ]]; do
+        PROJECT_ROOT="${PROJECT_ROOT:h}"
+        VENV_NAME="${PROJECT_ROOT:t}"
+      done
+      # No environment exists in the current path.
+      if [[ "$PROJECT_ROOT" == "/" ]]; then
+        return
+      fi
+      ;&
+    *)
+      VENV_NAME="${VENV_NAME:-$2}"
+      VENV_DIR="$PYVENV_DIR/$VENV_NAME"
+      if [[ ! -d "$VENV_DIR" ]]; then
+        return
+      fi
+      source "$VENV_DIR/bin/activate"
+      ;;
+  esac
 }
 
 py-cleanup() { # {{{1
