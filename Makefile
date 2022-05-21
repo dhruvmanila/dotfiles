@@ -8,3 +8,8 @@ $(BIN_DIR)/$(BIN): $(SH_FILES) src/bashly.yml
 	BASHLY_TARGET_DIR=$(BIN_DIR) bashly generate
 	bashly add comp script $(BASH_COMPLETION) --force
 	shfmt -w -i 2 -bn -ci -sr $(BIN_DIR)/$(BIN)
+
+.PHONY: docker
+docker:
+	docker build --tag dhruvmanila/dotfiles:latest .
+	docker push dhruvmanila/dotfiles:latest
