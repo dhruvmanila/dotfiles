@@ -4,9 +4,9 @@
 # command in a manner similar to `pyenv`.
 
 set -e
-[[ -n "$PYENV_DEBUG" ]] && set -x
+[[ -n "$PYENV_TRACE" ]] && set -x
 
-version="v0.5.1"
+version="v0.6.0"
 
 : "${CMD:=$(basename "$0")}"
 : "${PYENV_ROOT:="$HOME/.pyenv"}"
@@ -17,8 +17,14 @@ if [[ ! -d "$PYENV_ROOT" ]]; then
   touch "$PYENV_ROOT/version"
 fi
 
+function debug() {
+  if [[ -n "$PYENV_DEBUG" ]]; then
+    echo "==> $1"
+  fi
+}
+
 function usage() {
-  echo "$CMD - Personal tool for managing multiple Python versions"
+  echo "Personal tool for managing multiple Python versions"
   echo ""
   echo "Usage:"
   echo "  $CMD [command]"
@@ -33,6 +39,10 @@ function usage() {
   echo "  link         link all available Python versions to '$HOME/.local/bin'"
   echo "  root         display root directory where versions are kept"
 }
+
+debug "$CMD version: $version"
+debug "PYENV_ROOT: $PYENV_ROOT"
+debug "PYTHON_BUILD_CACHE_PATH: $PYTHON_BUILD_CACHE_PATH"
 
 case "$1" in
   --version | -v)
@@ -53,12 +63,14 @@ case "$1" in
         ;;
       *)
         PREFIX="$PYENV_ROOT/versions/$2"
+        debug "$1: $PREFIX"
         if [[ ! -d "$PREFIX" ]]; then
           echo "$CMD: version '$2' not installed"
           exit 1
         fi
         # Remove the old link, if it exists.
         if [[ -L "$PYENV_ROOT/bin" ]]; then
+          debug "$1: removing $PYENV_ROOT/bin"
           rm "$PYENV_ROOT/bin"
         fi
         echo "$CMD: $PYENV_ROOT/bin -> $PREFIX/bin"
@@ -86,9 +98,15 @@ case "$1" in
       shift
     done
 
+    debug "$1: OPTIONS: ${OPTIONS[*]}"
+    debug "$1: ARGUMENTS: ${ARGUMENTS[*]}"
+
     PREFIX_EXISTS=0
     cleanup() {
-      ((PREFIX_EXISTS)) && rm -rf "$PREFIX"
+      if ((PREFIX_EXISTS)); then
+        debug "install: cleanup: $PREFIX"
+        rm -rf "$PREFIX"
+      fi
     }
     trap cleanup SIGINT
 
@@ -139,6 +157,7 @@ case "$1" in
       *)
         DEFINITION="$2"
         PREFIX="$PYENV_ROOT/versions/$DEFINITION"
+        debug "$1: $PREFIX"
         if [[ ! -d "$PREFIX" ]]; then
           echo "$CMD: version '$DEFINITION' not installed"
           exit 1
@@ -151,8 +170,10 @@ case "$1" in
         read -rp "$CMD: Continue? [y/n] "
         case "$REPLY" in
           y | Y)
+            debug "$1: remove $PREFIX"
             rm -rf "$PREFIX"
             if [[ -L "$SYMLINK" ]]; then
+              debug "$1: remove $SYMLINK"
               rm "$SYMLINK"
             fi
             echo "$CMD: $DEFINITION uninstalled"
