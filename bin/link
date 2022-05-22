@@ -6,9 +6,9 @@ import sys
 from pathlib import Path
 
 if (dotfiles := os.getenv("DOTFILES")) is not None:
-    CONFIG_DIR = Path(dotfiles) / "config"
+    CONFIG_DIR = Path(dotfiles).expanduser() / "config"
 else:
-    CONFIG_DIR = Path("~/dotfiles/config")
+    CONFIG_DIR = Path.home() / "dotfiles" / "config"
 
 REQUIRED_DIRECTORIES = [
     "~/.config/gh",
@@ -71,7 +71,7 @@ SYMLINKS: dict[str, dict[str, str]] = {
 def create_required_directories() -> None:
     """Create all the required directories."""
     for dirpath in REQUIRED_DIRECTORIES:
-        dir = Path(dirpath)
+        dir = Path(dirpath).expanduser()
         if not dir.exists():
             print(f"==> mkdir: {dir}")
             dir.mkdir(parents=True)
@@ -85,7 +85,7 @@ def create_symlinks(links: dict[str, str]) -> None:
     either the `DOTFILES` environment variable suffixed with `config` or `~/dotfiles/config`.
     """
     for linkpath, target in links.items():
-        link = Path(linkpath)
+        link = Path(linkpath).expanduser()
         if not link.is_symlink():
             print(f"==> {link} -> {target}")
             link.symlink_to(CONFIG_DIR / target)
