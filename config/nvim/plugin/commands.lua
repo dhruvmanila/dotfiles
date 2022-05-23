@@ -81,17 +81,6 @@ end, {
   desc = 'Print information for given client id, or all clients if none given',
 })
 
--- LspLog {{{1
-
--- Do NOT define the command as plain string because the module `vim.lsp` is
--- expensive to load on startup.
-
-nvim_create_user_command('LspLog', function()
-  vim.cmd('botright split | resize 20 | edit + ' .. vim.lsp.get_log_path())
-end, {
-  desc = 'Open logs for the builtin LSP client',
-})
-
 -- Term / Vterm / Tterm {{{1
 
 nvim_create_user_command('Term', 'new | wincmd J | resize -5 | term', {
