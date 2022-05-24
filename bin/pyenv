@@ -6,22 +6,31 @@
 set -e
 [[ -n "$PYENV_TRACE" ]] && set -x
 
-version="v0.6.0"
+version="v0.7.0"
 
 : "${CMD:=$(basename "$0")}"
 : "${PYENV_ROOT:="$HOME/.pyenv"}"
+: "${PYTHON_BUILD_PREFIX:="/usr/local"}"
 : "${PYTHON_BUILD_CACHE_PATH:="$PYENV_ROOT/cache"}"
 
-if [[ ! -d "$PYENV_ROOT" ]]; then
-  mkdir -p "$PYENV_ROOT/"{versions,cache}
-  touch "$PYENV_ROOT/version"
-fi
+PYTHON_BUILD_BIN="$PYTHON_BUILD_PREFIX/bin/python-build"
 
 function debug() {
   if [[ -n "$PYENV_DEBUG" ]]; then
     echo "==> $1"
   fi
 }
+
+debug "$CMD version: $version"
+debug "PYENV_ROOT: $PYENV_ROOT"
+debug "PYTHON_BUILD_PREFIX: $PYTHON_BUILD_PREFIX"
+debug "PYTHON_BUILD_BIN: $PYTHON_BUILD_BIN"
+debug "PYTHON_BUILD_CACHE_PATH: $PYTHON_BUILD_CACHE_PATH"
+
+if [[ ! -d "$PYENV_ROOT" ]]; then
+  mkdir -p "$PYENV_ROOT/"{versions,cache}
+  touch "$PYENV_ROOT/version"
+fi
 
 function usage() {
   echo "Personal tool for managing multiple Python versions"
@@ -40,9 +49,22 @@ function usage() {
   echo "  root         display root directory where versions are kept"
 }
 
-debug "$CMD version: $version"
-debug "PYENV_ROOT: $PYENV_ROOT"
-debug "PYTHON_BUILD_CACHE_PATH: $PYTHON_BUILD_CACHE_PATH"
+# Install/Update the `python-build` command under $PREFIX (default: /use/local)
+#
+# $1 (string): 'install' or 'update'
+function python-build() {
+  case "$1" in
+    install)
+      echo "$CMD: Installing 'python-build'..."
+      git -C "$PYENV_ROOT" clone https://github.com/pyenv/pyenv
+      ;;
+    update)
+      echo "$CMD: Updating 'python-build'..."
+      git -C "$PYENV_ROOT/pyenv" pull
+      ;;
+  esac
+  "$PYENV_ROOT"/pyenv/plugins/python-build/install.sh
+}
 
 case "$1" in
   --version | -v)
@@ -81,9 +103,8 @@ case "$1" in
     ;;
 
   install)
-    if ! command -v "python-build" > /dev/null; then
-      echo "$CMD: 'python-build' command not found"
-      exit 1
+    if [[ ! -x "$PYTHON_BUILD_BIN" ]]; then
+      python-build "install"
     fi
 
     shift
@@ -114,7 +135,7 @@ case "$1" in
     case "${#ARGUMENTS[@]}" in
       0)
         PYTHON_BUILD_CACHE_PATH="$PYTHON_BUILD_CACHE_PATH" \
-          python-build "${OPTIONS[@]}" || STATUS=$?
+          $PYTHON_BUILD_BIN "${OPTIONS[@]}" || STATUS=$?
         ;;
       1)
         DEFINITION="${ARGUMENTS[0]}"
@@ -131,7 +152,7 @@ case "$1" in
         fi
 
         PYTHON_BUILD_CACHE_PATH="$PYTHON_BUILD_CACHE_PATH" \
-          python-build "${OPTIONS[@]}" "$DEFINITION" "$PREFIX" || STATUS=$?
+          $PYTHON_BUILD_BIN "${OPTIONS[@]}" "$DEFINITION" "$PREFIX" || STATUS=$?
         ;;
       *)
         echo "$CMD: invalid arguments: ${ARGUMENTS[*]}"
@@ -225,6 +246,10 @@ case "$1" in
         exit 1
         ;;
     esac
+    ;;
+
+  update-deps)
+    python-build "update"
     ;;
 
   root)
