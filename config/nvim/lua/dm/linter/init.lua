@@ -93,37 +93,6 @@ do
   local severity_map = {
     error = vim.diagnostic.severity.ERROR,
     warning = vim.diagnostic.severity.WARN,
-    note = vim.diagnostic.severity.INFO,
-    style = vim.diagnostic.severity.HINT,
-  }
-
-  register('sh', {
-    cmd = 'shellcheck',
-    args = { '--format', 'json', '-' },
-    ignore_exitcode = true,
-    parser = function(output)
-      local diagnostics = {}
-      for _, item in ipairs(vim.json.decode(output)) do
-        table.insert(diagnostics, {
-          source = 'shellcheck',
-          lnum = item.line - 1,
-          end_lnum = item.endLine - 1,
-          col = item.column - 1,
-          end_col = item.endColumn - 1,
-          severity = severity_map[item.level],
-          code = item.code,
-          message = item.message,
-        })
-      end
-      return diagnostics
-    end,
-  })
-end
-
-do
-  local severity_map = {
-    error = vim.diagnostic.severity.ERROR,
-    warning = vim.diagnostic.severity.WARN,
     info = vim.diagnostic.severity.INFO,
     style = vim.diagnostic.severity.HINT,
   }
