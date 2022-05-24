@@ -14,7 +14,8 @@ case $state in
       'uninstall[uninstall a specific Python version]' \
       'versions[list all the installed Python versions]' \
       'link[link all available Python versions]' \
-      'root[display root directory where versions are kept]'
+      'root[display root directory where versions are kept]' \
+      'update-deps[update dependencies]'
     ;;
   args)
     case $words[2] in
