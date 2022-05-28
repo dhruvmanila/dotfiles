@@ -1,101 +1,86 @@
-#!/usr/bin/env python3
-from __future__ import annotations
+#!/bin/bash
 
-import os
-import sys
-from pathlib import Path
+: "${DOTFILES:="$HOME/dotfiles"}"
 
-if (dotfiles := os.getenv("DOTFILES")) is not None:
-    CONFIG_DIR = Path(dotfiles).expanduser() / "config"
-else:
-    CONFIG_DIR = Path.home() / "dotfiles" / "config"
+case "$1" in
+  -f | --force)
+    FORCE=1
+    ;;
+esac
 
-REQUIRED_DIRECTORIES = [
-    "~/.config/gh",
-    "~/.gnupg",
-    "~/.ipython/profile_default",
-    "~/.jupyter/lab",
-    "~/.ssh",
-    "~/contributing",
-    "~/git",
-    "~/neovim",
-    "~/playground",
-    "~/projects",
-    "~/work",
-]
+REQUIRED_DIRECTORIES=(
+  ~/.config/gh
+  ~/.gnupg
+  ~/.ipython/profile_default
+  ~/.jupyter/lab
+  ~/.ssh
+  ~/contributing
+  ~/git
+  ~/neovim
+  ~/playground
+  ~/projects
+  ~/work
+)
 
-SYMLINKS: dict[str, dict[str, str]] = {
-    "common": {
-        "~/.editorconfig": ".editorconfig",
-        "~/.bash_profile": "bash/bash_profile",
-        "~/.bashrc": "bash/bashrc",
-        "~/.config/bat": "bat",
-        "~/.config/bpytop": "bpytop",
-        "~/.config/gh/config.yml": "gh/config.yml",
-        "~/.gitconfig": "git/config",
-        "~/.gitmessage": "git/message",
-        "~/.gnupg/gpg-agent.conf": "gpg/gpg-agent.conf",
-        "~/.gnupg/gpg.conf": "gpg/gpg.conf",
-        "~/.config/grip": "grip",
-        "~/.config/himalaya": "himalaya",
-        "~/.config/htop": "htop",
-        "~/.inputrc": "inputrc",
-        "~/.ipython/profile_default/ipython_config.py": "ipython/ipython_config.py",
-        "~/.ipython/profile_default/startup": "ipython/startup",
-        "~/.jupyter/jupyter_lab_config.py": "jupyter/jupyter_lab_config.py",
-        "~/.jupyter/jupyter_notebook_config.py": "jupyter/jupyter_notebook_config.py",
-        "~/.jupyter/lab/user-settings": "jupyter/lab/user-settings",
-        "~/.config/kitty": "kitty",
-        "~/.config/nvim": "nvim",
-        "~/.config/pip": "pip",
-        "~/.ssh/config": "ssh/config",
-        "~/.config/starship.toml": "startship.toml",
-        "~/.tmux.conf": "tmux/tmux.conf",
-        "~/.vim": "vim",
-        "~/.vimrc": "vim/vimrc",
-        "~/.config/youtube-dl": "youtube-dl",
-        "~/.zshenv": "zsh/zshenv",
-        "~/.zshrc": "zsh/zshrc",
-    },
-    "macos": {
-        "~/Library/Application Support/bottom": "bottom",
-        "~/Library/Preferences/glow": "glow",
-        "~/.hammerspoon": "hammerspoon",
-        "~/.config/karabiner": "karabiner",
-        "~/Library/Application Support/pypoetry": "pypoetry",
-    },
-    "linux": {},
+for directory in "${REQUIRED_DIRECTORIES[@]}"; do
+  if ! [[ -d $directory ]]; then
+    mkdir -p "$directory"
+    echo "==> Created $directory"
+  fi
+done
+
+link() {
+  local source_file="${DOTFILES}/config/${1}"
+  local target_file="${HOME}/${2}"
+  if ((FORCE)) || ! [[ -e "$target_file" ]]; then
+    echo "==> $target_file -> $source_file"
+    ln -fs "$source_file" "$target_file"
+  fi
 }
 
+case "$OSTYPE" in
+  darwin*)
+    link "bottom" "Library/Application Support/bottom"
+    link "glow" "Library/Preferences/glow"
+    link "hammerspoon" ".hammerspoon"
+    link "karabiner" ".config/karabiner"
+    link "pypoetry" "Library/Application Support/pypoetry"
+    ;;
+  linux*) ;;
+  *)
+    echo "$0: unsupported OS: $OSTYPE"
+    exit 1
+    ;;
+esac
 
-def create_required_directories() -> None:
-    """Create all the required directories."""
-    for dirpath in REQUIRED_DIRECTORIES:
-        dir = Path(dirpath).expanduser()
-        if not dir.exists():
-            print(f"==> mkdir: {dir}")
-            dir.mkdir(parents=True)
-
-
-def create_symlinks(links: dict[str, str]) -> None:
-    """Create all the symlinks using the given mapping where the key is the symlink
-    path and value is the target.
-
-    The target path should be relative to the dotfiles config directory which is
-    either the `DOTFILES` environment variable suffixed with `config` or `~/dotfiles/config`.
-    """
-    for linkpath, target in links.items():
-        link = Path(linkpath).expanduser()
-        if not link.is_symlink():
-            print(f"==> {link} -> {target}")
-            link.symlink_to(CONFIG_DIR / target)
-
-
-if __name__ == "__main__":
-    create_required_directories()
-
-    create_symlinks(SYMLINKS["common"])
-    if sys.platform == "darwin":
-        create_symlinks(SYMLINKS["macos"])
-    elif sys.platform == "linux":
-        create_symlinks(SYMLINKS["linux"])
+# Common symlinks
+link ".editorconfig" ".editorconfig"
+link "bash/bash_profile" ".bash_profile"
+link "bash/bashrc" ".bashrc"
+link "bat" ".config/bat"
+link "bpytop" ".config/bpytop"
+link "gh/config.yml" ".config/gh/config.yml"
+link "git/config" ".gitconfig"
+link "git/message" ".gitmessage"
+link "gpg/gpg-agent.conf" ".gnupg/gpg-agent.conf"
+link "gpg/gpg.conf" ".gnupg/gpg.conf"
+link "grip" ".config/grip"
+link "himalaya" ".config/himalaya"
+link "htop" ".config/htop"
+link "inputrc" ".inputrc"
+link "ipython/ipython_config.py" ".ipython/profile_default/ipython_config.py"
+link "ipython/startup" ".ipython/profile_default/startup"
+link "jupyter/jupyter_lab_config.py" ".jupyter/jupyter_lab_config.py"
+link "jupyter/jupyter_notebook_config.py" ".jupyter/jupyter_notebook_config.py"
+link "jupyter/lab/user-settings" ".jupyter/lab/user-settings"
+link "kitty" ".config/kitty"
+link "nvim" ".config/nvim"
+link "pip" ".config/pip"
+link "ssh/config" ".ssh/config"
+link "startship.toml" ".config/starship.toml"
+link "tmux/tmux.conf" ".tmux.conf"
+link "vim" ".vim"
+link "vim/vimrc" ".vimrc"
+link "youtube-dl" ".config/youtube-dl"
+link "zsh/zshenv" ".zshenv"
+link "zsh/zshrc" ".zshrc"
