@@ -106,47 +106,53 @@ cdpath=(
 
 # path {{{2
 
-if [[ -x /usr/local/bin/brew ]]; then
-  # Add this installation of Homebrew to PATH, MANPATH and INFOPATH. Also, export
-  # some HOMEBREW* variables to avoid querying them multiple times.
-  eval "$(/usr/local/bin/brew shellenv)"
+case "$OSTYPE" in
+  darwin*)
+    [[ -x "/usr/local/bin/brew" ]] && \
+      eval "$(/usr/local/bin/brew shellenv)"
 
-  path=(
-    # MacOS ships with an older version of Ruby, so replace the system ruby with
-    # an updated one from Homebrew.
-    "$HOMEBREW_PREFIX"/lib/ruby/gems/*/bin
+    path=(
+      # MacOS ships with an older version of Ruby, so replace the system ruby with
+      # an updated one from Homebrew.
+      "$HOMEBREW_PREFIX"/lib/ruby/gems/*/bin(N-/)
 
-    # Brew installed packages which are not symlinked into /usr/local because a
-    # similar software is already provided by the system.
-    #
-    # In other words, these are keg-only and if we want to use the binaries from
-    # these packages, their bin directory needs to be added first in the PATH.
-    "$HOMEBREW_PREFIX"/opt/{ruby,sqlite,llvm}/bin
+      # Brew installed packages which are not symlinked into /usr/local because a
+      # similar software is already provided by the system.
+      #
+      # In other words, these are keg-only and if we want to use the binaries from
+      # these packages, their bin directory needs to be added first in the PATH.
+      "$HOMEBREW_PREFIX"/opt/{ruby,sqlite,llvm}/bin(N-/)
 
-    # GNU packages.
-    "$HOMEBREW_PREFIX"/opt/make/libexec/gnubin
+      # GNU packages.
+      "$HOMEBREW_PREFIX"/opt/make/libexec/gnubin(N-/)
 
-    $path
-  )
-fi
+      $path
+    )
+    ;;
+
+  linux*)
+    [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && \
+      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    ;;
+esac
 
 path=(
   # Global Python version bin directory.
-  "$PYENV_ROOT/bin"
+  "$PYENV_ROOT/bin"(N-/)
 
   # Local build of Neovim nightly.
-  "$HOME/neovim/bin"
+  "$HOME/neovim/bin"(N-/)
 
   # Language specific bin directory.
-  "$CARGO_HOME/bin"
-  "$GOPATH/bin"
+  "$CARGO_HOME/bin"(N-/)
+  "$GOPATH/bin"(N-/)
 
   # Local scripts and `pipx` installed executables.
-  "$HOME/.local/bin"
+  "$HOME/.local/bin"(N-/)
 
   # Luarocks bin directory for Lua 5.1. This is the version used by Neovim, so
   # we will be installing the packages for that version only.
-  "$HOME/.luarocks/bin"
+  "$HOME/.luarocks/bin"(N-/)
 
   $path
 )
