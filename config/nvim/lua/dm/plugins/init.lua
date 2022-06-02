@@ -132,7 +132,18 @@ packer.startup {
 
     -- Utilities
     use 'airblade/vim-rooter'
-    use 'editorconfig/editorconfig-vim'
+
+    use {
+      'editorconfig/editorconfig-vim',
+      config = function()
+        vim.g.EditorConfig_exclude_patterns = { 'fugitive://.*', 'scp://.*' }
+        vim.g.EditorConfig_max_line_indicator = 'none'
+        vim.g.EditorConfig_preserve_formatoptions = 1
+        vim.g.EditorConfig_exec_path = 'editorconfig'
+        vim.g.EditorConfig_core_mode = 'external_command'
+      end,
+    }
+
     use 'itchyny/vim-external'
     use 'junegunn/vim-easy-align'
     use 'lambdalisue/vim-protocol'
