@@ -31,3 +31,6 @@ indent_style = tab
 [*/cs50/**{.c,.html,.css,.js}]
 indent_size = 4
 indent_style = space
+
+[**OneDrive-Thoucentric/workspace/**.py]
+trim_trailing_whitespace = false
