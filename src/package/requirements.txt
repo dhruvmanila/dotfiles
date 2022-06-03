@@ -16,4 +16,5 @@ pre-commit
 pyupgrade
 remove-print-statements
 speedtest-cli
+sqlparse
 visidata

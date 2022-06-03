@@ -10,6 +10,8 @@ tap "mongodb/brew"
 tap "romkatv/gitstatus"
 # Static checker for GitHub Actions workflow files
 brew "actionlint"
+# Tool for generating GNU Standards-compliant Makefiles
+brew "automake"
 # Command-line interface for SQLite
 brew "sqlite"
 # General-purpose data compression with high compression ratio
@@ -96,6 +98,8 @@ brew "jq"
 brew "keychain"
 # Pager program similar to more
 brew "less"
+# LLVM's OpenMP runtime library
+brew "libomp"
 # Framework for layout and rendering of i18n text
 brew "pango"
 # Next-gen compiler infrastructure
@@ -136,6 +140,8 @@ brew "pass"
 brew "pinentry-mac"
 # Object-relational database system
 brew "postgresql"
+# Object-relational database system
+brew "postgresql@13"
 # Coreutils progress viewer
 brew "progress"
 # Persistent key-value database, with built-in net interface
@@ -196,13 +202,9 @@ cask "discord"
 cask "docker"
 # Draw.io is free online diagram software
 cask "drawio"
-# Web browser
-cask "firefox"
 cask "font-fira-code"
 # Typeface made for developers
 cask "font-jetbrains-mono"
-# Web browser
-cask "google-chrome"
 # Desktop automation application
 cask "hammerspoon"
 # Terminal emulator as alternative to Apple's Terminal app
@@ -211,6 +213,8 @@ cask "iterm2"
 cask "karabiner-elements"
 # GPU-based terminal emulator
 cask "kitty"
+# Provides updates to various Microsoft products
+cask "microsoft-auto-update"
 # Email client
 cask "microsoft-outlook"
 # Meet, chat, call, and collaborate in just one place
@@ -243,16 +247,11 @@ cask "visual-studio-code"
 cask "vlc"
 # Desktop client for WhatsApp
 cask "whatsapp"
-# Video communication and virtual meeting platform
-cask "zoom"
 mas "Azure VPN Client", id: 1553936137
-mas "Developer", id: 640199958
-mas "Focalboard", id: 1556908618
 mas "Hotspot Shield", id: 771076721
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
-mas "Pocket", id: 568494494
 mas "Speedtest", id: 1153157709
 mas "The Unarchiver", id: 425424353
 mas "Vimari", id: 1480933944
