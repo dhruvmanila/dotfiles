@@ -16,25 +16,6 @@ local HIDDEN_CURSOR = 'a:HiddenCursor/lCursor'
 -- Dashboard namespace
 local dashboard = {}
 
--- Dashboard buffer/window options
-dashboard.opts = {
-  bufhidden = 'wipe',
-  buflisted = false,
-  colorcolumn = '',
-  cursorcolumn = false,
-  cursorline = false,
-  foldcolumn = '0',
-  list = false,
-  modifiable = true,
-  number = false,
-  readonly = false,
-  relativenumber = false,
-  signcolumn = 'no',
-  spell = false,
-  swapfile = false,
-  wrap = false,
-}
-
 ---@class DashboardEntry
 ---@field key string keymap to trigger the `command`
 ---@field description string|fun():string oneline command description
@@ -165,24 +146,6 @@ local function center(lines)
   end, lines)
 end
 
----@alias OptionProcess
----|'"set"' # set the options using the `opts` table
----|'"save"' # save the option values for the given `opts` table
----@param opts table<string, any>
----@param process OptionProcess
-local function option_process(opts, process)
-  assert(process == 'save' or process == 'set', "Incorrect 'process' value")
-  for name, value in pairs(opts) do
-    if process == 'set' then
-      -- FIXME: Currently `opt_local` is broken in Neovim as it leaks
-      -- window options to other windows. It seems that `setlocal` is magical
-      vim.opt_local[name] = value
-    elseif process == 'save' then
-      dashboard.saved_opts[name] = vim.opt_local[name]:get()
-    end
-  end
-end
-
 -- Render the text on the buffer using the Text object.
 local function render_text()
   local text = Text:new()
@@ -260,15 +223,6 @@ local function setup_autocmds()
     pattern = '<buffer>',
     callback = cursor.show,
   })
-  -- TODO: This should not be needed once the options bug is fixed upstream
-  api.nvim_create_autocmd('BufWipeout', {
-    pattern = '<buffer>',
-    once = true,
-    callback = function()
-      option_process(dashboard.saved_opts, 'set')
-      dashboard.saved_opts = {}
-    end,
-  })
 end
 
 --- Open the dashboard buffer in the current buffer if it is empty or create
@@ -287,8 +241,6 @@ local function open(on_vimenter)
   -- If we are being called from a dashboard buffer, then we should not save
   -- the options as it will save the dashboard buffer specific options.
   if vim.bo.filetype ~= 'dashboard' then
-    dashboard.saved_opts = {}
-    option_process(dashboard.opts, 'save')
     dashboard.guicursor = vim.o.guicursor
   end
 
@@ -306,15 +258,27 @@ local function open(on_vimenter)
   end
 
   -- Set the dashboard buffer options
-  option_process(dashboard.opts, 'set')
+  api.nvim_set_option_value('bufhidden', 'wipe', { scope = 'local' })
+  api.nvim_set_option_value('buflisted', false, { scope = 'local' })
+  api.nvim_set_option_value('colorcolumn', '', { scope = 'local' })
+  api.nvim_set_option_value('cursorcolumn', false, { scope = 'local' })
+  api.nvim_set_option_value('cursorline', false, { scope = 'local' })
+  api.nvim_set_option_value('foldcolumn', '0', { scope = 'local' })
+  api.nvim_set_option_value('list', false, { scope = 'local' })
+  api.nvim_set_option_value('modifiable', true, { scope = 'local' })
+  api.nvim_set_option_value('number', false, { scope = 'local' })
+  api.nvim_set_option_value('readonly', false, { scope = 'local' })
+  api.nvim_set_option_value('relativenumber', false, { scope = 'local' })
+  api.nvim_set_option_value('signcolumn', 'no', { scope = 'local' })
+  api.nvim_set_option_value('spell', false, { scope = 'local' })
+  api.nvim_set_option_value('swapfile', false, { scope = 'local' })
+  api.nvim_set_option_value('wrap', false, { scope = 'local' })
 
   -- Render the text and lock the buffer
   render_text()
-  option_process({
-    modifiable = false,
-    modified = false,
-    filetype = 'dashboard',
-  }, 'set')
+  api.nvim_set_option_value('modifiable', false, { scope = 'local' })
+  api.nvim_set_option_value('modified', false, { scope = 'local' })
+  api.nvim_set_option_value('filetype', 'dashboard', { scope = 'local' })
 
   api.nvim_buf_set_name(0, '[Dashboard]')
   setup_mappings()
