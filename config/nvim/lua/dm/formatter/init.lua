@@ -32,7 +32,6 @@ register({ 'c', 'cpp' }, {
 register('go', {
   lsp = {
     format = true,
-    code_actions = { 'source.organizeImports' },
   },
 })
 

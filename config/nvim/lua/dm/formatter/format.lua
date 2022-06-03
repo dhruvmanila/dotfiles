@@ -7,10 +7,10 @@ local job = require 'dm.job'
 -- Types {{{
 
 ---@class Formatter
----@field enable? fun():boolean enable/disable the formatter, (default: enabled)
+---@field enable? fun(bufnr: number):boolean enable/disable the formatter, (default: enabled)
 ---@field cmd? string formatter command (default: nil)
----@field args? string[]|fun():string[] arguments to pass (default: nil)
----@field lsp? { format?: boolean, opts?: table, code_actions?: string[] }
+---@field args? string[]|fun(bufnr: number):string[] arguments to pass (default: nil)
+---@field lsp? { format?: boolean, opts?: table }
 
 ---@class Format
 ---@field bufnr number
@@ -57,7 +57,7 @@ end
 ---@param formatter Formatter
 function Format:run(formatter)
   local args = formatter.args
-  if type(args) == 'function' then
+  if args and type(args) == 'function' then
     args = args(self.bufnr)
   end
 
@@ -110,41 +110,6 @@ function Format:run_lsp(formatter)
   )
 end
 
--- Format:run_code_actions {{{1
-
--- Execute the provided code actions for all the LSP clients synchronously.
----@param code_actions string[]
-function Format:run_code_actions(code_actions)
-  local params = vim.lsp.util.make_range_params()
-  params.context = { only = code_actions }
-  local responses, err = vim.lsp.buf_request_sync(
-    self.bufnr,
-    'textDocument/codeAction',
-    params,
-    1000 -- timeout (ms)
-  )
-  if responses == nil then
-    return log.error(err)
-  end
-
-  local executed = false
-  for client_id, response in pairs(responses) do
-    if not vim.tbl_isempty(response) then
-      local action = response.result[1]
-      local client = vim.lsp.get_client_by_id(client_id)
-      if action.edit then
-        vim.lsp.util.apply_workspace_edit(action.edit, client.offset_encoding)
-        executed = true
-      end
-    end
-  end
-
-  if executed then
-    self:write()
-    self:update_state()
-  end
-end
-
 -- Format:step {{{1
 
 -- A helper function to bridge the gap between running multiple formatters
@@ -161,15 +126,11 @@ function Format:step()
   local formatter = table.remove(self.formatters, 1)
   -- By default, every formatter is on.
   if formatter.enable == nil or formatter.enable(self.bufnr) then
-    if formatter.cmd == nil then
-      if formatter.lsp.code_actions ~= nil then
-        self:run_code_actions(formatter.lsp.code_actions)
-      end
-      if formatter.lsp.format then
-        return self:run_lsp(formatter)
-      end
-    else
+    if formatter.cmd then
       return self:run(formatter)
+    else
+      assert(formatter.lsp.format, 'invalid formatter spec')
+      return self:run_lsp(formatter)
     end
   else
     return self:step()
@@ -202,17 +163,6 @@ function Format:write()
   format_write = false
 end
 
--- Format:update_state {{{1
-
--- Update the state of the format runner. This should be called only when the
--- buffer is updated by the LSP client, so that other formatters are aware of
--- the updated buffer.
-function Format:update_state()
-  self.changedtick = api.nvim_buf_get_changedtick(self.bufnr)
-  self.input = api.nvim_buf_get_lines(self.bufnr, 0, -1, false)
-  self.output = self.input
-end
-
 -- }}}1
 
 -- Register the formatters for the given filetypes.
@@ -233,13 +183,13 @@ function M.register(filetypes, formatters)
       if formatter.cmd and formatter.lsp.format then
         log.fmt_warn(
           'LSP client and external command cannot be used in the same formatter '
-            .. "spec in '%s'. Please separate them out.",
+            .. "spec for filetype '%s'. Please separate them out.",
           filetype
         )
       elseif not (formatter.cmd or formatter.lsp.format) then
         log.fmt_warn(
           'Please provide either an external command to run or enable formatting '
-            .. "through the LSP client. Both are disabled for '%s'.",
+            .. "through the LSP client. Both are disabled for filetype '%s'.",
           filetype
         )
       else
