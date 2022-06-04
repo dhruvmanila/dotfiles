@@ -96,8 +96,8 @@ upgrade_nnn() { # {{{1
 
 upgrade_npm() { # {{{1
   header "Upgrading npm and packages..."
-  npm --global install npm@latest
-  npm --global upgrade
+  npm --location=global install npm@latest
+  npm --location=global upgrade
 }
 
 upgrade_plugins() { # {{{1

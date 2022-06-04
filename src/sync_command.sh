@@ -23,7 +23,7 @@ fi
 
 if [[ $sync_all || $sync_node ]]; then
   header "Syncing node_modules.txt with the global Node packages..."
-  npm --global --json list \
+  npm --location=global --json list \
     | jq --raw-output '.dependencies | del(."instant-markdown-d") | keys | join("\n")' \
       > "${NPM_GLOBAL_PACKAGES}"
 fi

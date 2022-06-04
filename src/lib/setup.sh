@@ -100,7 +100,7 @@ install_homebrew_packages() { # {{{1
 install_npm_global_packages() { # {{{1
   header "Installing global npm packages from ${NPM_GLOBAL_PACKAGES}..."
   while IFS= read -r package; do
-    npm --global install "$package"
+    npm --location=global install "$package"
   done < "${NPM_GLOBAL_PACKAGES}"
 }
 

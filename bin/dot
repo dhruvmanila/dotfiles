@@ -428,7 +428,7 @@ install_homebrew_packages() { # {{{1
 install_npm_global_packages() { # {{{1
   header "Installing global npm packages from ${NPM_GLOBAL_PACKAGES}..."
   while IFS= read -r package; do
-    npm --global install "$package"
+    npm --location=global install "$package"
   done < "${NPM_GLOBAL_PACKAGES}"
 }
 
@@ -712,8 +712,8 @@ upgrade_nnn() { # {{{1
 
 upgrade_npm() { # {{{1
   header "Upgrading npm and packages..."
-  npm --global install npm@latest
-  npm --global upgrade
+  npm --location=global install npm@latest
+  npm --location=global upgrade
 }
 
 upgrade_plugins() { # {{{1
@@ -940,7 +940,7 @@ dot_sync_command() {
 
   if [[ $sync_all || $sync_node ]]; then
     header "Syncing node_modules.txt with the global Node packages..."
-    npm --global --json list \
+    npm --location=global --json list \
       | jq --raw-output '.dependencies | del(."instant-markdown-d") | keys | join("\n")' \
         > "${NPM_GLOBAL_PACKAGES}"
   fi
