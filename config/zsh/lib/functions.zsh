@@ -129,7 +129,19 @@ py-venv-activate() { # {{{1
   # The activation part cannot be a script as that is executed in a subshell
   # and so the `source` part will also be executed in the subshell instead of
   # the current shell.
-  PYVENV_DIR="$HOME/Library/Application Support/pyvenv"
+  case "$OSTYPE" in
+    darwin*)
+      PYVENV_DIR="$HOME/Library/Application Support/pyvenv"
+      ;;
+    linux*)
+      PYVENV_DIR="$HOME/.local/share/pyvenv"
+      ;;
+    *)
+      echo "$0: unsupported OS: $OSTYPE"
+      return 1
+      ;;
+  esac
+
   case "$2" in
     -h | --help)
       echo "Usage: $0 $1 [<name>]"
