@@ -5,7 +5,6 @@ local lspconfig = require 'lspconfig'
 local servers = require 'dm.lsp.servers'
 local preview = require 'dm.lsp.preview'
 
-require 'dm.formatter'
 require 'dm.lsp.handlers'
 require 'dm.lsp.progress'
 

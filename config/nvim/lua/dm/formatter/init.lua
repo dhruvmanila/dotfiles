@@ -1,14 +1,8 @@
 local api = vim.api
 local lsp_util = vim.lsp.util
 
-local register = require('dm.formatter.format').register
-local root_pattern = require('lspconfig.util').root_pattern
-local path = require('lspconfig.util').path
-
-local finder = {
-  stylua_config_file = root_pattern('.stylua.toml', 'stylua.toml'),
-  clang_format_config_file = root_pattern '.clang-format',
-}
+local format = require 'dm.formatter.format'
+local register = format.register
 
 -- c, cpp {{{1
 
@@ -23,7 +17,11 @@ register({ 'c', 'cpp' }, {
     }
   end,
   enable = function(bufnr)
-    return finder.clang_format_config_file(api.nvim_buf_get_name(bufnr)) ~= nil
+    return not vim.tbl_isempty(vim.fs.find({ '.clang-format' }, {
+      path = api.nvim_buf_get_name(bufnr),
+      upward = true,
+      type = 'file',
+    }))
   end,
 })
 
@@ -50,29 +48,20 @@ register({
 -- lua {{{1
 
 do
-  local stylua_config_dir
-  local possible_filenames = {
-    'stylua.toml',
-    '.stylua.toml',
-  }
+  local stylua_config_path
 
   register('lua', {
     cmd = 'stylua',
     args = function()
-      local stylua_config_path
-      for _, filename in ipairs(possible_filenames) do
-        stylua_config_path = stylua_config_dir .. '/' .. filename
-        if path.exists(stylua_config_path) then
-          break
-        end
-      end
       return { '--config-path', stylua_config_path, '-' }
     end,
     enable = function(bufnr)
-      stylua_config_dir = finder.stylua_config_file(
-        api.nvim_buf_get_name(bufnr)
-      )
-      return stylua_config_dir ~= nil
+      stylua_config_path = vim.fs.find({ 'stylua.toml', '.stylua.toml' }, {
+        path = api.nvim_buf_get_name(bufnr),
+        upward = true,
+        type = 'file',
+      })[1]
+      return stylua_config_path ~= nil
     end,
   })
 end
@@ -125,3 +114,7 @@ register('yaml', {
     return { '--parser', 'yaml', '--tab-width', tabwidth }
   end,
 })
+
+-- }}}1
+
+return { format = format.format }
