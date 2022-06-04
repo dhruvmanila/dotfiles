@@ -2,6 +2,39 @@ local lint = require 'dm.linter.lint'
 
 local register = lint.register
 
+-- Dockerfile:hadolint {{{1
+do
+  local severity_map = {
+    error = vim.diagnostic.severity.ERROR,
+    warning = vim.diagnostic.severity.WARN,
+    info = vim.diagnostic.severity.INFO,
+    style = vim.diagnostic.severity.HINT,
+  }
+
+  register('Dockerfile', {
+    cmd = 'hadolint',
+    args = { '--format', 'json', '-' },
+    ignore_exitcode = true,
+    parser = function(output)
+      local diagnostics = {}
+      for _, item in ipairs(vim.json.decode(output)) do
+        table.insert(diagnostics, {
+          source = 'hadolint',
+          lnum = item.line - 1,
+          end_lnum = item.line,
+          col = item.column - 1,
+          end_col = item.column,
+          severity = severity_map[item.level],
+          code = item.code,
+          message = item.message,
+        })
+      end
+      return diagnostics
+    end,
+  })
+end
+
+-- python:flake8 {{{1
 do
   local pat = '[^:]+:(%d+):(%d+):(([EWF])%w+):(.+)'
   local group = { 'lnum', 'col', 'code', 'severity', 'message' }
@@ -36,6 +69,7 @@ do
   })
 end
 
+-- python:mypy {{{1
 do
   local pat = '([^:]+):(%d+):(%d+): (%a+): (.*)'
   local groups = { 'file', 'lnum', 'col', 'severity', 'message' }
@@ -89,37 +123,7 @@ do
   })
 end
 
-do
-  local severity_map = {
-    error = vim.diagnostic.severity.ERROR,
-    warning = vim.diagnostic.severity.WARN,
-    info = vim.diagnostic.severity.INFO,
-    style = vim.diagnostic.severity.HINT,
-  }
-
-  register('Dockerfile', {
-    cmd = 'hadolint',
-    args = { '--format', 'json', '-' },
-    ignore_exitcode = true,
-    parser = function(output)
-      local diagnostics = {}
-      for _, item in ipairs(vim.json.decode(output)) do
-        table.insert(diagnostics, {
-          source = 'hadolint',
-          lnum = item.line - 1,
-          end_lnum = item.line,
-          col = item.column - 1,
-          end_col = item.column,
-          severity = severity_map[item.level],
-          code = item.code,
-          message = item.message,
-        })
-      end
-      return diagnostics
-    end,
-  })
-end
-
+-- yaml:actionlint {{{1
 register('yaml', {
   cmd = 'actionlint',
   args = { '-no-color', '-format', '{{json .}}', '-' },
@@ -146,5 +150,7 @@ register('yaml', {
     return diagnostics
   end,
 })
+
+-- }}}1
 
 return { lint = lint.lint }
