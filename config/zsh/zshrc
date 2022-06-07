@@ -72,6 +72,18 @@ export CARGO_HOME="$HOME/.cargo"
 # Custom tool for managing multiple Python versions (smaller version of `pyenv`)
 export PYENV_ROOT="$HOME/.pyenv"
 
+case "$OSTYPE" in
+  darwin*)
+    [[ -x "/usr/local/bin/brew" ]] && \
+      eval "$(/usr/local/bin/brew shellenv)"
+    ;;
+
+  linux*)
+    [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && \
+      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    ;;
+esac
+
 # fpath {{{2
 
 # An array (colon separated list) of directories specifying the search path
@@ -83,9 +95,11 @@ export PYENV_ROOT="$HOME/.pyenv"
 fpath=(
   # Custom and third-party completion definitions. This is kept first in path
   # to override any possible conflicting function.
-  $DOTFILES/config/zsh/completions
+  $DOTFILES/config/zsh/completions(N-/)
   # Additional completion definitions, not available in a default installation.
-  $DOTFILES/config/zsh/plugins/zsh-completions/src
+  $DOTFILES/config/zsh/plugins/zsh-completions/src(N-/)
+  # Completions installed by Homebrew.
+  $HOMEBREW_PREFIX/share/zsh/site-functions(N-/)
 
   $fpath
 )
@@ -108,9 +122,6 @@ cdpath=(
 
 case "$OSTYPE" in
   darwin*)
-    [[ -x "/usr/local/bin/brew" ]] && \
-      eval "$(/usr/local/bin/brew shellenv)"
-
     path=(
       # MacOS ships with an older version of Ruby, so replace the system ruby with
       # an updated one from Homebrew.
@@ -128,11 +139,6 @@ case "$OSTYPE" in
 
       $path
     )
-    ;;
-
-  linux*)
-    [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && \
-      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     ;;
 esac
 
