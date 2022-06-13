@@ -50,9 +50,15 @@ end
 -- in Vim will differ from that in the shell. It should not matter as our
 -- cwd in Vim is determined from the file using root patterns (`vim-rooter`).
 -- }}}
--- We're also not interested in some of the default values: {{{
+-- We're also not interested in the following: {{{
 --
 --   * blank: no point in saving empty windows
---   * buffers: we don't want to restore hidden and unloaded buffers
+--   * folds: they are created dynamically and might be missing on startup
 -- }}}
-vim.opt.sessionoptions = { 'curdir', 'folds', 'help', 'tabpages', 'winsize' }
+vim.opt.sessionoptions = {
+  'buffers',
+  'curdir',
+  'help',
+  'tabpages',
+  'winsize',
+}
