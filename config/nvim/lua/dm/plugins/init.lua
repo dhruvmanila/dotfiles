@@ -99,6 +99,8 @@ packer.startup {
       keys = {
         { 'n', '<leader>nf' }, -- Neogen func
         { 'n', '<leader>nc' }, -- Neogen class
+        { 'n', '<leader>ngf' }, -- Neogen func
+        { 'n', '<leader>ngc' }, -- Neogen class
       },
       config = conf 'neogen',
     }
