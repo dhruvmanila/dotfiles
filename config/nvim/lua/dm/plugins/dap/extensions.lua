@@ -27,15 +27,15 @@ dapui.setup {
   mappings = {
     expand = { '<CR>', '<2-LeftMouse>', '<Tab>' },
   },
-  sidebar = {
-    size = math.floor(vim.o.columns * 0.4),
-    elements = {
-      { id = 'scopes', size = 0.8 },
-      { id = 'stacks', size = 0.2 },
+  layouts = {
+    {
+      size = math.floor(vim.o.columns * 0.4),
+      position = 'left',
+      elements = {
+        { id = 'scopes', size = 0.8 },
+        { id = 'stacks', size = 0.2 },
+      },
     },
-  },
-  tray = {
-    elements = {},
   },
   floating = {
     border = dm.border[vim.g.border_style],
