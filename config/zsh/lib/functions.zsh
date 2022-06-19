@@ -123,50 +123,15 @@ py-venv-activate() { # {{{1
   # Activate the Python virtual environment built using the `pyvenv` command.
   #
   # This is used for the `_python_auto_venv` hook, but can be used from the
-  # command-line as well. If the name of the environment is not provided, the
-  # tail part of the current working directory will be used.
+  # command-line as well.
   #
   # The activation part cannot be a script as that is executed in a subshell
   # and so the `source` part will also be executed in the subshell instead of
   # the current shell.
-  case "$OSTYPE" in
-    darwin*)
-      PYVENV_DIR="$HOME/Library/Application Support/pyvenv"
-      ;;
-    linux*)
-      PYVENV_DIR="$HOME/.local/share/pyvenv"
-      ;;
-    *)
-      echo "$0: unsupported OS: $OSTYPE"
-      return 1
-      ;;
-  esac
-
-  case "$2" in
-    -h | --help)
-      echo "Usage: $0 $1 [<name>]"
-      ;;
-    "")
-      PROJECT_ROOT="$PWD"
-      VENV_NAME="${PROJECT_ROOT:t}"
-      while [[ ! -d "$PYVENV_DIR/$VENV_NAME" && "$PROJECT_ROOT" != "/" ]]; do
-        PROJECT_ROOT="${PROJECT_ROOT:h}"
-        VENV_NAME="${PROJECT_ROOT:t}"
-      done
-      # No environment exists in the current path.
-      if [[ "$PROJECT_ROOT" == "/" ]]; then
-        return
-      fi
-      ;&
-    *)
-      VENV_NAME="${VENV_NAME:-$2}"
-      VENV_DIR="$PYVENV_DIR/$VENV_NAME"
-      if [[ ! -d "$VENV_DIR" ]]; then
-        return
-      fi
-      source "$VENV_DIR/bin/activate"
-      ;;
-  esac
+  VENV_DIR=$(pyvenv --venv 2> /dev/null)
+  if (( $? == 0 )) && [[ -n $VENV_DIR ]]; then
+    source "$VENV_DIR/bin/activate"
+  fi
 }
 
 py-cleanup() { # {{{1
