@@ -33,18 +33,27 @@ register('go', {
   },
 })
 
--- javascript, json, typescript {{{1
+-- html, javascript, json, typescript, yaml {{{1
 
 register({
+  'html',
   'javascript',
   'json',
   'typescript',
+  'yaml',
 }, {
-  lsp = {
-    format = true,
-  },
+  cmd = 'prettier',
+  args = function(bufnr)
+    return {
+      '--tab-width',
+      vim.lsp.util.get_effective_tabstop(bufnr),
+      '--stdin-filepath',
+      vim.api.nvim_buf_get_name(bufnr),
+    }
+  end,
 })
 
+-- }}}1
 -- lua {{{1
 
 do
@@ -104,17 +113,5 @@ register('xml', {
   cmd = 'xmllint',
   args = { '--format', '-' },
 })
-
--- yaml {{{1
-
-register('yaml', {
-  cmd = 'prettier',
-  args = function(bufnr)
-    local tabwidth = lsp_util.get_effective_tabstop(bufnr)
-    return { '--parser', 'yaml', '--tab-width', tabwidth }
-  end,
-})
-
--- }}}1
 
 return { format = format.format }
