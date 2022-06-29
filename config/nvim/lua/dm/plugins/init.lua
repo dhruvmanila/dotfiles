@@ -130,6 +130,7 @@ packer.startup {
 
     -- Utilities
     use 'airblade/vim-rooter'
+    use { 'nacro90/numb.nvim', config = "require('numb').setup()" }
 
     use {
       'editorconfig/editorconfig-vim',
