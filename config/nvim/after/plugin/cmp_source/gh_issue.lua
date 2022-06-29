@@ -1,3 +1,8 @@
+local ok, cmp = pcall(require, 'cmp')
+if not ok then
+  return
+end
+
 local log = require 'dm.log'
 local job = require 'dm.job'
 
@@ -78,7 +83,4 @@ function source:complete(params, callback)
   end
 end
 
-local ok, cmp = pcall(require, 'cmp')
-if ok then
-  cmp.register_source('gh_issue', source:new())
-end
+cmp.register_source('gh_issue', source:new())
