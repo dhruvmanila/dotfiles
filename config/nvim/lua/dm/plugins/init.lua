@@ -117,11 +117,7 @@ packer.startup {
     use 'rhysd/committia.vim'
     use 'rhysd/git-messenger.vim'
     use { 'lewis6991/gitsigns.nvim', config = conf 'gitsigns' }
-    use {
-      'dhruvmanila/gitlinker.nvim',
-      config = conf 'gitlinker',
-      branch = 'fix/space-char',
-    }
+    use { 'ruifm/gitlinker.nvim', config = conf 'gitlinker' }
 
     -- Filetype
     use 'MTDL9/vim-log-highlighting'
