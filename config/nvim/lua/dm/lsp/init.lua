@@ -30,7 +30,10 @@ do
       nowait = true,
     })
     -- As per `:h 'showbreak'`, the value should be a literal "NONE".
-    vim.wo[winnr].showbreak = 'NONE'
+    vim.api.nvim_set_option_value('showbreak', 'NONE', {
+      scope = 'local',
+      win = winnr,
+    })
     return bufnr, winnr
   end
 end
