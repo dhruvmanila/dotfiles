@@ -72,6 +72,9 @@ telescope.setup {
       },
       include_extensions = true,
     },
+    git_files = {
+      show_untracked = true,
+    },
     git_branches = {
       theme = 'dropdown',
       layout_config = {
