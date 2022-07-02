@@ -22,7 +22,7 @@ end
 local function delete_session(prompt_bufnr)
   local current_picker = action_state.get_current_picker(prompt_bufnr)
   current_picker:delete_selection(function(selection)
-    session.delete(selection.value)
+    return session.delete(selection.value)
   end)
 end
 
