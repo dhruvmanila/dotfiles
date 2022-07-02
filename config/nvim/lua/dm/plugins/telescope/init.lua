@@ -89,8 +89,6 @@ telescope.setup {
     live_grep = {
       path_display = { truncate = 3 },
     },
-    lsp_code_actions = { theme = 'cursor' },
-    lsp_range_code_actions = { theme = 'cursor' },
     lsp_document_diagnostics = { line_width = 60 },
     lsp_workspace_diagnostics = { line_width = 60 },
   },
