@@ -71,6 +71,7 @@ telescope.setup {
         height = 0.5,
       },
       include_extensions = true,
+      use_default_opts = true,
     },
     git_files = {
       show_untracked = true,
