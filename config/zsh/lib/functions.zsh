@@ -185,8 +185,8 @@ py-upgrade-venv() { # {{{1
     echo "Usage: $0 <version>"
     return 1
   fi
-  DEFINITION="$1"
-  PYTHON_EXEC="$PYENV_ROOT/versions/$DEFINITION/bin/python"
+  local DEFINITION="$1"
+  local PYTHON_EXEC="$PYENV_ROOT/versions/$DEFINITION/bin/python"
   if [[ ! -e $PYTHON_EXEC ]]; then
     echo "$0: version '$DEFINITION' not installed"
     echo "$0: Use 'pyenv install $DEFINITION' to install it"
@@ -196,9 +196,9 @@ py-upgrade-venv() { # {{{1
   # to update the symlink to point to the desired Python version.
   echo "$0: $VIRTUAL_ENV/bin/python -> $PYTHON_EXEC"
   ln -sf "$PYTHON_EXEC" "$VIRTUAL_ENV/bin/python"
-  $PYTHON_EXEC -m venv --upgrade "$VIRTUAL_ENV"
+  local VENV_PROMPT="${${VIRTUAL_ENV%-*}:t}"
+  $PYTHON_EXEC -m venv --upgrade "$VIRTUAL_ENV" --prompt "$VENV_PROMPT"
   echo "$0: Upgraded to $DEFINITION"
-  echo "$0: Update the prompt name with 'py-make-venv <name>'"
 }
 
 viw() { # {{{1
