@@ -6,6 +6,10 @@ return {
   -- Settings: https://github.com/bash-lsp/bash-language-server/blob/master/server/src/config.ts
   bashls = {},
 
+  -- https://github.com/microsoft/vscode/tree/main/extensions/css-language-features/server
+  -- Install: `npm install --global vscode-langservers-extracted`
+  cssls = {},
+
   -- https://github.com/llvm/llvm-project/tree/main/clang-tools-extra/clangd
   -- Install: `xcode-select install` OR `brew install llvm`
   clangd = {},
@@ -31,6 +35,10 @@ return {
       },
     },
   },
+
+  -- https://github.com/microsoft/vscode/tree/main/extensions/html-language-features/server
+  -- Install: `npm install --global vscode-langservers-extracted`
+  html = {},
 
   -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
   -- Install: `npm install --global vscode-langservers-extracted`
