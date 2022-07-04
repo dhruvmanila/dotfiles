@@ -154,28 +154,6 @@ py-cleanup() { # {{{1
   done
 }
 
-py-make-venv() { # {{{1
-  # Create/rename a Python virtual environment in the current directory.
-  #
-  # $1 (string): prompt name
-  # $2 (string) (optional): Python version to use (default: global)
-  if (( $# == 0 )); then
-    echo "Usage: $0 <prompt> [<version>]"
-    return 1
-  fi
-  local definition="$2"
-  if [[ -z "$definition" ]]; then
-    definition="$(pyenv global)"
-  fi
-  local python_exec="$PYENV_ROOT/versions/$definition/bin/python"
-  if [[ ! -f "$python_exec" ]]; then
-    echo "$0: version '$2' does not exist"
-    return 1
-  fi
-  echo "==> Using '$python_exec'"
-  $python_exec -m venv .venv --prompt "$1"
-}
-
 py-kernel() { # {{{1
   # Create an IPython kernel for the current Python virtual environment.
   # This is useful to have one Jupyter installation but different Python kernels
