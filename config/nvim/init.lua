@@ -35,10 +35,6 @@ g.loaded_tutor_mode_plugin = 1
 g.loaded_zip = 1
 g.loaded_zipPlugin = 1
 
--- Disable builtin filetype detection and switch to `filetype.lua`.
-g.did_load_filetypes = 0
-g.do_filetype_lua = 1
-
 -- Custom global variables for use in various parts of the config. These don't
 -- have any special meaning in Neovim.
 
