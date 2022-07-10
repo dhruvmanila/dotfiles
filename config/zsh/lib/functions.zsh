@@ -128,9 +128,11 @@ py-venv-activate() { # {{{1
   # The activation part cannot be a script as that is executed in a subshell
   # and so the `source` part will also be executed in the subshell instead of
   # the current shell.
-  VENV_DIR=$(pyvenv --venv 2> /dev/null)
-  if (( $? == 0 )) && [[ -n $VENV_DIR ]]; then
-    source "$VENV_DIR/bin/activate"
+  if command -v pyvenv &> /dev/null; then
+    VENV_DIR=$(pyvenv --venv 2> /dev/null)
+    if (( $? == 0 )) && [ -n "$VENV_DIR" ]; then
+      source "$VENV_DIR/bin/activate"
+    fi
   fi
 }
 
