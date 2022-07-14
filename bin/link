@@ -45,6 +45,7 @@ case "$OSTYPE" in
     link "hammerspoon" ".hammerspoon"
     link "karabiner" ".config/karabiner"
     link "pypoetry" "Library/Application Support/pypoetry"
+    link "vscode/settings.json" "Library/Application Support/Code/User/settings.json"
     ;;
   linux*) ;;
   *)

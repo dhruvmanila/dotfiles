@@ -1,139 +1,160 @@
 {
-    "files.autoSave": "onFocusChange",
+  "files.autoSave": "onFocusChange",
 
-    // Settings viewer as JSON
-    "workbench.settings.editor": "json",
-    "workbench.settings.openDefaultSettings": true,
-    "workbench.settings.useSplitJSON": true,
-    "workbench.editor.enablePreview": false,
+  // Neovim
+  "vscode-neovim.neovimExecutablePaths.darwin": "nvim",
+  "vscode-neovim.neovimInitVimPaths.darwin": "~/Library/CloudStorage/OneDrive-Thoucentric/init.lua",
 
-    // Theme
-    "workbench.colorTheme": "Gruvbox Material Dark",
-    "gruvboxMaterial.darkPalette": "original",
-    "gruvboxMaterial.darkWorkbench": "high-contrast",
-    "gruvboxMaterial.darkContrast": "soft",
-    "gruvboxMaterial.italicKeywords": true,
-    "editor.semanticHighlighting.enabled": true,
+  // Settings viewer as JSON
+  "workbench.settings.editor": "json",
+  "workbench.settings.openDefaultSettings": true,
+  "workbench.settings.useSplitJSON": true,
+  "workbench.editor.enablePreview": false,
 
-    // Font sizes
-    "editor.fontSize": 16,
-    "debug.console.fontSize": 16,
-    "terminal.integrated.fontSize": 16,
-    "editor.fontFamily": "JetBrains Mono",
-    "editor.fontLigatures": true,
-    "editor.lineHeight": 20,
+  // Theme
+  "workbench.colorTheme": "Gruvbox Material Dark",
+  "gruvboxMaterial.darkPalette": "original",
+  "gruvboxMaterial.darkWorkbench": "high-contrast",
+  "gruvboxMaterial.darkContrast": "soft",
+  "gruvboxMaterial.italicKeywords": true,
+  "gruvboxMaterial.colorfulSyntax": true,
+  "editor.semanticHighlighting.enabled": true,
 
-    // Editor settings
-    "editor.wordWrap": "on",
-    "editor.scrollBeyondLastLine": false,
-    "editor.minimap.enabled": false,
-    "editor.inlineSuggest.enabled": true,
+  // Font sizes
+  "editor.fontSize": 16,
+  "debug.console.fontSize": 16,
+  "terminal.integrated.fontSize": 16,
+  "editor.fontFamily": "JetBrains Mono",
+  "editor.fontLigatures": true,
+  "editor.lineHeight": 20,
 
-    // No autoupdate for extensions
-    "extensions.autoUpdate": false,
+  // Editor settings
+  "editor.wordWrap": "on",
+  "editor.scrollBeyondLastLine": false,
+  "editor.minimap.enabled": false,
+  "editor.inlineSuggest.enabled": true,
+  "editor.comments.ignoreEmptyLines": false,
 
-    // Terminal settings
-    "terminal.integrated.inheritEnv": true,
-    "workbench.colorCustomizations": {
-        "terminal.background": "#242424"
-    },
+  // No autoupdate for extensions
+  "extensions.autoUpdate": false,
 
-    // Executes file in file directory
-    "python.terminal.executeInFileDir": true,
+  // Terminal settings
+  "terminal.integrated.inheritEnv": true,
+  "workbench.colorCustomizations": {
+    "terminal.background": "#242424"
+  },
 
-    // Directory path where all virtualenvs are stored
-    "python.venvPath": "~/Library/Application Support/pyvenv",
+  // Executes file in file directory
+  "python.terminal.executeInFileDir": true,
 
-    // Python formatter
-    "python.formatting.provider": "black",
-    "editor.formatOnSave": false,
+  // Directory path where all virtualenvs are stored
+  "python.venvPath": "~/Library/Application Support/pyvenv",
 
-    // Python isort imports
-    // "python.sortImports.args": [
-    //     "--profile=black"
-    // ],
+  // Python formatter
+  "python.formatting.provider": "black",
+  "editor.formatOnSave": false,
 
-    // Run isort automatically on save
-    "[python]": {
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": false
+  // Python isort imports
+  "python.sortImports.args": ["--profile=black"],
+
+  // Run isort automatically on save
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": false
+    }
+  },
+
+  // Python Linter
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyEnabled": true,
+  "python.linting.flake8Path": "~/.local/bin/flake8",
+  "python.formatting.blackPath": "~/.local/bin/black",
+
+  // Python autocomplete
+  "python.languageServer": "Pylance",
+
+  // Python docstring format
+  "autoDocstring.docstringFormat": "numpy",
+
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // Code runner settings
+  // "code-runner.executorMap": {
+  //     "python": "$pythonPath -u $fullFileName"
+  // },
+  // "code-runner.fileDirectoryAsCwd": true,
+  // "code-runner.clearPreviousOutput": true,
+  // "code-runner.saveFileBeforeRun": true,
+
+  // Controls the dimensions of opening a new window when at least one window is already opened.
+  "window.newWindowDimensions": "maximized",
+
+  // Python doc string foreground color and font style
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "string.quoted.docstring.multi.python",
+        "settings": {
+          "foreground": "#69676c", // docstring color
+          "fontStyle": ""
         }
-    },
+      }
+    ]
+  },
 
-    // Python Linter
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
+  // Completion
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
 
-    // Python static type checker
-    "python.linting.mypyEnabled": true,
+  // Set association for non-standard files to help syntax highlighting
+  "files.associations": {
+    "Brewfile": "ruby",
+    "Vagrantfile": "ruby"
+  },
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook"
+  },
 
-    // Python autocomplete
-    "python.languageServer": "Pylance",
+  // Lua language server settings
+  "Lua.diagnostics.globals": ["vim"],
+  "Lua.runtime.version": "LuaJIT",
+  "Lua.workspace.preloadFileSize": 1000,
+  "Lua.runtime.path": [
+    "?.lua",
+    "?/init.lua",
+    "?/?.lua",
+    "lua/?.lua",
+    "lua/?/init.lua"
+  ],
 
-    // Code runner settings
-    "code-runner.executorMap": {
-        "python": "$pythonPath -u $fullFileName"
-    },
-    "code-runner.fileDirectoryAsCwd": true,
-    "code-runner.clearPreviousOutput": true,
-    "code-runner.saveFileBeforeRun": true,
+  // Language specific settings
+  "[yaml]": {
+    "editor.tabSize": 4
+  },
 
-    // Controls the dimensions of opening a new window when at least one window is already opened.
-    "window.newWindowDimensions": "maximized",
+  "github.copilot.enable": {
+    "*": false,
+    "python": true,
+    "javascript": true,
+    "html": true,
+    "css": true
+  },
+  "github.copilot.advanced": {},
 
-    // Python doc string foreground color and font style
-    "editor.tokenColorCustomizations": {
-        "textMateRules": [
-            {
-                "scope": "string.quoted.docstring.multi.python",
-                "settings": {
-                    "foreground": "#69676c", // docstring color
-                    "fontStyle": ""
-                }
-            }
-        ]
-    },
-
-    "editor.suggestSelection": "first",
-    "editor.comments.ignoreEmptyLines": false,
-
-    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
-
-    // Set association for non-standard files to help syntax highlighting
-    "files.associations": {
-        "Brewfile": "ruby",
-        "Vagrantfile": "ruby"
-    },
-    "workbench.editorAssociations": {
-        "*.ipynb": "jupyter-notebook"
-    },
-
-    // Lua language server settings
-    "Lua.diagnostics.globals": [
-        "vim"
-    ],
-    "Lua.runtime.version": "LuaJIT",
-    "Lua.workspace.preloadFileSize": 1000,
-    "Lua.runtime.path": [
-        "?.lua",
-        "?/init.lua",
-        "?/?.lua",
-        "lua/?.lua",
-        "lua/?/init.lua"
-    ],
-
-    // Language specific settings
-    "[yaml]": {
-        "editor.tabSize": 4
-    },
-
-    "github.copilot.enable": {
-        "*": false,
-        "python": true
-    },
-
-    // No telemetry
-    "telemetry.telemetryLevel": "off",
-    "Lua.telemetry.enable": false,
-    "redhat.telemetry.enabled": false
+  // No telemetry
+  "telemetry.telemetryLevel": "off",
+  "Lua.telemetry.enable": false,
+  "redhat.telemetry.enabled": false
 }
