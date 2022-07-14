@@ -3,7 +3,6 @@ upgrade_all() { # {{{1
   upgrade_plugins
   upgrade_npm
   upgrade_python
-  upgrade_cargo
   upgrade_neovim "$@"
   upgrade_nnn
   upgrade_mac
