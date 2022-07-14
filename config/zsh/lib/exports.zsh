@@ -114,7 +114,12 @@ export HOMEBREW_NO_ENV_HINTS=1
 # `R` - Send ANSI "color" escape sequences and OSC 8 hyperlink in "raw" form
 #       which will allow us to see colors. This is useful for commands such as
 #       `git log`. Without, you would see things like `ESC[33m ... ESC[m`.
-export LESS='i~JMR'
+# `S` - Causes lines longer than the screen width to be chopped (truncated)
+#       rather than wrapped. That is, the portion of a long line that does
+#       not fit in the screen width is not displayed until you press RIGHT-
+#       ARROW. The default is to wrap long lines; that is, display the
+#       remainder on the next line.
+export LESS='i~JMRS'
 
 # `X` - leave content on-screen
 # `F` - quit automatically if less than one screenfull
