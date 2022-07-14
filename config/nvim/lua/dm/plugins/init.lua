@@ -150,6 +150,7 @@ packer.startup {
     use 'rcarriga/nvim-notify'
     use 'romainl/vim-cool'
     use { 'ggandor/lightspeed.nvim', config = conf 'lightspeed' }
+    use { 'klen/nvim-config-local', config = "require('config-local').setup()" }
 
     -- Docs
     use 'milisims/nvim-luaref'

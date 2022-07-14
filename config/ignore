@@ -10,3 +10,6 @@
 __pycache__
 .pytest_cache
 .ipynb_checkpoints
+
+# Neovim project local config
+.vimrc.lua
