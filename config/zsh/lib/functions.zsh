@@ -212,6 +212,6 @@ viw() { # {{{1
   if [[ "$bin" == "$(pyenv root)/shims/"* ]]; then
     bin=$(pyenv which "$1")
   fi
-  $EDITOR "$bin"
+  $EDITOR $(realpath "$bin")
 }
 
