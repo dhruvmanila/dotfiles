@@ -11,8 +11,14 @@ local keymap = vim.keymap
 -- beginning matches the current command-line or move through the wildmenu
 -- completion.
 -- }}}
-keymap.set('c', '<C-p>', "wildmenumode() ? '<C-p>' : '<Up>'", { expr = true })
-keymap.set('c', '<C-n>', "wildmenumode() ? '<C-n>' : '<Down>'", { expr = true })
+keymap.set('c', '<C-p>', "wildmenumode() ? '<C-p>' : '<Up>'", {
+  expr = true,
+  replace_keycodes = false,
+})
+keymap.set('c', '<C-n>', "wildmenumode() ? '<C-n>' : '<Down>'", {
+  expr = true,
+  replace_keycodes = false,
+})
 
 ---Navigate search without leaving incremental mode.
 ---@param key string
