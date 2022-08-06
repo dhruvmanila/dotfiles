@@ -16,7 +16,7 @@ function M.listener()
     params,
     function(err, result, ctx)
       if err then
-        return log.error('LSP (%s): %s', ctx.method, err)
+        return log.fmt_error('LSP (%s): %s', ctx.method, err)
       end
       -- Remove all the existing lightbulbs.
       vim.api.nvim_buf_clear_namespace(0, LIGHTBULB_EXTMARK_NS, 0, -1)
