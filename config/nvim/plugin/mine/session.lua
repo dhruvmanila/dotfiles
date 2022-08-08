@@ -56,7 +56,6 @@ end
 --   * folds: they are created dynamically and might be missing on startup
 -- }}}
 vim.opt.sessionoptions = {
-  'buffers',
   'curdir',
   'help',
   'tabpages',
