@@ -25,6 +25,7 @@ local node_types = {
   'module', -- preview the entire module
   'class_definition',
   'function_definition',
+  'expression_statement',
 }
 
 -- Determine whether this is the node to be used for treesitter range.
