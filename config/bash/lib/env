@@ -15,6 +15,10 @@
 # Hide the “default interactive shell is now zsh” warning on macOS.
 export BASH_SILENCE_DEPRECATION_WARNING=1
 
+# cargo {{{1
+
+source "$HOME/.cargo/env"
+
 # EDITOR {{{1
 
 # Make Neovim the default editor.

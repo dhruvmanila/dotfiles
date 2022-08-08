@@ -39,6 +39,9 @@ source ~/dotfiles/config/bash/lib/functions
 # and avoid duplication.
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+# Rust installed vis https://rustup.rs
+[ -f ~/.cargo/env ] && source "$HOME/.cargo/env"
+
 # Plugins {{{1
 
 # Prompt {{{1
