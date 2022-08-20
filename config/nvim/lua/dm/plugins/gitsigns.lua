@@ -13,7 +13,7 @@ local function on_attach(bufnr)
       end)
       return '<Ignore>'
     end
-  end, { expr = true })
+  end, { expr = true, desc = 'gitsigns: go to next hunk' })
 
   vim.keymap.set('n', '[c', function()
     if vim.wo.diff then
@@ -24,28 +24,36 @@ local function on_attach(bufnr)
       end)
       return '<Ignore>'
     end
-  end, { expr = true })
+  end, { expr = true, desc = 'gitsigns: go to previous hunk' })
 
   -- Actions
   vim.keymap.set({ 'n', 'v' }, '<leader>hs', gitsigns.stage_hunk, {
     buffer = bufnr,
-    desc = 'Gitsigns: Stage hunk',
+    desc = 'gitsigns: stage hunk',
   })
   vim.keymap.set({ 'n', 'v' }, '<leader>hr', gitsigns.reset_hunk, {
     buffer = bufnr,
-    desc = 'Gitsigns: Reset hunk',
+    desc = 'gitsigns: reset hunk',
   })
   vim.keymap.set('n', '<leader>hu', gitsigns.undo_stage_hunk, {
     buffer = bufnr,
-    desc = 'Gitsigns: Undo stage hunk',
+    desc = 'gitsigns: undo the last stage hunk',
   })
   vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, {
     buffer = bufnr,
-    desc = 'Gitsigns: Reset buffer',
+    desc = 'gitsigns: reset buffer',
   })
   vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, {
     buffer = bufnr,
-    desc = 'Gitsigns: Preview hunk',
+    desc = 'gitsigns: preview hunk',
+  })
+  vim.keymap.set('n', '<leader>hb', gitsigns.toggle_current_line_blame, {
+    buffer = bufnr,
+    desc = 'gitsigns: toggle current line blame',
+  })
+  vim.keymap.set('n', '<leader>hd', gitsigns.toggle_deleted, {
+    buffer = bufnr,
+    desc = 'gitsigns: toggle deleted lines',
   })
 
   -- Text object
