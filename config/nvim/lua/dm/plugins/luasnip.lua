@@ -30,37 +30,12 @@ ls.add_snippets('all', { -- {{{1
       return vim.bo.commentstring:gsub('%%s', 'TODO(dhruvmanila): ')
     end, {}),
   }),
-
-  s({ trig = 'date', dscr = "today's date in YYYY-mm-dd format" }, {
-    f(function()
-      return { os.date '%Y-%m-%d' }
-    end, {}),
-    i(0),
-  }),
 })
 
 ls.add_snippets('go', { -- {{{1
   s({ trig = 'main', dscr = 'main function' }, {
     t { 'func main() {', '\t' },
     i(0),
-    t { '', '}' },
-  }),
-
-  -- #1:
-  --     if err != nil {
-  --         return nil, err
-  --     }
-  --
-  -- #2:
-  --     if err != nil {
-  --         return err
-  --     }
-  s({ trig = 'iferr', dscr = 'if err is not nil block' }, {
-    t { 'if err != nil {', '\treturn ' },
-    c(1, {
-      sn(nil, { i(1, 'nil'), t ', err' }),
-      t 'err',
-    }),
     t { '', '}' },
   }),
 })
