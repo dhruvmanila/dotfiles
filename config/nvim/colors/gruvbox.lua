@@ -396,6 +396,9 @@ link('DashboardEntry', 'AquaBold')
 link('DashboardFooter', 'Blue')
 
 -- Plugins {{{1
+-- copilot.vim {{{2
+link('CopilotSuggestion', 'Comment')
+
 -- gitsigns.nvim {{{2
 link('GitSignsAdd', 'Green')
 link('GitSignsChange', 'Blue')
