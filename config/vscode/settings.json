@@ -3,7 +3,9 @@
 
   // Neovim
   "vscode-neovim.neovimExecutablePaths.darwin": "nvim",
-  "vscode-neovim.neovimInitVimPaths.darwin": "~/Library/CloudStorage/OneDrive-Thoucentric/init.lua",
+  "vscode-neovim.neovimExecutablePaths.win32": "nvim",
+  "vscode-neovim.neovimInitVimPaths.darwin": "~/dotfiles/config/vscode/init.lua",
+  "vscode-neovim.neovimInitVimPaths.win32": "~/dotfiles/config/vscode/init.lua",
 
   // Settings viewer as JSON
   "workbench.settings.editor": "json",
@@ -90,14 +92,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
-  // Code runner settings
-  // "code-runner.executorMap": {
-  //     "python": "$pythonPath -u $fullFileName"
-  // },
-  // "code-runner.fileDirectoryAsCwd": true,
-  // "code-runner.clearPreviousOutput": true,
-  // "code-runner.saveFileBeforeRun": true,
-
   // Controls the dimensions of opening a new window when at least one window is already opened.
   "window.newWindowDimensions": "maximized",
 
@@ -116,7 +110,6 @@
 
   // Completion
   "editor.suggestSelection": "first",
-  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
 
   // Set association for non-standard files to help syntax highlighting
   "files.associations": {
