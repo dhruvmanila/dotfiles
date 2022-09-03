@@ -12,14 +12,14 @@
 
 if [[ -n "$HOMEBREW_PREFIX" ]]; then
   export CFLAGS="\
-  -I $HOMEBREW_PREFIX/include \
-  -I $HOMEBREW_PREFIX/opt/openssl@3/include \
+  -I$HOMEBREW_PREFIX/include \
+  -I$HOMEBREW_PREFIX/opt/openssl@3/include \
   "
   export CPPFLAGS="$CFLAGS"
 
   export LDFLAGS="\
-  -L $HOMEBREW_PREFIX/lib \
-  -L $HOMEBREW_PREFIX/opt/openssl@3/lib \
+  -L$HOMEBREW_PREFIX/lib \
+  -L$HOMEBREW_PREFIX/opt/openssl@3/lib \
   "
 fi
 
