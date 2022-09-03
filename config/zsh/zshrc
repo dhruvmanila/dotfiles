@@ -239,7 +239,7 @@ function source_completion {
   fi
 }
 
-source_completion "/usr/local/etc/bash_completion.d/dot-completion.bash"
+source_completion "$DOTFILES/config/bash/completions/dot.bash"
 
 # source <(register-python-argcomplete pipx)
 # complete -C aws_completer aws

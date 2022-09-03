@@ -1,6 +1,7 @@
 BIN := dot
-BIN_DIR := $(HOME)/dotfiles/bin
-BASH_COMPLETION := /usr/local/etc/bash_completion.d/$(BIN)-completion.bash
+DOTFILES := $(HOME)/dotfiles
+BIN_DIR := $(DOTFILES)/bin
+BASH_COMPLETION := $(DOTFILES)/config/bash/completions/$(BIN).bash
 
 SH_FILES := $(shell find src -type f -name '*.sh')
 
