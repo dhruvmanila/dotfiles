@@ -67,23 +67,28 @@ local function filetype()
   return ft
 end
 
--- Return the currently active neovim LSP client(s) and the status message.
+-- Function to run the LspInfo command when clicking on the icon/message
+-- on the statusline.
+function _G.st_open_lsp_info()
+  vim.cmd { cmd = 'LspInfo' }
+end
+
+-- Return an icon if there are active LSP client(s) and the status message
+-- associated with that client. If the region containing the icon/message is
+-- clicked, then the `LspInfo` command is ran.
 ---@return string
-local function lsp_clients_and_messages()
-  local result = {}
-  local clients = vim.lsp.buf_get_clients(0)
-  for _, client in pairs(clients) do
-    table.insert(result, client.name)
-  end
-  if not vim.tbl_isempty(result) then
-    result = ' ' .. table.concat(result, ' ')
+local function lsp_icon_and_messages()
+  local result = ''
+  local clients = vim.lsp.get_active_clients { bufnr = 0 }
+  if not vim.tbl_isempty(clients) then
+    result = '%@v:lua.st_open_lsp_info@' .. ''
     local message = vim.g.lsp_progress_message
     if message and message ~= '' then
-      result = result .. ' | ' .. message
+      result = result .. ' ' .. message
     end
-    return result
+    result = result .. '%T'
   end
-  return ''
+  return result
 end
 
 -- Used for showing the LSP diagnostics information. The order is maintained.
@@ -143,7 +148,7 @@ function _G.nvim_statusline()
     .. '%*'
     .. '%='
     .. pad(dap_status())
-    .. pad(lsp_clients_and_messages())
+    .. pad(lsp_icon_and_messages())
     .. '%2*'
     .. pad(filetype())
     .. '%1*'
