@@ -12,6 +12,8 @@ alias -g L='| less'
 alias -g N='> /dev/null'
 alias -g T='| tail'
 
+alias b='bookmarks'
+
 # cd {{{1
 
 # Easier navigation to parent directories.
