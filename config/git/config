@@ -1,8 +1,3 @@
-[user]
-	name = Dhruv Manilawala
-	email = dhruvmanila@gmail.com
-	signingkey = 9601911DE8797432
-
 [include]
 	path = ~/.gitconfig.local
 
