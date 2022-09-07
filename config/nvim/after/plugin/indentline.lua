@@ -10,6 +10,7 @@ g.indent_blankline_filetype_exclude = {
   'fugitive',
   'git',
   'gitcommit',
+  'go',
   'help',
   'log',
   'lspinfo',
