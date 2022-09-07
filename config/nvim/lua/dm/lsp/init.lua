@@ -8,6 +8,9 @@ local preview = require 'dm.lsp.preview'
 require 'dm.lsp.handlers'
 require 'dm.lsp.progress'
 
+require('lspconfig.ui.windows').default_options.border =
+  dm.border[vim.g.border_style]
+
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
 lsp.set_log_level(vim.env.DEBUG and 'debug' or 'warn')
 require('vim.lsp.log').set_format_func(vim.inspect)

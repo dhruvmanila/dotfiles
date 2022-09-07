@@ -388,6 +388,9 @@ highlight('LspReferenceWrite', { bg = palette.bg_current_word })
 -- Codelens {{{2
 link('LspCodeLens', 'Grey')
 
+-- LspInfo {{{2
+link('LspInfoBorder', 'FloatBorder')
+
 -- }}}2
 
 -- Dashboard {{{1
