@@ -172,7 +172,12 @@ packer.startup {
     use 'nanotee/luv-vimdocs'
 
     -- Icons
-    use 'yamatsum/nvim-nonicons'
+    use {
+      'yamatsum/nvim-nonicons',
+      cond = function()
+        return vim.env.TERM == 'xterm-kitty'
+      end,
+    }
     use { 'kyazdani42/nvim-web-devicons', config = conf 'nvim_web_devicons' }
 
     -- Startup & Profiling
