@@ -47,7 +47,9 @@ case "$OSTYPE" in
     link "pypoetry" "Library/Application Support/pypoetry"
     link "vscode/settings.json" "Library/Application Support/Code/User/settings.json"
     ;;
-  linux*) ;;
+  linux*)
+    link "bottom" ".config/bottom"
+    ;;
   *)
     echo "$0: unsupported OS: $OSTYPE"
     exit 1
@@ -78,7 +80,7 @@ link "kitty" ".config/kitty"
 link "nvim" ".config/nvim"
 link "pip" ".config/pip"
 link "ssh/config" ".ssh/config"
-link "startship.toml" ".config/starship.toml"
+link "starship.toml" ".config/starship.toml"
 link "tmux/tmux.conf" ".tmux.conf"
 link "vim" ".vim"
 link "vim/vimrc" ".vimrc"
