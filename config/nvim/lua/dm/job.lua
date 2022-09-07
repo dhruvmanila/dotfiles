@@ -61,10 +61,14 @@ return function(opts)
   opts = opts or {}
   vim.validate { cmd = { opts.cmd, 's' } }
 
+  local cmd = opts.cmd
+  if vim.fn.executable(cmd) ~= 1 then
+    return log.fmt_warn('command does not exist: %s', cmd)
+  end
+
   -- We cannot initialize this to an empty table because it would reset the
   -- environment for the process even if `opts.env` is `nil`.
   local env
-  local cmd = opts.cmd
   local args = opts.args or {}
   if type(args) == 'function' then
     args = args()
