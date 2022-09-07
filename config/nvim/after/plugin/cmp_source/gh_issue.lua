@@ -1,5 +1,5 @@
 local ok, cmp = pcall(require, 'cmp')
-if not ok then
+if not ok or not dm.executable 'gh' then
   return
 end
 

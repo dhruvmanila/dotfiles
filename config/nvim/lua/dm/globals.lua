@@ -169,3 +169,10 @@ end
 function dm.escape(str)
   return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
+
+-- Check if the given command is executable.
+---@param cmd string
+---@return boolean
+function dm.executable(cmd)
+  return vim.fn.executable(cmd) > 0
+end
