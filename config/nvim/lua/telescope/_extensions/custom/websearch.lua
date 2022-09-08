@@ -167,7 +167,7 @@ return function(opts)
   opts = opts or {}
   local search_engine = config.search_engine
 
-  if vim.fn.executable(executable[search_engine]) <= 0 then
+  if not dm.executable(executable[search_engine]) then
     dm.notify(
       'Telescope',
       ("'websearch' requires the `%s` executable for searching on '%s'"):format(

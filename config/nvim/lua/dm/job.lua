@@ -62,7 +62,7 @@ return function(opts)
   vim.validate { cmd = { opts.cmd, 's' } }
 
   local cmd = opts.cmd
-  if vim.fn.executable(cmd) ~= 1 then
+  if not dm.executable(cmd) then
     return log.fmt_warn('command does not exist: %s', cmd)
   end
 
