@@ -192,7 +192,7 @@ local function set_python_venv_name()
     end
     -- Fallback to the directory name.
     if not vim.g.current_python_venv_name then
-      vim.g.current_python_venv_name = vim.fn.fnamemodify(dir, ':t')
+      vim.g.current_python_venv_name = vim.fs.basename(dir)
     end
   end
 end

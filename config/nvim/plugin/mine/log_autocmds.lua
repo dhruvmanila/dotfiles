@@ -23,9 +23,7 @@ local function toggle_autocmds_logging()
     vim.api.nvim_create_autocmd(event, {
       group = id,
       callback = function(args)
-        log.info(
-          ('%s %s'):format(args.event, vim.fn.fnamemodify(args.match, ':t'))
-        )
+        log.info(('%s %s'):format(args.event, vim.fs.basename(args.match)))
       end,
     })
   end

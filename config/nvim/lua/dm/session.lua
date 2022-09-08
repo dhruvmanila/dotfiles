@@ -92,7 +92,7 @@ end
 function session.current()
   local current_session = vim.v.this_session
   if current_session and current_session ~= '' then
-    return fn.fnamemodify(current_session, ':t')
+    return vim.fs.basename(current_session)
   end
   return ''
 end
@@ -202,7 +202,7 @@ function session.rename(new_name)
   if ok then
     dm.notify(
       TITLE,
-      'Renamed ' .. fn.fnamemodify(current_session, ':t') .. ' -> ' .. new_name
+      'Renamed ' .. vim.fs.basename(current_session) .. ' -> ' .. new_name
     )
     vim.v.this_session = session_file
   else

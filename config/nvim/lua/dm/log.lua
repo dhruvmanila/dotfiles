@@ -95,7 +95,7 @@ log.new = function(config, standalone)
   local console_output = vim.schedule_wrap(
     function(level_config, nameupper, msg, info)
       local lineinfo = ('%s:%s'):format(
-        vim.fn.fnamemodify(info.short_src, ':t'),
+        vim.fs.basename(info.short_src),
         info.currentline
       )
       local console_string = ('%s [%s] .../%s: %s'):format(
@@ -131,7 +131,7 @@ log.new = function(config, standalone)
 
   local file_output = vim.schedule_wrap(function(nameupper, msg, info)
     local lineinfo = ('%s:%s'):format(
-      vim.fn.fnamemodify(info.short_src, ':t'),
+      vim.fs.basename(info.short_src),
       info.currentline
     )
     local fp = assert(io.open(outfile, 'a'))
