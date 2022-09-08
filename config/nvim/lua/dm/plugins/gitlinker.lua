@@ -22,9 +22,11 @@ local function get_azure_devops_url(url_data)
     return url
   end
 
-  url = (
-    '%s&line=%d&lineEnd=%d&lineStartColumn=1&lineEndColumn=1&lineStyle=plain&_a=contents'
-  ):format(url, url_data.lstart, url_data.lend + 1)
+  url = ('%s&line=%d&lineEnd=%d&lineStartColumn=1&lineEndColumn=1&lineStyle=plain&_a=contents'):format(
+    url,
+    url_data.lstart,
+    url_data.lend + 1
+  )
 
   return url
 end

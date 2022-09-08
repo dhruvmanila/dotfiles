@@ -108,9 +108,8 @@ local DIAGNOSTIC_OPTS = {
 local function lsp_diagnostics()
   local result = {}
   for _, opt in ipairs(DIAGNOSTIC_OPTS) do
-    local count = vim.tbl_count(
-      vim.diagnostic.get(0, { severity = opt.severity })
-    )
+    local count =
+      vim.tbl_count(vim.diagnostic.get(0, { severity = opt.severity }))
     if count > 0 then
       table.insert(result, opt.hl .. opt.icon .. ' ' .. count)
     end
@@ -175,9 +174,8 @@ local function set_python_version()
     args = { '--version' },
     ---@param result JobResult
     on_exit = function(result)
-      vim.g.current_python_version = result.stdout
-        :gsub('\r\n', '')
-        :gsub('\n', '')
+      vim.g.current_python_version =
+        result.stdout:gsub('\r\n', ''):gsub('\n', '')
     end,
   }
 end

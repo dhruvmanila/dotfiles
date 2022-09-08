@@ -58,27 +58,29 @@ return function(opts)
     return nil
   end
 
-  pickers.new(opts, {
-    prompt_title = 'Installed Plugins',
-    finder = finders.new_table {
-      results = plugins,
-      entry_maker = function(entry)
-        return {
-          display = entry.name,
-          value = entry.name,
-          path = entry.path,
-          url = entry.url,
-          ordinal = entry.name,
-        }
+  pickers
+    .new(opts, {
+      prompt_title = 'Installed Plugins',
+      finder = finders.new_table {
+        results = plugins,
+        entry_maker = function(entry)
+          return {
+            display = entry.name,
+            value = entry.name,
+            path = entry.path,
+            url = entry.url,
+            ordinal = entry.name,
+          }
+        end,
+      },
+      previewer = false,
+      sorter = telescope_config.generic_sorter(opts),
+      attach_mappings = function(_, map)
+        actions.select_default:replace(custom_actions.open_in_browser)
+        map('i', '<C-f>', find_files_in_plugin)
+        map('n', '<C-f>', find_files_in_plugin)
+        return true
       end,
-    },
-    previewer = false,
-    sorter = telescope_config.generic_sorter(opts),
-    attach_mappings = function(_, map)
-      actions.select_default:replace(custom_actions.open_in_browser)
-      map('i', '<C-f>', find_files_in_plugin)
-      map('n', '<C-f>', find_files_in_plugin)
-      return true
-    end,
-  }):find()
+    })
+    :find()
 end

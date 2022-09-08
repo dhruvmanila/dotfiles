@@ -775,21 +775,23 @@ return function()
     return displayer { entry.name, entry.icon }
   end
 
-  pickers.new(opts, {
-    prompt_title = 'Search Icons',
-    finder = finders.new_table {
-      results = results,
-      entry_maker = function(entry)
-        return {
-          display = make_display,
-          value = entry.icon,
-          name = entry.name,
-          icon = entry.icon,
-          ordinal = entry.name,
-        }
-      end,
-    },
-    previewer = false,
-    sorter = telescope_config.generic_sorter(opts),
-  }):find()
+  pickers
+    .new(opts, {
+      prompt_title = 'Search Icons',
+      finder = finders.new_table {
+        results = results,
+        entry_maker = function(entry)
+          return {
+            display = make_display,
+            value = entry.icon,
+            name = entry.name,
+            icon = entry.icon,
+            ordinal = entry.name,
+          }
+        end,
+      },
+      previewer = false,
+      sorter = telescope_config.generic_sorter(opts),
+    })
+    :find()
 end

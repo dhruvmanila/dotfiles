@@ -46,27 +46,29 @@ return function(opts)
     })
   end
 
-  pickers.new(opts, {
-    prompt_title = 'Sessions',
-    finder = finders.new_table {
-      results = results,
-      entry_maker = function(entry)
-        return {
-          display = entry.name,
-          value = entry.value,
-          name = entry.name,
-          current = entry.current,
-          ordinal = entry.name,
-        }
+  pickers
+    .new(opts, {
+      prompt_title = 'Sessions',
+      finder = finders.new_table {
+        results = results,
+        entry_maker = function(entry)
+          return {
+            display = entry.name,
+            value = entry.value,
+            name = entry.name,
+            current = entry.current,
+            ordinal = entry.name,
+          }
+        end,
+      },
+      previewer = false,
+      sorter = telescope_config.generic_sorter(opts),
+      attach_mappings = function(_, map)
+        actions.select_default:replace(load_session)
+        map('i', '<C-x>', delete_session)
+        map('n', '<C-x>', delete_session)
+        return true
       end,
-    },
-    previewer = false,
-    sorter = telescope_config.generic_sorter(opts),
-    attach_mappings = function(_, map)
-      actions.select_default:replace(load_session)
-      map('i', '<C-x>', delete_session)
-      map('n', '<C-x>', delete_session)
-      return true
-    end,
-  }):find()
+    })
+    :find()
 end

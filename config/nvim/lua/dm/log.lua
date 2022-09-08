@@ -109,11 +109,8 @@ log.new = function(config, standalone)
         vim.cmd('echohl ' .. level_config.hl)
       end
 
-      local split_console = vim.split(
-        console_string,
-        '\n',
-        { trimempty = true }
-      )
+      local split_console =
+        vim.split(console_string, '\n', { trimempty = true })
       for _, v in ipairs(split_console) do
         local formatted_msg = vim.fn.escape(v, [["\]])
 

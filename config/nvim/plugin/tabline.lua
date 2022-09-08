@@ -29,9 +29,8 @@ end
 ---@return string
 function _G.nvim_tabline()
   local line = ''
-  local current_tabpagenr = api.nvim_tabpage_get_number(
-    api.nvim_get_current_tabpage()
-  )
+  local current_tabpagenr =
+    api.nvim_tabpage_get_number(api.nvim_get_current_tabpage())
   for tabpagenr = 1, #api.nvim_list_tabpages() do
     line = line .. tabline_label(tabpagenr, tabpagenr == current_tabpagenr)
   end

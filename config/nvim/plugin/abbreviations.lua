@@ -5,9 +5,12 @@ local cmd = vim.cmd
 ---@param long string
 local function cabbrev(short, long)
   cmd(
-    (
-      "cnoreabbrev <expr> %s getcmdtype() == ':' && getcmdpos() == %d ? '%s' : '%s'"
-    ):format(short, #short + 1, long, short)
+    ("cnoreabbrev <expr> %s getcmdtype() == ':' && getcmdpos() == %d ? '%s' : '%s'"):format(
+      short,
+      #short + 1,
+      long,
+      short
+    )
   )
 end
 

@@ -43,25 +43,27 @@ return function(opts)
     }
   end
 
-  pickers.new(opts, {
-    prompt_title = 'Search GitHub Stars',
-    finder = finders.new_table {
-      results = _CachedGithubStars,
-      entry_maker = function(entry)
-        return {
-          display = make_display,
-          value = entry.name,
-          description = entry.description,
-          url = entry.url,
-          ordinal = entry.name .. ' ' .. entry.description,
-        }
+  pickers
+    .new(opts, {
+      prompt_title = 'Search GitHub Stars',
+      finder = finders.new_table {
+        results = _CachedGithubStars,
+        entry_maker = function(entry)
+          return {
+            display = make_display,
+            value = entry.name,
+            description = entry.description,
+            url = entry.url,
+            ordinal = entry.name .. ' ' .. entry.description,
+          }
+        end,
+      },
+      previewer = false,
+      sorter = telescope_config.generic_sorter(opts),
+      attach_mappings = function()
+        actions.select_default:replace(custom_actions.open_in_browser)
+        return true
       end,
-    },
-    previewer = false,
-    sorter = telescope_config.generic_sorter(opts),
-    attach_mappings = function()
-      actions.select_default:replace(custom_actions.open_in_browser)
-      return true
-    end,
-  }):find()
+    })
+    :find()
 end

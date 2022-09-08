@@ -85,24 +85,26 @@ return function(opts)
     float.toggle()
   end
 
-  pickers.new(opts, {
-    prompt_title = 'Lir cd (' .. cwd .. ')',
-    finder = finders.new_oneshot_job({ 'fd', '--type', 'd' }, {
-      cwd = cwd,
-      entry_maker = function(line)
-        return {
-          display = line,
-          value = line,
-          cwd = cwd,
-          ordinal = line,
-        }
+  pickers
+    .new(opts, {
+      prompt_title = 'Lir cd (' .. cwd .. ')',
+      finder = finders.new_oneshot_job({ 'fd', '--type', 'd' }, {
+        cwd = cwd,
+        entry_maker = function(line)
+          return {
+            display = line,
+            value = line,
+            cwd = cwd,
+            ordinal = line,
+          }
+        end,
+      }),
+      previewer = tree_previewer(),
+      sorter = telescope_config.generic_sorter(opts),
+      attach_mappings = function()
+        actions.select_default:replace(open_dir_in_lir)
+        return true
       end,
-    }),
-    previewer = tree_previewer(),
-    sorter = telescope_config.generic_sorter(opts),
-    attach_mappings = function()
-      actions.select_default:replace(open_dir_in_lir)
-      return true
-    end,
-  }):find()
+    })
+    :find()
 end

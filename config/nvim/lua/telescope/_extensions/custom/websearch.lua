@@ -116,11 +116,8 @@ local function do_search()
 
   -- start in-progress animation
   if not state.anim_timer then
-    state.anim_timer = vim.fn.timer_start(
-      100,
-      in_progress_animation,
-      { ['repeat'] = -1 }
-    )
+    state.anim_timer =
+      vim.fn.timer_start(100, in_progress_animation, { ['repeat'] = -1 })
   end
 
   local function on_exit(result)

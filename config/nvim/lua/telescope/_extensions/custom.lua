@@ -24,11 +24,8 @@ end
 
 return telescope.register_extension {
   setup = function(ext_config)
-    _TelescopeCustomExtensionsConfig = vim.tbl_deep_extend(
-      'force',
-      _TelescopeCustomExtensionsConfig,
-      ext_config
-    )
+    _TelescopeCustomExtensionsConfig =
+      vim.tbl_deep_extend('force', _TelescopeCustomExtensionsConfig, ext_config)
   end,
   exports = {
     github_stars = require_on_module_call 'github_stars',
