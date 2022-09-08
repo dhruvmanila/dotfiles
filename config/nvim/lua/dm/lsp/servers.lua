@@ -78,41 +78,32 @@ return {
   -- https://github.com/sumneko/lua-language-server
   -- Install: `brew install lua-language-server`
   -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#sumneko_lua
-  sumneko_lua = function()
-    return require('lua-dev').setup {
-      library = {
-        plugins = false,
+  sumneko_lua = {
+    Lua = {
+      completion = {
+        -- Do NOT show contextual words, I got `cmp-buffer` for that.
+        showWord = 'Disable',
       },
-      lspconfig = {
-        settings = {
-          Lua = {
-            completion = {
-              -- Do NOT show contextual words, I got `cmp-buffer` for that.
-              showWord = 'Disable',
-            },
-            workspace = {
-              preloadFileSize = 1000,
-            },
-            diagnostics = {
-              globals = {
-                'packer_plugins',
-                'describe',
-                'it',
-                'pending',
-                'before_each',
-                'after_each',
-                'assert',
-                'stub',
-                'setup',
-                'teardown',
-                'insulate',
-              },
-            },
-          },
+      workspace = {
+        preloadFileSize = 1000,
+      },
+      diagnostics = {
+        globals = {
+          'packer_plugins',
+          'describe',
+          'it',
+          'pending',
+          'before_each',
+          'after_each',
+          'assert',
+          'stub',
+          'setup',
+          'teardown',
+          'insulate',
         },
       },
-    }
-  end,
+    },
+  },
 
   -- https://github.com/typescript-language-server/typescript-language-server
   -- Install: `npm install --global typescript typescript-language-server`

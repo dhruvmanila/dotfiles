@@ -178,6 +178,13 @@ local function on_attach(client, bufnr)
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 end
 
+---@see https://github.com/folke/lua-dev.nvim#%EF%B8%8F-configuration
+require('lua-dev').setup {
+  library = {
+    plugins = false,
+  },
+}
+
 do
   -- Define default client capabilities.
   ---@see https://github.com/hrsh7th/cmp-nvim-lsp#setup
