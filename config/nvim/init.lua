@@ -17,6 +17,10 @@ pcall(require, 'impatient')
 g.mapleader = ' '
 g.maplocalleader = ' '
 
+-- Enable treesitter highlighting for lua
+---@see https://github.com/neovim/neovim/issues/14090#issuecomment-1237820552
+g.ts_highlight_lua = true
+
 -- Setup neovim providers (`:h provider`)
 g.loaded_node_provider = 0
 g.loaded_perl_provider = 0
