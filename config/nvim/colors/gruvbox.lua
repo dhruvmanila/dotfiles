@@ -481,6 +481,11 @@ link('TSStringRegex', 'Green') -- check
 link('TSTagDelimiter', 'Green') -- check
 link('TSVariableBuiltin', 'BlueItalic') -- check
 
+-- Custom captures {{{3
+link('@docstring', 'TSComment')
+
+-- }}}3
+
 -- telescope.nvim {{{2
 link('TelescopeMatching', 'Blue')
 link('TelescopePromptPrefix', 'Yellow')
@@ -492,6 +497,8 @@ link('UltestRunning', 'Aqua')
 link('UltestDefault', 'Grey')
 link('UltestBorder', 'Fg')
 link('UltestSummaryInfo', 'BlueBold')
+
+-- }}}2
 
 -- Extended File Types {{{1
 -- diff {{{2

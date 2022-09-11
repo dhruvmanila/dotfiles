@@ -1,11 +1,6 @@
 vim.keymap.set('n', '<Leader>tp', '<Cmd>TSPlaygroundToggle<CR>')
 vim.keymap.set('n', '<Leader>th', '<Cmd>TSHighlightCapturesUnderCursor<CR>')
 
--- Set custom capture groups defined in `highlights.scm`
-require('nvim-treesitter.highlight').set_custom_captures {
-  ['docstring'] = 'TSComment',
-}
-
 require('nvim-treesitter.configs').setup {
   -- Install the parsers synchronously on a fresh setup
   sync_install = vim.env.NVIM_BOOTSTRAP and true or false,
