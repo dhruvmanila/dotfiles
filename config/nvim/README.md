@@ -7,8 +7,6 @@
 ├── after
 │   ├── ftplugin             # Override filetype settings
 │   │   └── ...
-│   ├── queries              # Override treesitter queries
-│   │   └── ...
 │   └── plugin               # Plugin configurations
 │       └── ...
 ├── colors                   # Custom defined colorschemes
@@ -33,6 +31,8 @@
 │   │   └── ...
 │   ├── *.vim ...            # First all .vim files are loaded
 │   └── *.lua ...            # And then all .lua files are loaded
+├── queries                  # Custom treesitter queries
+│   └── ...
 ├── init.lua
 ├── filetype.lua             # Help filetype detection
 └── minimal.lua              # Minimal bug repro template
