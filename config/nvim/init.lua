@@ -50,8 +50,8 @@ g.os = vim.loop.os_uname().sysname
 -- Shell command used to open URL, files, etc.
 ---@type "'open'"|"'xdg-open'"|"'start'"
 g.open_command = (g.os == 'Darwin' and 'open')
-  or (g.os == 'Linux' and 'xdg-open')
   or (g.os == 'Windows_NT' and 'start')
+  or 'xdg-open'
 
 require 'dm.globals' -- Global functions and variables
 require 'dm.plugins' -- Plugin configuration
