@@ -147,7 +147,10 @@ lir.setup {
 
     -- Search and open Lir in any directory from the current one using Telescope
     -- Mapping is similar to `nnn`
-    [';c'] = require('telescope').extensions.custom.lir_cd,
+    [';c'] = function()
+      -- This is a callable metatable which is not accepted in `vim.keymap.set`.
+      require('telescope').extensions.custom.lir_cd()
+    end,
   },
   on_init = function()
     -- These additional mappings allow us to visually select multiple items and
