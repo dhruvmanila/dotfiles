@@ -143,16 +143,15 @@ py-cleanup() { # {{{1
     return 1
   }
   for pattern in "pytest_cache" "mypy_cache" "__pycache__"; do
-    echo "==> removing '$pattern'"
-    # TODO: Update once this commit is in the release version
-    # https://github.com/sharkdp/fd/commit/0aee9b0fd950fbe4862f92e1445966a995ca06ee
+    echo "==> Removing '$pattern'"
     fd \
       --hidden \
       --no-ignore \
       --type="directory" \
       --exclude="*venv" \
       "$pattern" \
-      --exec bash -c 'echo "    {}"; rm -rf {}'
+      --exec echo "    {}" \; \
+      --exec rm -r {}
   done
 }
 
