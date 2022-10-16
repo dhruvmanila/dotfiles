@@ -185,8 +185,7 @@ do
   -- Define default client capabilities.
   ---@see https://github.com/hrsh7th/cmp-nvim-lsp#setup
   ---@see https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#completionClientCapabilities
-  local capabilities = lsp.protocol.make_client_capabilities()
-  require('cmp_nvim_lsp').update_capabilities(capabilities)
+  local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
   -- Setting up the servers with the provided configuration and additional
   -- capabilities.
