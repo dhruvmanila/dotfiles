@@ -143,6 +143,9 @@ case "$OSTYPE" in
 esac
 
 path=(
+  # https://github.com/deta/deta-cli
+  "$HOME/.deta/bin"(N-/)
+
   # Global Python version bin directory.
   "$PYENV_ROOT/bin"(N-/)
 
