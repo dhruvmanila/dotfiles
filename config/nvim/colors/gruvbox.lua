@@ -465,21 +465,21 @@ for _, section in ipairs { 'Border', 'Icon', 'Title' } do
 end
 
 -- nvim-treesitter {{{2
-highlight('TSDanger', { fg = palette.red, gui = 'bold' })
-highlight('TSWarning', { fg = palette.yellow, gui = 'bold' })
-link('TSConstant', 'Fg')
-link('TSConstBuiltin', 'BlueItalic')
-link('TSConstMacro', 'BlueItalic')
-link('TSConstructor', 'GreenBold')
-link('TSFuncBuiltin', 'GreenBold')
-link('TSFuncMacro', 'GreenBold')
-link('TSMethod', 'GreenBold')
-link('TSNamespace', 'YellowItalic')
-link('TSPunctDelimiter', 'Grey')
-link('TSStringEscape', 'Green') -- check
-link('TSStringRegex', 'Green') -- check
-link('TSTagDelimiter', 'Green') -- check
-link('TSVariableBuiltin', 'BlueItalic') -- check
+highlight('@text.danger', { fg = palette.red, gui = 'bold' })
+highlight('@text.warning', { fg = palette.yellow, gui = 'bold' })
+link('@constant', 'Fg')
+link('@constant.builtin', 'BlueItalic')
+link('@constant.macro', 'BlueItalic')
+link('@constructor', 'GreenBold')
+link('@function.builtin', 'GreenBold')
+link('@function.macro', 'GreenBold')
+link('@method', 'GreenBold')
+link('@namespace', 'YellowItalic')
+link('@punctuation.delimiter', 'Grey')
+link('@string.escape', 'Green') -- check
+link('@string.regex', 'Green') -- check
+link('@tag.delimiter', 'Green') -- check
+link('@variable.builtin', 'BlueItalic') -- check
 
 -- Custom captures {{{3
 link('@docstring', 'TSComment')
