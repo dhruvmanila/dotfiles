@@ -39,7 +39,7 @@ packer.startup {
       config = "require('dm.lsp')",
       requires = {
         'b0o/SchemaStore.nvim',
-        'folke/lua-dev.nvim',
+        'folke/neodev.nvim',
       },
     }
     use {

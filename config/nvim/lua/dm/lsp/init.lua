@@ -178,8 +178,8 @@ local function on_attach(client, bufnr)
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 end
 
----@see https://github.com/folke/lua-dev.nvim#%EF%B8%8F-configuration
-require('lua-dev').setup {
+---@see https://github.com/folke/neodev.nvim#%EF%B8%8F-configuration
+require('neodev').setup {
   library = {
     plugins = false,
   },
