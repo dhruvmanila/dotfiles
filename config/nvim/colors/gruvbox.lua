@@ -482,7 +482,7 @@ link('@tag.delimiter', 'Green') -- check
 link('@variable.builtin', 'BlueItalic') -- check
 
 -- Custom captures {{{3
-link('@docstring', 'TSComment')
+link('@docstring', '@comment')
 
 -- }}}3
 
