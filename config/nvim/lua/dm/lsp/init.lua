@@ -152,13 +152,9 @@ local function on_attach(client, bufnr)
       desc = 'LSP: Code action (bulb)',
     })
 
-    keymap.set('n', '<leader>ca', lsp.buf.code_action, {
+    keymap.set({ 'n', 'x' }, '<leader>ca', lsp.buf.code_action, {
       buffer = bufnr,
       desc = 'LSP: Code action',
-    })
-    keymap.set('x', '<leader>ca', lsp.buf.range_code_action, {
-      buffer = bufnr,
-      desc = 'LSP: Code action (range)',
     })
   end
 
