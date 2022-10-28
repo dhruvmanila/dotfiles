@@ -59,6 +59,10 @@ return {
     }
   end,
 
+  -- https://github.com/artempyanykh/marksman
+  -- Install: Pre-built binaries from https://github.com/artempyanykh/marksman/releases
+  marksman = {},
+
   -- https://github.com/microsoft/pyright
   -- Install: `npm install --global pyright`
   -- Settings: https://github.com/microsoft/pyright/blob/master/docs/settings.md
