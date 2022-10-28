@@ -1,4 +1,4 @@
-name: dot
+name: dotbot
 help: Personal tool for managing dotfiles and packages
 version: 1.0.0
 

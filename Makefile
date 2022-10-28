@@ -1,4 +1,4 @@
-BIN := dot
+BIN := dotbot
 DOTFILES := $(HOME)/dotfiles
 BIN_DIR := $(DOTFILES)/bin
 BASH_COMPLETION := $(DOTFILES)/config/bash/completions/$(BIN).bash
