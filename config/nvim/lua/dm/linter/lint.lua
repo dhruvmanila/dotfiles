@@ -12,6 +12,7 @@ local job = require 'dm.job'
 ---@field args string[]|fun(bufnr: number):string[] (default: {})
 ---@field enable? fun(bufnr: number):boolean (default: nil)
 ---@field stdin? boolean (default: true)
+---@field append_fname? boolean (default: true)
 ---@field stream? '"stdout"'|'"stderr"' (default: "stdout")
 ---@field ignore_exitcode? boolean (default: false)
 ---@field env? table<string, string>
@@ -30,15 +31,16 @@ local function run_linter(bufnr, linter)
     return
   end
 
-  local writer
-  local args = linter.args
-  if type(args) == 'function' then
-    args = args(bufnr)
+  local args = {}
+  local resolved_args = linter.args
+  if type(resolved_args) == 'function' then
+    resolved_args = resolved_args(bufnr)
   end
+  -- Add the arguments to a local table so as to not mutate the original table.
+  vim.list_extend(args, resolved_args)
 
-  if not linter.stdin then
-    -- Do NOT mutate the original `args` table.
-    args = vim.deepcopy(args)
+  local writer
+  if not linter.stdin and linter.append_fname then
     table.insert(args, api.nvim_buf_get_name(bufnr))
   else
     writer = api.nvim_buf_get_lines(bufnr, 0, -1, false)
@@ -77,6 +79,7 @@ function M.register(filetype, linter)
   end
 
   linter.stdin = if_nil(linter.stdin, true)
+  linter.append_fname = if_nil(linter.append_fname, not linter.stdin)
   linter.stream = linter.stream or 'stdout'
   linter.ignore_exitcode = if_nil(linter.ignore_exitcode, false)
 
