@@ -9,11 +9,13 @@ Dhruv
 default = true
 email = "dhruvmanila@gmail.com"
 
+backend = "imap"
 imap-host = "imap.gmail.com"
 imap-port = 993
 imap-login = "dhruvmanila@gmail.com"
 imap-passwd-cmd = "pass show gmail/dhruvmanila"
 
+sender = "smtp"
 smtp-host = "smtp.gmail.com"
 smtp-port = 465
 smtp-login = "dhruvmanila@gmail.com"
