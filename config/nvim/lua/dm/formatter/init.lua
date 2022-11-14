@@ -88,6 +88,12 @@ register('python', {
   },
 })
 
+-- rust {{{1
+
+register('rust', {
+  cmd = 'rustfmt',
+})
+
 -- sh {{{1
 
 register('sh', {

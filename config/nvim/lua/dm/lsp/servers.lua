@@ -79,6 +79,13 @@ return {
     },
   },
 
+  -- https://github.com/rust-lang/rust-analyzer
+  -- Install:
+  --   $ rustup component add --toolchain stable rust-analyzer
+  --   $ ln -sfv "$(rustup which --toolchain stable rust-analyzer)" "$CARGO_HOME/bin"
+  -- Settings: https://rust-analyzer.github.io/manual.html#configuration
+  rust_analyzer = {},
+
   -- https://github.com/sumneko/lua-language-server
   -- Install: `brew install lua-language-server`
   -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#sumneko_lua
