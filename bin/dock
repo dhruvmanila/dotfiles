@@ -20,21 +20,12 @@ except ModuleNotFoundError as err:
 
 # Dock applications ordered from left to right.
 DOCK_APPS = [
-    "/Applications/Safari.app",
     "/Applications/Brave Browser.app",
     "/Applications/kitty.app",
-    "/Applications/Docker.app/Contents/MacOS/Docker Desktop.app",
+    "/Applications/Notion.app",
     "/System/Applications/Notes.app",
     "/System/Applications/Music.app",
     "/System/Applications/Books.app",
-    "/Applications/Microsoft Teams.app",
-    "/Applications/Microsoft Outlook.app",
-    "/Applications/Microsoft Excel.app",
-    "/Applications/Microsoft Word.app",
-    "/Applications/draw.io.app",
-    "/Applications/MongoDB Compass.app",
-    "/Applications/pgAdmin 4.app",
-    "/Applications/Azure VPN Client.app",
 ]
 
 
