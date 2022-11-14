@@ -43,16 +43,16 @@ g.loaded_zipPlugin = 1
 -- have any special meaning in Neovim.
 
 -- Global border style
----@type '"edge"'|'"single"'|'"double"'|'"shadow"'|'"rounded"'|'"solid"'
+---@type 'edge'|'single'|'double'|'shadow'|'rounded'|'solid'
 ---@see https://en.wikipedia.org/wiki/Box-drawing_character
 g.border_style = 'edge'
 
 -- Operating system name
----@type "'Darwin'"|"'Linux'"|"'Windows_NT'"
+---@type 'Darwin'|'Linux'|'Windows_NT'
 g.os = vim.loop.os_uname().sysname
 
 -- Shell command used to open URL, files, etc.
----@type "'open'"|"'xdg-open'"|"'start'"
+---@type 'open'|'xdg-open'|'start'
 g.open_command = (g.os == 'Darwin' and 'open')
   or (g.os == 'Windows_NT' and 'start')
   or 'xdg-open'
