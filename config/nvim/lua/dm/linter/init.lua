@@ -88,13 +88,13 @@ do
       end
 
       local diagnostics = {}
-      local cwd = vim.loop.cwd()
-      local current_file = vim.api.nvim_buf_get_name(bufnr)
+      -- Current file path from the current working directory.
+      local current_file =
+        vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':.')
 
       for _, item in ipairs(decoded.Issues) do
-        local linted_file = cwd .. '/' .. item.Pos.Filename
         -- Publish diagnostics only for the current file.
-        if linted_file == current_file then
+        if item.Pos.Filename == current_file then
           -- Diagnostic uses 0-based rows and columns.
           ---@see |diagnostic-structure|
           local lnum = item.Pos.Line > 0 and item.Pos.Line - 1 or 0
@@ -176,16 +176,15 @@ do
     ignore_exitcode = true,
     parser = function(output, bufnr)
       local diagnostics = {}
+      local current_file =
+        vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':.')
+
       for line in vim.gsplit(output, '\n') do
         local diagnostic = vim.diagnostic.match(line, pat, groups, severity_map)
-        if
-          diagnostic
-          -- Use the `file` group to filter diagnostics related to other files.
-          -- This is done because `mypy` can follow imports and report errors
-          -- from other files which will be displayed in the current buffer.
-          and diagnostic.file
-            == vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':~:.')
-        then
+        -- Use the `file` group to filter diagnostics related to other files.
+        -- This is done because `mypy` can follow imports and report errors
+        -- from other files which will be displayed in the current buffer.
+        if diagnostic and diagnostic.file == current_file then
           diagnostic.source = 'mypy'
           if
             diagnostic.severity == vim.diagnostic.severity.HINT
