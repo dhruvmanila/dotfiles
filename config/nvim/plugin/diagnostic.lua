@@ -14,17 +14,6 @@ for _, info in ipairs(severity_info) do
   vim.fn.sign_define(info.hl, { text = info.icon, texthl = info.hl })
 end
 
--- Format the diagnostic message to include the `code` value.
----@param diagnostic table
----@return string
-local function format_diagnostic(diagnostic)
-  local message = diagnostic.message
-  if diagnostic.code then
-    message = ('%s (%s)'):format(message, diagnostic.code)
-  end
-  return message
-end
-
 -- Prefix each diagnostic in the floating window with an appropriate icon.
 ---@param diagnostic table
 ---@return string #icon as per the diagnostic severity
@@ -43,7 +32,6 @@ vim.diagnostic.config {
   float = {
     header = false,
     source = 'always',
-    format = format_diagnostic,
     prefix = prefix_diagnostic,
   },
 }
