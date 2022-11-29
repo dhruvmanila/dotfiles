@@ -32,7 +32,7 @@ packer.startup {
   function(use)
     use 'wbthomason/packer.nvim'
 
-    -- LSP, completion & snippets
+    -- LSP, completion & snippets {{{1
     use {
       'neovim/nvim-lspconfig',
       event = 'BufReadPre',
@@ -70,7 +70,7 @@ packer.startup {
     }
     use { 'L3MON4D3/LuaSnip', config = conf 'luasnip' }
 
-    -- Fuzzy finder (Telescope)
+    -- Fuzzy finder (Telescope) {{{1
     use {
       'nvim-telescope/telescope.nvim',
       config = conf 'telescope',
@@ -82,7 +82,7 @@ packer.startup {
       },
     }
 
-    -- Debugging (DAP) & Testing
+    -- Debugging (DAP) & Testing {{{1
     use {
       'mfussenegger/nvim-dap',
       keys = {
@@ -99,7 +99,7 @@ packer.startup {
     }
     use { 'klen/nvim-test', config = conf 'nvim_test' }
 
-    -- Treesitter
+    -- Treesitter {{{1
     use {
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate',
@@ -120,7 +120,7 @@ packer.startup {
       config = conf 'neogen',
     }
 
-    -- Tpope
+    -- Tpope {{{1
     use 'tpope/vim-commentary'
     use 'tpope/vim-eunuch'
     use 'tpope/vim-fugitive'
@@ -128,22 +128,22 @@ packer.startup {
     use 'tpope/vim-scriptease'
     use 'tpope/vim-surround'
 
-    -- Git
+    -- Git {{{1
     use 'rhysd/committia.vim'
     use 'rhysd/git-messenger.vim'
     use { 'lewis6991/gitsigns.nvim', config = conf 'gitsigns' }
     use { 'ruifm/gitlinker.nvim', config = conf 'gitlinker' }
 
-    -- Filetype
+    -- Filetype {{{1
     use 'MTDL9/vim-log-highlighting'
     use 'fladson/vim-kitty'
     use 'raimon49/requirements.txt.vim'
     use 'vim-scripts/applescript.vim'
 
-    -- File explorer
+    -- File explorer {{{1
     use { 'tamago324/lir.nvim', keys = { { 'n', '-' } }, config = conf 'lir' }
 
-    -- Utilities
+    -- Utilities {{{1
     use 'airblade/vim-rooter'
     use { 'nacro90/numb.nvim', config = "require('numb').setup()" }
 
@@ -160,7 +160,7 @@ packer.startup {
     use 'milisims/nvim-luaref'
     use 'nanotee/luv-vimdocs'
 
-    -- Icons
+    -- Icons {{{1
     use {
       'yamatsum/nvim-nonicons',
       cond = function()
@@ -169,9 +169,11 @@ packer.startup {
     }
     use { 'kyazdani42/nvim-web-devicons', config = conf 'nvim_web_devicons' }
 
-    -- Startup & Profiling
+    -- Startup & Profiling {{{1
     use 'lewis6991/impatient.nvim'
     use { 'dstein64/vim-startuptime', cmd = 'StartupTime' }
+
+    -- }}}1
 
     -- Install every package on boostrap.
     if packer_bootstrap then
