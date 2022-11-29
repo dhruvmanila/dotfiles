@@ -147,17 +147,7 @@ packer.startup {
     use 'airblade/vim-rooter'
     use { 'nacro90/numb.nvim', config = "require('numb').setup()" }
 
-    use {
-      'editorconfig/editorconfig-vim',
-      config = function()
-        vim.g.EditorConfig_exclude_patterns = { 'fugitive://.*', 'scp://.*' }
-        vim.g.EditorConfig_max_line_indicator = 'none'
-        vim.g.EditorConfig_preserve_formatoptions = 1
-        vim.g.EditorConfig_exec_path = 'editorconfig'
-        vim.g.EditorConfig_core_mode = 'external_command'
-      end,
-    }
-
+    use 'gpanders/editorconfig.nvim'
     use 'itchyny/vim-external'
     use 'junegunn/vim-easy-align'
     use 'lambdalisue/vim-protocol'
