@@ -201,6 +201,52 @@ do
   })
 end
 
+-- python:ruff {{{1
+
+register('python', {
+  cmd = 'ruff',
+  args = { '--exit-zero', '--format', 'json' },
+  stdin = false,
+  enable = function()
+    local version = vim.g.current_python_version or ''
+    if version ~= '' then
+      -- Format: 'Python X.Y.Z'
+      ---@type number[]
+      local parts = vim.tbl_map(
+        tonumber,
+        vim.split(
+          vim.split(version, ' ', { plain = true })[2],
+          '.',
+          { plain = true }
+        )
+      )
+      return parts[0] == 3 and parts[1] < 11
+    end
+    -- Disable until we know the Python version.
+    return false
+  end,
+  parser = function(output)
+    local diagnostics = {}
+    for _, item in ipairs(vim.json.decode(output)) do
+      -- Ignore all the fixed diagnostics. This will be true if a fix was
+      -- available and the `--fix` flag was passed.
+      if not item.fixed then
+        table.insert(diagnostics, {
+          source = 'ruff',
+          lnum = math.max(item.location.row - 1, 0),
+          end_lnum = math.max(item.end_location.row - 1, 0),
+          col = math.max(item.location.column - 1, 0),
+          end_col = math.max(item.end_location.column - 1, 0),
+          severity = vim.diagnostic.severity.WARN,
+          code = item.code,
+          message = item.message,
+        })
+      end
+    end
+    return diagnostics
+  end,
+})
+
 -- yaml:actionlint {{{1
 register('yaml', {
   cmd = 'actionlint',
