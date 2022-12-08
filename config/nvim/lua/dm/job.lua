@@ -123,7 +123,7 @@ return function(opts)
 
   if not handle then
     close_safely(stdin, stdout, stderr)
-    log.fmt_error('Failed to spawn process: %s', pid_or_err)
+    log.fmt_error('Failed to spawn process (%s): %s', cmd, pid_or_err)
     return
   end
 
