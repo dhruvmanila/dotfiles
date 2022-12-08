@@ -30,10 +30,25 @@ return {
           unusedparams = true,
           unusedwrite = true,
         },
+        -- Used as placeholder to be replaced by `on_init`.
+        ['local'] = '',
         gofumpt = true,
         usePlaceholders = true,
       },
     },
+    on_init = function(client)
+      for line in io.lines 'go.mod' do
+        if vim.startswith(line, 'module') then
+          client.config.settings.gopls['local'] =
+            vim.split(line, ' ', { plain = true })[2]
+        end
+      end
+      client.notify(
+        'workspace/didChangeConfiguration',
+        { settings = client.config.settings }
+      )
+      return true
+    end,
   },
 
   -- https://github.com/microsoft/vscode/tree/main/extensions/html-language-features/server
