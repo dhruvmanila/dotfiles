@@ -95,10 +95,8 @@ do
       for _, item in ipairs(decoded.Issues) do
         -- Publish diagnostics only for the current file.
         if item.Pos.Filename == current_file then
-          -- Diagnostic uses 0-based rows and columns.
-          ---@see |diagnostic-structure|
-          local lnum = item.Pos.Line > 0 and item.Pos.Line - 1 or 0
-          local col = item.Pos.Column > 0 and item.Pos.Column - 1 or 0
+          local lnum = math.max(item.Pos.Line - 1, 0)
+          local col = math.max(item.Pos.Column - 1, 0)
           table.insert(diagnostics, {
             lnum = lnum,
             end_lnum = lnum,
