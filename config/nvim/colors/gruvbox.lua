@@ -1,27 +1,12 @@
 -- Ref: https://github.com/sainnhe/gruvbox-material/blob/master/colors/gruvbox-material.vim
 
--- Global style settings. {{{
---     ┌─────────┬─────────────────┐
---     │  State  │      Value      │
---     ├─────────┼─────────────────┤
---     │ Disable │       nil       │
---     ├─────────┼─────────────────┤
---     │ Enable  │ 'italic'/'bold' │
---     └─────────┴─────────────────┘
--- }}}
-local italic = 'italic'
-local bold = 'bold'
+-- Global style settings.
+local italic = true
+local bold = true
+local underline = true
 
--- Italic in comments. {{{
---     ┌─────────┬───────────┐
---     │  State  │   Value   │
---     ├─────────┼───────────┤
---     │ Disable │    nil    │
---     ├─────────┼───────────┤
---     │ Enable  │ 'italic'  │
---     └─────────┴───────────┘
--- }}}
-local italic_comment = 'italic'
+-- Italic in comments.
+local italic_comment = true
 
 local palette = {
   bg0 = '#282828',
@@ -61,55 +46,19 @@ local base = {
 
 palette = vim.tbl_extend('error', base, palette)
 
--- Lua wrapper around `:highlight`
+-- Wrapper around `vim.api.nvim_set_hl` to set the global highlight group.
 ---@param group_name string
----@param args { bg: string, fg: string, sp: string, gui: string, blend: number }
----@param default? boolean
-local function highlight(group_name, args, default)
-  vim.cmd(
-    ('highlight %s %s guifg=%s guibg=%s gui=%s guisp=%s blend=%s'):format(
-      default and 'default' or '',
-      group_name,
-      args.fg or 'NONE',
-      args.bg or 'NONE',
-      args.gui or 'NONE',
-      args.sp or 'NONE',
-      args.blend or 'NONE'
-    )
-  )
+---@param args? table<string, any> Refer to |nvim_set_hl()|
+local function highlight(group_name, args)
+  args = args or {}
+  vim.api.nvim_set_hl(0, group_name, args)
 end
 
--- Lua wrapper around `:highlight link`
+-- Wrapper around `vim.api.nvim_set_hl` to link two highlight groups.
 ---@param from_group string
 ---@param to_group string
----@param force? boolean
-local function link(from_group, to_group, force)
-  -- When do I need to add a bang after :hi? {{{
-  --
-  -- When you try to create a link between 2 HGs, and the first one has been
-  -- defined with its own attributes:
-  --
-  --   > :hi MyGroup ctermbg=green guibg=green
-  --   > :hi link MyGroup Search
-  --   > E414: ...
-  --
-  --   > :hi! link MyGroup Search
-  --        ^
-  --
-  -- If you execute :hi MyGroup, you'll see that the old attributes are still
-  -- there. But the highlighting applied to xxx is given by the link. This shows
-  -- that a link has priority over attributes.
-  --
-  -- You could also have cleared MyGroup:
-  --
-  --   > :hi MyGroup ctermbg=green guibg=green
-  --   > :hi clear MyGroup
-  --   > :hi link MyGroup Search
-  -- }}}
-  if force == nil or force == true then
-    vim.cmd('highlight clear ' .. from_group)
-  end
-  vim.cmd(('highlight default link %s %s'):format(from_group, to_group))
+local function link(from_group, to_group)
+  vim.api.nvim_set_hl(0, from_group, { link = to_group })
 end
 
 -- `background` needs to be set *before* `:highlight clear` {{{
@@ -154,18 +103,18 @@ vim.g.colors_name = 'gruvbox'
 -- }}}
 highlight('Fg', { fg = palette.fg })
 highlight('Grey', { fg = palette.grey1 })
-highlight('GreyBold', { fg = palette.grey1, gui = bold })
-highlight('GreyItalic', { fg = palette.grey1, gui = italic })
-highlight('GreyUnderline', { fg = palette.grey1, gui = 'underline' })
+highlight('GreyBold', { fg = palette.grey1, bold = bold })
+highlight('GreyItalic', { fg = palette.grey1, italic = italic })
+highlight('GreyUnderline', { fg = palette.grey1, underline = underline })
 
 for name, color in pairs(base) do
   -- Uppercase the first letter of the given string.
   --   'red' -> 'Red'
   name = name:gsub('^%l', string.upper)
   highlight(name, { fg = color })
-  highlight(name .. 'Bold', { fg = color, gui = bold })
-  highlight(name .. 'Italic', { fg = color, gui = italic })
-  highlight(name .. 'Underline', { fg = color, gui = 'underline' })
+  highlight(name .. 'Bold', { fg = color, bold = bold })
+  highlight(name .. 'Italic', { fg = color, italic = italic })
+  highlight(name .. 'Underline', { fg = color, underline = underline })
 end
 
 -- Default Highlight Groups (`:h highlight-group`) {{{1
@@ -183,8 +132,8 @@ highlight('Search', { fg = palette.bg0, bg = palette.bg_green })
 highlight('ColorColumn', { bg = palette.bg1 })
 highlight('Conceal', { fg = palette.bg3 })
 
-highlight('Cursor', { gui = 'reverse' })
-highlight('HiddenCursor', { gui = 'reverse', blend = 100 })
+highlight('Cursor', { reverse = true })
+highlight('HiddenCursor', { reverse = true, blend = 100 })
 link('vCursor', 'Cursor')
 link('iCursor', 'Cursor')
 link('lCursor', 'Cursor')
@@ -194,7 +143,7 @@ link('TermCursor', 'Cursor')
 highlight('CursorLine', { bg = palette.bg1 })
 highlight('CursorColumn', { bg = palette.bg1 })
 highlight('LineNr', { fg = palette.bg3 })
-highlight('CursorLineNr', { fg = palette.yellow, gui = 'bold' })
+highlight('CursorLineNr', { fg = palette.yellow, bold = true })
 
 highlight('DiffAdd', { bg = palette.bg_diff_green })
 highlight('DiffChange', { bg = palette.bg_diff_blue })
@@ -202,10 +151,10 @@ highlight('DiffDelete', { bg = palette.bg_diff_red })
 highlight('DiffText', { fg = palette.bg0, bg = palette.blue })
 
 highlight('Directory', { fg = palette.green })
-highlight('ErrorMsg', { fg = palette.red, gui = 'bold,underline' })
-highlight('WarningMsg', { fg = palette.yellow, gui = 'bold' })
-highlight('ModeMsg', { fg = palette.fg, gui = 'bold' })
-highlight('MoreMsg', { fg = palette.yellow, gui = 'bold' })
+highlight('ErrorMsg', { fg = palette.red, bold = true, underline = true })
+highlight('WarningMsg', { fg = palette.yellow, bold = true })
+highlight('ModeMsg', { fg = palette.fg, bold = true })
+highlight('MoreMsg', { fg = palette.yellow, bold = true })
 highlight('MatchParen', { bg = palette.bg2 })
 highlight('NonText', { fg = palette.bg3 })
 highlight('Whitespace', { fg = palette.bg3 })
@@ -216,7 +165,7 @@ highlight('PmenuSbar', { bg = palette.bg2 })
 highlight('PmenuSel', {
   fg = palette.bg2,
   bg = palette.blue,
-  gui = 'bold',
+  bold = true,
 })
 link('WildMenu', 'PmenuSel')
 highlight('PmenuThumb', { bg = palette.grey0 })
@@ -231,17 +180,17 @@ else
 end
 
 highlight('Question', { fg = palette.yellow })
-highlight('SpellBad', { gui = 'undercurl', sp = palette.red })
-highlight('SpellCap', { gui = 'undercurl', sp = palette.blue })
-highlight('SpellLocal', { gui = 'undercurl', sp = palette.aqua })
-highlight('SpellRare', { gui = 'undercurl', sp = palette.purple })
+highlight('SpellBad', { undercurl = true, sp = palette.red })
+highlight('SpellCap', { undercurl = true, sp = palette.blue })
+highlight('SpellLocal', { undercurl = true, sp = palette.aqua })
+highlight('SpellRare', { undercurl = true, sp = palette.purple })
 highlight('VertSplit', { fg = palette.bg3 })
 highlight('Visual', { bg = palette.bg2 })
 highlight('VisualNOS', { bg = palette.bg2 })
-highlight('QuickFixLine', { fg = palette.purple, gui = 'bold' })
+highlight('QuickFixLine', { fg = palette.purple, bold = true })
 highlight('Debug', { fg = palette.orange })
 highlight('debugPC', { fg = palette.bg0, bg = palette.green })
-highlight('debugBreakpoint', { fg = palette.bg0, palette.red })
+highlight('debugBreakpoint', { fg = palette.bg0, bg = palette.red })
 highlight('ToolbarButton', { fg = palette.bg0, bg = palette.grey2 })
 highlight('Substitute', { fg = palette.bg0, bg = palette.yellow })
 
@@ -262,7 +211,7 @@ highlight('StatusLineTermNC', {
 --     │ User1 │ User2 │                                  │ User2 │ User1 │
 --     └───────┴───────┴──────────────────────────────────┴───────┴───────┘
 -- }}}
-highlight('User1', { fg = palette.bg0, bg = palette.grey2, gui = 'bold' })
+highlight('User1', { fg = palette.bg0, bg = palette.grey2, bold = true })
 highlight('User2', { fg = palette.fg, bg = palette.bg_statusline3 })
 -- LSP diagnostic groups {{{
 --
@@ -278,48 +227,51 @@ highlight('User9', { fg = palette.red, bg = palette.bg_statusline2 })
 highlight('TabLineSel', {
   fg = palette.fg,
   bg = palette.bg0,
-  gui = 'bold,underline',
+  bold = true,
+  underline = true,
 })
 highlight('TabLine', { fg = '#928374', bg = '#242424' })
 highlight('TabLineFill', { fg = '#928374', bg = '#1e1e1e' })
+
+-- }}}2
 
 -- Syntax {{{1
 
 highlight('Boolean', { fg = palette.purple })
 highlight('Character', { fg = palette.aqua })
-highlight('Comment', { fg = palette.grey1, gui = italic_comment })
-highlight('Conditional', { fg = palette.red, gui = italic })
+highlight('Comment', { fg = palette.grey1, italic = italic_comment })
+highlight('Conditional', { fg = palette.red, italic = italic })
 highlight('Constant', { fg = palette.aqua })
-highlight('Define', { fg = palette.purple, gui = italic })
+highlight('Define', { fg = palette.purple, italic = italic })
 highlight('Delimiter', { fg = palette.fg })
 highlight('Error', { fg = palette.red })
-highlight('Exception', { fg = palette.red, gui = italic })
+highlight('Exception', { fg = palette.red, italic = italic })
 highlight('Float', { fg = palette.purple })
-highlight('Function', { fg = palette.green, gui = bold })
+highlight('Function', { fg = palette.green, bold = bold })
 highlight('Identifier', { fg = palette.blue })
 highlight('Ignore', { fg = palette.grey1 })
-highlight('Include', { fg = palette.purple, gui = italic })
-highlight('Keyword', { fg = palette.red, gui = italic })
+highlight('Include', { fg = palette.purple, italic = italic })
+highlight('Keyword', { fg = palette.red, italic = italic })
 highlight('Label', { fg = palette.orange })
 highlight('Macro', { fg = palette.aqua })
 highlight('Number', { fg = palette.purple })
 highlight('Operator', { fg = palette.orange })
-highlight('PreCondit', { fg = palette.purple, gui = italic })
-highlight('PreProc', { fg = palette.purple, gui = italic })
-highlight('Repeat', { fg = palette.red, gui = italic })
+highlight('PreCondit', { fg = palette.purple, italic = italic })
+highlight('PreProc', { fg = palette.purple, italic = italic })
+highlight('Repeat', { fg = palette.red, italic = italic })
 highlight('Special', { fg = palette.yellow })
 highlight('SpecialChar', { fg = palette.yellow })
-highlight('SpecialComment', { fg = palette.grey1, gui = italic_comment })
-highlight('Statement', { fg = palette.red, gui = italic })
+highlight('SpecialComment', { fg = palette.grey1, italic = italic_comment })
+highlight('Statement', { fg = palette.red, italic = italic })
 highlight('StorageClass', { fg = palette.orange })
 highlight('String', { fg = palette.aqua })
 highlight('Structure', { fg = palette.orange })
 highlight('Tag', { fg = palette.orange })
-highlight('Title', { fg = palette.orange, gui = 'bold' })
-highlight('Todo', { fg = palette.purple, gui = italic_comment })
+highlight('Title', { fg = palette.orange, bold = true })
+highlight('Todo', { fg = palette.purple, italic = italic_comment })
 highlight('Type', { fg = palette.yellow })
-highlight('Typedef', { fg = palette.red, gui = italic })
-highlight('Underlined', { gui = 'underline' })
+highlight('Typedef', { fg = palette.red, italic = italic })
+highlight('Underlined', { underline = true })
 
 -- Terminal {{{1
 
@@ -366,13 +318,10 @@ highlight('DiagnosticVirtualTextInfo', { fg = palette.blue })
 highlight('DiagnosticVirtualTextHint', { fg = palette.aqua })
 
 -- Underline Diagnostics {{{2
-highlight('DiagnosticUnderlineError', { gui = 'undercurl', sp = palette.red })
-highlight('DiagnosticUnderlineWarn', {
-  gui = 'undercurl',
-  sp = palette.yellow,
-})
-highlight('DiagnosticUnderlineInfo', { gui = 'undercurl', sp = palette.blue })
-highlight('DiagnosticUnderlineHint', { gui = 'undercurl', sp = palette.aqua })
+highlight('DiagnosticUnderlineError', { undercurl = true, sp = palette.red })
+highlight('DiagnosticUnderlineWarn', { undercurl = true, sp = palette.yellow })
+highlight('DiagnosticUnderlineInfo', { undercurl = true, sp = palette.blue })
+highlight('DiagnosticUnderlineHint', { undercurl = true, sp = palette.aqua })
 
 -- Sign Diagnostics {{{2
 highlight('DiagnosticSignError', { fg = palette.red })
@@ -411,7 +360,9 @@ link('GitSignsChangeDelete', 'Purple')
 -- lightspeed.nvim {{{2
 highlight('LightspeedOneCharMatch', {
   fg = 'White',
-  gui = 'bold,italic,underline',
+  bold = true,
+  italic = true,
+  underline = true,
 })
 
 -- lir.nvim {{{2
@@ -465,8 +416,8 @@ for _, section in ipairs { 'Border', 'Icon', 'Title' } do
 end
 
 -- nvim-treesitter {{{2
-highlight('@text.danger', { fg = palette.red, gui = 'bold' })
-highlight('@text.warning', { fg = palette.yellow, gui = 'bold' })
+highlight('@text.danger', { fg = palette.red, bold = true })
+highlight('@text.warning', { fg = palette.yellow, bold = true })
 link('@constant', 'Fg')
 link('@constant.builtin', 'BlueItalic')
 link('@constant.macro', 'BlueItalic')
@@ -479,6 +430,7 @@ link('@punctuation.delimiter', 'Grey')
 link('@string.escape', 'Green') -- check
 link('@string.regex', 'Green') -- check
 link('@tag.delimiter', 'Green') -- check
+link('@variable', 'Fg')
 link('@variable.builtin', 'BlueItalic') -- check
 
 -- Custom captures {{{3
@@ -529,12 +481,12 @@ link('helpSpecial', 'Blue')
 link('helpCommand', 'Aqua')
 
 -- markdown {{{2
-highlight('markdownH1', { fg = palette.red, gui = 'bold' })
-highlight('markdownH2', { fg = palette.orange, gui = 'bold' })
-highlight('markdownH3', { fg = palette.yellow, gui = 'bold' })
-highlight('markdownH4', { fg = palette.green, gui = 'bold' })
-highlight('markdownH5', { fg = palette.blue, gui = 'bold' })
-highlight('markdownH6', { fg = palette.purple, gui = 'bold' })
+highlight('markdownH1', { fg = palette.red, bold = true })
+highlight('markdownH2', { fg = palette.orange, bold = true })
+highlight('markdownH3', { fg = palette.yellow, bold = true })
+highlight('markdownH4', { fg = palette.green, bold = true })
+highlight('markdownH5', { fg = palette.blue, bold = true })
+highlight('markdownH6', { fg = palette.purple, bold = true })
 link('markdownCode', 'Aqua')
 link('markdownCodeBlock', 'Aqua')
 link('markdownUrl', 'BlueUnderline')
