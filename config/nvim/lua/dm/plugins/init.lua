@@ -145,7 +145,6 @@ packer.startup {
     use 'airblade/vim-rooter'
     use { 'nacro90/numb.nvim', config = "require('numb').setup()" }
 
-    use 'gpanders/editorconfig.nvim'
     use 'itchyny/vim-external'
     use 'junegunn/vim-easy-align'
     use 'lambdalisue/vim-protocol'
