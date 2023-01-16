@@ -355,6 +355,7 @@ link('CopilotSuggestion', 'Comment')
 link('GitSignsAdd', 'Green')
 link('GitSignsChange', 'Blue')
 link('GitSignsDelete', 'Red')
+link('GitSignsTopdelete', 'Red')
 link('GitSignsChangeDelete', 'Purple')
 
 -- lightspeed.nvim {{{2
