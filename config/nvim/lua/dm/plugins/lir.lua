@@ -3,43 +3,6 @@ local lir = require 'lir'
 local actions = require 'lir.actions'
 local mark_actions = require 'lir.mark.actions'
 
-local Path = require 'plenary.path'
-
--- Helper function to jump the cursor to the given entry (file/directory)
--- in the Lir buffer.
----@param name string
-local function cursor_jump(name)
-  local lnum = lir.get_context():indexof(name)
-  if lnum then
-    vim.cmd(tostring(lnum))
-  end
-end
-
--- Alternative to the builtin `new_file` function. This creates a new file
--- in the file system and puts the cursor above the file, similar to `mkdir`.
--- Original implementation just creates a vim buffer and opens it.
-local function newfile()
-  vim.ui.input({
-    prompt = 'Create file: ',
-  }, function(name)
-    if not name or name == '' then
-      return
-    end
-    local ctx = lir.get_context()
-    local path = Path:new(ctx.dir .. name)
-    if path:exists() then
-      dm.notify('Lir', { 'File already exists', tostring(path) }, 3)
-      cursor_jump(name)
-      return
-    end
-    path:touch()
-    actions.reload()
-    vim.schedule(function()
-      cursor_jump(name)
-    end)
-  end)
-end
-
 -- Go to the git root directory for the current directory using lspconfig
 -- util function.
 local function goto_git_root()
@@ -91,7 +54,10 @@ end
 
 lir.setup {
   show_hidden_files = true,
-  devicons_enable = true,
+  devicons = {
+    enable = true,
+    highlight_dirname = true,
+  },
   hide_cursor = false,
   float = {
     winblend = 0,
@@ -112,7 +78,7 @@ lir.setup {
     ['<C-t>'] = actions.tabedit,
 
     ['d'] = actions.mkdir,
-    ['f'] = newfile,
+    ['f'] = actions.touch,
     ['r'] = actions.rename,
     ['x'] = actions.wipeout,
 
@@ -152,7 +118,11 @@ lir.setup {
       require('telescope').extensions.custom.lir_cd()
     end,
   },
-  on_init = function()
+}
+
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+  pattern = { 'lir' },
+  callback = function()
     -- These additional mappings allow us to visually select multiple items and
     -- then copy or cut them all at once.
     --
@@ -171,6 +141,6 @@ lir.setup {
       desc = 'Lir: Cut visual selection',
     })
   end,
-}
+})
 
 vim.keymap.set('n', '-', require('lir.float').toggle, { desc = 'Lir: Toggle' })
