@@ -16,23 +16,12 @@ neogen.setup {
   },
 }
 
-vim.keymap.set('n', '<leader>nf', '<Cmd>Neogen func<CR>')
-vim.keymap.set('n', '<leader>nc', '<Cmd>Neogen class<CR>')
+vim.keymap.set('n', '<leader>nn', '<Cmd>Neogen<CR>')
 
-vim.keymap.set('n', '<leader>ngf', function()
+vim.keymap.set('n', '<leader>ng', function()
   neogen.generate {
     annotation_convention = {
       python = 'google_docstrings',
     },
-    type = 'func',
   }
-end, { desc = 'neogen: google docstring for function' })
-
-vim.keymap.set('n', '<leader>ngc', function()
-  neogen.generate {
-    annotation_convention = {
-      python = 'google_docstrings',
-    },
-    type = 'class',
-  }
-end, { desc = 'neogen: google docstring for class' })
+end, { desc = 'neogen: google docstring' })

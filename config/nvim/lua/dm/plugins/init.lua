@@ -112,10 +112,8 @@ packer.startup {
     use {
       'danymat/neogen',
       keys = {
-        { 'n', '<leader>nf' }, -- Neogen func
-        { 'n', '<leader>nc' }, -- Neogen class
-        { 'n', '<leader>ngf' }, -- Neogen func
-        { 'n', '<leader>ngc' }, -- Neogen class
+        { 'n', '<leader>nn' }, -- Neogen Python numpydoc
+        { 'n', '<leader>ng' }, -- Neogen Python google docstring
       },
       config = conf 'neogen',
     }
