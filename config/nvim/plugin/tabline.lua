@@ -4,36 +4,71 @@ local api = vim.api
 local session = require 'dm.session'
 local provider = require 'dm.provider'
 
--- Provide the tabline label for active and inactive tabpage.
----@param tabpagenr integer
----@param is_active boolean
----@return string
-local function tabline_label(tabpagenr, is_active)
-  local winnr = fn.tabpagewinnr(tabpagenr)
-  local bufnr = fn.tabpagebuflist(tabpagenr)[winnr]
-  local tabhl = is_active and '%#TabLineSel#' or '%#TabLine#'
+---@class Tabpage
+---@field id integer
+---@field name string
+---@field flags string
+---@field is_active boolean
 
-  return tabhl
+-- Construct and return the tabline label.
+---@param tabpage Tabpage
+---@return string
+local function tabpage_label(tabpage)
+  return (tabpage.is_active and '%#TabLineSel#' or '%#TabLine#')
     .. '%'
-    .. tabpagenr
+    .. tabpage.id
     .. 'T' -- Starts mouse click target region
     .. '  '
-    .. tabpagenr
+    .. tabpage.id
     .. ': '
-    .. provider.buffer_name(bufnr, ':t')
-    .. provider.buffer_flags(bufnr)
+    .. tabpage.name
+    .. tabpage.flags
     .. '  '
+end
+
+-- Collect and return a mapping from filename to all the tabpages with the
+-- same filename.
+---@return table<string, Tabpage[]>
+local function collect_tabpages()
+  local tabpages = {}
+  local current_tabpagenr =
+    api.nvim_tabpage_get_number(api.nvim_get_current_tabpage())
+  for tabpagenr = 1, #api.nvim_list_tabpages() do
+    local winnr = fn.tabpagewinnr(tabpagenr)
+    local bufnr = fn.tabpagebuflist(tabpagenr)[winnr]
+    local tabpage = {
+      id = tabpagenr,
+      name = provider.buffer_name(bufnr),
+      flags = provider.buffer_flags(bufnr),
+      is_active = tabpagenr == current_tabpagenr,
+    }
+    local filename = fn.fnamemodify(tabpage.name, ':t')
+    tabpages[filename] = tabpages[filename] or {}
+    table.insert(tabpages[filename], tabpage)
+  end
+  return tabpages
 end
 
 -- Provide the tabline.
 ---@return string
 function _G.nvim_tabline()
-  local line = ''
-  local current_tabpagenr =
-    api.nvim_tabpage_get_number(api.nvim_get_current_tabpage())
-  for tabpagenr = 1, #api.nvim_list_tabpages() do
-    line = line .. tabline_label(tabpagenr, tabpagenr == current_tabpagenr)
+  local labels = {}
+
+  for filename, tabpages in pairs(collect_tabpages()) do
+    if #tabpages == 1 then
+      local tabpage = tabpages[1]
+      tabpage.name = filename
+      labels[tabpage.id] = tabpage_label(tabpage)
+    else
+      for _, tabpage in ipairs(tabpages) do
+        local parts = vim.split(tabpage.name, '/', { trimempty = true })
+        tabpage.name = parts[#parts - 1] .. '/' .. parts[#parts]
+        labels[tabpage.id] = tabpage_label(tabpage)
+      end
+    end
   end
+
+  local line = table.concat(labels, '')
   local current_session = session.current()
   if current_session ~= '' then
     current_session = '  ' .. current_session .. ' '
