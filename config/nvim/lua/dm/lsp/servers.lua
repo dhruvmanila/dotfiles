@@ -53,7 +53,9 @@ return {
 
   -- https://github.com/microsoft/vscode/tree/main/extensions/html-language-features/server
   -- Install: `npm install --global vscode-langservers-extracted`
-  html = {},
+  html = {
+    filetypes = { 'html', 'htmldjango' },
+  },
 
   -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
   -- Install: `npm install --global vscode-langservers-extracted`
