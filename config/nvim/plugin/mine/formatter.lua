@@ -51,6 +51,13 @@ vim.api.nvim_create_user_command('Format', format, {})
 vim.keymap.set('n', ';f', '<Cmd>Format<CR>')
 
 -- Auto formatting is ON except for some projects.
-if not ignore_projects 'thoucentric' then
+if
+  not ignore_projects(
+    'price-vision',
+    'production-plan',
+    'replenishment',
+    'thousense-lite'
+  )
+then
   toggle_auto_formatting()
 end
