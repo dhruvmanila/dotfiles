@@ -105,27 +105,30 @@ return {
   -- Install: `brew install lua-language-server`
   -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#sumneko_lua
   sumneko_lua = {
-    Lua = {
-      completion = {
-        -- Do NOT show contextual words, I got `cmp-buffer` for that.
-        showWord = 'Disable',
-      },
-      workspace = {
-        preloadFileSize = 1000,
-      },
-      diagnostics = {
-        globals = {
-          'packer_plugins',
-          'describe',
-          'it',
-          'pending',
-          'before_each',
-          'after_each',
-          'assert',
-          'stub',
-          'setup',
-          'teardown',
-          'insulate',
+    settings = {
+      Lua = {
+        completion = {
+          -- Do NOT show contextual words, I got `cmp-buffer` for that.
+          showWord = 'Disable',
+        },
+        workspace = {
+          preloadFileSize = 1000,
+        },
+        diagnostics = {
+          globals = {
+            'packer_plugins',
+            -- Busted
+            'after_each',
+            'assert',
+            'before_each',
+            'describe',
+            'insulate',
+            'it',
+            'match',
+            'setup',
+            'stub',
+            'teardown',
+          },
         },
       },
     },
