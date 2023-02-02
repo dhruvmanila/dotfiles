@@ -99,9 +99,21 @@ return {
   -- https://github.com/rust-lang/rust-analyzer
   -- Install:
   --   $ rustup component add --toolchain stable rust-analyzer
+  --
+  --   Optionally, symlink the executable to cargo bin directory.
   --   $ ln -sfv "$(rustup which --toolchain stable rust-analyzer)" "$CARGO_HOME/bin"
+  --
   -- Settings: https://rust-analyzer.github.io/manual.html#configuration
-  rust_analyzer = {},
+  rust_analyzer = {
+    cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
+    settings = {
+      ['rust-analyzer'] = {
+        checkOnSave = {
+          command = 'clippy',
+        },
+      },
+    },
+  },
 
   -- https://github.com/sumneko/lua-language-server
   -- Install: `brew install lua-language-server`
