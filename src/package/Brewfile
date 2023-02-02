@@ -1,4 +1,6 @@
+tap "charmbracelet/tap"
 tap "clementtsang/bottom"
+tap "deepsourcelabs/cli"
 tap "heroku/brew"
 tap "homebrew/bundle"
 tap "homebrew/cask"
@@ -10,12 +12,22 @@ tap "mongodb/brew"
 tap "romkatv/gitstatus"
 # Static checker for GitHub Actions workflow files
 brew "actionlint"
-# Tool for generating GNU Standards-compliant Makefiles
-brew "automake"
-# Command-line interface for SQLite
-brew "sqlite"
+# Extremely Fast Compression algorithm
+brew "lz4"
 # General-purpose data compression with high compression ratio
 brew "xz"
+# Tool for generating GNU Standards-compliant Makefiles
+brew "automake"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# Generic library support script
+brew "libtool"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
+# Extendable version manager with support for Ruby, Node.js, Erlang & more
+brew "asdf"
+# Command-line interface for SQLite
+brew "sqlite"
 # Microsoft Azure CLI 2.0
 brew "azure-cli"
 # Bourne-Again SHell, a UNIX command interpreter
@@ -36,40 +48,50 @@ brew "pkg-config"
 brew "tcl-tk"
 # Vector graphics library with cross-device output support
 brew "cairo"
+# Pager program similar to more
+brew "less"
+# Hacker News in your terminal
+brew "circumflex"
 # Ultralightweight JSON parser in ANSI C
 brew "cjson"
+# Formatting tools for C, C++, Obj-C, Java, JavaScript, TypeScript
+brew "clang-format"
 # Cross-platform make
 brew "cmake"
 # Console Matrix
 brew "cmatrix"
-# GNU File, Shell, and Text utilities
-brew "coreutils"
+# Modern diagram scripting language that turns text to diagrams
+brew "d2"
 # Tool to perform numerical, textual & statistical operations
 brew "datamash"
 # DuckDuckGo from the terminal
 brew "ddgr"
+# Debugger for the Go programming language
+brew "delve"
 # Tool for exploring each layer in a docker image
 brew "dive"
 # Generate documentation for several programming languages
 brew "doxygen"
 # Maintain consistent coding style between multiple editors
 brew "editorconfig"
+# Modern replacement for 'ls'
+brew "exa"
 # Simple, fast and user-friendly alternative to find
 brew "fd"
-# Generic library support script
-brew "libtool"
 # Validating, recursive, caching DNS resolver
 brew "unbound"
 # OpenType text shaping engine
 brew "harfbuzz"
-# Extremely Fast Compression algorithm
-brew "lz4"
+# Framework for layout and rendering of i18n text
+brew "pango"
 # Secure Reliable Transport
 brew "srt"
 # Play, record, convert, and stream audio and video
 brew "ffmpeg"
 # Collection of GNU find, xargs, and locate
 brew "findutils"
+# Stack trace visualizer
+brew "flamegraph"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GNU debugger
@@ -80,10 +102,26 @@ brew "gh"
 brew "git"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
+# Git extension for versioning large files
+brew "git-lfs"
 # GNU Pretty Good Privacy (PGP) package
 brew "gnupg"
+# Stricter gofmt
+brew "gofumpt"
+# Fast linters runner for Go
+brew "golangci-lint"
+# Language server for the Go language
+brew "gopls"
+# Deliver Go binaries as fast and easily as possible
+brew "goreleaser"
+# Graph visualization software from AT&T and Bell Labs
+brew "graphviz"
+# Tool for glamorous shell scripts
+brew "gum"
 # Smarter Dockerfile linter to validate best practices
 brew "hadolint"
+# Post-modern modal text editor
+brew "helix"
 # CLI email client written in Rust
 brew "himalaya"
 # Improved top (interactive process viewer)
@@ -96,18 +134,16 @@ brew "hyperfine"
 brew "jq"
 # User-friendly front-end to ssh-agent(1)
 brew "keychain"
-# Pager program similar to more
-brew "less"
 # LLVM's OpenMP runtime library
-brew "libomp"
-# Framework for layout and rendering of i18n text
-brew "pango"
+brew "libomp", link: true
 # Next-gen compiler infrastructure
 brew "llvm"
 # Curses-based tool for viewing and analyzing log files
 brew "lnav"
 # Language Server for the Lua language
 brew "lua-language-server"
+# Powerful, lightweight programming language (v5.1.5)
+brew "lua@5.1"
 # Package manager for the Lua programming language
 brew "luarocks"
 # Utility for directing compilation
@@ -126,8 +162,8 @@ brew "nginx"
 brew "ninja"
 # Platform built on V8 to build network applications
 brew "node"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3"
+# Development kit for the Java programming language
+brew "openjdk"
 # Tool for creating identical machine images for multiple platforms
 brew "packer"
 # Paragraph reflow for email
@@ -139,9 +175,7 @@ brew "pass"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Object-relational database system
-brew "postgresql"
-# Object-relational database system
-brew "postgresql@13"
+brew "postgresql@14", restart_service: true
 # Coreutils progress viewer
 brew "progress"
 # Persistent key-value database, with built-in net interface
@@ -152,8 +186,6 @@ brew "rename"
 brew "ripgrep"
 # Powerful, clean, object-oriented scripting language
 brew "ruby"
-# Safe, concurrent, practical language
-brew "rust"
 # Static analysis and lint tool, for (ba)sh scripts
 brew "shellcheck"
 # Autoformat shell script source code
@@ -168,24 +200,32 @@ brew "tealdeer"
 brew "terraform"
 # Terminal multiplexer
 brew "tmux"
+# Program that allows you to count code, quickly
+brew "tokei"
 # CLI tool that moves files or folder to the trash
 brew "trash"
+# Command-line tool for sharing terminal over the web
+brew "ttyd"
 # Maintained ctags implementation
 brew "universal-ctags"
 # Bash completion for Vagrant
 brew "vagrant-completion"
 # Vi 'workalike' with many additional features
 brew "vim"
-# Process YAML documents from the CLI
+# Watch files and take action when they change
+brew "watchman"
+# Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
 # Fork of youtube-dl with additional features and fixes
 brew "yt-dlp"
 # UNIX shell (command interpreter)
 brew "zsh"
-# Additional completion definitions for zsh
-brew "zsh-completions"
+# A tool for recording terminal GIFs
+brew "charmbracelet/tap/vhs"
 # A cross-platform graphical process/system monitor with a customizable interface and a multitude of features.
 brew "clementtsang/bottom/bottom"
+# Command line interface to DeepSource
+brew "deepsourcelabs/cli/deepsource"
 # Everything you need to get started with Heroku
 brew "heroku/brew/heroku"
 # High-performance, schema-free, document-oriented database
@@ -194,6 +234,8 @@ brew "mongodb/brew/mongodb-community"
 brew "romkatv/gitstatus/gitstatus"
 # Web browser focusing on privacy
 cask "brave-browser"
+# Free and open-source web browser
+cask "chromium"
 # Browser for SQLite databases
 cask "db-browser-for-sqlite"
 # Voice and text chat software
@@ -202,19 +244,30 @@ cask "discord"
 cask "docker"
 # Draw.io is free online diagram software
 cask "drawio"
+# Screenshot software
+cask "flameshot"
+# Free monospaced font with programming ligatures
 cask "font-fira-code"
 # Typeface made for developers
 cask "font-jetbrains-mono"
+# Web browser
+cask "google-chrome"
 # Desktop automation application
 cask "hammerspoon"
+# Testing client for REST, GraphQL, and HTTP APIs
+cask "httpie"
 # Terminal emulator as alternative to Apple's Terminal app
 cask "iterm2"
 # Keyboard customizer
 cask "karabiner-elements"
 # GPU-based terminal emulator
 cask "kitty"
+# App to manage software development and track bugs
+cask "linear-linear"
 # Provides updates to various Microsoft products
 cask "microsoft-auto-update"
+# Web browser
+cask "microsoft-edge"
 # Email client
 cask "microsoft-outlook"
 # Meet, chat, call, and collaborate in just one place
@@ -233,6 +286,10 @@ cask "pgadmin4"
 cask "postman"
 # Peer to peer Bitorrent client
 cask "qbittorrent"
+# All-in-one bookmark manager
+cask "raindropio"
+# Control your tools with a few keystrokes
+cask "raycast"
 # Move and resize windows using keyboard shortcuts or snap areas
 cask "rectangle"
 # Team communication and collaboration software
@@ -245,6 +302,8 @@ cask "virtualbox"
 cask "visual-studio-code"
 # Multimedia player
 cask "vlc"
+# Rust-based terminal
+cask "warp"
 # Desktop client for WhatsApp
 cask "whatsapp"
 mas "Azure VPN Client", id: 1553936137
@@ -252,6 +311,7 @@ mas "Hotspot Shield", id: 771076721
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
 mas "Pages", id: 409201541
+mas "Shazam", id: 897118787
 mas "Speedtest", id: 1153157709
 mas "The Unarchiver", id: 425424353
 mas "Vimari", id: 1480933944

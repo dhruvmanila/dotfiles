@@ -1,6 +1,8 @@
 asciinema
 awsebcli
 black
+bpytop
+buku
 flake8
 grip
 httpie
@@ -9,12 +11,18 @@ isort
 jupyter
 line-profiler
 mypy
+pg-activity
 pgcli
 pipenv
 poetry
 pre-commit
+py-spy
+pyre-check
 pyupgrade
 remove-print-statements
+ruff
 speedtest-cli
 sqlparse
+swiggy-analytics
 visidata
+watchfiles
