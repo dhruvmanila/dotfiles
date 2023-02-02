@@ -29,11 +29,12 @@ dapui.setup {
   },
   layouts = {
     {
-      size = math.floor(vim.o.columns * 0.4),
+      size = 0.35,
       position = 'left',
       elements = {
-        { id = 'scopes', size = 0.7 },
-        { id = 'breakpoints', size = 0.3 },
+        { id = 'scopes', size = 0.6 },
+        { id = 'watches', size = 0.2 },
+        { id = 'breakpoints', size = 0.2 },
       },
     },
   },
