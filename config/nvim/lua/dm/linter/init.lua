@@ -205,7 +205,7 @@ end
 
 register('python', {
   cmd = 'ruff',
-  args = { '--exit-zero', '--format', 'json' },
+  args = { 'check', '--exit-zero', '--format', 'json' },
   stdin = false,
   enable = function()
     local version = vim.g.current_python_version or ''
