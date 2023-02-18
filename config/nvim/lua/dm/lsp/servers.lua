@@ -115,10 +115,10 @@ return {
     },
   },
 
-  -- https://github.com/sumneko/lua-language-server
+  -- https://github.com/LuaLS/lua-language-server
   -- Install: `brew install lua-language-server`
-  -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#sumneko_lua
-  sumneko_lua = {
+  -- Settings: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
+  lua_ls = {
     settings = {
       Lua = {
         completion = {
