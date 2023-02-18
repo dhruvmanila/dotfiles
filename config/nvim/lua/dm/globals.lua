@@ -104,6 +104,7 @@ do
         DEBUG = '',
       },
       on_open = function(winnr)
+        vim.api.nvim_win_set_config(winnr, { zindex = 100 })
         vim.keymap.set('n', 'q', '<Cmd>bdelete<CR>', {
           buffer = vim.api.nvim_win_get_buf(winnr),
           nowait = true,
