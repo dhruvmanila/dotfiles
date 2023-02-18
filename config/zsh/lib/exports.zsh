@@ -90,9 +90,6 @@ export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_BUNDLE_NO_LOCK=1
 export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/lib/Brewfile"
 
-# Disable auto-update after every `HOMEBREW_AUTO_UPDATE_SECS` before some commands.
-export HOMEBREW_NO_AUTO_UPDATE=1
-
 # Use `bat` for `brew cat` command.
 export HOMEBREW_BAT=1
 
