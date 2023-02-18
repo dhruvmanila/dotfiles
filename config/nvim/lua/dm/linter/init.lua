@@ -133,6 +133,10 @@ do
       'E501', -- line too long
       '-',
     },
+    enable = function()
+      -- Let's just use `ruff`
+      return false
+    end,
     ignore_exitcode = true,
     parser = function(output)
       local diagnostics = {}
@@ -207,24 +211,6 @@ register('python', {
   cmd = 'ruff',
   args = { 'check', '--exit-zero', '--format', 'json' },
   stdin = false,
-  enable = function()
-    local version = vim.g.current_python_version or ''
-    if version ~= '' then
-      -- Format: 'Python X.Y.Z'
-      ---@type number[]
-      local parts = vim.tbl_map(
-        tonumber,
-        vim.split(
-          vim.split(version, ' ', { plain = true })[2],
-          '.',
-          { plain = true }
-        )
-      )
-      return parts[0] == 3 and parts[1] < 11
-    end
-    -- Disable until we know the Python version.
-    return false
-  end,
   parser = function(output)
     local diagnostics = {}
     for _, item in ipairs(vim.json.decode(output)) do
