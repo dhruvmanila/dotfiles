@@ -105,6 +105,7 @@ packer.startup {
       run = ':TSUpdate',
       config = conf 'treesitter',
       requires = {
+        'nvim-treesitter/nvim-treesitter-context',
         'nvim-treesitter/nvim-treesitter-textobjects',
         'nvim-treesitter/playground',
       },
