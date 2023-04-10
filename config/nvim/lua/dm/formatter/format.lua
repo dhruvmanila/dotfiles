@@ -141,7 +141,7 @@ end
 
 function Format:done()
   if self.changedtick ~= api.nvim_buf_get_changedtick(self.bufnr) then
-    log.warn 'Skipping formatting, buffer was changed'
+    log.debug 'Skipping formatting, buffer was changed'
   elseif vim.tbl_isempty(self.output) then
     log.warn 'Skipping formatting, received empty output'
   elseif vim.deep_equal(self.input, self.output) then
