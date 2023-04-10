@@ -17,7 +17,7 @@
 # * rule: horizontal lines to delimit files.
 # * numbers: show line numbers in the side bar.
 # * snip: draw separation lines between distinct line ranges.
---style="changes,header"
+--style="changes,header,numbers,rule"
 
 # Enable this to use italic text on the terminal. This is not supported on all
 # terminal emulators (like tmux, by default):
