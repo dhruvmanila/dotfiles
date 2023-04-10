@@ -63,6 +63,13 @@ ls.add_snippets('lua', { -- {{{1
   }),
 })
 
+ls.add_snippets('markdown', { -- {{{1
+  parse(
+    { trig = 'detail', dscr = 'Detail block along with summary' },
+    '<details>\n<summary>${1:summary}</summary>\n\n${2:details}\n\n</details>'
+  ),
+})
+
 ls.add_snippets('python', { -- {{{1
   s({ trig = 'ifmain', dscr = 'if __name__ == "__main__":' }, {
     t { 'if __name__ == "__main__":', '\t' },
