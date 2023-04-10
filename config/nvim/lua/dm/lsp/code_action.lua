@@ -5,6 +5,8 @@ local log = require 'dm.log'
 -- Create a namespace for the lightbulb extmark.
 local LIGHTBULB_EXTMARK_NS = vim.api.nvim_create_namespace 'dm__lsp_lightbulb'
 
+local RUST_ANALYZER_WAIT_MESSAGE = 'waiting for cargo metadata or cargo check'
+
 -- Code action listener to set and update the lightbulb to indicate that there
 -- are code actions available on that line.
 function M.listener()
@@ -16,6 +18,9 @@ function M.listener()
     params,
     function(err, result, ctx)
       if err then
+        if err.message == RUST_ANALYZER_WAIT_MESSAGE then
+          return log.fmt_debug('LSP (%s): %s', ctx.method, err)
+        end
         return log.fmt_error('LSP (%s): %s', ctx.method, err)
       end
       -- Remove all the existing lightbulbs.
