@@ -1,7 +1,11 @@
 vim.filetype.add {
-  extension = {},
+  extension = {
+    just = 'just',
+  },
 
   filename = {
+    justfile = 'just',
+    Justfile = 'just',
     Brewfile = 'ruby',
     Vagrantfile = 'ruby',
     ['.gitignore'] = 'conf',

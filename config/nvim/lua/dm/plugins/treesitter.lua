@@ -1,6 +1,8 @@
 vim.keymap.set('n', '<Leader>tp', '<Cmd>TSPlaygroundToggle<CR>')
 vim.keymap.set('n', '<Leader>th', '<Cmd>TSHighlightCapturesUnderCursor<CR>')
 
+require('tree-sitter-just').setup {}
+
 require('nvim-treesitter.configs').setup {
   -- Install the parsers synchronously on a fresh setup
   sync_install = vim.env.NVIM_BOOTSTRAP and true or false,
@@ -22,6 +24,7 @@ require('nvim-treesitter.configs').setup {
     'javascript',
     'json',
     'jsonc',
+    'just',
     'lua',
     'make',
     'markdown',
@@ -33,6 +36,7 @@ require('nvim-treesitter.configs').setup {
     'toml',
     'typescript',
     'vim',
+    'vimdoc',
     'yaml',
   },
 
