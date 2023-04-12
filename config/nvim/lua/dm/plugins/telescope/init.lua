@@ -20,8 +20,9 @@ telescope.setup {
       },
       vertical = {
         width = { padding = 8 },
-        height = { padding = 2 },
+        height = { padding = 1 },
         preview_height = 0.5,
+        preview_cutoff = 30,
         mirror = true,
       },
       flex = {
@@ -72,6 +73,9 @@ telescope.setup {
       },
       include_extensions = true,
       use_default_opts = true,
+    },
+    git_commits = {
+      layout_strategy = 'vertical',
     },
     git_files = {
       show_untracked = true,
