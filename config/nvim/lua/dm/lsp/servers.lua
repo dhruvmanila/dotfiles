@@ -96,6 +96,15 @@ return {
     },
   },
 
+  -- https://github.com/charliermarsh/ruff-lsp
+  -- Install: `pipx install ruff-lsp`
+  -- Settings: https://github.com/charliermarsh/ruff-lsp#settings
+  ruff_lsp = {
+    init_options = {
+      settings = {},
+    },
+  },
+
   -- https://github.com/rust-lang/rust-analyzer
   -- Install:
   --   $ rustup component add --toolchain stable rust-analyzer
