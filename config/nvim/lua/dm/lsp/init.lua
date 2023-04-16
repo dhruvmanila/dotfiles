@@ -56,6 +56,11 @@ local function on_attach(client, bufnr)
   -- LSP augroup id.
   local id = vim.api.nvim_create_augroup('dm__lsp', { clear = true })
 
+  if client.name == 'ruff_lsp' then
+    -- Disable hover in favor of Pyright
+    client.server_capabilities.hoverProvider = false
+  end
+
   if capabilities.hoverProvider then
     keymap.set('n', 'K', lsp.buf.hover, {
       buffer = bufnr,
