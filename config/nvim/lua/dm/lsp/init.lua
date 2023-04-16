@@ -145,12 +145,14 @@ local function on_attach(client, bufnr)
   end
 
   if capabilities.codeActionProvider then
-    vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-      group = id,
-      buffer = bufnr,
-      callback = require('dm.lsp.code_action').listener,
-      desc = 'LSP: Code action (bulb)',
-    })
+    if vim.g.lsp_code_action_lightbulb then
+      vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+        group = id,
+        buffer = bufnr,
+        callback = require('dm.lsp.code_action').listener,
+        desc = 'LSP: Code action (bulb)',
+      })
+    end
 
     keymap.set({ 'n', 'x' }, '<leader>ca', lsp.buf.code_action, {
       buffer = bufnr,

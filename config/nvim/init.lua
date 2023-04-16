@@ -56,5 +56,9 @@ g.open_command = (g.os == 'Darwin' and 'open')
   or (g.os == 'Windows_NT' and 'start')
   or 'xdg-open'
 
+-- Provide VSCode like code action lightbulb.
+---@type boolean
+g.lsp_code_action_lightbulb = false
+
 require 'dm.globals' -- Global functions and variables
 require 'dm.plugins' -- Plugin configuration
