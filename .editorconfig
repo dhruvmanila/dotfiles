@@ -24,7 +24,7 @@ indent_style = space
 indent_size = 4
 indent_style = space
 
-[*{gitconfig,Makefile,go}]
+[*{gitconfig,gitmodules,Makefile,go}]
 indent_size = 4
 indent_style = tab
 
