@@ -26,8 +26,8 @@ local default_config = {
   use_file = true,
 
   -- Any messages above this level will be logged.
-  ---@type string|number
-  level = vim.env.DEBUG and 'debug' or 'info',
+  ---@type string
+  level = dm.current_log_level,
 
   -- Level configuration
   ---@type { name: string, hl: string }[]
@@ -37,7 +37,6 @@ local default_config = {
     { name = 'info', hl = 'None' },
     { name = 'warn', hl = 'WarningMsg' },
     { name = 'error', hl = 'ErrorMsg' },
-    { name = 'fatal', hl = 'ErrorMsg' },
   },
 
   -- Limit the number of decimals displayed for floats
@@ -61,6 +60,7 @@ log.new = function(config, standalone)
   local levels = {}
   for i, v in ipairs(config.modes) do
     levels[v.name] = i
+    levels[v.name:upper()] = i
   end
 
   -- Round a float to a certain precision.

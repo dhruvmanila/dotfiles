@@ -20,7 +20,7 @@ local SERVER_EXEC = 'instant-markdown-d'
 local SERVER_ENV = 'INSTANT_MARKDOWN_ALLOW_UNSAFE_CONTENT=1'
 
 -- `stdout` and `stderr` of the server will be redirected to this file.
-local SERVER_LOG_FILE = vim.env.DEBUG
+local SERVER_LOG_FILE = dm.current_log_level == dm.log.levels.DEBUG
     and vim.fn.stdpath 'cache' .. '/instant_markdown_d.log'
   or '/dev/null'
 

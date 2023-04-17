@@ -1,6 +1,29 @@
 -- Custom global namespace.
 _G.dm = {}
 
+dm.log = {
+  levels = {
+    TRACE = 'TRACE',
+    DEBUG = 'DEBUG',
+    INFO = 'INFO',
+    WARN = 'WARN',
+    ERROR = 'ERROR',
+  }
+}
+
+-- Global log level for Neovim. This can be updated by setting the environment
+-- variable `NVIM_LOG_LEVEL` to one of the allowed values (`dm.log.levels`).
+---@type string
+dm.current_log_level = 'WARN'
+if vim.env.NVIM_LOG_LEVEL then
+  dm.current_log_level = assert(
+    dm.log.levels[vim.env.NVIM_LOG_LEVEL:upper()],
+    ('Log level must be one of (trace, debug, info, warn, error), got: %q'):format(
+      vim.env.NVIM_LOG_LEVEL
+    )
+  )
+end
+
 -- If the border key is custom, then return the respective table otherwise
 -- return the string as it is.
 dm.border = setmetatable({

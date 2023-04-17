@@ -12,7 +12,7 @@ require('lspconfig.ui.windows').default_options.border =
   dm.border[vim.g.border_style]
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-lsp.set_log_level(vim.env.DEBUG and 'debug' or 'warn')
+lsp.set_log_level(dm.current_log_level)
 require('vim.lsp.log').set_format_func(vim.inspect)
 
 -- Set the default options for all LSP floating windows.
@@ -58,7 +58,7 @@ local function on_attach(client, bufnr)
 
   if client.name == 'ruff_lsp' then
     -- Disable hover in favor of Pyright
-    client.server_capabilities.hoverProvider = false
+    capabilities.hoverProvider = false
   end
 
   if capabilities.hoverProvider then

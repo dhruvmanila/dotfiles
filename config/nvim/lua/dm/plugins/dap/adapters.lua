@@ -14,7 +14,7 @@ dap.adapters.go = function(callback)
     cmd = 'dlv',
     args = function()
       local args = { 'dap', '--listen', '127.0.0.1:' .. port }
-      if vim.env.DEBUG then
+      if dm.current_log_level == dm.log.levels.DEBUG then
         vim.list_extend(args, {
           '--log',
           '--log-dest',

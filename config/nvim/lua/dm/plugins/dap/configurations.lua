@@ -15,7 +15,7 @@ end
 -- in debug mode, use the environment variable `DEBUG` like: `$ DEBUG=1 nvim`.
 ---@return boolean?
 local function log_to_file()
-  if vim.env.DEBUG then
+  if dm.current_log_level == dm.log.levels.DEBUG then
     -- https://github.com/microsoft/debugpy/wiki/Enable-debugger-logs
     vim.env.DEBUGPY_LOG_DIR = vim.fn.stdpath 'cache' .. '/debugpy'
     return true

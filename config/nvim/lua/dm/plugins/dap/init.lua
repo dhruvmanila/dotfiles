@@ -5,7 +5,7 @@ require 'dm.plugins.dap.configurations'
 local dap = require 'dap'
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-dap.set_log_level(vim.env.DEBUG and 'debug' or 'warn')
+dap.set_log_level(dm.current_log_level)
 
 vim.fn.sign_define {
   { name = 'DapStopped', text = '', texthl = '' },
