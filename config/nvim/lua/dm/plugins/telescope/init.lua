@@ -106,11 +106,6 @@ telescope.setup {
       override_file_sorter = true,
       case_mode = 'smart_case',
     },
-    bookmarks = {
-      selected_browser = 'brave',
-      url_open_command = vim.g.open_command,
-      full_path = false,
-    },
     custom = {
       websearch = {
         search_engine = 'duckduckgo',
