@@ -189,7 +189,7 @@ packer.startup {
     end
   end,
   log = {
-    level = vim.env.DEBUG and 'debug' or 'warn',
+    level = dm.current_log_level,
   },
   config = {
     compile_path = packer_compiled_path,
