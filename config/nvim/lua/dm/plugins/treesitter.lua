@@ -16,6 +16,8 @@ require('nvim-treesitter.configs').setup {
     'cpp',
     'dockerfile',
     'fish',
+    'gitattributes',
+    'gitignore',
     'go',
     'gomod',
     'gowork',
