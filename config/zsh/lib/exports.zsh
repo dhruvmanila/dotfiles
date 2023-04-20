@@ -181,7 +181,7 @@ export NNN_TRASH=1
 #   commands and invoke like plugins, add ! (bang) before the command.
 # }}}
 NNN_SHELL_PLUGINS='l:-!git log;x:!chmod +x $nnn'
-NNN_PLUGINS='p:preview-tui-ext;c:fzcd;o:fzopen'
+NNN_PLUGINS='p:preview-tui;c:fzcd;o:fzopen'
 export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
 
 unset NNN_SHELL_PLUGINS NNN_PLUGINS

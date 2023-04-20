@@ -91,6 +91,10 @@ upgrade_nnn() { # {{{1
     git checkout "$latest_tag"
     build_nnn
   )
+
+  # https://github.com/jarun/nnn/tree/master/plugins#installation
+  header "Upgrading nnn plugins..."
+  sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)"
 }
 
 upgrade_npm() { # {{{1
