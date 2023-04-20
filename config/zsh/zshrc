@@ -146,6 +146,9 @@ path=(
   # https://github.com/deta/deta-cli
   "$HOME/.deta/bin"(N-/)
 
+  # Docker bin directory containing the `docker` and `docker-compose` commands.
+  "$HOME/.docker/bin"(N-/)
+
   # Global Python version bin directory.
   "$PYENV_ROOT/bin"(N-/)
 
