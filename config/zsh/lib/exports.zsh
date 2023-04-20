@@ -23,6 +23,25 @@ if [[ -n "$HOMEBREW_PREFIX" ]]; then
   "
 fi
 
+# bat {{{1
+
+# Specify desired highlighting theme (e.g. "TwoDark"). Run `bat --list-themes`
+# for a list of all available themes
+export BAT_THEME="gruvbox-dark"
+
+# Specify the style
+# * full: enables all available components.
+# * auto: same as 'full', unless the output is piped (default).
+# * plain: disables all available components.
+# * changes: show Git modification markers.
+# * header: show filenames before the content.
+# * grid: vertical/horizontal lines to separate side bar
+#         and the header from the content.
+# * rule: horizontal lines to delimit files.
+# * numbers: show line numbers in the side bar.
+# * snip: draw separation lines between distinct line ranges.
+export BAT_STYLE="changes,header,numbers,rule"
+
 # EDITOR {{{1
 
 # Make Neovim the default editor.
@@ -143,6 +162,10 @@ export MANPAGER="nvim +Man!"
 #                ││││││ }}}
 export NNN_OPTS="dDeHuU"
 export NNN_FIFO=/tmp/nnn.fifo
+
+# These are defined in the `bat` section.
+export NNN_BATTHEME="$BAT_THEME"
+export NNN_BATSTYLE="$BAT_STYLE"
 
 # Use system Trash.
 #

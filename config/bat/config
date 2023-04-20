@@ -1,23 +1,9 @@
 # This is `bat`s configuration file. Each line either contains a comment or
 # a command-line option that you want to pass to `bat` by default. You can
 # run `bat --help` to get a list of all possible configuration options.
-
-# Specify desired highlighting theme (e.g. "TwoDark"). Run `bat --list-themes`
-# for a list of all available themes
---theme="gruvbox-dark"
-
-# Specify the style
-# * full: enables all available components.
-# * auto: same as 'full', unless the output is piped (default).
-# * plain: disables all available components.
-# * changes: show Git modification markers.
-# * header: show filenames before the content.
-# * grid: vertical/horizontal lines to separate side bar
-#         and the header from the content.
-# * rule: horizontal lines to delimit files.
-# * numbers: show line numbers in the side bar.
-# * snip: draw separation lines between distinct line ranges.
---style="changes,header,numbers,rule"
+#
+# NOTE: Only use this file if the configuration cannot be done using
+# environment variables.
 
 # Enable this to use italic text on the terminal. This is not supported on all
 # terminal emulators (like tmux, by default):
