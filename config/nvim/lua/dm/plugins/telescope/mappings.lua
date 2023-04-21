@@ -33,7 +33,9 @@ vim.keymap.set('n', '<leader>rg', builtin.live_grep, {
 -- Smart tags picker which uses either the LSP symbols, treesitter symbols or
 -- buffer tags, whichever is available first.
 vim.keymap.set('n', '<leader>ft', function()
-  if #vim.lsp.buf_get_clients(0) > 0 then
+  if
+    #vim.lsp.get_active_clients { bufnr = vim.api.nvim_get_current_buf() } > 0
+  then
     builtin.lsp_document_symbols()
   elseif ts_parsers.has_parser() then
     builtin.treesitter()

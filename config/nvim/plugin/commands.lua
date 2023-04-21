@@ -66,17 +66,19 @@ end, {
 nvim_create_user_command('LspClient', function(opts)
   local client
   if opts.args ~= '' then
-    local client_id = opts.args:match '(%d+)%s-.-'
-    client = vim.lsp.get_client_by_id(tonumber(client_id))
+    local client_id = opts.args:match '(%d+)'
+    client = vim.lsp.get_active_clients { id = tonumber(client_id) }
   else
-    client = vim.lsp.buf_get_clients()
+    client = vim.lsp.get_active_clients()
   end
-  print(vim.inspect(client))
+  local _, info = next(client)
+  vim.print(info)
 end, {
   nargs = '?',
   complete = function()
-    -- https://github.com/neovim/nvim-lspconfig/blob/master/plugin/lspconfig.vim#L10
-    return lsp_get_active_client_ids()
+    return vim.tbl_map(function(client)
+      return ('%d (%s)'):format(client.id, client.name)
+    end, vim.lsp.get_active_clients())
   end,
   desc = 'Print information for given client id, or all clients if none given',
 })
