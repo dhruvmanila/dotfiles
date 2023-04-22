@@ -108,10 +108,19 @@ register('sh', {
 
 -- sql {{{1
 
-register('sql', {
-  cmd = 'sqlformat',
-  args = { '--reindent', '--keywords', 'upper', '--wrap_after', '80', '-' },
-})
+-- FIXME: This doesn't work if there are unfixable violations detected as the
+-- exit code will then be 1.
+-- register('sql', {
+--   cmd = 'sqlfluff',
+--   args = {
+--     'fix',
+--     '--disable-progress-bar',
+--     '--nocolor',
+--     '--dialect=postgres',
+--     '--force',
+--     '-',
+--   },
+-- })
 
 -- xml {{{1
 
