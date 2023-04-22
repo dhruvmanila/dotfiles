@@ -1,3 +1,35 @@
+checksum() { # {{{1
+  # Usage:
+  # To download and verify a script pass the URL and the CHECKSUM:
+  #
+  #   checksum <URL> <CHECKSUM>
+  #
+  # The script will be printed out by default so you can inspect it.
+  # If you’re happy with it, you can pipe the script to sh to execute it:
+  #
+  #   checksum <URL> <CHECKSUM> | sh
+  #
+  # If you just want to calculate the checksum for a URL you can omit the CHECKSUM:
+  #
+  #   checksum <URL>
+  #
+  # Ref: https://checksum.sh
+  script=$(curl --fail --silent --show-error --location "$1")
+  if ! command -v shasum >/dev/null; then
+    shasum() { sha1sum "$@"; }
+  fi
+  value=$(printf '%s\n' "$script" | shasum | awk '{print $1}')
+  if [[ -z "$2" ]]; then
+    printf '%s\n' "$value"
+  elif [[ "$value" = "$2" ]]; then
+    printf '%s\n' "$script"
+  else
+    echo "Invalid checksum: $2 (expected $value)" 1>&2;
+  fi
+  unset script
+  unset value
+}
+
 dsh() { # {{{1
   # Start a bash shell for the given docker container.
   if (( $# == 0 )); then
@@ -37,7 +69,7 @@ git-stats() { # {{{1
   # Ref: https://twitter.com/thorstenball/status/1293181225280999431
   git log \
     --since "30 days ago" \
-    --author "$(git config --global user.name)" \
+    --author "$(git config --get user.name)" \
     --pretty=tformat: --numstat |
       awk '{
         add += $1; subs += $2; loc += $1 - $2
@@ -142,7 +174,7 @@ py-cleanup() { # {{{1
     echo "$0: 'fd' command not found"
     return 1
   }
-  for pattern in "pytest_cache" "mypy_cache" "__pycache__"; do
+  for pattern in "pytest_cache" "mypy_cache" "__pycache__" "ruff_cache"; do
     echo "==> Removing '$pattern'"
     fd \
       --hidden \
@@ -200,6 +232,29 @@ py-upgrade-venv() { # {{{1
   local VENV_PROMPT="${${VIRTUAL_ENV%-*}:t}"
   $PYTHON_EXEC -m venv --upgrade "$VIRTUAL_ENV" --prompt "$VENV_PROMPT"
   echo "$0: Upgraded to $DEFINITION"
+}
+
+rm-email() { # {{{1
+  if ! (( $+commands[himalaya] )); then
+    echo "$0: 'himalaya' command not found"
+    return 1
+  elif (( $# != 1 )); then
+    echo "Usage: $0 <query>"
+    return 1
+  elif [[ -z "$1" ]]; then
+   echo "$0: query cannot be empty"
+   return 1
+  fi
+
+  output=$(NO_COLOR=1 himalaya search "$1" --size=0)
+  printf "%s\n\n" "$output"
+
+  read -q "?Above emails will be removed. Continue? [y/n] " confirm
+  printf "\n"
+  if [[ "$confirm" = "y" ]]; then
+    himalaya delete \
+      $(echo $output | awk 'NR > 2 && $1 != "" {print $1}' | paste -s -d ',' -)
+  fi
 }
 
 viw() { # {{{1
