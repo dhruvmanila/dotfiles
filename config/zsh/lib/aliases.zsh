@@ -13,6 +13,7 @@ alias -g N='> /dev/null'
 alias -g T='| tail'
 
 alias b='bookmarks'
+alias hn='clx --nerdfonts --comment-width=$((COLUMNS - 10))'
 
 # cd {{{1
 
@@ -115,6 +116,9 @@ alias vm='nvim -n -u ${HOME}/dotfiles/config/nvim/minimal.lua'
 # https://github.com/rhysd/vim-startuptime
 alias vim-startuptime='vim-startuptime | head -n 30'
 alias nvim-startuptime='\vim-startuptime -vimpath nvim | head -n 30'
+
+# Open Neovim in development mode.
+alias nvim-dev='cd ${HOME}/contributing/neovim && VIMRUNTIME=runtime ./build/bin/nvim && cd -'
 
 # ssh {{{1
 
