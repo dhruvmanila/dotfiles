@@ -2,7 +2,6 @@ local telescope = require 'telescope'
 local actions = require 'telescope.actions'
 local action_layout = require 'telescope.actions.layout'
 
-local themes = require 'dm.plugins.telescope.themes'
 local custom_actions = require 'dm.plugins.telescope.actions'
 
 telescope.setup {
@@ -21,7 +20,7 @@ telescope.setup {
       vertical = {
         width = { padding = 8 },
         height = { padding = 1 },
-        preview_height = 0.5,
+        preview_height = 0.6,
         preview_cutoff = 30,
         mirror = true,
       },
@@ -115,7 +114,10 @@ telescope.setup {
         max_results = 0,
       },
     },
-    ['ui-select'] = { themes.dropdown_list },
+    ['ui-select'] = {
+      require('telescope.themes').get_dropdown(),
+      specific_opts = {},
+    },
   },
 }
 
