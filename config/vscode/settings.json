@@ -23,9 +23,9 @@
   "editor.semanticHighlighting.enabled": true,
 
   // Font sizes
-  "editor.fontSize": 16,
-  "debug.console.fontSize": 16,
-  "terminal.integrated.fontSize": 16,
+  "editor.fontSize": 17,
+  "debug.console.fontSize": 17,
+  "terminal.integrated.fontSize": 17,
   "editor.fontFamily": "JetBrains Mono",
   "editor.fontLigatures": true,
   "editor.lineHeight": 20,
@@ -77,7 +77,7 @@
   "python.languageServer": "Pylance",
 
   // Python docstring format
-  "autoDocstring.docstringFormat": "numpy",
+  "autoDocstring.docstringFormat": "numpy-notypes",
 
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -117,7 +117,8 @@
     "Vagrantfile": "ruby"
   },
   "workbench.editorAssociations": {
-    "*.ipynb": "jupyter-notebook"
+    "*.ipynb": "jupyter-notebook",
+    "*.hdl": "vhdl"
   },
 
   // Lua language server settings
@@ -149,5 +150,6 @@
   // No telemetry
   "telemetry.telemetryLevel": "off",
   "Lua.telemetry.enable": false,
-  "redhat.telemetry.enabled": false
+  "redhat.telemetry.enabled": false,
+  "git.openRepositoryInParentFolders": "never"
 }
