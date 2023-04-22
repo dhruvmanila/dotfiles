@@ -1,9 +1,11 @@
+---@diagnostic disable: duplicate-set-field
+
 -- Modified version of the original handler. This will open the quickfix
 -- window only if the response is a list and the count is greater than 1.
 local function location_handler(err, result, ctx)
   local title = 'LSP (' .. ctx.method .. ')'
   if err then
-    dm.notify(title, tostring(err))
+    dm.notify(title, tostring(err), 4)
     return
   end
   if result == nil or vim.tbl_isempty(result) then
@@ -40,14 +42,16 @@ do
   ---@see https://github.com/neovim/nvim-lspconfig/wiki/User-contributed-tips#use-nvim-notify-to-display-lsp-messages
   vim.lsp.handlers['window/showMessage'] = function(err, result, ctx)
     if err then
-      dm.notify('LSP (' .. ctx.method .. ')', tostring(err))
+      dm.notify('LSP (' .. ctx.method .. ')', tostring(err), 4)
       return
     end
 
     local client = vim.lsp.get_client_by_id(ctx.client_id)
+    local client_name = client and client.name
+      or ('id=%d'):format(ctx.client_id)
 
     dm.notify(
-      ('LSP Codelens (%s)'):format(client.name),
+      ('LSP Message (%s)'):format(client_name),
       result.message,
       levels[result.type]
     )
