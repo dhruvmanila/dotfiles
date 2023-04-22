@@ -38,7 +38,7 @@ local function collect_tabpages()
     local bufnr = fn.tabpagebuflist(tabpagenr)[winnr]
     local tabpage = {
       id = tabpagenr,
-      name = provider.buffer_name(bufnr),
+      name = api.nvim_buf_get_name(bufnr),
       flags = provider.buffer_flags(bufnr),
       is_active = tabpagenr == current_tabpagenr,
     }
