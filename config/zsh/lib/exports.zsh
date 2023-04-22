@@ -186,20 +186,6 @@ export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
 
 unset NNN_SHELL_PLUGINS NNN_PLUGINS
 
-# PAGER {{{1
-
-# Rationale {{{
-#
-# Some scripts/programs may rely on this variable to determine which pager they
-# should invoke. If `PAGER` is not set, they may fall back on `more(1)`. That's
-# the case, for example, with the zsh script `run-help` (bound to `C-x H` atm):
-#
-#     /usr/local/share/zsh/functions/run-help
-#
-# We always want `less(1)` to be invoked.
-# }}}
-export PAGER='less'
-
 # Python {{{1
 
 # Disable virtual environment prompt.
