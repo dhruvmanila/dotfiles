@@ -101,7 +101,11 @@ return {
   -- Settings: https://github.com/charliermarsh/ruff-lsp#settings
   ruff_lsp = {
     init_options = {
-      settings = {},
+      settings = {
+        -- Let's use the global executable. This can be upgraded irrespective
+        -- of the bundled version.
+        path = { '~/.local/bin/ruff' },
+      },
     },
   },
 
