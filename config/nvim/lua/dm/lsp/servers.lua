@@ -30,9 +30,16 @@ return {
           unusedparams = true,
           unusedwrite = true,
         },
-        -- Used as placeholder to be replaced by `on_init`.
-        ['local'] = '',
         gofumpt = true,
+        hints = {
+          assignVariableTypes = true,
+          compositeLiteralFields = true,
+          compositeLiteralTypes = true,
+          constantValues = true,
+          functionTypeParameters = true,
+          parameterNames = true,
+          rangeVariableTypes = true,
+        },
         usePlaceholders = true,
       },
     },
@@ -134,12 +141,12 @@ return {
   lua_ls = {
     settings = {
       Lua = {
+        codelens = {
+          enable = true,
+        },
         completion = {
           -- Do NOT show contextual words, I got `cmp-buffer` for that.
           showWord = 'Disable',
-        },
-        workspace = {
-          preloadFileSize = 1000,
         },
         diagnostics = {
           globals = {
@@ -157,6 +164,16 @@ return {
             'teardown',
           },
         },
+        hint = {
+          enable = true,
+        },
+        format = {
+          enable = false,
+        },
+        workspace = {
+          preloadFileSize = 1000,
+          checkThirdParty = false,
+        },
       },
     },
   },
@@ -164,7 +181,34 @@ return {
   -- https://github.com/typescript-language-server/typescript-language-server
   -- Install: `npm install --global typescript typescript-language-server`
   -- Settings: https://github.com/typescript-language-server/typescript-language-server#initializationoptions
-  tsserver = {},
+  tsserver = {
+    settings = {
+      typescript = {
+        inlayHints = {
+          includeInlayParameterNameHints = 'all',
+          includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayVariableTypeHints = true,
+          includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayEnumMemberValueHints = true,
+        },
+      },
+      javascript = {
+        inlayHints = {
+          includeInlayParameterNameHints = 'all',
+          includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayVariableTypeHints = true,
+          includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayEnumMemberValueHints = true,
+        },
+      },
+    },
+  },
 
   -- https://github.com/iamcco/vim-language-server
   -- Install: `npm install --global vim-language-server`

@@ -1,6 +1,7 @@
 local lsp = vim.lsp
 local keymap = vim.keymap
 
+local inlayhints = require 'lsp-inlayhints'
 local lspconfig = require 'lspconfig'
 local servers = require 'dm.lsp.servers'
 local preview = require 'dm.lsp.preview'
@@ -178,15 +179,21 @@ local function on_attach(client, bufnr)
     })
   end
 
+  -- Plugins
+  inlayhints.on_attach(client, bufnr)
+
   vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
 end
 
----@see https://github.com/folke/neodev.nvim#%EF%B8%8F-configuration
+-- https://github.com/folke/neodev.nvim#%EF%B8%8F-configuration
 require('neodev').setup {
   library = {
     plugins = false,
   },
 }
+
+-- https://github.com/lvimuser/lsp-inlayhints.nvim#configuration
+inlayhints.setup()
 
 do
   -- Define default client capabilities.

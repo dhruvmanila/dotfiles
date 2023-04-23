@@ -40,6 +40,7 @@ packer.startup {
       requires = {
         'b0o/SchemaStore.nvim',
         'folke/neodev.nvim',
+        'lvimuser/lsp-inlayhints.nvim',
       },
     }
     use {
