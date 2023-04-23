@@ -44,8 +44,16 @@ return {
       },
     },
     on_init = function(client)
-      for line in io.lines 'go.mod' do
+      -- Find the first `go.mod` file starting from the current buffer path,
+      -- moving upwards. This is to support Go workspaces.
+      local modfile = vim.fs.find({ 'go.mod' }, {
+        path = vim.api.nvim_buf_get_name(0),
+        upward = true,
+        type = 'file',
+      })[1]
+      for line in io.lines(modfile) do
         if vim.startswith(line, 'module') then
+          -- https://github.com/golang/tools/blob/master/gopls/doc/settings.md#local-string
           client.config.settings.gopls['local'] =
             vim.split(line, ' ', { plain = true })[2]
         end
