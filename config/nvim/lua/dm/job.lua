@@ -95,7 +95,7 @@ return function(opts)
   ---@param code number
   ---@param signal number
   local function on_exit(code, signal)
-    log.fmt_debug('Process exited (code: %d, signal: %d)', code, signal)
+    log.fmt_info('Process exited (code: %d, signal: %d)', code, signal)
     stdout:read_stop()
     stderr:read_stop()
     close_safely(handle, stdin, stdout, stderr)
@@ -112,7 +112,7 @@ return function(opts)
     end
   end
 
-  log.fmt_debug('Spawning process: %s %s', cmd, args)
+  log.fmt_info('Spawning process: %s %s', cmd, args)
   handle, pid_or_err = uv.spawn(cmd, {
     args = args,
     stdio = { stdin, stdout, stderr },
@@ -127,7 +127,7 @@ return function(opts)
     return
   end
 
-  log.fmt_debug('Process spawned with PID: %d', pid_or_err)
+  log.fmt_info('Process spawned with PID: %d', pid_or_err)
   stdout:read_start(stdout_handler)
   stderr:read_start(stderr_handler)
 
