@@ -8,7 +8,7 @@ dm.log = {
     INFO = 'INFO',
     WARN = 'WARN',
     ERROR = 'ERROR',
-  }
+  },
 }
 
 -- Global log level for Neovim. This can be updated by setting the environment
@@ -73,7 +73,7 @@ dm.icons = {
 ---@param ... T
 ---@return T
 P = function(...)
-  vim.pretty_print(...)
+  vim.print(...)
   return ...
 end
 
