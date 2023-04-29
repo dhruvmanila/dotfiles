@@ -214,7 +214,9 @@ do
   -- Setting up the servers with the provided configuration and additional
   -- capabilities.
   for server, config in pairs(servers) do
-    config = type(config) == 'function' and config() or config
+    if type(config) == 'function' then
+      config = config()
+    end
     config = vim.tbl_deep_extend('keep', config, {
       on_attach = on_attach,
       capabilities = capabilities,

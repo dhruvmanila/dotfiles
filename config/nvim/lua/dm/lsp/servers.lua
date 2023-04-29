@@ -1,6 +1,6 @@
 -- LSP server configurations
----@return table<string, table|function>
-return {
+---@type table<string, table|function>
+local servers = {
   -- https://github.com/bash-lsp/bash-language-server
   -- Install: `npm install --global bash-language-server`
   -- Settings: https://github.com/bash-lsp/bash-language-server/blob/master/server/src/config.ts
@@ -251,3 +251,5 @@ return {
     },
   },
 }
+
+return servers
