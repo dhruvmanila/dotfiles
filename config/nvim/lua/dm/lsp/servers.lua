@@ -144,6 +144,17 @@ return {
         },
       },
     },
+    capabilities = {
+      experimental = {
+        commands = {
+          -- See: ./commands.lua
+          commands = {
+            'rust-analyzer.runSingle',
+            'rust-analyzer.debugSingle',
+          },
+        },
+      },
+    },
   },
 
   -- https://github.com/LuaLS/lua-language-server
