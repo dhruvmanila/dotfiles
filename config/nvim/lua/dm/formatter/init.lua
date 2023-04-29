@@ -18,7 +18,7 @@ register({ 'c', 'cpp' }, {
   end,
   enable = function(bufnr)
     return not vim.tbl_isempty(vim.fs.find({ '.clang-format' }, {
-      path = api.nvim_buf_get_name(bufnr),
+      path = vim.fs.dirname(api.nvim_buf_get_name(bufnr)),
       upward = true,
       type = 'file',
     }))
@@ -66,7 +66,7 @@ do
     end,
     enable = function(bufnr)
       stylua_config_path = vim.fs.find({ 'stylua.toml', '.stylua.toml' }, {
-        path = api.nvim_buf_get_name(bufnr),
+        path = vim.fs.dirname(api.nvim_buf_get_name(bufnr)),
         upward = true,
         type = 'file',
       })[1]

@@ -68,7 +68,7 @@ do
         '.golangci.toml',
         '.golangci.json',
       }, {
-        path = vim.api.nvim_buf_get_name(bufnr),
+        path = vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)),
         upward = true,
         type = 'file',
       })[1]

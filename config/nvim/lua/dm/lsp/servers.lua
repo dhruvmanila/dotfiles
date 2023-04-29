@@ -47,7 +47,7 @@ return {
       -- Find the first `go.mod` file starting from the current buffer path,
       -- moving upwards. This is to support Go workspaces.
       local modfile = vim.fs.find({ 'go.mod' }, {
-        path = vim.api.nvim_buf_get_name(0),
+        path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
         upward = true,
         type = 'file',
       })[1]
