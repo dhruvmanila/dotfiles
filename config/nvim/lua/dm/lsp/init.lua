@@ -3,11 +3,12 @@ local keymap = vim.keymap
 
 local inlayhints = require 'lsp-inlayhints'
 local lspconfig = require 'lspconfig'
+
 local preview = require 'dm.lsp.preview'
+local rust_analyzer = require 'dm.lsp.extensions.rust_analyzer'
 local servers = require 'dm.lsp.servers'
 
 require 'dm.lsp.handlers'
-require 'dm.lsp.extensions.rust_analyzer'
 require 'dm.lsp.progress'
 
 require('lspconfig.ui.windows').default_options.border =
@@ -62,6 +63,13 @@ local function on_attach(client, bufnr)
   if client.name == 'ruff_lsp' then
     -- Disable hover in favor of Pyright
     capabilities.hoverProvider = false
+  end
+
+  if client.name == 'rust_analyzer' then
+    keymap.set('n', '<leader>rr', rust_analyzer.runnables, {
+      buffer = bufnr,
+      desc = 'LSP (rust-analyzer): Runnables',
+    })
   end
 
   if capabilities.hoverProvider then

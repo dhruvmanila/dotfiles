@@ -1,4 +1,5 @@
--- Client side commands.
+-- Client side extension for `rust-analyzer`.
+local M = {}
 
 local job = require 'dm.job'
 local log = require 'dm.log'
@@ -173,3 +174,32 @@ end
 vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
   start_debugging_from_args(command.arguments[1].args)
 end
+
+function M.runnables()
+  vim.lsp.buf_request(0, 'experimental/runnables', {
+    textDocument = vim.lsp.util.make_text_document_params(0),
+    position = nil,
+  }, function(_, result)
+    if result == nil then
+      return
+    end
+    ---@cast result CargoRunnable[]
+
+    vim.ui.select(
+      vim.tbl_map(function(runnable)
+        return runnable.label
+      end, result),
+      {
+        prompt = 'Runnables',
+        kind = 'rust-analyzer/runnables',
+      },
+      function(_, idx)
+        local runnable = result[idx]
+        local args, cwd = extract_from_args(runnable.args)
+        execute_command('cargo', args, cwd)
+      end
+    )
+  end)
+end
+
+return M
