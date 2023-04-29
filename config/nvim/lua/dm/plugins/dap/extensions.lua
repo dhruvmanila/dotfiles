@@ -1,6 +1,6 @@
 local dap = require 'dap'
-local dapui = require 'dapui'
 local dap_python = require 'dap-python'
+local dapui = require 'dapui'
 
 -- Automatically open and close the DAP UI.
 dap.listeners.after['event_initialized']['dap_ui'] = function()

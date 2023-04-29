@@ -1,9 +1,9 @@
-local telescope = require 'telescope'
 local builtin = require 'telescope.builtin'
+local telescope = require 'telescope'
 local ts_parsers = require 'nvim-treesitter.parsers'
 
-local themes = require 'dm.plugins.telescope.themes'
 local pickers = require 'dm.plugins.telescope.pickers'
+local themes = require 'dm.plugins.telescope.themes'
 
 -- Builtin Pickers
 

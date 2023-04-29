@@ -1,9 +1,9 @@
 -- Custom Telescope actions.
 local M = {}
 
-local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
 local action_utils = require 'telescope.actions.utils'
+local actions = require 'telescope.actions'
 
 -- Yank the selected entry or all the selections made using multi-selection
 -- into the register pointed by the variable 'v:register' separated by newline.

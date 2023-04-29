@@ -1,6 +1,6 @@
 local api = vim.api
-local lir = require 'lir'
 local actions = require 'lir.actions'
+local lir = require 'lir'
 local mark_actions = require 'lir.mark.actions'
 
 -- Go to the git root directory for the current directory using lspconfig

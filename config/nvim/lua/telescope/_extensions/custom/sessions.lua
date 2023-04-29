@@ -1,8 +1,8 @@
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
 local telescope_config = require('telescope.config').values
-local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
+local actions = require 'telescope.actions'
 
 local session = require 'dm.session'
 

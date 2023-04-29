@@ -3,8 +3,8 @@ if not ok or not dm.executable 'gh' then
   return
 end
 
-local log = require 'dm.log'
 local job = require 'dm.job'
+local log = require 'dm.log'
 
 -- Default configuration for the source.
 local defaults = {

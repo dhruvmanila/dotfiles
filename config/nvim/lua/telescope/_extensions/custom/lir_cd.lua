@@ -3,11 +3,11 @@ local pickers = require 'telescope.pickers'
 local previewers = require 'telescope.previewers'
 local putils = require 'telescope.previewers.utils'
 local telescope_config = require('telescope.config').values
-local actions = require 'telescope.actions'
 local action_state = require 'telescope.actions.state'
+local actions = require 'telescope.actions'
 
-local lir = require 'lir'
 local float = require 'lir.float'
+local lir = require 'lir'
 
 -- This flag is used to determine whether we were in a normal buffer or in a
 -- floating lir window and take the appropriate action when pressing '<CR>'.

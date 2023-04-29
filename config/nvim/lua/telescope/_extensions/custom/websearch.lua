@@ -11,8 +11,8 @@ local telescope_config = require('telescope.config').values
 local actions = require 'telescope.actions'
 local entry_display = require 'telescope.pickers.entry_display'
 
-local job = require 'dm.job'
 local custom_actions = require 'dm.plugins.telescope.actions'
+local job = require 'dm.job'
 
 local state = {}
 

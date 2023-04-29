@@ -1,8 +1,8 @@
 local fn = vim.fn
 local api = vim.api
 
-local session = require 'dm.session'
 local provider = require 'dm.provider'
+local session = require 'dm.session'
 
 ---@class Tabpage
 ---@field id integer

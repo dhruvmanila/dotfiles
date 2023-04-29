@@ -1,6 +1,6 @@
-local telescope = require 'telescope'
-local actions = require 'telescope.actions'
 local action_layout = require 'telescope.actions.layout'
+local actions = require 'telescope.actions'
+local telescope = require 'telescope'
 
 local custom_actions = require 'dm.plugins.telescope.actions'
 

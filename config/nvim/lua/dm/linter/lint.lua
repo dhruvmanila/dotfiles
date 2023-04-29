@@ -2,8 +2,8 @@ local M = {}
 
 local api = vim.api
 local if_nil = vim.F.if_nil
-local log = require 'dm.log'
 local job = require 'dm.job'
+local log = require 'dm.log'
 
 -- Types {{{
 
