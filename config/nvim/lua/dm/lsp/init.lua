@@ -3,11 +3,11 @@ local keymap = vim.keymap
 
 local inlayhints = require 'lsp-inlayhints'
 local lspconfig = require 'lspconfig'
-local servers = require 'dm.lsp.servers'
 local preview = require 'dm.lsp.preview'
+local servers = require 'dm.lsp.servers'
 
-require 'dm.lsp.commands'
 require 'dm.lsp.handlers'
+require 'dm.lsp.extensions.rust_analyzer'
 require 'dm.lsp.progress'
 
 require('lspconfig.ui.windows').default_options.border =

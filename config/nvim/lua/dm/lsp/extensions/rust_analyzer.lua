@@ -4,49 +4,59 @@ local job = require 'dm.job'
 local log = require 'dm.log'
 
 -- Refer: https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts#L139
+
 ---@class CargoRunnableArgs
 ---@field cargoArgs string[]
 ---@field cargoExtraArgs string[]
 ---@field executableArgs string[]
 ---@field workspaceRoot string?
 
-local execute_command
+---@class CargoRunnable
+---@field label string
+---@field args CargoRunnableArgs
 
-do
-  ---@type number?
-  local bufnr
+---@type number?
+local last_execute_command_bufnr
 
-  -- Spawns the command in a new terminal opened in a horizontal split at
-  -- the bottom.
-  --
-  -- This uses `vim.fn.termopen` to run the command.
-  --
-  -- Keybindings:
-  --    `q`: Quit the terminal window
-  execute_command = function(cmd, args, cwd)
-    if bufnr and vim.api.nvim_buf_is_valid(bufnr) then
-      vim.api.nvim_buf_delete(bufnr, { force = true })
-    end
-    bufnr = vim.api.nvim_create_buf(false, true)
-
-    vim.cmd.split()
-    vim.api.nvim_win_set_buf(vim.api.nvim_get_current_win(), bufnr)
-    vim.cmd.resize(-5)
-    vim.api.nvim_buf_set_keymap(bufnr, 'n', 'q', '<Cmd>q<CR>', {
-      noremap = true,
-    })
-
-    vim.cmd.stopinsert()
-    vim.fn.termopen(('%s %s'):format(cmd, table.concat(args, ' ')), {
-      cwd = cwd,
-    })
-
-    vim.api.nvim_buf_attach(bufnr, false, {
-      on_detach = function()
-        bufnr = nil
-      end,
-    })
+-- Spawns the command in a new terminal opened in a horizontal split at
+-- the bottom.
+--
+-- This uses `vim.fn.termopen` to run the command.
+--
+-- Keybindings:
+--    `q`: Quit the terminal window
+---@param cmd string
+---@param args string[]
+---@param cwd string
+local function execute_command(cmd, args, cwd)
+  if
+    last_execute_command_bufnr
+    and vim.api.nvim_buf_is_valid(last_execute_command_bufnr)
+  then
+    vim.api.nvim_buf_delete(last_execute_command_bufnr, { force = true })
   end
+  last_execute_command_bufnr = vim.api.nvim_create_buf(false, true)
+
+  vim.cmd.split()
+  vim.api.nvim_win_set_buf(
+    vim.api.nvim_get_current_win(),
+    last_execute_command_bufnr
+  )
+  vim.cmd.resize(-5)
+  vim.api.nvim_buf_set_keymap(last_execute_command_bufnr, 'n', 'q', '<Cmd>q<CR>', {
+    noremap = true,
+  })
+
+  vim.cmd.stopinsert()
+  vim.fn.termopen(('%s %s'):format(cmd, table.concat(args, ' ')), {
+    cwd = cwd,
+  })
+
+  vim.api.nvim_buf_attach(last_execute_command_bufnr, false, {
+    on_detach = function()
+      last_execute_command_bufnr = nil
+    end,
+  })
 end
 
 ---@param args CargoRunnableArgs
