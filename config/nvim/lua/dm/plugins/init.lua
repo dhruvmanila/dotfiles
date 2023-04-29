@@ -66,6 +66,7 @@ packer.startup {
           ['html'] = true,
           ['javascript'] = true,
           ['go'] = true,
+          ['rust'] = true,
         }
       end,
     }
