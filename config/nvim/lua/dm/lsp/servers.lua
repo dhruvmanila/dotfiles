@@ -1,3 +1,5 @@
+local extensions = require 'dm.lsp.extensions'
+
 -- LSP server configurations
 ---@type table<string, table|function>
 local servers = {
@@ -154,6 +156,10 @@ local servers = {
           },
         },
       },
+    },
+    commands = {
+      RustRunnables = { extensions.rust_analyzer.runnables },
+      RustLastRun = { extensions.rust_analyzer.execute_last_runnable },
     },
   },
 

@@ -70,6 +70,10 @@ local function on_attach(client, bufnr)
       buffer = bufnr,
       desc = 'LSP (rust-analyzer): Runnables',
     })
+    keymap.set('n', '<leader>rl', rust_analyzer.execute_last_runnable, {
+      buffer = bufnr,
+      desc = 'LSP (rust-analyzer): Execute last runnable',
+    })
   end
 
   if capabilities.hoverProvider then

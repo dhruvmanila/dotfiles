@@ -16,8 +16,15 @@ local log = require 'dm.log'
 ---@field label string
 ---@field args CargoRunnableArgs
 
----@type number?
-local last_execute_command_bufnr
+local cache = {
+  -- Bufnr for the latest executed command.
+  ---@type number?
+  bufnr = nil,
+
+  -- Last runnable.
+  ---@type CargoRunnable?
+  runnable = nil,
+}
 
 -- Spawns the command in a new terminal opened in a horizontal split at
 -- the bottom.
@@ -30,21 +37,15 @@ local last_execute_command_bufnr
 ---@param args string[]
 ---@param cwd string
 local function execute_command(cmd, args, cwd)
-  if
-    last_execute_command_bufnr
-    and vim.api.nvim_buf_is_valid(last_execute_command_bufnr)
-  then
-    vim.api.nvim_buf_delete(last_execute_command_bufnr, { force = true })
+  if cache.bufnr and vim.api.nvim_buf_is_valid(cache.bufnr) then
+    vim.api.nvim_buf_delete(cache.bufnr, { force = true })
   end
-  last_execute_command_bufnr = vim.api.nvim_create_buf(false, true)
+  cache.bufnr = vim.api.nvim_create_buf(false, true)
 
   vim.cmd.split()
-  vim.api.nvim_win_set_buf(
-    vim.api.nvim_get_current_win(),
-    last_execute_command_bufnr
-  )
+  vim.api.nvim_win_set_buf(vim.api.nvim_get_current_win(), cache.bufnr)
   vim.cmd.resize(-5)
-  vim.api.nvim_buf_set_keymap(last_execute_command_bufnr, 'n', 'q', '<Cmd>q<CR>', {
+  vim.api.nvim_buf_set_keymap(cache.bufnr, 'n', 'q', '<Cmd>q<CR>', {
     noremap = true,
   })
 
@@ -53,9 +54,9 @@ local function execute_command(cmd, args, cwd)
     cwd = cwd,
   })
 
-  vim.api.nvim_buf_attach(last_execute_command_bufnr, false, {
+  vim.api.nvim_buf_attach(cache.bufnr, false, {
     on_detach = function()
-      last_execute_command_bufnr = nil
+      cache.bufnr = nil
     end,
   })
 end
@@ -71,6 +72,13 @@ local function extract_from_args(args)
     args.executableArgs,
   },
     args.workspaceRoot
+end
+
+-- Execute Cargo runnable.
+---@param runnable CargoRunnable
+local function execute_runnable(runnable)
+  local args, cwd = extract_from_args(runnable.args)
+  execute_command('cargo', args, cwd)
 end
 
 -- Return the absolute path to the closest Cargo crate directory.
@@ -167,8 +175,7 @@ local function start_debugging_from_args(args)
 end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
-  local args, cwd = extract_from_args(command.arguments[1].args)
-  execute_command('cargo', args, cwd)
+  execute_runnable(command.arguments[1].args)
 end
 
 vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
@@ -179,27 +186,31 @@ function M.runnables()
   vim.lsp.buf_request(0, 'experimental/runnables', {
     textDocument = vim.lsp.util.make_text_document_params(0),
     position = nil,
-  }, function(_, result)
-    if result == nil then
+  }, function(_, runnables)
+    if runnables == nil then
       return
     end
-    ---@cast result CargoRunnable[]
+    ---@cast runnables CargoRunnable[]
 
-    vim.ui.select(
-      vim.tbl_map(function(runnable)
+    vim.ui.select(runnables, {
+      prompt = 'Runnables',
+      kind = 'rust-analyzer/runnables',
+      format_item = function(runnable)
         return runnable.label
-      end, result),
-      {
-        prompt = 'Runnables',
-        kind = 'rust-analyzer/runnables',
-      },
-      function(_, idx)
-        local runnable = result[idx]
-        local args, cwd = extract_from_args(runnable.args)
-        execute_command('cargo', args, cwd)
-      end
-    )
+      end,
+    }, function(runnable)
+      cache.runnable = runnable
+      execute_runnable(runnable)
+    end)
   end)
+end
+
+function M.execute_last_runnable()
+  if cache.runnable then
+    execute_runnable(cache.runnable)
+  else
+    M.runnables()
+  end
 end
 
 return M
