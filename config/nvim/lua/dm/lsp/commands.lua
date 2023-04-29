@@ -118,12 +118,14 @@ local function start_debugging_from_args(args)
 
       if #executables == 0 then
         dm.notify('Rust', 'No compilation artifacts', vim.log.levels.ERROR)
+        return
       elseif #executables > 1 then
         dm.notify(
           'Rust',
           'Multiple compilation artifacts are not supported',
           vim.log.levels.ERROR
         )
+        return
       end
 
       local dap_config = {
@@ -143,7 +145,6 @@ end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
   local args, cwd = extract_from_args(command.arguments[1].args)
-  log.fmt_debug('[%s] args=%s cwd=%s', command.command, args, cwd)
   execute_command('cargo', args, cwd)
 end
 
