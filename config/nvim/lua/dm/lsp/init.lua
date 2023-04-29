@@ -21,15 +21,16 @@ require('vim.lsp.log').set_format_func(vim.inspect)
 --   - Default border according to `vim.g.border_style`
 --   - 'q' to quit with `nowait = true`
 do
-  local default = lsp.util.open_floating_preview
+  local default_open_floating_preview = lsp.util.open_floating_preview
 
+  ---@diagnostic disable-next-line: duplicate-set-field
   lsp.util.open_floating_preview = function(contents, syntax, opts)
     opts = vim.tbl_deep_extend('force', opts, {
       border = dm.border[vim.g.border_style],
       max_width = math.min(math.floor(vim.o.columns * 0.7), 100),
       max_height = math.min(math.floor(vim.o.lines * 0.3), 30),
     })
-    local bufnr, winnr = default(contents, syntax, opts)
+    local bufnr, winnr = default_open_floating_preview(contents, syntax, opts)
     keymap.set('n', 'q', '<Cmd>bdelete<CR>', {
       buffer = bufnr,
       nowait = true,
