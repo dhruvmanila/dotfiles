@@ -37,12 +37,17 @@ vim.lsp.handlers['textDocument/typeDefinition'] = location_handler
 vim.lsp.handlers['textDocument/implementation'] = location_handler
 
 do
-  local levels = { 'ERROR', 'WARN', 'INFO', 'DEBUG' }
+  local levels = {
+    vim.log.levels.ERROR,
+    vim.log.levels.WARN,
+    vim.log.levels.INFO,
+    vim.log.levels.DEBUG,
+  }
 
-  ---@see https://github.com/neovim/nvim-lspconfig/wiki/User-contributed-tips#use-nvim-notify-to-display-lsp-messages
+  -- See: https://github.com/neovim/nvim-lspconfig/wiki/User-contributed-tips#use-nvim-notify-to-display-lsp-messages
   vim.lsp.handlers['window/showMessage'] = function(err, result, ctx)
     if err then
-      dm.notify('LSP (' .. ctx.method .. ')', tostring(err), 4)
+      dm.notify('LSP', tostring(err), vim.log.levels.ERROR)
       return
     end
 
