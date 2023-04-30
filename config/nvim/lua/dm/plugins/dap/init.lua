@@ -7,6 +7,14 @@ local dap = require 'dap'
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
 dap.set_log_level(dm.current_log_level)
 
+-- Load VSCode configurations from `./.vscode/launch.json` file.
+--
+-- Note: This should come after adding custom configurations as it *extends*
+-- it. If there's a configuration with the same name, it'll *override* it.
+require('dap.ext.vscode').load_launchjs(nil, {
+  lldb = { 'rust' },
+})
+
 vim.fn.sign_define {
   { name = 'DapStopped', text = '', texthl = '' },
   { name = 'DapLogPoint', text = '', texthl = '' },
