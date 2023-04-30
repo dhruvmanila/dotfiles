@@ -22,6 +22,13 @@ local function log_to_file()
   end
 end
 
+-- Helper function to ask the user for arguments.
+---@return string[]
+local function ask_for_arguments()
+  local args = vim.fn.input 'Arguments: '
+  return vim.split(args, ' +', { trimempty = true })
+end
+
 ---@see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
 dap.configurations.python = {
   {
@@ -39,10 +46,7 @@ dap.configurations.python = {
     type = 'python',
     request = 'launch',
     program = '${file}',
-    args = function()
-      local args = vim.fn.input 'Arguments: '
-      return vim.split(args, ' +', { trimempty = true })
-    end,
+    args = ask_for_arguments,
     console = 'internalConsole',
     justMyCode = false,
     pythonPath = get_python_path,
@@ -65,10 +69,7 @@ dap.configurations.python = {
     request = 'launch',
     module = '${relativeFileDirname}',
     cwd = '${workspaceFolder}',
-    args = function()
-      local args = vim.fn.input 'Arguments: '
-      return vim.split(args, ' +', { trimempty = true })
-    end,
+    args = ask_for_arguments,
     console = 'internalConsole',
     justMyCode = false,
     pythonPath = get_python_path,
@@ -172,5 +173,45 @@ dap.configurations.go = {
     mode = 'debug',
     program = '${workspaceFolder}',
     args = get_advent_of_code_args,
+  },
+}
+
+-- Helper function to return the program value for Rust.
+---@return string
+local function rust_program()
+  -- TODO: Use coroutine with `vim.ui.select` to fuzzy search over all
+  -- the exectuables found in the `./target/debug` directory.
+  local cwd = vim.loop.cwd() or '.'
+  local debugdir = cwd .. '/target/debug'
+  if vim.fs.basename(cwd) == 'ruff' then
+    local ruff_executable = debugdir .. '/ruff'
+    if dm.executable(ruff_executable) then
+      return ruff_executable
+    end
+  end
+  return vim.fn.input {
+    prompt = 'Path to executable: ',
+    default = dm.path_exists(debugdir) and debugdir or cwd,
+    completion = 'file',
+  }
+end
+
+dap.configurations.rust = {
+  {
+    type = 'lldb',
+    name = 'Launch',
+    request = 'launch',
+    program = rust_program,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = false,
+  },
+  {
+    type = 'lldb',
+    name = 'Launch with arguments',
+    request = 'launch',
+    program = rust_program,
+    args = ask_for_arguments,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = false,
   },
 }
