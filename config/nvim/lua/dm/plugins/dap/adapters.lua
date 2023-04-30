@@ -7,7 +7,27 @@ dap.adapters.lldb = {
   command = 'lldb-vscode',
 }
 
----@see https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation#go-using-delve-directly
+do
+  local extension_path =
+    vim.fs.normalize '~/.vscode/extensions/vadimcn.vscode-lldb-1.9.1'
+  local codelldb_path = extension_path .. '/adapter/codelldb'
+  local liblldb_path = extension_path .. '/lldb/lib/liblldb.dylib'
+
+  -- https://github.com/mfussenegger/nvim-dap/wiki/C-C---Rust-(via--codelldb)
+  -- Settings: https://github.com/vadimcn/codelldb/blob/master/MANUAL.md
+  dap.adapters.codelldb = {
+    name = 'codelldb',
+    type = 'server',
+    host = '127.0.0.1',
+    port = '${port}',
+    executable = {
+      command = codelldb_path,
+      args = { '--liblldb', liblldb_path, '--port', '${port}' },
+    },
+  }
+end
+
+-- https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation#go-using-delve-directly
 dap.adapters.go = function(callback)
   local port = 38697
   job {

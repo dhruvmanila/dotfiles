@@ -198,20 +198,22 @@ end
 
 dap.configurations.rust = {
   {
-    type = 'lldb',
+    type = 'codelldb',
     name = 'Launch',
     request = 'launch',
     program = rust_program,
     cwd = '${workspaceFolder}',
+    console = 'internalConsole',
     stopOnEntry = false,
   },
   {
-    type = 'lldb',
+    type = 'codelldb',
     name = 'Launch with arguments',
     request = 'launch',
     program = rust_program,
     args = ask_for_arguments,
     cwd = '${workspaceFolder}',
+    console = 'internalConsole',
     stopOnEntry = false,
   },
 }
