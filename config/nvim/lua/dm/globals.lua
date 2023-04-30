@@ -200,3 +200,11 @@ end
 function dm.executable(cmd)
   return vim.fn.executable(cmd) > 0
 end
+
+-- Return `true` if the given path exists, `false` otherwise
+---@param path string
+---@return boolean
+function dm.path_exists(path)
+  local _, err = vim.loop.fs_stat(path)
+  return err == nil
+end
