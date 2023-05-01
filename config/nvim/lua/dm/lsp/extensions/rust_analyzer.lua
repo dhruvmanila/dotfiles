@@ -61,24 +61,16 @@ local function execute_command(cmd, args, cwd)
   })
 end
 
----@param args CargoRunnableArgs
----@return string[] #List of all the arguments
----@return string #Workspace root as reported by the LSP server
-local function extract_from_args(args)
-  return vim.tbl_flatten {
-    args.cargoArgs,
-    args.cargoExtraArgs,
-    '--',
-    args.executableArgs,
-  },
-    args.workspaceRoot
-end
-
 -- Execute Cargo runnable.
 ---@param runnable CargoRunnable
 local function execute_runnable(runnable)
-  local args, cwd = extract_from_args(runnable.args)
-  execute_command('cargo', args, cwd)
+  local args = vim.tbl_flatten {
+    runnable.args.cargoArgs,
+    runnable.args.cargoExtraArgs,
+    '--',
+    runnable.args.executableArgs,
+  }
+  execute_command('cargo', args, runnable.args.workspaceRoot)
 end
 
 -- Return the absolute path to the closest Cargo crate directory.
@@ -175,7 +167,7 @@ local function start_debugging_from_args(args)
 end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
-  execute_runnable(command.arguments[1].args)
+  execute_runnable(command.arguments[1])
 end
 
 vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
