@@ -177,23 +177,29 @@ dap.configurations.go = {
 }
 
 -- Helper function to return the program value for Rust.
----@return string
+---@return string|thread
 local function rust_program()
-  -- TODO: Use coroutine with `vim.ui.select` to fuzzy search over all
-  -- the exectuables found in the `./target/debug` directory.
   local cwd = vim.loop.cwd() or '.'
   local debugdir = cwd .. '/target/debug'
-  if vim.fs.basename(cwd) == 'ruff' then
-    local ruff_executable = debugdir .. '/ruff'
-    if dm.executable(ruff_executable) then
-      return ruff_executable
+  local executables = {}
+  for name, itemtype in vim.fs.dir(debugdir) do
+    if itemtype == 'file' and not vim.endswith(name, 'dylib') then
+      local path = debugdir .. '/' .. name
+      if dm.executable(path) then
+        table.insert(executables, { name = name, path = path })
+      end
     end
   end
-  return vim.fn.input {
-    prompt = 'Path to executable: ',
-    default = dm.path_exists(debugdir) and debugdir or cwd,
-    completion = 'file',
-  }
+  return coroutine.create(function(dap_run_co)
+    vim.ui.select(executables, {
+      prompt = 'Select an executable to debug',
+      format_item = function(executable)
+        return executable.name
+      end,
+    }, function(executable)
+      coroutine.resume(dap_run_co, executable.path)
+    end)
+  end)
 end
 
 dap.configurations.rust = {
