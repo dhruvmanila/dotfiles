@@ -14,6 +14,7 @@ local log = require 'dm.log'
 
 ---@class CargoRunnable
 ---@field label string
+---@field kind 'cargo'
 ---@field args CargoRunnableArgs
 
 local cache = {
@@ -84,14 +85,16 @@ local function cargo_crate_dir()
   })[1])
 end
 
--- Start the debugging session from the given `args`.
+-- Start the debugging session for the given runnable spec.
 --
 -- This is used to execute the `rust-analyzer.debugSingle` command.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/toolchain.ts
----@param args CargoRunnableArgs
-local function start_debugging_from_args(args)
-  local cargo_args = vim.tbl_flatten { args.cargoArgs, '--message-format=json' }
+---@param runnable CargoRunnable
+local function debug_runnable(runnable)
+  -- This creates a copy to avoid mutating the original table.
+  local cargo_args =
+    vim.tbl_flatten { runnable.args.cargoArgs, '--message-format=json' }
   if cargo_args[1] == 'run' then
     cargo_args[1] = 'build'
   elseif cargo_args[1] == 'test' then
@@ -108,7 +111,7 @@ local function start_debugging_from_args(args)
   job {
     cmd = 'cargo',
     args = cargo_args,
-    cwd = args.workspaceRoot,
+    cwd = runnable.args.workspaceRoot,
     on_exit = function(result)
       if result.code > 0 then
         dm.notify(
@@ -152,12 +155,13 @@ local function start_debugging_from_args(args)
       end
 
       local dap_config = {
-        name = 'Rust: Debug',
-        type = 'lldb',
+        name = 'Debug ' .. runnable.label,
+        type = 'codelldb',
         request = 'launch',
         program = executables[1],
-        args = args.executableArgs or {},
-        cwd = cargo_crate_dir() or args.workspaceRoot,
+        args = runnable.args.executableArgs or {},
+        cwd = cargo_crate_dir() or runnable.args.workspaceRoot,
+        console = 'internalConsole',
         stopOnEntry = false,
       }
       log.fmt_info('Launching DAP with config: %s', dap_config)
@@ -171,7 +175,7 @@ vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
 end
 
 vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
-  start_debugging_from_args(command.arguments[1].args)
+  debug_runnable(command.arguments[1])
 end
 
 function M.runnables()
