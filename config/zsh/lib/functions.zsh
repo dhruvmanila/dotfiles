@@ -152,7 +152,7 @@ pip-upgrade() { # {{{1
 }
 
 py-venv-activate() { # {{{1
-  # Activate the Python virtual environment built using the `pyvenv` command.
+  # Activate the Python virtual environment built using the `pie` command.
   #
   # This is used for the `_python_auto_venv` hook, but can be used from the
   # command-line as well.
@@ -160,8 +160,8 @@ py-venv-activate() { # {{{1
   # The activation part cannot be a script as that is executed in a subshell
   # and so the `source` part will also be executed in the subshell instead of
   # the current shell.
-  if command -v pyvenv &> /dev/null; then
-    VENV_DIR=$(pyvenv --venv 2> /dev/null)
+  if command -v pie &> /dev/null; then
+    VENV_DIR=$(pie --venv 2> /dev/null)
     if (( $? == 0 )) && [ -n "$VENV_DIR" ]; then
       source "$VENV_DIR/bin/activate"
     fi
