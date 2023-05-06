@@ -1,0 +1,54 @@
+import os.path
+
+from docklib import Dock
+
+# Dock applications ordered from left to right.
+DOCK_APPS = [
+    "/Applications/Arc.app",
+    "/Applications/kitty.app",
+    "/System/Applications/Notes.app",
+    "/System/Applications/Music.app",
+    "/System/Applications/Books.app",
+]
+
+
+def refresh(dock: Dock) -> None:
+    dock.items["persistent-apps"] = []
+
+    for item in DOCK_APPS:
+        if os.path.exists(item):
+            item = dock.makeDockAppEntry(item)
+            dock.items["persistent-apps"].append(item)
+
+    dock.items["persistent-others"] = [
+        dock.makeDockOtherEntry(
+            os.path.expanduser("~/Downloads"),
+            arrangement=2,  # sort by date added
+            displayas=1,  # display as folder
+            showas=2,  # show as grid
+        )
+    ]
+
+    dock.save()
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-l",
+        "--list",
+        action="store_true",
+        help="list bundle identifier of all the current dock applications",
+    )
+    args = parser.parse_args()
+
+    dock = Dock()
+    if args.list:
+        for app in dock.items["persistent-apps"]:
+            path: str = app["tile-data"]["file-data"]["_CFURLString"]
+            path = path.removeprefix("file://").replace("%20", " ").removesuffix("/")
+            print(f'"{path}"')
+    else:
+        refresh(dock)
