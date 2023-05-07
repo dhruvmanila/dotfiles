@@ -61,4 +61,5 @@ g.open_command = (g.os == 'Darwin' and 'open')
 g.lsp_code_action_lightbulb = false
 
 require 'dm.globals' -- Global functions and variables
+require 'dm.options' -- Neovim options
 require 'dm.plugins' -- Plugin configuration
