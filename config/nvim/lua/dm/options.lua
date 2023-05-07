@@ -65,6 +65,10 @@ opt.diffopt:append {
 -- See: https://www.youtube.com/watch?v=F91VWOelFNE&t=174s
 opt.emoji = false
 
+-- exrc {{{1
+
+opt.exrc = true
+
 -- fillchars {{{1
 
 opt.fillchars = {

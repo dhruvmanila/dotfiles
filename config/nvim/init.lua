@@ -13,9 +13,6 @@ local g = vim.g
 
 pcall(require, 'impatient')
 
--- This needs to be set in `init.lua` file.
-vim.opt.exrc = true
-
 -- Leader bindings
 g.mapleader = ' '
 g.maplocalleader = ' '
