@@ -11,7 +11,9 @@
 -------------------------------------------------------------------------------
 local g = vim.g
 
-pcall(require, 'impatient')
+if vim.loader then
+  vim.loader.enable()
+end
 
 -- Leader bindings
 g.mapleader = ' '
@@ -22,18 +24,6 @@ g.loaded_node_provider = 0
 g.loaded_perl_provider = 0
 g.loaded_ruby_provider = 0
 g.loaded_python3_provider = 0
-
--- Disable built-in plugins (`:h standard-plugin-list`)
-g.loaded_2html_plugin = 1
-g.loaded_gzip = 1
-g.loaded_matchit = 1
-g.loaded_netrw = 1
-g.loaded_netrwPlugin = 1
-g.loaded_tar = 1
-g.loaded_tarPlugin = 1
-g.loaded_tutor_mode_plugin = 1
-g.loaded_zip = 1
-g.loaded_zipPlugin = 1
 
 -- Custom global variables for use in various parts of the config. These don't
 -- have any special meaning in Neovim.
@@ -59,4 +49,50 @@ g.lsp_code_action_lightbulb = false
 
 require 'dm.globals' -- Global functions and variables
 require 'dm.options' -- Neovim options
-require 'dm.plugins' -- Plugin configuration
+
+-- Plugins
+
+local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system {
+    'git',
+    'clone',
+    '--filter=blob:none',
+    '--branch=stable',
+    'https://github.com/folke/lazy.nvim.git',
+    lazypath,
+  }
+  vim.notify 'Installed lazy.nvim'
+end
+vim.opt.runtimepath:prepend(lazypath)
+
+-- See: https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
+require('lazy').setup('dm.plugins', {
+  change_detection = {
+    notify = false,
+  },
+  defaults = {
+    -- lazy = true,
+    -- default `cond` you can use to globally disable a lot of plugins
+    -- when running inside vscode for example
+    -- TODO: Maybe this could be useful to me to separate VSCode config?
+    -- cond = nil, ---@type boolean|fun(self:LazyPlugin):boolean|nil
+  },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        'gzip',
+        -- 'matchit',
+        -- 'matchparen',
+        'netrwPlugin',
+        'tarPlugin',
+        'tohtml',
+        'tutor',
+        'zipPlugin',
+      },
+    },
+  },
+  ui = {
+    border = dm.border[vim.g.border_style],
+  },
+})

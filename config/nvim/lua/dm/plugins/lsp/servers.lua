@@ -1,4 +1,4 @@
-local extensions = require 'dm.lsp.extensions'
+local extensions = require 'dm.plugins.lsp.extensions'
 
 -- LSP server configurations
 ---@type table<string, table|function>

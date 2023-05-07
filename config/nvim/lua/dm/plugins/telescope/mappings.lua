@@ -1,6 +1,5 @@
 local builtin = require 'telescope.builtin'
 local telescope = require 'telescope'
-local ts_parsers = require 'nvim-treesitter.parsers'
 
 local pickers = require 'dm.plugins.telescope.pickers'
 local themes = require 'dm.plugins.telescope.themes'
@@ -37,7 +36,7 @@ vim.keymap.set('n', '<leader>ft', function()
     #vim.lsp.get_active_clients { bufnr = vim.api.nvim_get_current_buf() } > 0
   then
     builtin.lsp_document_symbols()
-  elseif ts_parsers.has_parser() then
+  elseif require('nvim-treesitter.parsers').has_parser() then
     builtin.treesitter()
   else
     builtin.current_buffer_tags()

@@ -1,111 +1,163 @@
-vim.keymap.set('n', '<Leader>tp', '<Cmd>TSPlaygroundToggle<CR>')
-vim.keymap.set('n', '<Leader>th', '<Cmd>TSHighlightCapturesUnderCursor<CR>')
+return {
+  {
+    'nvim-treesitter/nvim-treesitter',
+    event = 'BufReadPre',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+      'IndianBoy42/tree-sitter-just',
+    },
+    build = ':TSUpdate',
+    config = function()
+      require('nvim-treesitter.configs').setup {
+        -- A list of parser names, or "all"
+        ensure_installed = {
+          'bash',
+          'c',
+          'cmake',
+          'comment',
+          'cpp',
+          'dockerfile',
+          'fish',
+          'gitattributes',
+          'gitignore',
+          'go',
+          'gomod',
+          'gowork',
+          'hcl',
+          'java',
+          'javascript',
+          'json',
+          'jsonc',
+          -- 'just',
+          'lua',
+          'make',
+          'markdown',
+          'python',
+          'query',
+          'ruby',
+          'rust',
+          'scheme',
+          'toml',
+          'typescript',
+          'vim',
+          'vimdoc',
+          'yaml',
+        },
 
-require('tree-sitter-just').setup {}
+        highlight = {
+          enable = true,
+        },
 
-require('nvim-treesitter.configs').setup {
-  -- Install the parsers synchronously on a fresh setup
-  sync_install = vim.env.NVIM_BOOTSTRAP and true or false,
+        playground = {
+          enable = true,
+          updatetime = 25,
+        },
 
-  -- A list of parser names, or "all"
-  ensure_installed = {
-    'bash',
-    'c',
-    'cmake',
-    'comment',
-    'cpp',
-    'dockerfile',
-    'fish',
-    'gitattributes',
-    'gitignore',
-    'go',
-    'gomod',
-    'gowork',
-    'hcl',
-    'java',
-    'javascript',
-    'json',
-    'jsonc',
-    'just',
-    'lua',
-    'make',
-    'markdown',
-    'python',
-    'query',
-    'ruby',
-    'rust',
-    'scheme',
-    'toml',
-    'typescript',
-    'vim',
-    'vimdoc',
-    'yaml',
+        incremental_selection = {
+          enable = true,
+          keymaps = {
+            init_selection = 'gn',
+            node_incremental = '<C-n>',
+            scope_incremental = '<C-s>',
+            node_decremental = '<C-p>',
+          },
+        },
+
+        textobjects = {
+          select = {
+            enable = true,
+            keymaps = {
+              ['aC'] = '@class.outer',
+              ['iC'] = '@class.inner',
+              ['af'] = '@function.outer',
+              ['if'] = '@function.inner',
+              ['aF'] = '@call.outer',
+              ['iF'] = '@call.inner',
+              ['ac'] = '@conditional.outer',
+              ['ic'] = '@conditional.inner',
+              ['ao'] = '@loop.outer',
+              ['io'] = '@loop.inner',
+              ['aa'] = '@parameter.outer',
+              ['ia'] = '@parameter.inner',
+            },
+          },
+
+          swap = {
+            enable = true,
+            swap_next = {
+              [']a'] = '@parameter.inner',
+            },
+            swap_previous = {
+              ['[a'] = '@parameter.inner',
+            },
+          },
+
+          move = {
+            enable = true,
+            set_jumps = true, -- whether to set jumps in the jumplist
+            goto_next_start = {
+              [']m'] = '@function.outer',
+              [']]'] = '@class.outer',
+            },
+            goto_previous_start = {
+              ['[m'] = '@function.outer',
+              ['[['] = '@class.outer',
+            },
+          },
+        },
+      }
+    end,
   },
 
-  highlight = {
-    enable = true,
-  },
-
-  playground = {
-    enable = true,
-    updatetime = 25,
-  },
-
-  incremental_selection = {
-    enable = true,
-    keymaps = {
-      init_selection = 'gn',
-      node_incremental = '<C-n>',
-      scope_incremental = '<C-s>',
-      node_decremental = '<C-p>',
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    event = 'BufReadPre',
+    opts = {
+      mode = 'cursor',
+      separator = { '─', 'WinSeparator' },
     },
   },
 
-  textobjects = {
-    select = {
-      enable = true,
-      keymaps = {
-        ['aC'] = '@class.outer',
-        ['iC'] = '@class.inner',
-        ['af'] = '@function.outer',
-        ['if'] = '@function.inner',
-        ['aF'] = '@call.outer',
-        ['iF'] = '@call.inner',
-        ['ac'] = '@conditional.outer',
-        ['ic'] = '@conditional.inner',
-        ['ao'] = '@loop.outer',
-        ['io'] = '@loop.inner',
-        ['aa'] = '@parameter.outer',
-        ['ia'] = '@parameter.inner',
+  {
+    'nvim-treesitter/playground',
+    cmd = { 'TSPlaygroundToggle' },
+    keys = {
+      { '<Leader>tp', '<Cmd>TSPlaygroundToggle<CR>' },
+      { '<Leader>th', '<Cmd>TSHighlightCapturesUnderCursor<CR>' },
+    },
+    dependencies = { 'nvim-treesitter' },
+  },
+
+  {
+    'danymat/neogen',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+    },
+    keys = {
+      { '<leader>nn', '<Cmd>Neogen<CR>' },
+      {
+        '<leader>ng',
+        function()
+          require('neogen').generate {
+            annotation_convention = {
+              python = 'google_docstrings',
+            },
+          }
+        end,
+        desc = 'neogen: google docstring',
       },
     },
-
-    swap = {
-      enable = true,
-      swap_next = {
-        [']a'] = '@parameter.inner',
-      },
-      swap_previous = {
-        ['[a'] = '@parameter.inner',
-      },
-    },
-
-    move = {
-      enable = true,
-      set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        [']m'] = '@function.outer',
-        [']]'] = '@class.outer',
-      },
-      goto_previous_start = {
-        ['[m'] = '@function.outer',
-        ['[['] = '@class.outer',
+    opts = {
+      snippet_engine = 'luasnip',
+      placeholders_hl = 'None',
+      languages = {
+        python = {
+          template = {
+            -- Update the default annotation convention.
+            annotation_convention = 'numpydoc',
+          },
+        },
       },
     },
   },
-}
-
-require('treesitter-context').setup {
-  mode = 'cursor',
-  separator = { '─', 'WinSeparator' },
 }

@@ -4,8 +4,6 @@ local M = {}
 local api = vim.api
 local lsp = vim.lsp
 
-local highlighter = require 'nvim-treesitter.highlight'
-
 -- Table consisting of treesitter node types to use for preview.
 local node_types = {
   -- go
@@ -115,7 +113,7 @@ local function preview_location_handler(_, result, ctx)
   location, location_bufnr = ts_range(location)
 
   local bufnr, winnr = lsp.util.preview_location(location)
-  highlighter.attach(bufnr, vim.bo.filetype)
+  require('nvim-treesitter.highlight').attach(bufnr, vim.bo.filetype)
 
   -- This will be used to avoid re-requesting and thus avoid attaching the
   -- highlighter again to the buffer which results in an error.

@@ -36,7 +36,7 @@ local function on_progress_update()
 end
 
 vim.api.nvim_create_autocmd('User', {
-  group = 'dm__statusline',
+  group = vim.api.nvim_create_augroup('dm__lsp_progress', { clear = true }),
   pattern = 'LspProgressUpdate',
   callback = on_progress_update,
 })

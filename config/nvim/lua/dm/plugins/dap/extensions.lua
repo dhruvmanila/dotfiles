@@ -42,5 +42,3 @@ dapui.setup {
     border = dm.border[vim.g.border_style],
   },
 }
-
-require('nvim-dap-virtual-text').setup()
