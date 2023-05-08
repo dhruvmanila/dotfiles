@@ -89,15 +89,37 @@ return {
     },
     dependencies = {
       'mfussenegger/nvim-dap-python',
-      'rcarriga/nvim-dap-ui',
+      {
+        'rcarriga/nvim-dap-ui',
+        opts = {
+          mappings = {
+            expand = { '<CR>', '<2-LeftMouse>', '<Tab>' },
+          },
+          layouts = {
+            {
+              size = 0.35,
+              position = 'left',
+              elements = {
+                { id = 'scopes', size = 0.6 },
+                { id = 'watches', size = 0.2 },
+                { id = 'breakpoints', size = 0.2 },
+              },
+            },
+          },
+          floating = {
+            border = dm.border[vim.g.border_style],
+          },
+        },
+      },
       { 'theHamsta/nvim-dap-virtual-text', config = true },
     },
     config = function()
-      require 'dm.plugins.dap.extensions'
       require 'dm.plugins.dap.adapters'
       require 'dm.plugins.dap.configurations'
 
       local dap = require 'dap'
+      local dapui = require 'dapui'
+      local dap_python = require 'dap-python'
 
       -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
       dap.set_log_level(dm.current_log_level)
@@ -145,13 +167,26 @@ return {
         })
       end
 
-      -- Automatically close the DAP repl and terminal buffer, if present.
-      dap.listeners.before['event_terminated']['dap_repl_terminal'] = function()
+      -- Automatically open and close the DAP windows.
+      dap.listeners.after['event_initialized']['dap_windows'] = function()
+        dapui.open()
+      end
+      dap.listeners.before['event_terminated']['dap_windows'] = function()
+        dap.repl.close()
+        dapui.close()
+      end
+      dap.listeners.before['event_exited']['dap_windows'] = function()
+        dapui.close()
         dap.repl.close()
       end
-      dap.listeners.before['event_exited']['dap_repl_terminal'] = function()
-        dap.repl.close()
-      end
+
+      -- DAP extension for Python. Filetype specific mappings are defined in
+      --    `./config/nvim/after/ftplugin/python.lua`
+      dap_python.setup(vim.loop.os_homedir() .. '/.neovim/.venv/bin/python', {
+        -- We will define the configuration ourselves for additional config options.
+        include_configs = false,
+      })
+      dap_python.test_runner = 'pytest'
     end,
   },
 }
