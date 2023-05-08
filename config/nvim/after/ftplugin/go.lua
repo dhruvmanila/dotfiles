@@ -1,3 +1,5 @@
+vim.bo.makeprg = 'go run %'
+
 vim.keymap.set('n', 'go', function()
   vim.lsp.buf.code_action {
     context = { only = { 'source.organizeImports' } },
