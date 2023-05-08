@@ -70,7 +70,7 @@ end
 -- Function to run the LspInfo command when clicking on the icon/message
 -- on the statusline.
 function _G.st_open_lsp_info()
-  vim.cmd { cmd = 'LspInfo' }
+  vim.cmd.LspInfo()
 end
 
 -- Return an icon if there are active LSP client(s) and the status message
@@ -120,11 +120,10 @@ end
 -- Return the current status of the DAP client.
 ---@return string
 local function dap_status()
-  local ok, dap = pcall(require, 'dap')
-  if not ok then
+  if not package.loaded.dap then
     return ''
   end
-  local status = dap.status()
+  local status = require('dap').status()
   if status and status ~= '' then
     return ' ' .. status
   end
@@ -172,7 +171,6 @@ local function set_python_version()
   job {
     cmd = 'python',
     args = { '--version' },
-    ---@param result JobResult
     on_exit = function(result)
       vim.g.current_python_version =
         result.stdout:gsub('\r\n', ''):gsub('\n', '')
