@@ -31,6 +31,7 @@ return {
 
   {
     'itchyny/vim-external',
+    lazy = false,
     keys = {
       {
         '<leader>ee',
