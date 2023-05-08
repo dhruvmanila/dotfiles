@@ -1,6 +1,5 @@
 ---@type number
-local namespace =
-  vim.api.nvim_get_namespaces()['dm__diagnostics_Dockerfile_hadolint']
+local namespace = vim.api.nvim_get_namespaces()['dm__linter_hadolint']
 
 -- Return a list of diagnostic codes of the current buffer for shellcheck.
 ---@return string[]
