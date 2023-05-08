@@ -18,27 +18,6 @@ local function find_files_in_plugin(prompt_bufnr)
   end)
 end
 
--- Collect and return the plugin information table.
---
--- Each plugin contains the following field:
---   - `name`: Full name of the plugin (user/repo) or only the name (repo)
---   - `url`: Plugin repository url
---   - `path`: Local path to the installation directory
----@return { name: string, url: string, path: string }[]
-local function collect_plugin_info()
-  local plugins = {}
-  for name, info in pairs(packer_plugins) do
-    -- Get the `user/repo` part from the URL.
-    local fullname = info.url:match '.-([^/]+/[^/]+)$'
-    table.insert(plugins, {
-      name = fullname or name,
-      url = info.url,
-      path = info.path,
-    })
-  end
-  return plugins
-end
-
 -- This extension will show the currently installed neovim plugins using
 -- packer.nvim and provide actions to either open the plugin homepage in the
 -- browser or a telescope finder for plugin files.
@@ -52,11 +31,18 @@ end
 return function(opts)
   opts = opts or {}
 
-  local plugins = collect_plugin_info()
+  local plugins = require('lazy').plugins()
   if vim.tbl_isempty(plugins) then
-    dm.notify('Telescope', 'Plugin information is not available', 3)
+    dm.notify(
+      'Telescope',
+      'Plugin information is not available',
+      vim.log.levels.WARN
+    )
     return nil
   end
+  table.sort(plugins, function(a, b)
+    return (a[1] or '') < (b[1] or '')
+  end)
 
   pickers
     .new(opts, {
@@ -65,11 +51,11 @@ return function(opts)
         results = plugins,
         entry_maker = function(entry)
           return {
-            display = entry.name,
-            value = entry.name,
-            path = entry.path,
+            display = entry[1],
+            value = entry[1],
+            path = entry.dir,
             url = entry.url,
-            ordinal = entry.name,
+            ordinal = entry[1],
           }
         end,
       },

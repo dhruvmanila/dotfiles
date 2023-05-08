@@ -71,12 +71,12 @@ vim.list_extend(entries, {
   {
     key = 'u',
     description = '  Sync packages',
-    command = 'PackerSync',
+    command = 'Lazy sync',
   },
   {
     key = 'p',
-    description = '  Startup time',
-    command = 'StartupTime',
+    description = '  Show detailed profiling',
+    command = 'Lazy profile',
   },
 })
 
@@ -99,7 +99,7 @@ end
 
 ---@return string[]
 local function generate_sub_header()
-  local version = api.nvim_exec('version', true)
+  local version = api.nvim_exec2('version', { output = true }).output
   version = vim.split(
     vim.split(version, '\n', { trimempty = true })[1],
     ' ',
@@ -110,16 +110,16 @@ end
 
 ---@return string[]
 local function generate_footer()
-  if not packer_plugins then
-    return {}
-  end
-  local loaded_plugins = 0
-  for _, info in pairs(packer_plugins) do
-    if info.loaded then
-      loaded_plugins = loaded_plugins + 1
-    end
-  end
-  return { '', '', 'Neovim loaded ' .. loaded_plugins .. ' plugins' }
+  local stats = require('lazy').stats()
+  return {
+    '',
+    '',
+    ('Neovim loaded %d/%d plugins in %dms'):format(
+      stats.loaded,
+      stats.count,
+      stats.startuptime
+    ),
+  }
 end
 
 -- Add the 'key' value to the right end of the given line with the appropriate
