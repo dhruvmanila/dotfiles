@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# This is a thin wrapper to invoke the actual script with the Python
+# interpreter containing the required dependencies. The dependencies
+# are mentioned in `$DOTFILES/scripts/requirements.txt`.
+
+: "${DOTFILES:="$HOME/dotfiles"}"
+
+exec \
+  "$HOME/Library/Application Support/pie/dotfiles-c2de1776/bin/python" \
+  "$DOTFILES/scripts/ruff-dev.py" \
+  "$@"
