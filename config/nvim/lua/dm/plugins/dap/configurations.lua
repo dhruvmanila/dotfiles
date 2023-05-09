@@ -168,6 +168,14 @@ dap.configurations.go = {
   },
   {
     type = 'go',
+    name = 'Launch: file with arguments',
+    request = 'launch',
+    args = ask_for_arguments,
+    mode = 'debug',
+    program = '${file}',
+  },
+  {
+    type = 'go',
     name = 'Launch: Advent of Code solution',
     request = 'launch',
     mode = 'debug',
