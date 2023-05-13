@@ -129,7 +129,6 @@ return {
         },
         -- By default, the order of the sources matter. That gives them priority.
         sources = {
-          { name = 'gh_issue' },
           { name = 'nvim_lsp' },
           { name = 'path' },
           { name = 'luasnip' },

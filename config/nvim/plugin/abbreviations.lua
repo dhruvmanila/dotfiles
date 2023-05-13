@@ -14,14 +14,6 @@ local function cabbrev(short, long)
   )
 end
 
--- Packer commands (`wbthomason/packer.nvim`)
-cabbrev('pc', 'PackerClean')
-cabbrev('po', 'PackerCompile')
-cabbrev('pi', 'PackerInstall')
-cabbrev('ps', 'PackerSync')
-cabbrev('pu', 'PackerUpdate')
-cabbrev('pp', 'PackerProfile')
-
 -- Session commands
 cabbrev('sc', 'SClose')
 cabbrev('sd', 'SDelete')
