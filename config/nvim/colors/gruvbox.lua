@@ -358,8 +358,8 @@ link('GitSignsDelete', 'Red')
 link('GitSignsTopdelete', 'Red')
 link('GitSignsChangeDelete', 'Purple')
 
--- lightspeed.nvim {{{2
-highlight('LightspeedOneCharMatch', {
+-- leap.nvim {{{2
+highlight('LeapMatch', {
   fg = 'White',
   bold = true,
   italic = true,

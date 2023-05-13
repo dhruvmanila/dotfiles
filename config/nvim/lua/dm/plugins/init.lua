@@ -12,6 +12,13 @@ return {
   { 'nacro90/numb.nvim', config = true },
 
   {
+    'ggandor/flit.nvim',
+    keys = { { 'f' }, { 'F' }, { 't' }, { 'T' } },
+    dependencies = { 'ggandor/leap.nvim' },
+    config = true,
+  },
+
+  {
     'airblade/vim-rooter',
     init = function()
       -- Prefer using manual mode.
