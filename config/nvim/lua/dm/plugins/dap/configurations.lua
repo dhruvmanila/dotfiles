@@ -176,6 +176,24 @@ dap.configurations.go = {
   },
   {
     type = 'go',
+    name = 'Launch: program',
+    request = 'launch',
+    mode = function()
+      return vim.endswith(vim.api.nvim_buf_get_name(0), '_test.go') and 'test'
+        or 'debug'
+    end,
+    program = '${workspaceFolder}',
+  },
+  {
+    type = 'go',
+    name = 'Launch: program with arguments',
+    request = 'launch',
+    args = ask_for_arguments,
+    mode = 'debug',
+    program = '${workspaceFolder}',
+  },
+  {
+    type = 'go',
     name = 'Launch: Advent of Code solution',
     request = 'launch',
     mode = 'debug',
