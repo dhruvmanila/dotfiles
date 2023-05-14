@@ -1,3 +1,8 @@
 [[language]]
 name = "python"
 language-server = { command = "pyright-langserver", args = ["--stdio"] }
+
+[[language]]
+name = "rust"
+config.cargo.features = "all"
+config.rust-analyzer.checkOnSave.command = "clippy"

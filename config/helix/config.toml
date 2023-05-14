@@ -1,1 +1,57 @@
 theme = "gruvbox"
+
+[editor]
+completion-trigger-len = 1
+cursorline = true
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.indent-guides]
+render = true
+character = "▏"
+
+[editor.lsp]
+display-messages = true
+display-inlay-hints = true
+
+[editor.soft-wrap]
+enable = true
+
+[editor.statusline]
+left = [
+  "mode",
+  "spinner",
+  "spacer",
+  "version-control",
+  "file-name",
+  "file-modification-indicator",
+  "diagnostics",
+]
+center = []
+right = [
+  "selections",
+  "file-type",
+  "position",
+  "total-line-numbers",
+  "file-encoding",
+]
+
+[editor.statusline.mode]
+normal = "NORMAL"
+insert = "INSERT"
+select = "SELECT"
+
+[keys.normal]
+space.w = ":update"
+space.q = ":write-quit"
+space.Q = ":write-quit-all"
+
+C-h = "jump_view_left"
+C-j = "jump_view_down"
+C-k = "jump_view_up"
+C-l = "jump_view_right"
+
+K = "hover"
