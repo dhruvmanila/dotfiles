@@ -16,7 +16,7 @@ indent_style = space
 indent_size = 4
 indent_style = space
 
-[*.{c,json,lua,rb,rkt,sh,sml,toml,yaml,yml}]
+[*.{c,json,lua,md,rb,rkt,sh,sml,toml,yaml,yml}]
 indent_size = 2
 indent_style = space
 
