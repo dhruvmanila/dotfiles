@@ -209,4 +209,19 @@ function M.execute_last_runnable()
   end
 end
 
+function M.reload_workspace()
+  local notification =
+    dm.notify('rust-analyzer', 'Reloading Cargo workspace...')
+  vim.lsp.buf_request(0, 'rust-analyzer/reloadWorkspace', nil, function(err)
+    if err then
+      dm.notify(
+        'rust-analyzer',
+        'Failed to reload Cargo workspace:\n\n' .. tostring(err),
+        vim.log.levels.ERROR,
+        { replace = notification }
+      )
+    end
+  end)
+end
+
 return M
