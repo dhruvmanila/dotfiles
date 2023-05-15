@@ -170,7 +170,7 @@ do
     else
       msg = ' ' .. msg:gsub('\n', ' \n ')
     end
-    notify(msg, level, opts)
+    return notify(msg, level, opts)
   end
 
   -- Wrapper around `vim.notify` to simplify passing the `title` value.
@@ -179,8 +179,10 @@ do
   ---@param title string
   ---@param msg string|string[]
   ---@param level? number|string
-  dm.notify = function(title, msg, level)
-    vim.notify(msg, level, { title = title })
+  ---@param opts? table
+  dm.notify = function(title, msg, level, opts)
+    opts = vim.tbl_extend('keep', opts or {}, { title = title })
+    return vim.notify(msg, level, opts)
   end
 end
 

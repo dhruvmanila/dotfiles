@@ -25,7 +25,12 @@ return function(opts)
   opts = opts or {}
 
   if vim.tbl_isempty(_CachedGithubStars) then
-    return dm.notify('Telescope', 'GitHub stars are not cached yet', 3)
+    dm.notify(
+      'Telescope',
+      'GitHub stars are not cached yet',
+      vim.log.levels.WARN
+    )
+    return
   end
 
   local displayer = entry_display.create {

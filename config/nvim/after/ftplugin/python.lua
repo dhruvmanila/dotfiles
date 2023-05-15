@@ -1,7 +1,4 @@
-local opt_local = vim.opt_local
-
-opt_local.makeprg = 'python3 %'
-opt_local.formatprg = 'black --quiet - | isort --quiet --profile=black -'
+vim.bo.makeprg = 'python3 %'
 
 -- PyDoc {{{
 
@@ -45,7 +42,8 @@ local function fully_qualified_name(import_name)
   local parser = vim.treesitter.get_parser(0)
   local tree = parser:parse()[1]
   if not tree then
-    return dm.notify('PyDoc', 'Failed to parse the tree', 4)
+    dm.notify('PyDoc', 'Failed to parse the tree', vim.log.levels.ERROR)
+    return {}
   end
 
   local ok, pydoc_query = pcall(
@@ -54,7 +52,8 @@ local function fully_qualified_name(import_name)
     construct_pydoc_query(import_name)
   )
   if not ok then
-    return dm.notify('PyDoc', 'Failed to parse the PyDoc query', 4)
+    dm.notify('PyDoc', 'Failed to parse the PyDoc query', vim.log.levels.ERROR)
+    return {}
   end
 
   local root = tree:root()
@@ -121,7 +120,8 @@ vim.api.nvim_buf_create_user_command(0, 'PyDoc', function(opts)
   -- We are only interested in the first line.
   -- }}}
   if #lines < 5 then
-    return dm.notify('PyDoc', lines[1])
+    dm.notify('PyDoc', lines[1])
+    return
   end
 
   vim.cmd(opts.mods .. ' split __doc__')

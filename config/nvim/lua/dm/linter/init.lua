@@ -35,7 +35,6 @@ do
 end
 
 -- go:golangci-lint {{{1
-
 do
   local config_path
 
@@ -206,7 +205,6 @@ do
 end
 
 -- sql:sqlfluff {{{1
-
 register('sql', {
   cmd = 'sqlfluff',
   args = {
