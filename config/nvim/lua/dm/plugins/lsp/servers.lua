@@ -138,18 +138,18 @@ local servers = {
     cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
     settings = {
       ['rust-analyzer'] = {
-        checkOnSave = {
-          command = 'clippy',
+        cargo = {
+          features = 'all',
         },
-        procMacro = {
-          enable = true,
+        check = {
+          command = 'clippy',
         },
       },
     },
     capabilities = {
       experimental = {
         commands = {
-          -- See: ./commands.lua
+          -- See: ./extensions/rust_analyzer.lua
           commands = {
             'rust-analyzer.runSingle',
             'rust-analyzer.debugSingle',
