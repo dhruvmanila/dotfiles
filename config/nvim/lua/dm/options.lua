@@ -42,10 +42,6 @@ opt.pumheight = 20
 -- instead of 'cterm' attributes.
 vim.opt.termguicolors = true
 
--- Custom colorscheme providing only the required highlight groups and thus
--- reducing the startup time.
-vim.cmd 'colorscheme gruvbox'
-
 -- diffopt {{{1
 
 opt.diffopt:append {

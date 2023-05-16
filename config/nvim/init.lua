@@ -96,3 +96,5 @@ require('lazy').setup('dm.plugins', {
     border = dm.border[vim.g.border_style],
   },
 })
+
+vim.cmd.colorscheme 'gruvbox'
