@@ -119,7 +119,7 @@ end
 
 -- Default Highlight Groups (`:h highlight-group`) {{{1
 
-highlight('Normal', { fg = palette.fg })
+highlight('Normal', { fg = palette.fg, bg = palette.bg0 })
 highlight('Terminal', { fg = palette.fg })
 highlight('EndOfBuffer', { fg = palette.bg3 })
 highlight('FoldColumn', { fg = palette.bg3 })
