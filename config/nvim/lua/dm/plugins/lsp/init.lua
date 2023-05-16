@@ -98,20 +98,12 @@ return {
             buffer = bufnr,
             desc = 'LSP: Goto definition',
           })
-          keymap.set('n', '<leader>pd', preview.definition, {
-            buffer = bufnr,
-            desc = 'LSP: Preview definition',
-          })
         end
 
         if capabilities.declarationProvider then
           keymap.set('n', 'gD', lsp.buf.declaration, {
             buffer = bufnr,
             desc = 'LSP: Goto declaration',
-          })
-          keymap.set('n', '<leader>pD', preview.declaration, {
-            buffer = bufnr,
-            desc = 'LSP: Preview declaration',
           })
         end
 
@@ -120,20 +112,12 @@ return {
             buffer = bufnr,
             desc = 'LSP: Goto type definition',
           })
-          keymap.set('n', '<leader>py', preview.type_definition, {
-            buffer = bufnr,
-            desc = 'LSP: Preview type definition',
-          })
         end
 
         if capabilities.implementationProvider then
           keymap.set('n', 'gi', lsp.buf.implementation, {
             buffer = bufnr,
             desc = 'LSP: Goto implementation',
-          })
-          keymap.set('n', '<leader>pi', preview.implementation, {
-            buffer = bufnr,
-            desc = 'LSP: Goto preview implementation',
           })
         end
 
@@ -245,5 +229,40 @@ return {
         end
       end
     end,
+  },
+
+  {
+    'DNLHC/glance.nvim',
+    opts = {
+      preview_win_opts = {
+        relativenumber = false,
+      },
+      theme = {
+        enable = true,
+        mode = 'darken',
+      },
+    },
+    keys = {
+      {
+        '<leader>pd',
+        '<Cmd>Glance definitions<CR>',
+        desc = 'LSP: Glance definition',
+      },
+      {
+        '<leader>pr',
+        '<Cmd>Glance references<CR>',
+        desc = 'LSP: Glance references',
+      },
+      {
+        '<leader>py',
+        '<Cmd>Glance type_definitions<CR>',
+        desc = 'LSP: Glance type definitions',
+      },
+      {
+        '<leader>pi',
+        '<Cmd>Glance implementations<CR>',
+        desc = 'LSP: Glance implementations',
+      },
+    },
   },
 }
