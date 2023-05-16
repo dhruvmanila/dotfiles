@@ -13,7 +13,6 @@ return {
       local inlayhints = require 'lsp-inlayhints'
       local lspconfig = require 'lspconfig'
 
-      local preview = require 'dm.plugins.lsp.preview'
       local rust_analyzer = require 'dm.plugins.lsp.extensions.rust_analyzer'
       local servers = require 'dm.plugins.lsp.servers'
 
