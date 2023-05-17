@@ -1,4 +1,4 @@
-local timeout = 1000
+local timeout = 2000
 local clear_message_timer
 
 -- Format the LSP message data to be displayed in the statusline.
@@ -12,10 +12,13 @@ local function format_data(data)
       message = message .. ' ' .. data.message
     end
     if data.percentage then
-      message = message .. (' (%.0f%%%%)'):format(data.percentage)
+      message = message .. (' (%.0f%%)'):format(data.percentage)
     end
   else
     message = data.content
+  end
+  if message then
+    message = '[' .. data.name .. '] ' .. message
   end
   return message
 end
@@ -23,16 +26,19 @@ end
 local function on_progress_update()
   local messages = vim.lsp.util.get_progress_messages()
   for _, data in ipairs(messages) do
-    vim.g.lsp_progress_message = format_data(data)
+    vim.api.nvim_echo({ { format_data(data), 'Grey' } }, false, {})
+    if data.done then
+      if clear_message_timer then
+        clear_message_timer:stop()
+      end
+      clear_message_timer = vim.defer_fn(function()
+        if vim.api.nvim_get_mode().mode == 'n' then
+          vim.api.nvim_echo({}, false, {})
+        end
+        clear_message_timer = nil
+      end, timeout)
+    end
   end
-  if clear_message_timer then
-    clear_message_timer:stop()
-  end
-  -- Reset the variable to clear the statusline.
-  clear_message_timer = vim.defer_fn(function()
-    vim.g.lsp_progress_message = nil
-    clear_message_timer = nil
-  end, timeout)
 end
 
 vim.api.nvim_create_autocmd('User', {

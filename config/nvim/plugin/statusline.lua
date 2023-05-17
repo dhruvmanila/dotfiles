@@ -73,20 +73,14 @@ function _G.st_open_lsp_info()
   vim.cmd.LspInfo()
 end
 
--- Return an icon if there are active LSP client(s) and the status message
--- associated with that client. If the region containing the icon/message is
--- clicked, then the `LspInfo` command is ran.
+-- Return an icon if there are active LSP client(s). If the region containing
+-- the icon is clicked, then the `LspInfo` command is ran.
 ---@return string
 local function lsp_icon_and_messages()
   local result = ''
   local clients = vim.lsp.get_active_clients { bufnr = 0 }
   if not vim.tbl_isempty(clients) then
-    result = '%@v:lua.st_open_lsp_info@' .. ''
-    local message = vim.g.lsp_progress_message
-    if message and message ~= '' then
-      result = result .. ' ' .. message
-    end
-    result = result .. '%T'
+    result = '%@v:lua.st_open_lsp_info@' .. '%T'
   end
   return result
 end
