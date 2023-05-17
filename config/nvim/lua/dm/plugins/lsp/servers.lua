@@ -160,7 +160,6 @@ local servers = {
     commands = {
       RustRunnables = { extensions.rust_analyzer.runnables },
       RustLastRun = { extensions.rust_analyzer.execute_last_runnable },
-      RustReloadWorkspace = { extensions.rust_analyzer.reload_workspace },
     },
   },
 
