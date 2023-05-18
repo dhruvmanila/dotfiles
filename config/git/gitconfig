@@ -5,6 +5,7 @@
 	editor = nvim
 	excludesfile = ~/.ignore
 	ignorecase = false
+	pager = delta
 
 [alias]
 	c = commit
