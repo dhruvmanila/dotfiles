@@ -176,22 +176,6 @@ local servers = {
           -- Do NOT show contextual words, I got `cmp-buffer` for that.
           showWord = 'Disable',
         },
-        diagnostics = {
-          globals = {
-            'packer_plugins',
-            -- Busted
-            'after_each',
-            'assert',
-            'before_each',
-            'describe',
-            'insulate',
-            'it',
-            'match',
-            'setup',
-            'stub',
-            'teardown',
-          },
-        },
         hint = {
           enable = true,
         },
@@ -200,7 +184,6 @@ local servers = {
         },
         workspace = {
           preloadFileSize = 1000,
-          checkThirdParty = false,
         },
       },
     },
