@@ -10,13 +10,11 @@ return {
       },
       {
         'dhruvmanila/browser-bookmarks.nvim',
-        config = function()
-          require('browser_bookmarks').setup {
-            selected_browser = 'brave',
-            url_open_command = vim.g.open_command,
-            full_path = false,
-          }
-        end,
+        opts = {
+          selected_browser = 'brave',
+          url_open_command = vim.g.open_command,
+          full_path = false,
+        },
       },
     },
     config = function()
