@@ -142,7 +142,7 @@ return {
     'ruifm/gitlinker.nvim',
     dependencies = { 'nvim-lua/plenary.nvim' },
     keys = {
-      '<leader>go', -- Defined by the plugin
+      { '<leader>go', nil, mode = { 'n', 'x' } }, -- Defined by the plugin
       {
         '<leader>gr',
         function()
