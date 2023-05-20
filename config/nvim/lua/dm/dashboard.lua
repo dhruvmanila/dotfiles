@@ -31,7 +31,7 @@ do
   if last_session then
     table.insert(entries, {
       key = 'l',
-      description = '  Last session (' .. last_session .. ')',
+      description = '  Last session (' .. last_session .. ')',
       command = function()
         session.load(last_session)
       end,
@@ -42,7 +42,7 @@ end
 vim.list_extend(entries, {
   {
     key = 's',
-    description = '  Find sessions',
+    description = '  Find sessions',
     command = function()
       require('telescope').extensions.custom.sessions(
         require('dm.plugins.telescope.themes').dropdown_list
@@ -56,7 +56,7 @@ vim.list_extend(entries, {
   },
   {
     key = 'h',
-    description = '  Recently opened files',
+    description = '  Recently opened files',
     command = function()
       require('telescope.builtin').oldfiles()
     end,
@@ -70,7 +70,7 @@ vim.list_extend(entries, {
   },
   {
     key = 'u',
-    description = '  Sync packages',
+    description = '  Sync packages',
     command = 'Lazy sync',
   },
   {

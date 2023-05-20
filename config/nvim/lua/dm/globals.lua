@@ -63,10 +63,10 @@ dm.icons = {
     Operator = '',
     TypeParameter = '',
   },
-  error = '',
-  warn = '',
-  info = '',
-  hint = '',
+  error = '',
+  warn = '',
+  info = '',
+  hint = '󰌶',
 }
 
 ---@generic T
