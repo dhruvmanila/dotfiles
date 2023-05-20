@@ -3,12 +3,11 @@ tap "clementtsang/bottom"
 tap "deepsourcelabs/cli"
 tap "heroku/brew"
 tap "homebrew/bundle"
-tap "homebrew/cask"
 tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
-tap "homebrew/core"
 tap "homebrew/services"
 tap "mongodb/brew"
+tap "render-oss/render"
 tap "romkatv/gitstatus"
 # Static checker for GitHub Actions workflow files
 brew "actionlint"
@@ -18,14 +17,6 @@ brew "lz4"
 brew "xz"
 # Tool for generating GNU Standards-compliant Makefiles
 brew "automake"
-# GNU File, Shell, and Text utilities
-brew "coreutils"
-# Generic library support script
-brew "libtool"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3"
-# Extendable version manager with support for Ruby, Node.js, Erlang & more
-brew "asdf"
 # Command-line interface for SQLite
 brew "sqlite"
 # Microsoft Azure CLI 2.0
@@ -60,6 +51,8 @@ brew "clang-format"
 brew "cmake"
 # Console Matrix
 brew "cmatrix"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
 # Modern diagram scripting language that turns text to diagrams
 brew "d2"
 # Tool to perform numerical, textual & statistical operations
@@ -92,6 +85,10 @@ brew "ffmpeg"
 brew "findutils"
 # Stack trace visualizer
 brew "flamegraph"
+# Generic library support script
+brew "libtool"
+# Command-line outline and bitmap font editor/converter
+brew "fontforge"
 # Command-line fuzzy finder written in Go
 brew "fzf"
 # GNU debugger
@@ -126,12 +123,12 @@ brew "helix"
 brew "himalaya"
 # Improved top (interactive process viewer)
 brew "htop"
-# Configurable static site generator
-brew "hugo"
 # Command-line benchmarking tool
 brew "hyperfine"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
+# Handy way to save and run project-specific commands
+brew "just"
 # User-friendly front-end to ssh-agent(1)
 brew "keychain"
 # LLVM's OpenMP runtime library
@@ -164,8 +161,12 @@ brew "ninja"
 brew "node"
 # Development kit for the Java programming language
 brew "openjdk"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
 # Tool for creating identical machine images for multiple platforms
 brew "packer"
+# Swiss-army knife of markup format conversion
+brew "pandoc"
 # Paragraph reflow for email
 brew "par"
 # Display directories as trees (with optional color/HTML output)
@@ -208,12 +209,8 @@ brew "trash"
 brew "ttyd"
 # Maintained ctags implementation
 brew "universal-ctags"
-# Bash completion for Vagrant
-brew "vagrant-completion"
 # Vi 'workalike' with many additional features
 brew "vim"
-# Watch files and take action when they change
-brew "watchman"
 # Process YAML, JSON, XML, CSV and properties documents from the CLI
 brew "yq"
 # Fork of youtube-dl with additional features and fixes
@@ -230,28 +227,30 @@ brew "deepsourcelabs/cli/deepsource"
 brew "heroku/brew/heroku"
 # High-performance, schema-free, document-oriented database
 brew "mongodb/brew/mongodb-community"
+# Launch your next project into the cloud
+brew "render-oss/render/render"
 # Git status for Bash/Zsh prompt
 brew "romkatv/gitstatus/gitstatus"
+# Prevents your sleeping computer from connecting to Bluetooth accessories
+cask "bluesnooze"
 # Web browser focusing on privacy
 cask "brave-browser"
-# Free and open-source web browser
-cask "chromium"
+# E-books management software
+cask "calibre"
 # Browser for SQLite databases
 cask "db-browser-for-sqlite"
 # Voice and text chat software
 cask "discord"
 # App to build and share containerized applications and microservices
 cask "docker"
-# Draw.io is free online diagram software
+# Online diagram software
 cask "drawio"
-# Screenshot software
-cask "flameshot"
 # Free monospaced font with programming ligatures
 cask "font-fira-code"
 # Typeface made for developers
 cask "font-jetbrains-mono"
-# Web browser
-cask "google-chrome"
+# Developer targeted fonts with a high number of glyphs
+cask "font-jetbrains-mono-nerd-font"
 # Desktop automation application
 cask "hammerspoon"
 # Testing client for REST, GraphQL, and HTTP APIs
@@ -264,15 +263,7 @@ cask "karabiner-elements"
 cask "kitty"
 # App to manage software development and track bugs
 cask "linear-linear"
-# Provides updates to various Microsoft products
-cask "microsoft-auto-update"
-# Web browser
-cask "microsoft-edge"
-# Email client
-cask "microsoft-outlook"
-# Meet, chat, call, and collaborate in just one place
-cask "microsoft-teams"
-# Explore and manipulate your MongoDB data
+# Interactive tool for analyzing MongoDB data
 cask "mongodb-compass"
 # Tool to control external monitor brightness & volume
 cask "monitorcontrol"
@@ -286,24 +277,24 @@ cask "pgadmin4"
 cask "postman"
 # Peer to peer Bitorrent client
 cask "qbittorrent"
-# All-in-one bookmark manager
-cask "raindropio"
 # Control your tools with a few keystrokes
 cask "raycast"
 # Move and resize windows using keyboard shortcuts or snap areas
 cask "rectangle"
 # Team communication and collaboration software
 cask "slack"
-# Development environment
-cask "vagrant"
-# Virtualizer for x86 hardware
-cask "virtualbox"
+# System monitor for the menu bar
+cask "stats"
+# Messaging app with a focus on speed and security
+cask "telegram"
 # Open-source code editor
 cask "visual-studio-code"
 # Multimedia player
 cask "vlc"
 # Rust-based terminal
 cask "warp"
+# GPU-accelerated cross-platform terminal emulator and multiplexer
+cask "wezterm"
 # Desktop client for WhatsApp
 cask "whatsapp"
 mas "Azure VPN Client", id: 1553936137

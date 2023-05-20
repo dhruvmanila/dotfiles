@@ -1,9 +1,12 @@
+apple-notes-to-sqlite
 asciinema
 awsebcli
+bandit
 black
 bpytop
 buku
 flake8
+frogmouth
 grip
 httpie
 ipdb
@@ -17,11 +20,14 @@ pipenv
 poetry
 pre-commit
 py-spy
+pydocstyle
 pyre-check
 pyupgrade
 remove-print-statements
 ruff
+ruff-lsp
 speedtest-cli
+sqlfluff
 sqlparse
 swiggy-analytics
 visidata
