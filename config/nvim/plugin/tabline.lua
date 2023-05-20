@@ -71,7 +71,7 @@ function _G.nvim_tabline()
   local line = table.concat(labels, '')
   local current_session = session.current()
   if current_session ~= '' then
-    current_session = '  ' .. current_session .. ' '
+    current_session = '  ' .. current_session .. ' '
   end
   return line
     .. '%#TabLineFill#' -- After the last tab fill with TabLineFill

@@ -37,8 +37,8 @@ local mode = {
 }
 
 local prompt_prefix = {
-  query = ' ',
-  result = ' ',
+  query = ' ',
+  result = ' ',
 }
 
 -- Simple animation frames displayed as the prompt prefix.

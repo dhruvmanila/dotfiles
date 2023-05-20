@@ -39,7 +39,7 @@ local function git_info()
   local info = ''
   local head = vim.b.gitsigns_head
   if head and head ~= '' then
-    info = ' ' .. head
+    info = '󰘬 ' .. head
   end
   local status = vim.b.gitsigns_status
   if status and status ~= '' then
@@ -80,7 +80,7 @@ local function lsp_icon_and_messages()
   local result = ''
   local clients = vim.lsp.get_active_clients { bufnr = 0 }
   if not vim.tbl_isempty(clients) then
-    result = '%@v:lua.st_open_lsp_info@' .. '%T'
+    result = '%@v:lua.st_open_lsp_info@' .. '%T'
   end
   return result
 end
