@@ -78,6 +78,9 @@ require('lazy').setup('dm.plugins', {
     -- TODO: Maybe this could be useful to me to separate VSCode config?
     -- cond = nil, ---@type boolean|fun(self:LazyPlugin):boolean|nil
   },
+  dev = {
+    path = '~/projects',
+  },
   performance = {
     rtp = {
       disabled_plugins = {
