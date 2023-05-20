@@ -1,7 +1,7 @@
 {
 	"__webextOptionsSync": "Refined GitHub",
 	"actionUrl": "arc://extensions/?id=hlepfoohegkhhmjieoechaddaejaokhf",
-	"customCSS": "@import url(\"https://fonts.googleapis.com/css?family=JetBrains+Mono:Regular\");\n\npre, code, .blob-code, .blob-code-marker, .react-code-text {\n  font-family: 'JetBrains Mono', monospace;\n  /* font-size: 15px; */\n};",
+	"customCSS": "@import url(\"https://fonts.googleapis.com/css?family=JetBrains+Mono:Regular\");\n\npre, code, .blob-code, .blob-code-marker, .react-code-text, textarea#read-only-cursor-text-area {\n  font-family: 'JetBrains Mono', monospace !important;\n  font-size: 15px !important;\n};",
 	"personalToken": "",
 	"logging": false,
 	"logHTTP": false,
