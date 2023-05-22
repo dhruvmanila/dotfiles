@@ -366,12 +366,6 @@ highlight('LeapMatch', {
   underline = true,
 })
 
--- lir.nvim {{{2
-link('LirFloatBorder', 'FloatBorder')
-link('LirFloatNormal', 'NormalFloat')
-link('LirSymlink', 'GreyItalic')
-link('LirEmptyDirText', 'LirSymlink')
-
 -- nvim-cmp {{{2
 link('CmpItemAbbr', 'Grey')
 link('CmpItemAbbrDeprecated', 'Error')
@@ -446,14 +440,6 @@ link('TreesitterContext', 'Normal')
 -- telescope.nvim {{{2
 link('TelescopeMatching', 'Blue')
 link('TelescopePromptPrefix', 'Yellow')
-
--- vim-ultest {{{2
-link('UltestPass', 'Green')
-link('UltestFail', 'Red')
-link('UltestRunning', 'Aqua')
-link('UltestDefault', 'Grey')
-link('UltestBorder', 'Fg')
-link('UltestSummaryInfo', 'BlueBold')
 
 -- }}}2
 
