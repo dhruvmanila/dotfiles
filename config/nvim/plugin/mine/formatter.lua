@@ -12,18 +12,24 @@ local format = require('dm.formatter').format
 local auto_formatting = false
 
 -- Toggle between the two states of auto formatting.
-local function toggle_auto_formatting()
+---@param notify? boolean
+local function toggle_auto_formatting(notify)
   auto_formatting = not auto_formatting
   -- Clear the autocmds for the auto formatting group.
   local id = vim.api.nvim_create_augroup('dm__auto_formatting', {
     clear = true,
   })
   if auto_formatting then
+    if notify then
+      dm.notify('Formatter', 'Auto formatting turned on')
+    end
     vim.api.nvim_create_autocmd('BufWritePost', {
       group = id,
       callback = format,
       desc = 'Format the buffer',
     })
+  elseif notify then
+    dm.notify('Formatter', 'Auto formatting turned off')
   end
 end
 
@@ -59,5 +65,5 @@ if
     'thousense-lite'
   )
 then
-  toggle_auto_formatting()
+  toggle_auto_formatting(false)
 end
