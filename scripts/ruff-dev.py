@@ -5,7 +5,7 @@ from pathlib import Path
 import watchfiles
 
 PLAYGROUND_DIR = Path.home().joinpath("playground", "python", "ruff-play")
-RUFF_DIR = Path.home().joinpath("contributing", "astral", "ruff")
+RUFF_DIR = Path.home().joinpath("work", "astral", "ruff")
 RUFF_FIXTURES_DIR = RUFF_DIR.joinpath("crates", "ruff", "resources", "test", "fixtures")
 
 DESCRIPTION = """
@@ -15,7 +15,7 @@ A tool to help in `ruff` development.
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument("rule", help="rule to run")
+    parser.add_argument("rule", nargs="?", help="rule to run")
     parser.add_argument(
         "--play", action="store_true", help="use the fixture from playground"
     )
@@ -30,6 +30,21 @@ def main() -> int:
     if Path.cwd() != RUFF_DIR:
         print(f"This script must be run from {str(RUFF_DIR)!r}")
         return 1
+
+    if args.rule is None:
+        watchfiles.run_process(
+            RUFF_DIR.joinpath("crates", "ruff"),
+            target=" ".join(
+                [
+                    "cargo",
+                    "build",
+                    "--all-features",
+                    "--bin=ruff",
+                ]
+            ),
+            target_type="command",
+        )
+        return 0
 
     if args.play:
         playground_file = PLAYGROUND_DIR.joinpath("src", f"{args.rule}.py")
@@ -55,6 +70,7 @@ def main() -> int:
             [
                 "cargo",
                 "run",
+                "--all-features",
                 "--bin=ruff",
                 "--",
                 "check",
@@ -67,7 +83,6 @@ def main() -> int:
         ),
         target_type="command",
     )
-
     return 0
 
 
