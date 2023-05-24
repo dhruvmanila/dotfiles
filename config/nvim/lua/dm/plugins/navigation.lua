@@ -15,6 +15,7 @@ return {
     columns = {
       'permissions',
       'size',
+      'mtime',
       'icon',
     },
     win_options = {
