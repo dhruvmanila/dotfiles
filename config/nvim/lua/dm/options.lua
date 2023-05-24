@@ -40,7 +40,12 @@ opt.pumheight = 20
 
 -- Enables 24-bit RGB colors. This will use the 'gui' highlight attributes
 -- instead of 'cterm' attributes.
-vim.opt.termguicolors = true
+opt.termguicolors = true
+
+-- conceal {{{1
+
+-- Hide the conceal characters unless the cursor is on that line.
+opt.conceallevel = 2
 
 -- diffopt {{{1
 
