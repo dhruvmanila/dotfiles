@@ -2,6 +2,7 @@
 
 ---@param opts table
 ---@param on_confirm fun(input?: string): nil
+---@diagnostic disable-next-line: duplicate-set-field
 vim.ui.input = function(opts, on_confirm)
   vim.validate { on_confirm = { on_confirm, 'function' } }
 
@@ -11,11 +12,12 @@ vim.ui.input = function(opts, on_confirm)
   opts.default = opts.default or ''
 
   local bufnr = vim.api.nvim_create_buf(false, true)
-  local win_opts = vim.lsp.util.make_floating_popup_options(
-    #opts.prompt + #opts.default + 25,
-    1,
-    { border = 'rounded' }
-  )
+  local win_opts =
+    vim.lsp.util.make_floating_popup_options(#opts.default + 25, 1, {
+      border = 'rounded',
+      title = opts.prompt,
+      title_pos = 'left',
+    })
   local winnr = vim.api.nvim_open_win(bufnr, true, win_opts)
 
   vim.bo[bufnr].buftype = 'prompt'
@@ -35,7 +37,7 @@ vim.ui.input = function(opts, on_confirm)
     on_confirm(new_input)
   end
 
-  vim.fn.prompt_setprompt(bufnr, opts.prompt)
+  vim.fn.prompt_setprompt(bufnr, ' ')
   -- This needs to be schedule wrapped for some reason, otherwise Neovim gets
   -- into a very weird and bad state. I was seeing text get deleted from the
   -- buffer and "NewLine" text being added to random places.
