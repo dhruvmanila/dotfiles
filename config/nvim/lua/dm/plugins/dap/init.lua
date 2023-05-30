@@ -128,9 +128,18 @@ return {
       --
       -- Note: This should come after adding custom configurations as it *extends*
       -- it. If there's a configuration with the same name, it'll *override* it.
-      require('dap.ext.vscode').load_launchjs(nil, {
+      local ok, err = pcall(require('dap.ext.vscode').load_launchjs, nil, {
         lldb = { 'rust' },
       })
+      if not ok then
+        vim.schedule(function()
+          dm.notify('nvim-dap', {
+            'Error while loading VSCode launch configuration:',
+            '',
+            tostring(err),
+          }, vim.log.levels.WARN)
+        end)
+      end
 
       vim.fn.sign_define {
         { name = 'DapStopped', text = '', texthl = '' },
