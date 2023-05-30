@@ -9,6 +9,7 @@ local underline = true
 local italic_comment = true
 
 local palette = {
+  bg_dim = '#1b1b1b',
   bg0 = '#282828',
   bg1 = '#32302f',
   bg2 = '#45403d',
@@ -268,7 +269,7 @@ highlight('String', { fg = palette.aqua })
 highlight('Structure', { fg = palette.orange })
 highlight('Tag', { fg = palette.orange })
 highlight('Title', { fg = palette.orange, bold = true })
-highlight('Todo', { fg = palette.purple, italic = italic_comment })
+highlight('Todo', { fg = palette.yellow, bold = true })
 highlight('Type', { fg = palette.yellow })
 highlight('Typedef', { fg = palette.red, italic = italic })
 highlight('Underlined', { underline = true })
@@ -293,7 +294,7 @@ vim.g.terminal_color_14 = palette.cyan
 vim.g.terminal_color_15 = palette.fg
 
 -- Neovim builtin LSP {{{1
--- Floating Diagnostics {{{2
+-- Floating Diagnostics
 highlight('DiagnosticFloatingError', {
   fg = palette.red,
   bg = palette.bg_float,
@@ -311,34 +312,62 @@ highlight('DiagnosticFloatingHint', {
   bg = palette.bg_float,
 })
 
--- Virtual Text Diagnostics {{{2
+-- Virtual Text Diagnostics
 highlight('DiagnosticVirtualTextError', { fg = palette.red })
 highlight('DiagnosticVirtualTextWarn', { fg = palette.yellow })
 highlight('DiagnosticVirtualTextInfo', { fg = palette.blue })
 highlight('DiagnosticVirtualTextHint', { fg = palette.aqua })
 
--- Underline Diagnostics {{{2
+-- Underline Diagnostics
 highlight('DiagnosticUnderlineError', { undercurl = true, sp = palette.red })
 highlight('DiagnosticUnderlineWarn', { undercurl = true, sp = palette.yellow })
 highlight('DiagnosticUnderlineInfo', { undercurl = true, sp = palette.blue })
 highlight('DiagnosticUnderlineHint', { undercurl = true, sp = palette.aqua })
 
--- Sign Diagnostics {{{2
+-- Sign Diagnostics
 highlight('DiagnosticSignError', { fg = palette.red })
 highlight('DiagnosticSignWarn', { fg = palette.yellow })
 highlight('DiagnosticSignInfo', { fg = palette.blue })
 highlight('DiagnosticSignHint', { fg = palette.aqua })
 
--- Reference Text {{{2
+-- Reference Text
 highlight('LspReferenceText', { bg = palette.bg_current_word })
 highlight('LspReferenceRead', { bg = palette.bg_current_word })
 highlight('LspReferenceWrite', { bg = palette.bg_current_word })
 
--- Codelens {{{2
+-- Codelens
 link('LspCodeLens', 'Grey')
 
--- LspInfo {{{2
+-- InlayHints
+link('LspInlayHint', 'Grey')
+
+-- LspInfo
 link('LspInfoBorder', 'FloatBorder')
+
+-- LspSemanticTokens {{{2
+-- link('@lsp.type.class', 'YellowItalic')
+-- link('@lsp.type.comment', 'Comment')
+-- link('@lsp.type.decorator', 'GreenBold')
+-- link('@lsp.type.enum', 'YellowItalic')
+-- link('@lsp.type.enumMember', 'Blue')
+-- link('@lsp.type.events', 'Orange')
+-- link('@lsp.type.function', 'GreenBold')
+-- link('@lsp.type.interface', 'YellowItalic')
+-- link('@lsp.type.keyword', 'Red')
+-- link('@lsp.type.macro', 'PurpleItalic')
+-- link('@lsp.type.method', 'GreenBold')
+-- link('@lsp.type.modifier', 'Orange')
+-- link('@lsp.type.namespace', 'YellowItalic')
+-- link('@lsp.type.number', 'Purple')
+-- link('@lsp.type.operator', 'Orange')
+-- link('@lsp.type.parameter', 'Fg')
+-- link('@lsp.type.property', 'Blue')
+-- link('@lsp.type.regexp', 'Green')
+-- link('@lsp.type.string', 'Aqua')
+-- link('@lsp.type.struct', 'YellowItalic')
+-- link('@lsp.type.type', 'YellowItalic')
+-- link('@lsp.type.typeParameter', 'YellowItalic')
+-- link('@lsp.type.variable', 'Fg')
 
 -- }}}2
 
@@ -411,22 +440,90 @@ for _, section in ipairs { 'Border', 'Icon', 'Title' } do
 end
 
 -- nvim-treesitter {{{2
+link('@annotation', 'Purple')
+link('@attribute', 'Purple')
+link('@boolean', 'Purple')
+link('@character', 'Aqua')
+link('@character.special', 'SpecialChar')
+link('@comment', 'Comment')
+link('@conceal', 'Grey')
+link('@conditional', 'Red')
+link('@constant', 'Fg')
+link('@constant.builtin', 'PurpleItalic')
+link('@constant.macro', 'PurpleItalic')
+link('@constructor', 'GreenBold')
+link('@debug', 'Debug')
+link('@define', 'Define')
+link('@error', 'Error')
+link('@exception', 'Red')
+link('@field', 'Blue')
+link('@float', 'Purple')
+link('@function', 'GreenBold')
+link('@function.builtin', 'GreenBold')
+link('@function.call', 'GreenBold')
+link('@function.macro', 'GreenBold')
+link('@include', 'Red')
+link('@keyword', 'Red')
+link('@keyword.function', 'Red')
+link('@keyword.operator', 'Orange')
+link('@keyword.return', 'Red')
+link('@label', 'Orange')
+link('@math', 'Blue')
+link('@method', 'GreenBold')
+link('@method.call', 'GreenBold')
+link('@namespace', 'YellowItalic')
+link('@none', 'Fg')
+link('@number', 'Purple')
+link('@operator', 'Orange')
+link('@parameter', 'Fg')
+link('@parameter.reference', 'Fg')
+link('@preproc', 'PreProc')
+link('@property', 'Blue')
+link('@punctuation.bracket', 'Fg')
+link('@punctuation.delimiter', 'Grey')
+link('@punctuation.special', 'Blue')
+link('@repeat', 'Red')
+link('@storageclass', 'Orange')
+link('@storageclass.lifetime', 'Orange')
+link('@strike', 'Grey')
+link('@string', 'Aqua')
+link('@string.escape', 'Green')
+link('@string.regex', 'Green')
+link('@string.special', 'SpecialChar')
+link('@symbol', 'Fg')
+link('@tag', 'Orange')
+link('@tag.attribute', 'Green')
+link('@tag.delimiter', 'Green')
+link('@text', 'Green')
 highlight('@text.danger', { fg = palette.red, bold = true })
 highlight('@text.warning', { fg = palette.yellow, bold = true })
-link('@constant', 'Fg')
-link('@constant.builtin', 'BlueItalic')
-link('@constant.macro', 'BlueItalic')
-link('@constructor', 'GreenBold')
-link('@function.builtin', 'GreenBold')
-link('@function.macro', 'GreenBold')
-link('@method', 'GreenBold')
-link('@namespace', 'YellowItalic')
-link('@punctuation.delimiter', 'Grey')
-link('@string.escape', 'Green') -- check
-link('@string.regex', 'Green') -- check
-link('@tag.delimiter', 'Green') -- check
+link('@text.diff.add', 'diffAdded')
+link('@text.diff.delete', 'diffRemoved')
+highlight('@text.emphasis', { italic = true })
+link('@text.environment', 'Macro')
+link('@text.environment.name', 'Type')
+link('@text.literal', 'String')
+link('@text.math', 'Blue')
+highlight('@text.note', { bg = palette.bg0, fg = palette.green, bold = true })
+link('@text.reference', 'Constant')
+link('@text.strike', 'Grey')
+highlight('@text.strong', { bold = true })
+link('@text.title', 'Title')
+link('@text.todo', 'Todo')
+link('@text.todo.checked', 'Green')
+link('@text.todo.unchecked', 'Ignore')
+highlight('@text.underline', { underline = true })
+link('@text.uri', 'markdownUrl')
+link('@todo', 'Todo')
+link('@type', 'YellowItalic')
+link('@type.builtin', 'YellowItalic')
+link('@type.definition', 'YellowItalic')
+link('@type.qualifier', 'Orange')
+link('@uri', 'markdownUrl')
 link('@variable', 'Fg')
-link('@variable.builtin', 'BlueItalic') -- check
+link('@variable.builtin', 'PurpleItalic')
+link('TSModuleInfoGood', 'Green')
+link('TSModuleInfoBad', 'Red')
 
 -- Custom captures {{{3
 link('@docstring', '@comment')
