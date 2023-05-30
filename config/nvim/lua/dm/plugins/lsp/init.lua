@@ -4,7 +4,7 @@ return {
     dependencies = {
       'b0o/SchemaStore.nvim',
       'folke/neodev.nvim',
-      'lvimuser/lsp-inlayhints.nvim',
+      { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' },
     },
     config = function()
       local lsp = vim.lsp
