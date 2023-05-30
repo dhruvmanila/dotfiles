@@ -15,7 +15,7 @@ return {
   'rcarriga/nvim-notify',
   'romainl/vim-cool',
 
-  { 'nacro90/numb.nvim', config = true },
+  { 'nacro90/numb.nvim', event = 'CmdlineEnter', config = true },
 
   {
     'ggandor/flit.nvim',
@@ -66,8 +66,7 @@ return {
   },
 
   -- Icons
-  'yamatsum/nvim-nonicons',
-  'kyazdani42/nvim-web-devicons',
+  'nvim-tree/nvim-web-devicons',
 
   -- Help docs
   'milisims/nvim-luaref',
