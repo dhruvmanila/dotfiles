@@ -1,6 +1,7 @@
 local log = require('dm.log').new {
   plugin = 'autocmds',
   use_console = false,
+  level = dm.log.levels.INFO,
 }
 
 ---@type string[]
