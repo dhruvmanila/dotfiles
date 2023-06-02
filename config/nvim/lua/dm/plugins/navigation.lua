@@ -1,3 +1,12 @@
+-- List of filenames which are always hidden in a oil buffer.
+local always_hidden = {
+  '.DS_Store',
+  '.mypy_cache',
+  '.pytest_cache',
+  '.ruff_cache',
+  '__pycache__',
+}
+
 return {
   'stevearc/oil.nvim',
   keys = {
@@ -22,10 +31,18 @@ return {
       number = false,
       relativenumber = false,
       signcolumn = 'yes:1', -- For padding
-      concealcursor = 'ni',
+      concealcursor = 'nvic',
+    },
+    view_options = {
+      show_hidden = true,
+      is_always_hidden = function(name)
+        return vim.tbl_contains(always_hidden, name)
+      end,
     },
     keymaps = {
       ['q'] = 'actions.close',
+      ['h'] = 'actions.parent',
+      ['l'] = 'actions.select',
       ['<C-h>'] = false, -- Keep this for window switching
       ['<C-s>'] = 'actions.select_split',
       ['<C-v>'] = 'actions.select_vsplit',
@@ -37,7 +54,7 @@ return {
       },
       ['`'] = {
         callback = function()
-          vim.cmd.edit '/'
+          require('oil').open '/'
         end,
         desc = 'Goto OS root directory',
       },
@@ -49,15 +66,16 @@ return {
       },
       ['gr'] = {
         callback = function()
-          local ok, util = pcall(require, 'lspconfig.util')
-          if not ok then
+          local _, gitdir = next(vim.fs.find('.git', {
+            path = require('oil').get_current_dir(),
+            upward = true,
+            type = 'directory',
+            stop = vim.loop.os_homedir(),
+          }))
+          if gitdir == nil then
             return
           end
-          local dir = util.find_git_ancestor(vim.loop.cwd())
-          if dir == nil or dir == '' then
-            return
-          end
-          vim.cmd.edit(dir)
+          require('oil').open(vim.fs.dirname(gitdir))
         end,
         desc = 'Goto to git root directory',
       },
