@@ -4,5 +4,6 @@ language-server = { command = "pyright-langserver", args = ["--stdio"] }
 
 [[language]]
 name = "rust"
+language-server = { command = "rustup", args = ["run", "stable", "rust-analyzer"] }
 config.cargo.features = "all"
 config.rust-analyzer.checkOnSave.command = "clippy"
