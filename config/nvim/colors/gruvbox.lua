@@ -149,7 +149,7 @@ highlight('CursorLineNr', { fg = palette.yellow, bold = true })
 highlight('DiffAdd', { bg = palette.bg_diff_green })
 highlight('DiffChange', { bg = palette.bg_diff_blue })
 highlight('DiffDelete', { bg = palette.bg_diff_red })
-highlight('DiffText', { fg = palette.bg0, bg = palette.blue })
+highlight('DiffText', { bg = palette.bg_current_word })
 
 highlight('Directory', { fg = palette.green })
 highlight('ErrorMsg', { fg = palette.red, bold = true, underline = true })
