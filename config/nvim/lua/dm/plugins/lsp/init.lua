@@ -143,14 +143,22 @@ return {
 
         -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
         if capabilities.documentHighlightProvider then
+          local lsp_document_highlight_group =
+            vim.api.nvim_create_augroup('dm__lsp_document_highlight', {
+              clear = false,
+            })
+          vim.api.nvim_clear_autocmds {
+            buffer = bufnr,
+            group = lsp_document_highlight_group,
+          }
           vim.api.nvim_create_autocmd('CursorHold', {
-            group = id,
+            group = lsp_document_highlight_group,
             buffer = bufnr,
             callback = lsp.buf.document_highlight,
             desc = 'LSP: Document highlight',
           })
           vim.api.nvim_create_autocmd('CursorMoved', {
-            group = id,
+            group = lsp_document_highlight_group,
             buffer = bufnr,
             callback = lsp.buf.clear_references,
             desc = 'LSP: Clear references',
