@@ -178,6 +178,15 @@ vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
   debug_runnable(command.arguments[1])
 end
 
+vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
+  local client = vim.lsp.get_client_by_id(ctx.client_id)
+  vim.lsp.util.jump_to_location(command.arguments[1], client.offset_encoding)
+end
+
+vim.lsp.commands['rust-analyzer.showReferences'] = function()
+  vim.lsp.buf.implementation()
+end
+
 function M.runnables()
   vim.lsp.buf_request(0, 'experimental/runnables', {
     textDocument = vim.lsp.util.make_text_document_params(0),

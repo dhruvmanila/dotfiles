@@ -153,6 +153,8 @@ local servers = {
           commands = {
             'rust-analyzer.runSingle',
             'rust-analyzer.debugSingle',
+            'rust-analyzer.showReferences',
+            'rust-analyzer.gotoLocation',
           },
         },
       },
