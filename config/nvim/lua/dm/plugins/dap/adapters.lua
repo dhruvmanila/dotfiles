@@ -9,7 +9,7 @@ dap.adapters.lldb = {
 
 do
   local extension_path =
-    vim.fs.normalize '~/.vscode/extensions/vadimcn.vscode-lldb-1.9.1'
+    vim.fs.normalize '~/.vscode/extensions/vadimcn.vscode-lldb-1.9.2'
   local codelldb_path = extension_path .. '/adapter/codelldb'
   local liblldb_path = extension_path .. '/lldb/lib/liblldb.dylib'
 
