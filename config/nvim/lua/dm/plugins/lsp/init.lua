@@ -182,10 +182,18 @@ return {
         end
 
         if capabilities.codeLensProvider then
+          local lsp_code_lens_group =
+            vim.api.nvim_create_augroup('dm__lsp_code_lens_refresh', {
+              clear = false,
+            })
+          vim.api.nvim_clear_autocmds {
+            buffer = bufnr,
+            group = lsp_code_lens_group,
+          }
           vim.api.nvim_create_autocmd(
-            { 'BufEnter', 'CursorHold', 'InsertLeave' },
+            { 'BufEnter', 'InsertLeave', 'BufWritePost' },
             {
-              group = id,
+              group = lsp_code_lens_group,
               buffer = bufnr,
               callback = lsp.codelens.refresh,
               desc = 'LSP: Refresh codelens',
