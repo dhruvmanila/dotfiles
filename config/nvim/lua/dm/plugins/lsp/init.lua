@@ -66,9 +66,6 @@ return {
       local function on_attach(client, bufnr)
         local capabilities = client.server_capabilities
 
-        -- LSP augroup id.
-        local id = vim.api.nvim_create_augroup('dm__lsp', { clear = true })
-
         if client.name == 'ruff_lsp' then
           -- Disable hover in favor of Pyright
           capabilities.hoverProvider = false
@@ -151,7 +148,7 @@ return {
             buffer = bufnr,
             group = lsp_document_highlight_group,
           }
-          vim.api.nvim_create_autocmd('CursorHold', {
+          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
             group = lsp_document_highlight_group,
             buffer = bufnr,
             callback = lsp.buf.document_highlight,
@@ -167,10 +164,18 @@ return {
 
         if capabilities.codeActionProvider then
           if vim.g.lsp_code_action_lightbulb then
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-              group = id,
+            local lsp_code_action_group =
+              vim.api.nvim_create_augroup('dm__lsp_code_action_lightbulb', {
+                clear = false,
+              })
+            vim.api.nvim_clear_autocmds {
               buffer = bufnr,
-              callback = require('dm.lsp.code_action').listener,
+              group = lsp_code_action_group,
+            }
+            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+              group = lsp_code_action_group,
+              buffer = bufnr,
+              callback = require('dm.plugins.lsp.code_action').listener,
               desc = 'LSP: Code action (bulb)',
             })
           end
