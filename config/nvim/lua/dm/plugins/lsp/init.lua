@@ -23,7 +23,7 @@ return {
         dm.border[vim.g.border_style]
 
       -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-      lsp.set_log_level(dm.current_log_level)
+      lsp.set_log_level(vim.env.NVIM_LSP_LOG_LEVEL or dm.current_log_level)
       require('vim.lsp.log').set_format_func(vim.inspect)
 
       -- Set the default options for all LSP floating windows.
