@@ -12,7 +12,8 @@ local RUST_ANALYZER_WAIT_MESSAGE = 'waiting for cargo metadata or cargo check'
 function M.listener()
   local bufnr = vim.api.nvim_get_current_buf()
   local params = vim.lsp.util.make_range_params()
-  params.context = { diagnostics = vim.lsp.diagnostic.get_line_diagnostics() }
+  params.context =
+    { diagnostics = vim.lsp.diagnostic.get_line_diagnostics(bufnr) }
   vim.lsp.buf_request(
     0,
     'textDocument/codeAction',
