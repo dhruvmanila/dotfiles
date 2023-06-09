@@ -238,9 +238,6 @@ opt.mouse = 'a'
 -- Print the line number in front of each line
 opt.number = true
 
--- Show the line number relative to the line with the cursor.
-opt.relativenumber = true
-
 -- scroll {{{1
 
 -- Display at least 'n' lines above/below the cursor

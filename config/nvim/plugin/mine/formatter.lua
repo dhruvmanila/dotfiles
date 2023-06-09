@@ -14,6 +14,7 @@ local auto_formatting = false
 -- Toggle between the two states of auto formatting.
 ---@param notify? boolean
 local function toggle_auto_formatting(notify)
+  notify = vim.F.if_nil(notify, true)
   auto_formatting = not auto_formatting
   -- Clear the autocmds for the auto formatting group.
   local id = vim.api.nvim_create_augroup('dm__auto_formatting', {

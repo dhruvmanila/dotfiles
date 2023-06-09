@@ -228,27 +228,63 @@ end
 --   - Disable in insert mode
 
 do
-  local id = nvim_create_augroup('dm__auto_relative_number', { clear = true })
+  -- Flag to denote the current state of auto relative number.
+  local auto_relative_number = false
 
-  nvim_create_autocmd({ 'BufEnter', 'FocusGained', 'InsertLeave', 'WinEnter' }, {
-    group = id,
-    callback = function()
-      if o.number and o.filetype ~= 'qf' then
-        o.relativenumber = true
-      end
-    end,
-    desc = 'Set relativenumber',
-  })
+  -- Create the autocmds necessary for auto `relativenumber`.
+  ---@param group integer|string
+  local function create_autocmds(group)
+    nvim_create_autocmd({ 'BufEnter', 'FocusGained', 'InsertLeave', 'WinEnter' }, {
+      group = group,
+      callback = function()
+        if o.number and o.filetype ~= 'qf' then
+          o.relativenumber = true
+        end
+      end,
+      desc = 'Set relativenumber',
+    })
 
-  nvim_create_autocmd({ 'BufLeave', 'FocusLost', 'InsertEnter', 'WinLeave' }, {
-    group = id,
-    callback = function()
-      if o.number and o.filetype ~= 'qf' then
-        o.relativenumber = false
+    nvim_create_autocmd({ 'BufLeave', 'FocusLost', 'InsertEnter', 'WinLeave' }, {
+      group = group,
+      callback = function()
+        if o.number and o.filetype ~= 'qf' then
+          o.relativenumber = false
+        end
+      end,
+      desc = 'Unset relativenumber',
+    })
+  end
+
+  -- Toggle between the two states of auto relative number.
+  ---@param notify? boolean (default: true)
+  local function toggle_auto_relative_number(notify)
+    notify = vim.F.if_nil(notify, true)
+    auto_relative_number = not auto_relative_number
+    local group = nvim_create_augroup('dm__auto_relative_number', {
+      clear = true,
+    })
+    if auto_relative_number then
+      if notify then
+        dm.notify('Autocmds', 'Auto `relativenumber` turned ON')
       end
-    end,
-    desc = 'Unset relativenumber',
-  })
+      o.relativenumber = true
+      create_autocmds(group)
+    else
+      if notify then
+        dm.notify('Autocmds', 'Auto `relativenumber` turned OFF')
+      end
+      o.relativenumber = false
+    end
+  end
+
+  vim.api.nvim_create_user_command(
+    'ToggleAutoRelativeNumber',
+    toggle_auto_relative_number,
+    {}
+  )
+
+  -- It's on by default.
+  toggle_auto_relative_number(false)
 end
 
 -- Terminal {{{1
