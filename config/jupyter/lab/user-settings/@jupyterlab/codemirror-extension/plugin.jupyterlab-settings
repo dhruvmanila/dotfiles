@@ -1,0 +1,9 @@
+{
+    "defaultConfig": {
+        "customStyles": {
+            "fontFamily": "JetBrains Mono",
+            "fontSize": 16,
+            "lineHeight": null
+        }
+    }
+}
