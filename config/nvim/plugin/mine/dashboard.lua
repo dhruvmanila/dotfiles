@@ -8,8 +8,9 @@ local dashboard = require 'dm.dashboard'
 -- Dashboard augroup id.
 local id = vim.api.nvim_create_augroup('dm__dashboard', { clear = true })
 
-vim.api.nvim_create_autocmd('VimEnter', {
+vim.api.nvim_create_autocmd('User', {
   group = id,
+  pattern = 'LazyVimStarted',
   callback = function()
     if
       vim.fn.argc() == 0
