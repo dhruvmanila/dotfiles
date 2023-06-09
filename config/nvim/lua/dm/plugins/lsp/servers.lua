@@ -140,9 +140,24 @@ local servers = {
       ['rust-analyzer'] = {
         cargo = {
           features = 'all',
+          buildScripts = {
+            enable = false,
+          },
         },
+        checkOnSave = false,
         check = {
           command = 'clippy',
+        },
+        inlayHints = {
+          closingBraceHints = {
+            enable = false,
+          },
+        },
+        procMacro = {
+          enable = true,
+        },
+        references = {
+          excludeImports = true,
         },
       },
     },
