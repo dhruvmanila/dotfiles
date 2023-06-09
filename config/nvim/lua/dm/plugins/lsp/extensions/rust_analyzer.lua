@@ -218,4 +218,49 @@ function M.execute_last_runnable()
   end
 end
 
+-- View crate graph.
+---@param full boolean #If true, include all crates, not just crates in the workspace.
+function M.view_crate_graph(full)
+  vim.lsp.buf_request(
+    0,
+    'rust-analyzer/viewCrateGraph',
+    { full = full },
+    function(err, graph)
+      if err ~= nil then
+        dm.notify('rust-analyzer', tostring(err), vim.log.levels.ERROR)
+        return
+      end
+
+      local notification = dm.notify(
+        'rust-analyzer',
+        'Processing crate graph. This may take a while...'
+      )
+
+      -- TODO(dhruvmanila): Make layout engine and output format as an argument?
+      -- Layout engines: https://graphviz.org/docs/layouts/
+      -- Output formats: https://graphviz.org/docs/outputs/
+      vim.system({ 'dot', '-Tsvg' }, { stdin = graph }, function(result)
+        if result.code > 0 then
+          dm.notify(
+            'rust-analyzer',
+            'Failed to process crate graph:\n\n' .. result.stderr,
+            vim.log.levels.ERROR,
+            { replace = notification }
+          )
+          return
+        end
+
+        local tmpfile =
+          vim.fs.joinpath(vim.fn.stdpath 'run', 'rust_analyzer_crate_graph.svg')
+        local file = assert(io.open(tmpfile, 'w+'))
+        assert(file:write(result.stdout))
+        assert(file:flush())
+        assert(file:close())
+
+        os.execute(vim.g.open_command .. ' ' .. tmpfile)
+      end)
+    end
+  )
+end
+
 return M

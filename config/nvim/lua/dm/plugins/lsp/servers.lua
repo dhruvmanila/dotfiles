@@ -177,6 +177,18 @@ local servers = {
     commands = {
       RustRunnables = { extensions.rust_analyzer.runnables },
       RustLastRun = { extensions.rust_analyzer.execute_last_runnable },
+      RustViewCrateGraph = {
+        function()
+          extensions.rust_analyzer.view_crate_graph(false)
+        end,
+        desc = 'rust-analyzer: View crate graph',
+      },
+      RustViewCrateGraphFull = {
+        function()
+          extensions.rust_analyzer.view_crate_graph(true)
+        end,
+        desc = 'rust-analyzer: View crate graph (full)',
+      },
     },
   },
 
