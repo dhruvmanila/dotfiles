@@ -46,6 +46,8 @@ return {
       ['<C-h>'] = false, -- Keep this for window switching
       ['<C-s>'] = 'actions.select_split',
       ['<C-v>'] = 'actions.select_vsplit',
+      ['<C-f>'] = 'actions.preview_scroll_down',
+      ['<C-b>'] = 'actions.preview_scroll_up',
       ['~'] = {
         callback = function()
           vim.cmd.edit(vim.loop.os_homedir())
