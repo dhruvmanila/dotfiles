@@ -19,16 +19,12 @@ local session = {}
 local TITLE = 'Session'
 
 -- Default session directory.
-local SESSION_DIR = fn.stdpath 'data' .. '/session'
+local SESSION_DIR = fn.stdpath 'data' .. '/sessions'
 
 do
   -- Create the directory if it does not exist.
   local info = uv.fs_stat(SESSION_DIR)
   if not info or info.type ~= 'directory' then
-    --                                ┌ read(4), write(2) and execute(1) by owner
-    --                                │┌ read(4) and execute(1) by group
-    --                                ││┌ read(4) and execute(1) by others
-    --                                │││
     uv.fs_mkdir(SESSION_DIR, tonumber(755, 8))
   end
 end
