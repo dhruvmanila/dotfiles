@@ -28,13 +28,15 @@ vim.api.nvim_create_autocmd('VimResized', {
   group = id,
   callback = function()
     if vim.bo.filetype == 'dashboard' then
-      dashboard.open()
+      dashboard.open(false)
     end
   end,
   desc = 'Redraw the dashboard buffer',
 })
 
-vim.api.nvim_create_user_command('Dashboard', dashboard.open, {
+vim.api.nvim_create_user_command('Dashboard', function()
+  dashboard.open(false)
+end, {
   bar = true,
   desc = 'Open dashboard',
 })

@@ -227,8 +227,9 @@ end
 
 --- Open the dashboard buffer in the current buffer if it is empty or create
 --- a new buffer for the current window.
----@param on_vimenter? boolean
+---@param on_vimenter boolean
 local function open(on_vimenter)
+  vim.validate { on_vimenter = { on_vimenter, 'boolean', true } }
   if on_vimenter and (vim.o.insertmode or not vim.bo.modifiable) then
     return
   end
@@ -256,6 +257,10 @@ local function open(on_vimenter)
       api.nvim_win_set_buf(0, bufnr)
     end
   end
+
+  -- Set this flag for other plugins to check if the dashboard was opened
+  -- on vimenter.
+  vim.b.dashboard_on_vimenter = on_vimenter
 
   -- Set the dashboard buffer options
   api.nvim_set_option_value('bufhidden', 'wipe', { scope = 'local' })
