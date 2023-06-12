@@ -8,7 +8,13 @@ return {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
       'saadparwaiz1/cmp_luasnip',
-      { 'petertriho/cmp-git', config = true, ft = 'gitcommit' },
+      {
+        'petertriho/cmp-git',
+        opts = {
+          filetypes = { 'gitcommit', 'markdown' },
+        },
+        ft = { 'gitcommit', 'markdown' },
+      },
     },
     config = function()
       local api = vim.api
@@ -161,6 +167,15 @@ return {
           { name = 'git' },
         },
       })
+
+      local filename = vim.fs.basename(vim.api.nvim_buf_get_name(0))
+      if filename == 'GRAPHITE_PR_DESCRIPTION.md' then
+        cmp.setup.buffer {
+          sources = {
+            { name = 'git' },
+          },
+        }
+      end
     end,
   },
 
