@@ -191,7 +191,7 @@ return {
 
       -- DAP extension for Python. Filetype specific mappings are defined in
       --    `./config/nvim/after/ftplugin/python.lua`
-      dap_python.setup(vim.loop.os_homedir() .. '/.neovim/.venv/bin/python', {
+      dap_python.setup(vim.g.os_homedir .. '/.neovim/.venv/bin/python', {
         -- We will define the configuration ourselves for additional config options.
         include_configs = false,
       })

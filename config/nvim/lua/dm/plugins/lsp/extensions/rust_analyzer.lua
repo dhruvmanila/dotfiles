@@ -80,7 +80,7 @@ local function cargo_crate_dir()
   return vim.fs.dirname(vim.fs.find('Cargo.toml', {
     upward = true,
     type = 'file',
-    stop = vim.loop.os_homedir(),
+    stop = vim.g.os_homedir,
     path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
   })[1])
 end

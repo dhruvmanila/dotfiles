@@ -50,7 +50,7 @@ return {
       ['<C-b>'] = 'actions.preview_scroll_up',
       ['~'] = {
         callback = function()
-          vim.cmd.edit(vim.loop.os_homedir())
+          vim.cmd.edit(vim.g.os_homedir)
         end,
         desc = 'Goto OS home directory',
       },
@@ -72,7 +72,7 @@ return {
             path = require('oil').get_current_dir(),
             upward = true,
             type = 'directory',
-            stop = vim.loop.os_homedir(),
+            stop = vim.g.os_homedir,
           }))
           if gitdir == nil then
             return

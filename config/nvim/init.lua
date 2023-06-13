@@ -37,6 +37,10 @@ g.border_style = 'edge'
 ---@type 'Darwin'|'Linux'|'Windows_NT'
 g.os = vim.loop.os_uname().sysname
 
+-- Home directory path
+---@type string
+g.os_homedir = assert(vim.loop.os_homedir())
+
 -- Shell command used to open URL, files, etc.
 ---@type 'open'|'xdg-open'|'start'
 g.open_command = (g.os == 'Darwin' and 'open')
