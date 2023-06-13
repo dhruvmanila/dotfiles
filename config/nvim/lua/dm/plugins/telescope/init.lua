@@ -20,6 +20,7 @@ return {
     config = function()
       local action_layout = require 'telescope.actions.layout'
       local actions = require 'telescope.actions'
+      local entry_display = require 'telescope.pickers.entry_display'
       local telescope = require 'telescope'
 
       local custom_actions = require 'dm.plugins.telescope.actions'
@@ -136,7 +137,31 @@ return {
           },
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
-            specific_opts = {},
+            specific_opts = {
+              ['session'] = {
+                make_displayer = function()
+                  return entry_display.create {
+                    separator = ' ',
+                    items = {
+                      { width = 1 },
+                      { width = 0.5 },
+                      { remaining = true },
+                    },
+                  }
+                end,
+                make_display = function(displayer)
+                  return function(entry)
+                    local session = entry.value.text
+                    ---@cast session Session
+                    return displayer {
+                      { session:is_active() and '' or ' ', 'Green' },
+                      session.project:gsub(vim.g.os_homedir, ''):sub(2),
+                      { session.branch, 'AquaBold' },
+                    }
+                  end
+                end,
+              },
+            },
           },
         },
       }

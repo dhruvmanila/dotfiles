@@ -136,7 +136,3 @@ end, { desc = 'Telescope: Installed plugins' })
 vim.keymap.set('n', '<leader>fb', function()
   telescope.extensions.bookmarks.bookmarks()
 end, { desc = 'Telescope: Browser bookmarks' })
-
-vim.keymap.set('n', '<leader>fs', function()
-  telescope.extensions.custom.sessions(themes.dropdown_list)
-end, { desc = 'Telescope: Sessions' })

@@ -2,7 +2,6 @@ local fn = vim.fn
 local api = vim.api
 
 local provider = require 'dm.provider'
-local session = require 'dm.session'
 
 ---@class Tabpage
 ---@field id integer
@@ -69,15 +68,11 @@ function _G.nvim_tabline()
   end
 
   local line = table.concat(labels, '')
-  local current_session = session.current()
-  if current_session ~= '' then
-    current_session = '  ' .. current_session .. ' '
-  end
   return line
     .. '%#TabLineFill#' -- After the last tab fill with TabLineFill
     .. '%T' -- Ends mouse click target region(s)
     .. '%='
-    .. current_session
+    .. (vim.v.this_session ~= '' and '   ' or '')
 end
 
 -- Always show the tabline

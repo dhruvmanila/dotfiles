@@ -2,7 +2,6 @@ local fn = vim.fn
 local api = vim.api
 
 local Text = require 'dm.text'
-local session = require 'dm.session'
 
 -- Variables {{{1
 
@@ -24,29 +23,19 @@ local dashboard = {}
 ---@type DashboardEntry[]
 local entries = {}
 
-do
-  local last_session = session.last()
-
-  -- Add the entry only if there is any last session.
-  if last_session then
-    table.insert(entries, {
-      key = 'l',
-      description = '  Last session (' .. last_session .. ')',
-      command = function()
-        session.load(last_session)
-      end,
-    })
-  end
-end
-
 vim.list_extend(entries, {
+  {
+    key = 'l',
+    description = '  Load current session',
+    command = function()
+      require('dm.session').load()
+    end,
+  },
   {
     key = 's',
     description = '  Find sessions',
     command = function()
-      require('telescope').extensions.custom.sessions(
-        require('dm.plugins.telescope.themes').dropdown_list
-      )
+      require('dm.session').select()
     end,
   },
   {

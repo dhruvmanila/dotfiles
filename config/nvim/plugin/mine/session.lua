@@ -23,26 +23,11 @@ api.nvim_create_autocmd('VimLeavePre', {
   desc = 'Save the session when exiting Neovim',
 })
 
-local function session_function_factory(function_name)
-  return function(opts)
-    session[function_name](opts.args)
-  end
-end
-
-do
-  local opts = {
-    nargs = 1,
-    complete = session.list,
-  }
-
-  -- stylua: ignore start
-  api.nvim_create_user_command('SClose', session.close, {})
-  api.nvim_create_user_command('SDelete', session_function_factory 'delete', opts)
-  api.nvim_create_user_command('SLoad', session_function_factory 'load', opts)
-  api.nvim_create_user_command('SRename', session_function_factory 'rename', opts)
-  api.nvim_create_user_command('SSave', session_function_factory 'save', opts)
-  -- stylua: ignore end
-end
+-- Keybindings
+vim.keymap.set('n', '<leader>sc', session.close)
+vim.keymap.set('n', '<leader>sd', session.delete)
+vim.keymap.set('n', '<leader>ss', session.save)
+vim.keymap.set('n', '<leader>sl', session.select)
 
 -- One caveat for storing 'curdir': {{{
 --

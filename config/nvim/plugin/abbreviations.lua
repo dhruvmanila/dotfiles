@@ -21,13 +21,6 @@ local function cabbrev(short, long)
   })
 end
 
--- Session commands
-cabbrev('sc', 'SClose')
-cabbrev('sd', 'SDelete')
-cabbrev('sl', 'SLoad')
-cabbrev('sr', 'SRename')
-cabbrev('ss', 'SSave')
-
 -- :so -> :source %
 cabbrev('so', 'source %')
 
