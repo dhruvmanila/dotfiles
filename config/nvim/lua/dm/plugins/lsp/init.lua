@@ -4,13 +4,11 @@ return {
     dependencies = {
       'b0o/SchemaStore.nvim',
       'folke/neodev.nvim',
-      { 'lvimuser/lsp-inlayhints.nvim', branch = 'anticonceal' },
     },
     config = function()
       local lsp = vim.lsp
       local keymap = vim.keymap
 
-      local inlayhints = require 'lsp-inlayhints'
       local lspconfig = require 'lspconfig'
 
       local rust_analyzer = require 'dm.plugins.lsp.extensions.rust_analyzer'
@@ -210,9 +208,6 @@ return {
           })
         end
 
-        -- Plugins
-        inlayhints.on_attach(client, bufnr)
-
         vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
       end
 
@@ -222,9 +217,6 @@ return {
           plugins = false,
         },
       }
-
-      -- https://github.com/lvimuser/lsp-inlayhints.nvim#configuration
-      inlayhints.setup()
 
       do
         -- Define default client capabilities.

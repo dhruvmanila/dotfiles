@@ -19,7 +19,6 @@
   "indent-blankline.nvim": { "branch": "master", "commit": "7075d7861f7a6bbf0de0298c83f8a13195e6ec01" },
   "lazy.nvim": { "branch": "main", "commit": "678179543e0d27650c328d8659f2c2cab4d854ef" },
   "leap.nvim": { "branch": "main", "commit": "14b5a65190fe69388a8f59c695ed3394a10d6af8" },
-  "lsp-inlayhints.nvim": { "branch": "anticonceal", "commit": "0fb3b5ef16f2d7e85963cb0b1beacf573ade35de" },
   "luv-vimdocs": { "branch": "main", "commit": "997b9338fd3ac91a53bbdc19110c127e3bea01c4" },
   "neodev.nvim": { "branch": "main", "commit": "d69254e1fbdc4a04c56719dde19e5eafb7b04b58" },
   "neogen": { "branch": "main", "commit": "1dd0319ccf41b2498f45a3c7607f2ee325ffc6a0" },
