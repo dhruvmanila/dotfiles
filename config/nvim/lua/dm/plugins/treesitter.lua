@@ -119,7 +119,7 @@ return {
     event = 'BufReadPre',
     opts = {
       mode = 'cursor',
-      separator = { '─', 'WinSeparator' },
+      separator = '─',
     },
   },
 

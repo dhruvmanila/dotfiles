@@ -531,7 +531,7 @@ link('@docstring', '@comment')
 -- }}}3
 
 -- nvim-treesitter-context {{{2
-link('TreesitterContextBorder', 'WinSeparator')
+link('TreesitterContextSeparator', 'WinSeparator')
 link('TreesitterContext', 'Normal')
 
 -- telescope.nvim {{{2
