@@ -7,6 +7,20 @@ local always_hidden = {
   '__pycache__',
 }
 
+-- Helper function to close the oil buffer after a selection.
+---@param select_opts table options to pass to `oil.select`
+---@return function #function to invoke the action
+local function select_close(select_opts)
+  return function()
+    local oil = require 'oil'
+    local oilwin = vim.api.nvim_get_current_win()
+    oil.select(select_opts)
+    vim.api.nvim_win_call(oilwin, function()
+      oil.close()
+    end)
+  end
+end
+
 return {
   'stevearc/oil.nvim',
   keys = {
@@ -44,8 +58,10 @@ return {
       ['h'] = 'actions.parent',
       ['l'] = 'actions.select',
       ['<C-h>'] = false, -- Keep this for window switching
-      ['<C-s>'] = 'actions.select_split',
-      ['<C-v>'] = 'actions.select_vsplit',
+      ['<C-l>'] = false, -- Keep this for window switching
+      ['<C-s>'] = select_close { horizontal = true },
+      ['<C-v>'] = select_close { vertical = true },
+      ['<C-t>'] = select_close { tab = true },
       ['<C-f>'] = 'actions.preview_scroll_down',
       ['<C-b>'] = 'actions.preview_scroll_up',
       ['~'] = {
