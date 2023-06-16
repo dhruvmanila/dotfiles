@@ -4,7 +4,7 @@ from pathlib import Path
 
 import watchfiles
 
-PLAYGROUND_DIR = Path.home().joinpath("playground", "python", "ruff-play")
+PLAYGROUND_DIR = Path.home().joinpath("playground", "ruff")
 RUFF_DIR = Path.home().joinpath("work", "astral", "ruff")
 RUFF_FIXTURES_DIR = RUFF_DIR.joinpath("crates", "ruff", "resources", "test", "fixtures")
 
