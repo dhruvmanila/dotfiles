@@ -113,15 +113,39 @@ local servers = {
     },
   },
 
-  -- https://github.com/charliermarsh/ruff-lsp
+  -- https://github.com/astral-sh/ruff-lsp
   -- Install: `pipx install ruff-lsp`
-  -- Settings: https://github.com/charliermarsh/ruff-lsp#settings
+  -- Settings: https://github.com/astral-sh/ruff-lsp#settings
   ruff_lsp = {
     init_options = {
       settings = {
         -- Let's use the global executable. This can be upgraded irrespective
         -- of the bundled version.
         path = { vim.fn.exepath 'ruff' },
+      },
+    },
+    commands = {
+      RuffAutofix = {
+        function()
+          vim.lsp.buf.execute_command {
+            command = 'ruff.applyAutofix',
+            arguments = {
+              { uri = vim.uri_from_bufnr(0) },
+            },
+          }
+        end,
+        description = 'Ruff: Fix all auto-fixable problems',
+      },
+      RuffOrganizeImports = {
+        function()
+          vim.lsp.buf.execute_command {
+            command = 'ruff.applyOrganizeImports',
+            arguments = {
+              { uri = vim.uri_from_bufnr(0) },
+            },
+          }
+        end,
+        description = 'Ruff: Format imports',
       },
     },
   },
