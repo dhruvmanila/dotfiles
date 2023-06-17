@@ -63,24 +63,75 @@ end, {
 
 -- LspClient {{{1
 
-nvim_create_user_command('LspClient', function(opts)
-  local client
-  if opts.args ~= '' then
-    local client_id = opts.args:match '(%d+)'
-    client = vim.lsp.get_active_clients { id = tonumber(client_id) }
-  else
-    client = vim.lsp.get_active_clients()
+-- Available fields for LSP client object.
+-- See: `:help vim.lsp.client`
+local lsp_client_fields = {
+  'attached_buffers',
+  'commands',
+  'config',
+  'dynamic_capabilities',
+  'handlers',
+  'id',
+  'initialized',
+  'messages',
+  'name',
+  'offset_encoding',
+  'progress',
+  'requests',
+  'rpc',
+  'server_capabilities',
+  'supports_method',
+  'workspace_folders',
+}
+
+-- Completion function for LSP clients.
+---@param arglead string
+---@param line string
+---@return string[] #Client info in the format of `client_id (client_name)`
+local client_completion = function(arglead, line)
+  if arglead ~= '' then
+    arglead = '.*' .. arglead .. '.*'
   end
-  local _, info = next(client)
+
+  -- `trimempty` shouldn't be used here to get the actual number of arguments
+  -- passed to the command. It'll be an empty string for the argument position
+  -- that is being completed or `arglead`.
+  local args = vim.split(line, '%s+')
+  local count = #args - 2
+
+  if count == 0 then
+    -- Autocomplete client name
+    return vim.tbl_map(
+      function(client)
+        return client.name
+      end,
+      vim.tbl_filter(function(client)
+        return client.name:match(arglead)
+      end, vim.lsp.get_active_clients())
+    )
+  elseif count == 1 then
+    -- Autocomplete client object fields
+    return vim.tbl_filter(function(field)
+      return field:match(arglead)
+    end, lsp_client_fields)
+  end
+
+  -- No completion for other arguments
+  return {}
+end
+
+nvim_create_user_command('LspClient', function(opts)
+  local _, info = next(vim.lsp.get_active_clients {
+    name = opts.fargs[1],
+  })
+  if opts.fargs[2] ~= nil then
+    info = info[opts.fargs[2]]
+  end
   vim.print(info)
 end, {
-  nargs = '?',
-  complete = function()
-    return vim.tbl_map(function(client)
-      return ('%d (%s)'):format(client.id, client.name)
-    end, vim.lsp.get_active_clients())
-  end,
-  desc = 'Print information for given client id, or all clients if none given',
+  nargs = '+',
+  complete = client_completion,
+  desc = 'LspClient <client_name> [<client_field>]: Print information about the LSP client',
 })
 
 -- Term / Vterm / Tterm {{{1
