@@ -49,7 +49,7 @@ g.open_command = (g.os == 'Darwin' and 'open')
 
 -- Provide VSCode like code action lightbulb.
 ---@type boolean
-g.lsp_code_action_lightbulb = true
+g.lsp_code_action_lightbulb = false
 
 require 'dm.globals' -- Global functions and variables
 require 'dm.options' -- Neovim options
