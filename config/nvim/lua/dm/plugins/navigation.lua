@@ -47,7 +47,6 @@ return {
       signcolumn = 'yes:1', -- For padding
       concealcursor = 'nvic',
     },
-    restore_win_options = false,
     view_options = {
       show_hidden = true,
       is_always_hidden = function(name)
