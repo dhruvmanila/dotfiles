@@ -4,6 +4,9 @@ local fn = vim.fn
 local uv = vim.loop
 local api = vim.api
 
+local dashboard = require 'dm.dashboard'
+local log = require 'dm.log'
+
 -- Notification title for the plugin
 local TITLE = 'Session Manager'
 
@@ -23,10 +26,18 @@ do
   end
 end
 
+-- Given a Yes/No question, return `true` if the user answered Yes, `false`
+-- otherwise.
+---@param question string
+---@return boolean
+local function confirm(question)
+  return fn.confirm(question .. '?', '&Yes\n&No') == 1
+end
+
 -- Return the `git` branch for the current project.
 ---@return string?
 local function current_git_branch()
-  local branch = vim.g.gitsigns_head
+  local branch = vim.b.gitsigns_head
   if branch == nil or branch == '' then
     local result =
       vim.system({ 'git', 'rev-parse', '--abbrev-ref', 'HEAD' }):wait()
@@ -108,6 +119,12 @@ function Session:is_active()
   return self.path == vim.v.this_session
 end
 
+-- Return `true` if the session file exists, `false` otherwise.
+---@return boolean
+function Session:exists()
+  return fn.filereadable(self.path) == 1
+end
+
 function Session:__tostring()
   local name = self.project:gsub(vim.g.os_homedir, ''):sub(2)
   if self.branch then
@@ -119,9 +136,9 @@ function Session:__tostring()
   return name
 end
 
--- Delete all the buffers. This is useful when switching between sessions.
+-- Delete all the buffers. This is useful when stopping the active session.
 local function delete_buffers()
-  vim.cmd '%bdelete!'
+  vim.cmd 'silent %bdelete!'
 end
 
 -- Stop all the LSP clients.
@@ -148,19 +165,12 @@ local function session_cleanup()
 end
 
 -- Delete the given session after prompting for confirmation.
---
--- The return value is a boolean indicating whether the session was deleted or
--- not. This could be useful information to act on for a third party integration.
 ---@param session Session
----@return boolean
+---@return boolean # `true` if the session was deleted, `false` otherwise.
 local function session_delete(session)
-  if fn.filereadable(session.path) == 0 then
-    dm.notify(
-      TITLE,
-      'No such session file: ' .. session.path,
-      vim.log.levels.WARN
-    )
-  elseif fn.confirm('Remove ' .. session.name .. '?', '&Yes\n&No') == 1 then
+  if not session:exists() then
+    dm.notify(TITLE, 'No such session: ' .. session.name, vim.log.levels.WARN)
+  elseif confirm('Remove ' .. session.name) then
     local ok, err = uv.fs_unlink(session.path)
     if ok then
       if session.path == vim.v.this_session then
@@ -182,19 +192,30 @@ local function session_delete(session)
   return false
 end
 
+-- Return the information about the active session, `nil` if there is none.
+---@return { name: string, path: string, project: string, branch?: string }?
+function M.active_session()
+  if active_session == nil then
+    return nil
+  end
+  return {
+    name = active_session.name,
+    path = active_session.path,
+    project = active_session.project,
+    branch = active_session.branch,
+  }
+end
+
 -- Close the current session if it exists and open the Dashboard.
 function M.close()
   if active_session == nil then
     dm.notify(TITLE, 'No active session to close')
     return
   end
-  M.write(active_session.path)
+  M.stop()
   stop_lsp_clients()
   delete_buffers()
-  -- Update the state.
-  active_session = nil
-  vim.v.this_session = ''
-  vim.cmd 'Dashboard'
+  dashboard.open(false)
 end
 
 -- Using `vim.ui.select`, prompt the user to select a session to delete.
@@ -227,12 +248,8 @@ end
 ---@param session? Session
 function M.load(session)
   session = session or Session:new()
-  if fn.filereadable(session.path) == 0 then
-    dm.notify(
-      TITLE,
-      'No session exists for the current working directory',
-      vim.log.levels.WARN
-    )
+  if not session:exists() then
+    dm.notify(TITLE, 'No such session: ' .. session.name, vim.log.levels.WARN)
     return
   end
   if active_session ~= nil then
@@ -250,9 +267,14 @@ function M.load(session)
   then
     stop_lsp_clients()
   end
-  delete_buffers()
-  active_session = session
-  vim.cmd.source(vim.fn.fnameescape(session.path))
+  log.fmt_info('Loading session file: %s', session.path)
+  local ok, err = pcall(vim.cmd.source, vim.fn.fnameescape(session.path))
+  if not ok then
+    log.fmt_error('Failed to load session file: %s', err)
+    dashboard.open(false)
+  else
+    active_session = session
+  end
 end
 
 -- Save the active session or the session for the current working directory and
@@ -260,7 +282,8 @@ end
 function M.save()
   local session = active_session or Session:new()
   M.write(session.path)
-  dm.notify(TITLE, 'Session saved for the current project')
+  active_session = session
+  dm.notify(TITLE, 'Session saved for ' .. session.name)
 end
 
 -- Using `vim.ui.select`, prompt the user to select a session to load.
@@ -276,17 +299,25 @@ function M.select()
   end)
 end
 
+-- Stop the active session, saving it first.
+function M.stop()
+  if active_session == nil then
+    dm.notify(TITLE, 'No active session to stop')
+    return
+  end
+  M.write(active_session.path)
+  active_session = nil
+  vim.v.this_session = ''
+  dm.notify(TITLE, 'Active session stopped')
+end
+
 -- Make/save the current session to the given path.
 ---@param session_file string
 function M.write(session_file)
+  log.fmt_info('Writing session file: %s', session_file)
   session_cleanup()
-  vim.cmd('mksession! ' .. vim.fn.fnameescape(session_file))
+  vim.cmd.mksession { vim.fn.fnameescape(session_file), bang = true }
 end
 
--- Return the active session, `nil` if none exists.
----@return Session?
-function M._active_session()
-  return active_session
-end
 
 return M

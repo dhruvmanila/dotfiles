@@ -24,10 +24,10 @@ api.nvim_create_autocmd('VimLeavePre', {
 })
 
 -- Keybindings
-vim.keymap.set('n', '<leader>sc', session.close)
-vim.keymap.set('n', '<leader>sd', session.delete)
-vim.keymap.set('n', '<leader>ss', session.save)
-vim.keymap.set('n', '<leader>sl', session.select)
+vim.keymap.set('n', '<leader>sc', session.close, { desc = 'session: close' })
+vim.keymap.set('n', '<leader>sd', session.delete, { desc = 'session: delete' })
+vim.keymap.set('n', '<leader>ss', session.save, { desc = 'session: save' })
+vim.keymap.set('n', '<leader>sl', session.select, { desc = 'session: load' })
 
 -- One caveat for storing 'curdir': {{{
 --
