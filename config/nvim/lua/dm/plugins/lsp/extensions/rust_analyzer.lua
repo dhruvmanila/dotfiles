@@ -1,7 +1,7 @@
--- Client side extension for `rust-analyzer`.
+-- Client side extensions for `rust-analyzer`.
 local M = {}
 
-local job = require 'dm.job'
+local dap_utils = require 'dm.plugins.dap.utils'
 local log = require 'dm.log'
 
 -- Refer: https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts#L139
@@ -103,21 +103,22 @@ local function debug_runnable(runnable)
     end
   end
 
-  dm.notify(
+  local notification = dm.notify(
     'Rust',
     'Compiling a debug build for debugging. This might take some time...'
   )
 
-  job {
-    cmd = 'cargo',
-    args = cargo_args,
-    cwd = runnable.args.workspaceRoot,
-    on_exit = function(result)
+  vim.system(
+    vim.tbl_flatten { 'cargo', cargo_args },
+    { cwd = runnable.args.workspaceRoot },
+    ---@param result SystemCompleted
+    function(result)
       if result.code > 0 then
         dm.notify(
           'Rust',
           'An error occurred while compiling:\n' .. result.stderr,
-          vim.log.levels.ERROR
+          vim.log.levels.ERROR,
+          { replace = notification }
         )
         return
       end
@@ -154,20 +155,26 @@ local function debug_runnable(runnable)
         return
       end
 
+      local args = runnable.args.executableArgs
+      if vim.tbl_isempty(args) then
+        ---@diagnostic disable-next-line: cast-local-type
+        args = dap_utils.ask_for_arguments
+      end
+
       local dap_config = {
         name = 'Debug ' .. runnable.label,
         type = 'codelldb',
         request = 'launch',
         program = executables[1],
-        args = runnable.args.executableArgs or {},
+        args = args,
         cwd = cargo_crate_dir() or runnable.args.workspaceRoot,
         console = 'internalConsole',
         stopOnEntry = false,
       }
       log.fmt_info('Launching DAP with config: %s', dap_config)
       require('dap').run(dap_config)
-    end,
-  }
+    end
+  )
 end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
@@ -239,26 +246,33 @@ function M.view_crate_graph(full)
       -- TODO(dhruvmanila): Make layout engine and output format as an argument?
       -- Layout engines: https://graphviz.org/docs/layouts/
       -- Output formats: https://graphviz.org/docs/outputs/
-      vim.system({ 'dot', '-Tsvg' }, { stdin = graph }, function(result)
-        if result.code > 0 then
-          dm.notify(
-            'rust-analyzer',
-            'Failed to process crate graph:\n\n' .. result.stderr,
-            vim.log.levels.ERROR,
-            { replace = notification }
+      vim.system(
+        { 'dot', '-Tsvg' },
+        { stdin = graph },
+        ---@param result SystemCompleted
+        function(result)
+          if result.code > 0 then
+            dm.notify(
+              'rust-analyzer',
+              'Failed to process crate graph:\n\n' .. result.stderr,
+              vim.log.levels.ERROR,
+              { replace = notification }
+            )
+            return
+          end
+
+          local tmpfile = vim.fs.joinpath(
+            vim.fn.stdpath 'run',
+            'rust_analyzer_crate_graph.svg'
           )
-          return
+          local file = assert(io.open(tmpfile, 'w+'))
+          file:write(result.stdout)
+          file:flush()
+          file:close()
+
+          os.execute(vim.g.open_command .. ' ' .. tmpfile)
         end
-
-        local tmpfile =
-          vim.fs.joinpath(vim.fn.stdpath 'run', 'rust_analyzer_crate_graph.svg')
-        local file = assert(io.open(tmpfile, 'w+'))
-        assert(file:write(result.stdout))
-        assert(file:flush())
-        assert(file:close())
-
-        os.execute(vim.g.open_command .. ' ' .. tmpfile)
-      end)
+      )
     end
   )
 end
