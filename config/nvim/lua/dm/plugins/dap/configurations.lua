@@ -1,5 +1,7 @@
 local dap = require 'dap'
 
+local utils = require 'dm.plugins.dap.utils'
+
 -- Return the path to Python executable.
 ---@return string
 local function get_python_path()
@@ -22,13 +24,6 @@ local function log_to_file()
   end
 end
 
--- Helper function to ask the user for arguments.
----@return string[]
-local function ask_for_arguments()
-  local args = vim.fn.input 'Arguments: '
-  return vim.split(args, ' +', { trimempty = true })
-end
-
 ---@see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings
 dap.configurations.python = {
   {
@@ -47,7 +42,7 @@ dap.configurations.python = {
     type = 'python',
     request = 'launch',
     program = '${file}',
-    args = ask_for_arguments,
+    args = utils.ask_for_arguments,
     console = 'internalConsole',
     justMyCode = false,
     showReturnValue = true,
@@ -72,7 +67,7 @@ dap.configurations.python = {
     request = 'launch',
     module = '${relativeFileDirname}',
     cwd = '${workspaceFolder}',
-    args = ask_for_arguments,
+    args = utils.ask_for_arguments,
     console = 'internalConsole',
     justMyCode = false,
     showReturnValue = true,
@@ -175,7 +170,7 @@ dap.configurations.go = {
     type = 'go',
     name = 'Launch: file with arguments',
     request = 'launch',
-    args = ask_for_arguments,
+    args = utils.ask_for_arguments,
     mode = 'debug',
     program = '${file}',
   },
@@ -193,7 +188,7 @@ dap.configurations.go = {
     type = 'go',
     name = 'Launch: program with arguments',
     request = 'launch',
-    args = ask_for_arguments,
+    args = utils.ask_for_arguments,
     mode = 'debug',
     program = '${workspaceFolder}',
   },
@@ -248,7 +243,7 @@ dap.configurations.rust = {
     name = 'Launch with arguments',
     request = 'launch',
     program = rust_program,
-    args = ask_for_arguments,
+    args = utils.ask_for_arguments,
     cwd = '${workspaceFolder}',
     console = 'internalConsole',
     stopOnEntry = false,
