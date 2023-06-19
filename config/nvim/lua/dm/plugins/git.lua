@@ -99,8 +99,7 @@ return {
     'rhysd/git-messenger.vim',
     init = function()
       vim.g.git_messenger_always_into_popup = true
-      vim.g.git_messenger_floating_win_opts =
-        { border = dm.border[vim.g.border_style] }
+      vim.g.git_messenger_floating_win_opts = { border = dm.border }
     end,
   },
 
@@ -129,7 +128,7 @@ return {
       numhl = false,
       linehl = false,
       preview_config = {
-        border = dm.border[vim.g.border_style],
+        border = dm.border,
         row = 1,
         col = 1,
       },

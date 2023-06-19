@@ -99,13 +99,13 @@ return {
       },
     },
     float = {
-      border = dm.border[vim.g.border_style],
+      border = dm.border,
     },
     preview = {
-      border = dm.border[vim.g.border_style],
+      border = dm.border,
     },
     progress = {
-      border = dm.border[vim.g.border_style],
+      border = dm.border,
     },
   },
 }

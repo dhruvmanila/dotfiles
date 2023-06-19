@@ -1,6 +1,3 @@
--- Custom global namespace.
-_G.dm = {}
-
 dm.log = {
   levels = {
     TRACE = 'TRACE',
@@ -26,7 +23,7 @@ end
 
 -- If the border key is custom, then return the respective table otherwise
 -- return the string as it is.
-dm.border = setmetatable({
+local borders = setmetatable({
   -- https://en.wikipedia.org/wiki/Box-drawing_character
   edge = { '🭽', '▔', '🭾', '▕', '🭿', '▁', '🭼', '▏' },
 }, {
@@ -34,6 +31,8 @@ dm.border = setmetatable({
     return key
   end,
 })
+
+dm.border = borders[dm.config.border_style]
 
 dm.icons = {
   lsp_kind = {

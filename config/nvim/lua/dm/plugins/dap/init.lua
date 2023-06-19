@@ -107,7 +107,7 @@ return {
             },
           },
           floating = {
-            border = dm.border[vim.g.border_style],
+            border = dm.border,
           },
         },
       },

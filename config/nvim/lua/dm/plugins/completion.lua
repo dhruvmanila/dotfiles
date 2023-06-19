@@ -92,7 +92,7 @@ return {
         },
         window = {
           documentation = {
-            border = dm.border[vim.g.border_style],
+            border = dm.border,
             winhighlight = 'NormalFloat:NormalFloat,FloatBorder:FloatBorder',
           },
         },

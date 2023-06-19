@@ -25,14 +25,6 @@ g.loaded_perl_provider = 0
 g.loaded_ruby_provider = 0
 g.loaded_python3_provider = 0
 
--- Custom global variables for use in various parts of the config. These don't
--- have any special meaning in Neovim.
-
--- Global border style
----@type 'edge'|'single'|'double'|'shadow'|'rounded'|'solid'
----@see https://en.wikipedia.org/wiki/Box-drawing_character
-g.border_style = 'edge'
-
 -- Operating system name
 ---@type 'Darwin'|'Linux'|'Windows_NT'
 g.os = vim.loop.os_uname().sysname
@@ -47,9 +39,21 @@ g.open_command = (g.os == 'Darwin' and 'open')
   or (g.os == 'Windows_NT' and 'start')
   or 'xdg-open'
 
--- Provide VSCode like code action lightbulb.
----@type boolean
-g.lsp_code_action_lightbulb = false
+local namespace = {
+  config = {
+    -- Global border style
+    --
+    -- See: https://en.wikipedia.org/wiki/Box-drawing_character
+    ---@type 'edge'|'single'|'double'|'shadow'|'rounded'|'solid'
+    border_style = 'edge',
+
+    -- Provide VSCode like code action lightbulb.
+    code_action_lightbulb = { enable = false },
+  },
+}
+
+-- Custom global namespace.
+_G.dm = dm or namespace
 
 require 'dm.globals' -- Global functions and variables
 require 'dm.options' -- Neovim options
@@ -100,7 +104,7 @@ require('lazy').setup('dm.plugins', {
     },
   },
   ui = {
-    border = dm.border[vim.g.border_style],
+    border = dm.border,
   },
 })
 

@@ -17,8 +17,7 @@ return {
       require 'dm.plugins.lsp.handlers'
       require 'dm.plugins.lsp.progress'
 
-      require('lspconfig.ui.windows').default_options.border =
-        dm.border[vim.g.border_style]
+      require('lspconfig.ui.windows').default_options.border = dm.border
 
       -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
       lsp.set_log_level(vim.env.NVIM_LSP_LOG_LEVEL or dm.current_log_level)
@@ -33,7 +32,7 @@ return {
         ---@diagnostic disable-next-line: duplicate-set-field
         lsp.util.open_floating_preview = function(contents, syntax, opts)
           opts = vim.tbl_deep_extend('force', opts, {
-            border = dm.border[vim.g.border_style],
+            border = dm.border,
             max_width = math.min(math.floor(vim.o.columns * 0.7), 100),
             max_height = math.min(math.floor(vim.o.lines * 0.3), 30),
           })
@@ -161,7 +160,7 @@ return {
         end
 
         if capabilities.codeActionProvider then
-          if vim.g.lsp_code_action_lightbulb then
+          if dm.config.code_action_lightbulb.enable then
             local lsp_code_action_group =
               vim.api.nvim_create_augroup('dm__lsp_code_action_lightbulb', {
                 clear = false,
