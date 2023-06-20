@@ -157,8 +157,7 @@ local function debug_runnable(runnable)
 
       local args = runnable.args.executableArgs
       if vim.tbl_isempty(args) then
-        ---@diagnostic disable-next-line: cast-local-type
-        args = dap_utils.ask_for_arguments
+        args = dap_utils.ask_for_arguments()
       end
 
       local dap_config = {

@@ -1,18 +1,10 @@
 local M = {}
 
 -- Helper function to ask the user for arguments.
----@return thread
+---@return string[]
 function M.ask_for_arguments()
-  return coroutine.create(function(dap_run_co)
-    vim.ui.input({ prompt = 'Arguments: ' }, function(args)
-      if args then
-        coroutine.resume(
-          dap_run_co,
-          vim.split(args, ' +', { trimempty = true })
-        )
-      end
-    end)
-  end)
+  local args = vim.fn.input 'Arguments: '
+  return vim.split(args, ' +', { trimempty = true })
 end
 
 return M
