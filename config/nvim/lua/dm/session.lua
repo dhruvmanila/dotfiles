@@ -293,7 +293,17 @@ function M.select()
     kind = 'session',
   }, function(selection)
     if selection then
-      -- TODO(dhruvmanila): Checkout the branch if it's different.
+      vim.system({ 'git', 'checkout', selection.branch }, {
+        cwd = selection.project,
+      }, function(result)
+        if result.code > 0 then
+          log.fmt_error(
+            'Failed to switch branch (%s): %s',
+            selection.branch,
+            result.stderr
+          )
+        end
+      end)
       M.load(selection)
     end
   end)
