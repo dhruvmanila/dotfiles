@@ -172,7 +172,7 @@ link('WildMenu', 'PmenuSel')
 highlight('PmenuThumb', { bg = palette.grey0 })
 
 -- Floating window and border highlights according to the global border style.
-if vim.g.border_style == 'edge' then
+if dm.config.border_style == 'edge' then
   highlight('NormalFloat', { bg = palette.bg_float })
   highlight('FloatBorder', { fg = palette.grey1, bg = palette.bg_float })
 else
