@@ -14,7 +14,11 @@ function M.listener()
   local params = vim.lsp.util.make_range_params()
   params.context = {
     diagnostics = vim.lsp.diagnostic.get_line_diagnostics(bufnr),
-    only = { '', 'quickfix', 'refactor' },
+    only = {
+      vim.lsp.protocol.CodeActionKind.Empty,
+      vim.lsp.protocol.CodeActionKind.QuickFix,
+      vim.lsp.protocol.CodeActionKind.Refactor,
+    },
   }
   vim.lsp.buf_request(
     0,
