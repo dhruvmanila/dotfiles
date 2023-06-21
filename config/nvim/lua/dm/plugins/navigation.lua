@@ -11,13 +11,9 @@ local always_hidden = {
 ---@param select_opts table options to pass to `oil.select`
 ---@return function #function to invoke the action
 local function select_close(select_opts)
+  local opts = vim.tbl_extend('keep', { close = true }, select_opts)
   return function()
-    local oil = require 'oil'
-    local oilwin = vim.api.nvim_get_current_win()
-    oil.select(select_opts)
-    vim.api.nvim_win_call(oilwin, function()
-      oil.close()
-    end)
+    require('oil').select(opts)
   end
 end
 
