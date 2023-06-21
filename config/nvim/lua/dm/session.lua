@@ -293,18 +293,20 @@ function M.select()
     kind = 'session',
   }, function(selection)
     if selection then
-      vim.system({ 'git', 'checkout', selection.branch }, {
-        cwd = selection.project,
-      }, function(result)
-        if result.code > 0 then
-          log.fmt_error(
-            'Failed to switch branch (%s): %s',
-            selection.branch,
-            result.stderr
-          )
-        end
-      end)
-      M.load(selection)
+      local result = vim
+        .system({ 'git', 'checkout', selection.branch }, {
+          cwd = selection.project,
+        })
+        :wait(1 * 1000) -- 1 second
+      if result.code > 0 then
+        dm.notify(TITLE, {
+          ('Failed to switch branch (%s):'):format(selection.branch),
+          '',
+          result.stderr,
+        })
+      else
+        M.load(selection)
+      end
     end
   end)
 end
