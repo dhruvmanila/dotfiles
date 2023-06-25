@@ -134,6 +134,18 @@ end, {
   desc = 'LspClient <client_name> [<client_field>]: Print information about the LSP client',
 })
 
+nvim_create_user_command('LspSetLogLevel', function(opts)
+  vim.lsp.set_log_level(opts.args)
+end, {
+  nargs = 1,
+  complete = function(arglead)
+    return vim.tbl_filter(function(level)
+      return type(level) == 'string' and level:match(arglead)
+    end, vim.tbl_keys(vim.lsp.log_levels))
+  end,
+  desc = 'LSP: Set log level',
+})
+
 -- Term / Vterm / Tterm {{{1
 
 nvim_create_user_command('Term', 'new | wincmd J | resize -5 | term', {
