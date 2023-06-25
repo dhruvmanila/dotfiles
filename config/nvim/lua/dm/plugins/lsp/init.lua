@@ -82,6 +82,10 @@ return {
             buffer = bufnr,
             desc = 'LSP (rust-analyzer): Execute last runnable',
           })
+          keymap.set('n', ';c', rust_analyzer.run_flycheck, {
+            buffer = bufnr,
+            desc = 'LSP (rust-analyzer): Run flycheck',
+          })
         end
 
         if supports_method 'textDocument/hover' then
