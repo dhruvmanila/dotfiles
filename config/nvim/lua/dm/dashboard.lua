@@ -88,13 +88,7 @@ end
 
 ---@return string[]
 local function generate_sub_header()
-  local version = api.nvim_exec2('version', { output = true }).output
-  version = vim.split(
-    vim.split(version, '\n', { trimempty = true })[1],
-    ' ',
-    { trimempty = true }
-  )[2]
-  return { version, '', '' }
+  return { tostring(vim.version()), '', '' }
 end
 
 ---@return string[]
