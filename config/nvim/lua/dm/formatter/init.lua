@@ -91,7 +91,9 @@ register('python', {
 -- rust {{{1
 
 register('rust', {
-  cmd = 'rustfmt',
+  lsp = {
+    format = true,
+  },
 })
 
 -- sh {{{1
