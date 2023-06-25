@@ -4,7 +4,6 @@ return {
     event = 'InsertEnter',
     dependencies = {
       'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-emoji',
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
       'saadparwaiz1/cmp_luasnip',
@@ -135,30 +134,10 @@ return {
         },
         -- By default, the order of the sources matter. That gives them priority.
         sources = {
-          { name = 'nvim_lsp' },
+          { name = 'nvim_lsp', max_item_count = 20 },
           { name = 'path' },
           { name = 'luasnip' },
-          {
-            name = 'buffer',
-            options = {
-              -- Provide suggestions from all the visible buffers.
-              ---@return number[]
-              get_bufnrs = function()
-                local bufnrs = {}
-                for _, winid in ipairs(api.nvim_list_wins()) do
-                  local bufnr = api.nvim_win_get_buf(winid)
-                  if
-                    api.nvim_buf_get_option(bufnr, 'filetype') ~= 'terminal'
-                  then
-                    bufnrs[#bufnrs + 1] = bufnr
-                  end
-                end
-                return bufnrs
-              end,
-            },
-            keyword_length = 4,
-          },
-          { name = 'emoji' },
+          { name = 'buffer', keyword_length = 4, max_item_count = 10 },
         },
       }
 
@@ -189,10 +168,11 @@ return {
     config = function()
       vim.g.copilot_filetypes = {
         ['*'] = false,
-        ['python'] = true,
+        ['go'] = true,
         ['html'] = true,
         ['javascript'] = true,
-        ['go'] = true,
+        ['lua'] = true,
+        ['python'] = true,
         ['rust'] = true,
       }
     end,
