@@ -186,7 +186,11 @@ end
 
 vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
   local client = vim.lsp.get_client_by_id(ctx.client_id)
-  vim.lsp.util.jump_to_location(command.arguments[1], client.offset_encoding)
+  vim.lsp.util.jump_to_location(
+    command.arguments[1],
+    client.offset_encoding,
+    true
+  )
 end
 
 vim.lsp.commands['rust-analyzer.showReferences'] = function()

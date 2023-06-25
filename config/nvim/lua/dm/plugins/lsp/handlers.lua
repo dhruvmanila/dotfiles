@@ -27,7 +27,7 @@ local function location_handler(err, result, ctx)
       vim.api.nvim_command 'copen | wincmd p'
     end
   else
-    vim.lsp.util.jump_to_location(result, client.offset_encoding)
+    vim.lsp.util.jump_to_location(result, client.offset_encoding, true)
   end
 end
 
