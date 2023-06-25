@@ -159,13 +159,13 @@ local servers = {
   --
   -- Settings: https://rust-analyzer.github.io/manual.html#configuration
   rust_analyzer = {
-    cmd = { 'rustup', 'run', 'stable', 'rust-analyzer' },
+    cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
     settings = {
       ['rust-analyzer'] = {
         cargo = {
           features = 'all',
           buildScripts = {
-            enable = false,
+            enable = true,
           },
         },
         checkOnSave = false,
