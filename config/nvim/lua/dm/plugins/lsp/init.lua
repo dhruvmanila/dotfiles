@@ -58,14 +58,19 @@ return {
       -- This function needs to be passed to every language server. If a language
       -- server requires either more config or less, it should also be done in this
       -- function using the `filetype` conditions.
-      ---@param client table
+      ---@param client lsp.Client
       ---@param bufnr number
       local function on_attach(client, bufnr)
-        local capabilities = client.server_capabilities
+        -- Wrapper around `client.supports_method`.
+        ---@param method string
+        ---@return boolean
+        local function supports_method(method)
+          return client.supports_method(method, { bufnr = bufnr })
+        end
 
         if client.name == 'ruff_lsp' then
           -- Disable hover in favor of Pyright
-          capabilities.hoverProvider = false
+          client.server_capabilities.hoverProvider = false
         end
 
         if client.name == 'rust_analyzer' then
@@ -79,56 +84,56 @@ return {
           })
         end
 
-        if capabilities.hoverProvider then
+        if supports_method 'textDocument/hover' then
           keymap.set('n', 'K', lsp.buf.hover, {
             buffer = bufnr,
             desc = 'LSP: Hover',
           })
         end
 
-        if capabilities.definitionProvider then
+        if supports_method 'textDocument/definition' then
           keymap.set('n', 'gd', lsp.buf.definition, {
             buffer = bufnr,
             desc = 'LSP: Goto definition',
           })
         end
 
-        if capabilities.declarationProvider then
+        if supports_method 'textDocument/declaration' then
           keymap.set('n', 'gD', lsp.buf.declaration, {
             buffer = bufnr,
             desc = 'LSP: Goto declaration',
           })
         end
 
-        if capabilities.typeDefinitionProvider then
+        if supports_method 'textDocument/typeDefinition' then
           keymap.set('n', 'gy', lsp.buf.type_definition, {
             buffer = bufnr,
             desc = 'LSP: Goto type definition',
           })
         end
 
-        if capabilities.implementationProvider then
+        if supports_method 'textDocument/implementation' then
           keymap.set('n', 'gi', lsp.buf.implementation, {
             buffer = bufnr,
             desc = 'LSP: Goto implementation',
           })
         end
 
-        if capabilities.referencesProvider then
+        if supports_method 'textDocument/references' then
           keymap.set('n', 'gr', lsp.buf.references, {
             buffer = bufnr,
             desc = 'LSP: Goto references',
           })
         end
 
-        if capabilities.renameProvider then
+        if supports_method 'textDocument/rename' then
           keymap.set('n', '<leader>rn', lsp.buf.rename, {
             buffer = bufnr,
             desc = 'LSP: Rename',
           })
         end
 
-        if capabilities.signatureHelpProvider then
+        if supports_method 'textDocument/signatureHelp' then
           keymap.set('n', '<C-s>', lsp.buf.signature_help, {
             buffer = bufnr,
             desc = 'LSP: Signature help',
@@ -136,7 +141,7 @@ return {
         end
 
         -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
-        if capabilities.documentHighlightProvider then
+        if supports_method 'textDocument/documentHighlight' then
           local lsp_document_highlight_group =
             vim.api.nvim_create_augroup('dm__lsp_document_highlight', {
               clear = false,
@@ -159,7 +164,7 @@ return {
           })
         end
 
-        if capabilities.codeActionProvider then
+        if supports_method 'textDocument/codeAction' then
           if dm.config.code_action_lightbulb.enable then
             local lsp_code_action_group =
               vim.api.nvim_create_augroup('dm__lsp_code_action_lightbulb', {
@@ -183,7 +188,7 @@ return {
           })
         end
 
-        if capabilities.codeLensProvider then
+        if supports_method 'textDocument/codeLens' then
           local lsp_code_lens_group =
             vim.api.nvim_create_augroup('dm__lsp_code_lens_refresh', {
               clear = false,
@@ -207,7 +212,6 @@ return {
           })
         end
 
-        vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
       end
 
       -- https://github.com/folke/neodev.nvim#%EF%B8%8F-configuration
@@ -219,8 +223,10 @@ return {
 
       do
         -- Define default client capabilities.
-        ---@see https://github.com/hrsh7th/cmp-nvim-lsp#setup
-        ---@see https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#completionClientCapabilities
+        --
+        -- References:
+        -- * https://github.com/hrsh7th/cmp-nvim-lsp#setup
+        -- * https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#completionClientCapabilities
         local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
         -- Setting up the servers with the provided configuration and additional
