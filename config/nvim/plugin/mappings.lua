@@ -262,7 +262,7 @@ keymap.set('n', 'cn', '*``cgn')
 keymap.set('n', 'cN', '*``cgN')
 
 -- Similarly in Visual mode
-vim.g.mc = dm.escape [[y/\V<C-r>=escape(@", '/')<CR><CR>]]
+vim.g.mc = vim.keycode [[y/\V<C-r>=escape(@", '/')<CR><CR>]]
 keymap.set('x', 'cn', [[g:mc . "``cgn"]], { expr = true })
 keymap.set('x', 'cN', [[g:mc . "``cgN"]], { expr = true })
 

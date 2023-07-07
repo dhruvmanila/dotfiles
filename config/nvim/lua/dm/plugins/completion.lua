@@ -18,7 +18,6 @@ return {
     config = function()
       local api = vim.api
       local feedkeys = api.nvim_feedkeys
-      local escape = dm.escape
       local lsp_kind = dm.icons.lsp_kind
 
       local cmp = require 'cmp'
@@ -79,7 +78,7 @@ return {
         if cmp.abort() then
           return
         elseif luasnip.choice_active() then
-          return feedkeys(escape '<Plug>luasnip-next-choice', '', true)
+          return feedkeys(vim.keycode '<Plug>luasnip-next-choice', '', true)
         else
           return fallback()
         end

@@ -185,16 +185,6 @@ do
   end
 end
 
--- Convenience wrapper around `nvim_replace_termcodes()`.
---
--- Converts a string representation of a mapping's RHS (eg. "<Tab>") into an
--- internal representation (eg. "\t").
----@param str string
----@return string
-function dm.escape(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
 -- Check if the given command is executable.
 ---@param cmd string
 ---@return boolean
