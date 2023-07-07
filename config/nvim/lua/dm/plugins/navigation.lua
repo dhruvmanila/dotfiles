@@ -74,7 +74,7 @@ return {
       },
       ['gx'] = {
         callback = function()
-          vim.fn['external#explorer'](require('oil').get_current_dir())
+          vim.ui.open(require('oil').get_current_dir())
         end,
         desc = 'Open the current directory in finder',
       },

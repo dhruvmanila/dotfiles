@@ -43,22 +43,6 @@ return {
   },
 
   {
-    'itchyny/vim-external',
-    lazy = false,
-    keys = {
-      {
-        '<leader>ee',
-        '<Plug>(external-explorer)',
-        desc = 'Open current buffer directory in finder',
-      },
-      { 'gx', '<Plug>(external-browser)' },
-    },
-    init = function()
-      vim.g.external_search_engine = 'https://duckduckgo.com/?q='
-    end,
-  },
-
-  {
     'junegunn/vim-easy-align',
     keys = {
       { 'ga', '<Plug>(EasyAlign)', mode = { 'n', 'x' } },
