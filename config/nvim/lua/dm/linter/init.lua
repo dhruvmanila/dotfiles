@@ -132,10 +132,8 @@ do
       'E501', -- line too long
       '-',
     },
-    enable = function()
-      -- Let's just use `ruff`
-      return false
-    end,
+    -- Let's just use `ruff`
+    enable = false,
     ignore_exitcode = true,
     parser = function(output)
       local diagnostics = {}

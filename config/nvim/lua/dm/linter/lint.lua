@@ -2,7 +2,6 @@ local M = {}
 
 local api = vim.api
 local if_nil = vim.F.if_nil
-local job = require 'dm.job'
 local log = require 'dm.log'
 
 -- Types {{{
@@ -10,14 +9,14 @@ local log = require 'dm.log'
 ---@class Linter
 ---@field cmd string
 ---@field args string[]|fun(bufnr: number):string[] (default: {})
----@field enable? fun(bufnr: number):boolean? (default: nil)
+---@field enable? boolean|fun(bufnr: number):boolean? (default: nil)
 ---@field stdin? boolean (default: true)
 ---@field append_fname? boolean (default: true)
 ---@field stream? '"stdout"'|'"stderr"' (default: "stdout")
----@field ignore_exitcode? boolean (default: false)
+---@field ignore_exitcode? boolean|number[] (default: false)
 ---@field env? table<string, string>
 ---@field parser fun(output: string, bufnr: number): table
----@field private namespace number
+---@field namespace number
 
 -- }}}
 
@@ -27,21 +26,24 @@ local registered_linters = {}
 ---@param bufnr number
 ---@param linter Linter
 local function run_linter(bufnr, linter)
-  if linter.enable ~= nil and linter.enable(bufnr) == false then
+  if
+    linter.enable ~= nil
+    and (linter.enable == false or linter.enable(bufnr) == false)
+  then
     return
   end
 
-  local args = {}
+  -- Create a local copy of the command and arguments.
+  local cmd = { linter.cmd }
   local resolved_args = linter.args
   if type(resolved_args) == 'function' then
     resolved_args = resolved_args(bufnr)
   end
-  -- Add the arguments to a local table so as to not mutate the original table.
-  vim.list_extend(args, resolved_args)
+  vim.list_extend(cmd, resolved_args)
 
   local writer
   if not linter.stdin and linter.append_fname then
-    table.insert(args, api.nvim_buf_get_name(bufnr))
+    table.insert(cmd, api.nvim_buf_get_name(bufnr))
   else
     writer = api.nvim_buf_get_lines(bufnr, 0, -1, false)
   end
@@ -53,21 +55,29 @@ local function run_linter(bufnr, linter)
     end
   end
 
-  job {
-    cmd = linter.cmd,
-    args = args,
-    env = linter.env,
-    writer = writer,
-    on_exit = function(result)
-      if not linter.ignore_exitcode and result.code > 0 then
+  vim.system(
+    cmd,
+    {
+      env = linter.env,
+      stdin = writer,
+    },
+    ---@param result SystemCompleted
+    vim.schedule_wrap(function(result)
+      if
+        (linter.ignore_exitcode == false and result.code > 0)
+        or (
+          type(linter.ignore_exitcode) == 'table'
+          and vim.tbl_contains(linter.ignore_exitcode, result.code)
+        )
+      then
         log.fmt_error('%s exited with exit code: %d', linter.cmd, result.code)
         return
       end
       local output = result[linter.stream]
       local diagnostics = linter.parser(output, bufnr)
       vim.diagnostic.set(linter.namespace, bufnr, diagnostics)
-    end,
-  }
+    end)
+  )
 end
 
 -- Register the linters for the given filetype.
