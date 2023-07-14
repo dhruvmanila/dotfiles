@@ -83,8 +83,16 @@ register('python', {
     args = { '--fast', '--quiet', '--target-version', 'py310', '-' },
   },
   {
-    cmd = 'isort',
-    args = { '-' },
+    cmd = 'ruff',
+    args = function(bufnr)
+      return {
+        '--select=I001',
+        '--fix',
+        '--stdin-filename',
+        vim.fn.fnamemodify(':.', vim.api.nvim_buf_get_name(bufnr)),
+        '-',
+      }
+    end,
   },
 })
 
