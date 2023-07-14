@@ -36,6 +36,13 @@ return {
         }),
       })
 
+      ls.add_snippets('gitcommit', {
+        parse(
+          { trig = 'coauth', dscr = 'Add co-authors to commit message' },
+          'Co-authored-by: ${1:author} <${2:email}>'
+        ),
+      })
+
       ls.add_snippets('go', {
         s({ trig = 'main', dscr = 'main function' }, {
           t { 'func main() {', '\t' },

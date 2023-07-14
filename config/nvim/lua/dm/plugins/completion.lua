@@ -143,6 +143,7 @@ return {
       cmp.setup.filetype({ 'gitcommit' }, {
         sources = {
           { name = 'git' },
+          { name = 'luasnip' },
         },
       })
 
