@@ -2,7 +2,7 @@
 
 # ~/dotfiles
 
-_Magical objects that make certain computers extremely usa-able for me._
+_Magical objects that make certain computers extremely use-able for me._
 
 </div>
 
@@ -14,8 +14,7 @@ _Magical objects that make certain computers extremely usa-able for me._
 
 The installation script is auto-generated using
 [bashly](https://github.com/DannyBen/bashly) whose source code resides in the
-`src/` directory. Currently, this is only compatible on a mac machine, but
-should work mostly on Linux as well.
+`src/` directory. Currently, it's outdated and only compatible on a mac machine.
 
 ***I would not recommend running the above script without fully understanding
 what it actually does.***
