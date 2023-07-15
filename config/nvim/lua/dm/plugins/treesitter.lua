@@ -29,6 +29,7 @@ return {
           'json',
           'jsonc',
           -- 'just',
+          'lalrpop',
           'lua',
           'make',
           'markdown',
