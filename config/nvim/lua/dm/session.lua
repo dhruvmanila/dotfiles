@@ -331,5 +331,4 @@ function M.write(session_file)
   vim.cmd.mksession { vim.fn.fnameescape(session_file), bang = true }
 end
 
-
 return M

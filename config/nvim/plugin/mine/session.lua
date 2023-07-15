@@ -28,6 +28,12 @@ vim.keymap.set('n', '<leader>sc', session.close, { desc = 'session: close' })
 vim.keymap.set('n', '<leader>sd', session.delete, { desc = 'session: delete' })
 vim.keymap.set('n', '<leader>ss', session.save, { desc = 'session: save' })
 vim.keymap.set('n', '<leader>sl', session.select, { desc = 'session: load' })
+vim.keymap.set('n', '<leader>st', session.stop, { desc = 'session: stop' })
+
+-- Commands
+api.nvim_create_user_command('SessionActive', function()
+  vim.print(session.active_session())
+end, { desc = 'session: print the active session' })
 
 -- One caveat for storing 'curdir': {{{
 --
