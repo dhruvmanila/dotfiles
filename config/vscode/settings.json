@@ -50,7 +50,7 @@
   "python.terminal.executeInFileDir": true,
 
   // Directory path where all virtualenvs are stored
-  "python.venvPath": "~/Library/Application Support/pyvenv",
+  "python.venvPath": "~/Library/Application Support/pie",
 
   // Python formatter
   "python.formatting.provider": "black",
