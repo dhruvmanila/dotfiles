@@ -254,21 +254,11 @@ opt.smartcase = true
 -- shortmess {{{1
 
 opt.shortmess:append {
-  -- Enable all sorts of abbreviations in messages
-  a = true,
-
-  -- Don't print |ins-completion-menu| messages. For example: {{{
-  --
-  --    - "-- XXX completion (YYY)"
-  --    - "match 1 of 2"
-  --    - "The only match"
-  --    - "Pattern not found"
-  --    - "Back at original"
-  -- }}}
-  c = true,
-
-  -- Disable the default Vim startup message
-  I = true,
+  a = true, -- Enable all sorts of abbreviations in messages
+  c = true, -- Don't print |ins-completion-menu| messages
+  I = true, -- Disable the default Vim startup message
+  t = true, -- Truncate file messages at start
+  W = true, -- Don't give "written" or "[w]" when writing a file
 }
 
 -- signcolumn {{{1
@@ -314,7 +304,7 @@ opt.titlestring = "nvim: %t (%{fnamemodify(getcwd(), ':t')})"
 -- updatetime {{{1
 
 -- Wait for 'n' number of milliseconds before executing `CursorHold`
-opt.updatetime = 100
+opt.updatetime = 300
 
 -- wildmenu / wildcharm {{{1
 
