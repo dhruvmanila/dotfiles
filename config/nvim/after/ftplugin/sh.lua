@@ -12,10 +12,7 @@ local function buf_shellcheck_error_codes()
       bufnr = vim.api.nvim_get_current_buf(),
       name = server_name,
     })[1].id
-    namespace = vim.api.nvim_get_namespaces()[('vim.lsp.%s.%d'):format(
-      server_name,
-      client_id
-    )]
+    namespace = vim.api.nvim_get_namespaces()[('vim.lsp.%s.%d'):format(server_name, client_id)]
   end
   local errorcodes = {}
   for _, diagnostic in ipairs(vim.diagnostic.get(0, { namespace = namespace })) do
@@ -26,9 +23,7 @@ local function buf_shellcheck_error_codes()
 end
 
 vim.api.nvim_buf_create_user_command(0, 'ShellCheckWiki', function(opts)
-  vim.fn['external#browser'](
-    'https://github.com/koalaman/shellcheck/wiki/' .. opts.args
-  )
+  vim.fn['external#browser']('https://github.com/koalaman/shellcheck/wiki/' .. opts.args)
 end, {
   nargs = 1,
   complete = buf_shellcheck_error_codes,

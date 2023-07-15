@@ -40,14 +40,11 @@ return {
       {
         '<leader>dB',
         function()
-          vim.ui.input(
-            { prompt = 'Breakpoint Condition: ' },
-            function(condition)
-              if condition then
-                require('dap').set_breakpoint(condition)
-              end
+          vim.ui.input({ prompt = 'Breakpoint Condition: ' }, function(condition)
+            if condition then
+              require('dap').set_breakpoint(condition)
             end
-          )
+          end)
         end,
         desc = 'DAP: Set breakpoint with condition',
       },
@@ -150,10 +147,8 @@ return {
       }
 
       -- Default command to create a split window when using the integrated terminal.
-      dap.defaults.fallback.terminal_win_cmd = string.format(
-        'belowright %dnew | set winfixheight',
-        math.floor(vim.o.lines * 0.3)
-      )
+      dap.defaults.fallback.terminal_win_cmd =
+        string.format('belowright %dnew | set winfixheight', math.floor(vim.o.lines * 0.3))
 
       do
         local id = vim.api.nvim_create_augroup('dm__dap_repl', { clear = true })

@@ -52,14 +52,9 @@ do
     end
 
     local client = vim.lsp.get_client_by_id(ctx.client_id)
-    local client_name = client and client.name
-      or ('id=%d'):format(ctx.client_id)
+    local client_name = client and client.name or ('id=%d'):format(ctx.client_id)
 
-    dm.notify(
-      ('LSP Message (%s)'):format(client_name),
-      result.message,
-      levels[result.type]
-    )
+    dm.notify(('LSP Message (%s)'):format(client_name), result.message, levels[result.type])
   end
 end
 
@@ -91,14 +86,8 @@ do
     return diagnostic
   end
 
-  vim.lsp.handlers['textDocument/publishDiagnostics'] = function(
-    err,
-    result,
-    ctx,
-    config
-  )
-    result.diagnostics =
-      vim.tbl_map(show_related_information, result.diagnostics)
+  vim.lsp.handlers['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
+    result.diagnostics = vim.tbl_map(show_related_information, result.diagnostics)
     original_handler(err, result, ctx, config)
   end
 end

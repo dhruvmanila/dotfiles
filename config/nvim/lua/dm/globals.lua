@@ -100,12 +100,7 @@ do
       table.insert(start, hrtime())
     end,
     stop = function(info)
-      print(
-        output:format(
-          info and ' ' .. info or '',
-          (hrtime() - table.remove(start)) / 1e6
-        )
-      )
+      print(output:format(info and ' ' .. info or '', (hrtime() - table.remove(start)) / 1e6))
     end,
   }
 end
@@ -158,9 +153,7 @@ do
     end
     level = level or vim.log.levels.INFO
     opts = opts or {}
-    opts.title = opts.title
-      or (type(level) == 'string' and level)
-      or default_title[level]
+    opts.title = opts.title or (type(level) == 'string' and level) or default_title[level]
     -- Provide a padding between the text and the border on both sides.
     if type(msg) == 'table' then
       msg = vim.tbl_map(function(line)

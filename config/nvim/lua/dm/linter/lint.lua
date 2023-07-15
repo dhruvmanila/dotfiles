@@ -26,10 +26,7 @@ local registered_linters = {}
 ---@param bufnr number
 ---@param linter Linter
 local function run_linter(bufnr, linter)
-  if
-    linter.enable ~= nil
-    and (linter.enable == false or linter.enable(bufnr) == false)
-  then
+  if linter.enable ~= nil and (linter.enable == false or linter.enable(bufnr) == false) then
     return
   end
 

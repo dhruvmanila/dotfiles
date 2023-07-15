@@ -56,14 +56,10 @@ local servers = {
       for line in io.lines(modfile) do
         if vim.startswith(line, 'module') then
           -- https://github.com/golang/tools/blob/master/gopls/doc/settings.md#local-string
-          client.config.settings.gopls['local'] =
-            vim.split(line, ' ', { plain = true })[2]
+          client.config.settings.gopls['local'] = vim.split(line, ' ', { plain = true })[2]
         end
       end
-      client.notify(
-        'workspace/didChangeConfiguration',
-        { settings = client.config.settings }
-      )
+      client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
       return true
     end,
   },

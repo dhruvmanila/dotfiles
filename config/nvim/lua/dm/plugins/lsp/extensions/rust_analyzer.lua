@@ -93,8 +93,7 @@ end
 ---@param runnable CargoRunnable
 local function debug_runnable(runnable)
   -- This creates a copy to avoid mutating the original table.
-  local cargo_args =
-    vim.tbl_flatten { runnable.args.cargoArgs, '--message-format=json' }
+  local cargo_args = vim.tbl_flatten { runnable.args.cargoArgs, '--message-format=json' }
   if cargo_args[1] == 'run' then
     cargo_args[1] = 'build'
   elseif cargo_args[1] == 'test' then
@@ -103,10 +102,8 @@ local function debug_runnable(runnable)
     end
   end
 
-  local notification = dm.notify(
-    'Rust',
-    'Compiling a debug build for debugging. This might take some time...'
-  )
+  local notification =
+    dm.notify('Rust', 'Compiling a debug build for debugging. This might take some time...')
 
   vim.system(
     vim.tbl_flatten { 'cargo', cargo_args },
@@ -124,16 +121,12 @@ local function debug_runnable(runnable)
       end
 
       local executables = {}
-      for _, value in
-        ipairs(vim.split(result.stdout, '\n', { trimempty = true }))
-      do
+      for _, value in ipairs(vim.split(result.stdout, '\n', { trimempty = true })) do
         local artifact = vim.json.decode(value, { luanil = { object = true } })
         ---@cast artifact table
         if artifact.reason == 'compiler-artifact' and artifact.executable then
-          local is_binary =
-            vim.list_contains(artifact.target.crate_types, 'bin')
-          local is_build_script =
-            vim.list_contains(artifact.target.kind, 'custom-build')
+          local is_binary = vim.list_contains(artifact.target.crate_types, 'bin')
+          local is_build_script = vim.list_contains(artifact.target.kind, 'custom-build')
           if
             (cargo_args[1] == 'build' and is_binary and not is_build_script)
             or (cargo_args[1] == 'test' and artifact.profile.test)
@@ -147,11 +140,7 @@ local function debug_runnable(runnable)
         dm.notify('Rust', 'No compilation artifacts', vim.log.levels.ERROR)
         return
       elseif #executables > 1 then
-        dm.notify(
-          'Rust',
-          'Multiple compilation artifacts are not supported',
-          vim.log.levels.ERROR
-        )
+        dm.notify('Rust', 'Multiple compilation artifacts are not supported', vim.log.levels.ERROR)
         return
       end
 
@@ -186,11 +175,7 @@ end
 
 vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
   local client = vim.lsp.get_client_by_id(ctx.client_id)
-  vim.lsp.util.jump_to_location(
-    command.arguments[1],
-    client.offset_encoding,
-    true
-  )
+  vim.lsp.util.jump_to_location(command.arguments[1], client.offset_encoding, true)
 end
 
 vim.lsp.commands['rust-analyzer.showReferences'] = function()
@@ -231,53 +216,43 @@ end
 -- View crate graph.
 ---@param full boolean #If true, include all crates, not just crates in the workspace.
 function M.view_crate_graph(full)
-  vim.lsp.buf_request(
-    0,
-    'rust-analyzer/viewCrateGraph',
-    { full = full },
-    function(err, graph)
-      if err ~= nil then
-        dm.notify('rust-analyzer', tostring(err), vim.log.levels.ERROR)
-        return
-      end
-
-      local notification = dm.notify(
-        'rust-analyzer',
-        'Processing crate graph. This may take a while...'
-      )
-
-      -- TODO(dhruvmanila): Make layout engine and output format as an argument?
-      -- Layout engines: https://graphviz.org/docs/layouts/
-      -- Output formats: https://graphviz.org/docs/outputs/
-      vim.system(
-        { 'dot', '-Tsvg' },
-        { stdin = graph },
-        ---@param result SystemCompleted
-        function(result)
-          if result.code > 0 then
-            dm.notify(
-              'rust-analyzer',
-              'Failed to process crate graph:\n\n' .. result.stderr,
-              vim.log.levels.ERROR,
-              { replace = notification }
-            )
-            return
-          end
-
-          local tmpfile = vim.fs.joinpath(
-            vim.fn.stdpath 'run',
-            'rust_analyzer_crate_graph.svg'
-          )
-          local file = assert(io.open(tmpfile, 'w+'))
-          file:write(result.stdout)
-          file:flush()
-          file:close()
-
-          os.execute(vim.g.open_command .. ' ' .. tmpfile)
-        end
-      )
+  vim.lsp.buf_request(0, 'rust-analyzer/viewCrateGraph', { full = full }, function(err, graph)
+    if err ~= nil then
+      dm.notify('rust-analyzer', tostring(err), vim.log.levels.ERROR)
+      return
     end
-  )
+
+    local notification =
+      dm.notify('rust-analyzer', 'Processing crate graph. This may take a while...')
+
+    -- TODO(dhruvmanila): Make layout engine and output format as an argument?
+    -- Layout engines: https://graphviz.org/docs/layouts/
+    -- Output formats: https://graphviz.org/docs/outputs/
+    vim.system(
+      { 'dot', '-Tsvg' },
+      { stdin = graph },
+      ---@param result SystemCompleted
+      function(result)
+        if result.code > 0 then
+          dm.notify(
+            'rust-analyzer',
+            'Failed to process crate graph:\n\n' .. result.stderr,
+            vim.log.levels.ERROR,
+            { replace = notification }
+          )
+          return
+        end
+
+        local tmpfile = vim.fs.joinpath(vim.fn.stdpath 'run', 'rust_analyzer_crate_graph.svg')
+        local file = assert(io.open(tmpfile, 'w+'))
+        file:write(result.stdout)
+        file:flush()
+        file:close()
+
+        os.execute(vim.g.open_command .. ' ' .. tmpfile)
+      end
+    )
+  end)
 end
 
 function M.run_flycheck()

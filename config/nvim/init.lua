@@ -35,9 +35,7 @@ g.os_homedir = assert(vim.loop.os_homedir())
 
 -- Shell command used to open URL, files, etc.
 ---@type 'open'|'xdg-open'|'start'
-g.open_command = (g.os == 'Darwin' and 'open')
-  or (g.os == 'Windows_NT' and 'start')
-  or 'xdg-open'
+g.open_command = (g.os == 'Darwin' and 'open') or (g.os == 'Windows_NT' and 'start') or 'xdg-open'
 
 local namespace = {
   config = {

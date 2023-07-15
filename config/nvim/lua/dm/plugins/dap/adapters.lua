@@ -8,8 +8,7 @@ dap.adapters.lldb = {
 }
 
 do
-  local extension_path =
-    vim.fs.normalize '~/.vscode/extensions/vadimcn.vscode-lldb-1.9.2'
+  local extension_path = vim.fs.normalize '~/.vscode/extensions/vadimcn.vscode-lldb-1.9.2'
   local codelldb_path = extension_path .. '/adapter/codelldb'
   local liblldb_path = extension_path .. '/lldb/lib/liblldb.dylib'
 
@@ -54,11 +53,7 @@ dap.adapters.go = function(callback)
     end,
     on_exit = function(result)
       if result.code ~= 0 then
-        dm.notify(
-          'DAP (Go adapter - delve)',
-          'dlv exited with code: ' .. result.code,
-          4
-        )
+        dm.notify('DAP (Go adapter - delve)', 'dlv exited with code: ' .. result.code, 4)
       end
     end,
   }

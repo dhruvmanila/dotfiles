@@ -46,8 +46,7 @@ local anim_frames = { '- ', '\\ ', '| ', '/ ' }
 
 -- Callback for setting the prompt animation frame appropriately.
 local function in_progress_animation()
-  state.current_frame = state.current_frame >= #anim_frames and 1
-    or state.current_frame + 1
+  state.current_frame = state.current_frame >= #anim_frames and 1 or state.current_frame + 1
   state.picker:change_prompt_prefix(anim_frames[state.current_frame], 'Comment')
   state.picker:reset_prompt()
 end
@@ -116,8 +115,7 @@ local function do_search()
 
   -- start in-progress animation
   if not state.anim_timer then
-    state.anim_timer =
-      vim.fn.timer_start(100, in_progress_animation, { ['repeat'] = -1 })
+    state.anim_timer = vim.fn.timer_start(100, in_progress_animation, { ['repeat'] = -1 })
   end
 
   local function on_exit(result)

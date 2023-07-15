@@ -39,14 +39,9 @@ end
 local function current_git_branch()
   local branch = vim.b.gitsigns_head
   if branch == nil or branch == '' then
-    local result =
-      vim.system({ 'git', 'rev-parse', '--abbrev-ref', 'HEAD' }):wait()
+    local result = vim.system({ 'git', 'rev-parse', '--abbrev-ref', 'HEAD' }):wait()
     if result.code > 0 then
-      dm.notify(
-        TITLE,
-        { 'Failed to get git branch:', '', result.stderr },
-        vim.log.levels.ERROR
-      )
+      dm.notify(TITLE, { 'Failed to get git branch:', '', result.stderr }, vim.log.levels.ERROR)
       return
     end
     branch = vim.trim(result.stdout)
@@ -261,10 +256,7 @@ function M.load(session)
     M.write(active_session.path)
   end
   -- Stop the LSP clients only if the project has changed.
-  if
-    session.project
-    ~= (active_session and active_session.project or vim.fn.getcwd())
-  then
+  if session.project ~= (active_session and active_session.project or vim.fn.getcwd()) then
     stop_lsp_clients()
   end
   log.fmt_info('Loading session file: %s', session.path)

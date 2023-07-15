@@ -25,9 +25,7 @@ do
         end
       end, timeout)
     end,
-    desc = ('Clear command-line messages after %d seconds'):format(
-      timeout / 1000
-    ),
+    desc = ('Clear command-line messages after %d seconds'):format(timeout / 1000),
   })
 end
 
@@ -100,11 +98,7 @@ nvim_create_autocmd('BufReadPost', {
     -- Cursor position when last exiting the current buffer.
     ---@see :h 'quote
     local line, col = unpack(api.nvim_buf_get_mark(0, '"'))
-    if
-      o.filetype ~= 'gitcommit'
-      and line > 0
-      and line < api.nvim_buf_line_count(0)
-    then
+    if o.filetype ~= 'gitcommit' and line > 0 and line < api.nvim_buf_line_count(0) then
       api.nvim_win_set_cursor(0, { line, col })
     end
   end,
@@ -277,11 +271,7 @@ do
     end
   end
 
-  vim.api.nvim_create_user_command(
-    'ToggleAutoRelativeNumber',
-    toggle_auto_relative_number,
-    {}
-  )
+  vim.api.nvim_create_user_command('ToggleAutoRelativeNumber', toggle_auto_relative_number, {})
 
   -- It's on by default.
   toggle_auto_relative_number(false)

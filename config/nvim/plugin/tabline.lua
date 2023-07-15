@@ -30,8 +30,7 @@ end
 ---@return table<string, Tabpage[]>
 local function collect_tabpages()
   local tabpages = {}
-  local current_tabpagenr =
-    api.nvim_tabpage_get_number(api.nvim_get_current_tabpage())
+  local current_tabpagenr = api.nvim_tabpage_get_number(api.nvim_get_current_tabpage())
   for tabpagenr = 1, #api.nvim_list_tabpages() do
     local winnr = fn.tabpagewinnr(tabpagenr)
     local bufnr = fn.tabpagebuflist(tabpagenr)[winnr]

@@ -97,11 +97,7 @@ local function generate_footer()
   return {
     '',
     '',
-    ('Neovim loaded %d/%d plugins in %dms'):format(
-      stats.loaded,
-      stats.count,
-      stats.startuptime
-    ),
+    ('Neovim loaded %d/%d plugins in %dms'):format(stats.loaded, stats.count, stats.startuptime),
   }
 end
 

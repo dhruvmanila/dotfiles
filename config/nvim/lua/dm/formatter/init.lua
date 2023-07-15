@@ -109,9 +109,7 @@ register('rust', {
 register('sh', {
   cmd = 'shfmt',
   args = function(bufnr)
-    local indent_size = vim.bo.expandtab
-        and lsp_util.get_effective_tabstop(bufnr)
-      or 0
+    local indent_size = vim.bo.expandtab and lsp_util.get_effective_tabstop(bufnr) or 0
     return { '-i', indent_size, '-bn', '-ci', '-sr', '-' }
   end,
 })

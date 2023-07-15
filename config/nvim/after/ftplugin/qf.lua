@@ -4,8 +4,7 @@ local api = vim.api
 -- Autosize quickfix to match its minimum content
 -- https://vim.fandom.com/wiki/Automatically_fitting_a_quickfix_window_height
 local function adjust_height(minheight, maxheight)
-  local height =
-    math.max(math.min(api.nvim_buf_line_count(0), maxheight), minheight)
+  local height = math.max(math.min(api.nvim_buf_line_count(0), maxheight), minheight)
   api.nvim_win_set_height(0, height)
 end
 

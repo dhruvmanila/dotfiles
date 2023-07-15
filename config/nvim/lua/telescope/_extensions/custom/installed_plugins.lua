@@ -33,11 +33,7 @@ return function(opts)
 
   local plugins = require('lazy').plugins()
   if vim.tbl_isempty(plugins) then
-    dm.notify(
-      'Telescope',
-      'Plugin information is not available',
-      vim.log.levels.WARN
-    )
+    dm.notify('Telescope', 'Plugin information is not available', vim.log.levels.WARN)
     return nil
   end
   table.sort(plugins, function(a, b)

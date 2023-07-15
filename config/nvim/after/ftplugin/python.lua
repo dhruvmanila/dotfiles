@@ -46,11 +46,8 @@ local function fully_qualified_name(import_name)
     return {}
   end
 
-  local ok, pydoc_query = pcall(
-    vim.treesitter.parse_query,
-    'python',
-    construct_pydoc_query(import_name)
-  )
+  local ok, pydoc_query =
+    pcall(vim.treesitter.parse_query, 'python', construct_pydoc_query(import_name))
   if not ok then
     dm.notify('PyDoc', 'Failed to parse the PyDoc query', vim.log.levels.ERROR)
     return {}

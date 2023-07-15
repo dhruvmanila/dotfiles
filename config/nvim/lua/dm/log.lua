@@ -92,57 +92,38 @@ log.new = function(config, standalone)
     return table.concat(result, ' ')
   end
 
-  local console_output = vim.schedule_wrap(
-    function(level_config, nameupper, msg, info)
-      local lineinfo = ('%s:%s'):format(
-        vim.fs.basename(info.short_src),
-        info.currentline
-      )
-      local console_string = ('%s [%s] .../%s: %s'):format(
-        os.date '%H:%M:%S',
-        nameupper,
-        lineinfo,
-        msg
-      )
+  local console_output = vim.schedule_wrap(function(level_config, nameupper, msg, info)
+    local lineinfo = ('%s:%s'):format(vim.fs.basename(info.short_src), info.currentline)
+    local console_string = ('%s [%s] .../%s: %s'):format(
+      os.date '%H:%M:%S',
+      nameupper,
+      lineinfo,
+      msg
+    )
 
-      if config.highlights and level_config.hl then
-        vim.cmd('echohl ' .. level_config.hl)
-      end
+    if config.highlights and level_config.hl then
+      vim.cmd('echohl ' .. level_config.hl)
+    end
 
-      local split_console =
-        vim.split(console_string, '\n', { trimempty = true })
-      for _, v in ipairs(split_console) do
-        local formatted_msg = vim.fn.escape(v, [["\]])
+    local split_console = vim.split(console_string, '\n', { trimempty = true })
+    for _, v in ipairs(split_console) do
+      local formatted_msg = vim.fn.escape(v, [["\]])
 
-        local ok = pcall(
-          vim.cmd,
-          ([[echom "[%s] %s"]]):format(config.plugin, formatted_msg)
-        )
-        if not ok then
-          vim.api.nvim_out_write(msg .. '\n')
-        end
-      end
-
-      if config.highlights and level_config.hl then
-        vim.cmd 'echohl NONE'
+      local ok = pcall(vim.cmd, ([[echom "[%s] %s"]]):format(config.plugin, formatted_msg))
+      if not ok then
+        vim.api.nvim_out_write(msg .. '\n')
       end
     end
-  )
+
+    if config.highlights and level_config.hl then
+      vim.cmd 'echohl NONE'
+    end
+  end)
 
   local file_output = vim.schedule_wrap(function(nameupper, msg, info)
-    local lineinfo = ('%s:%s'):format(
-      vim.fs.basename(info.short_src),
-      info.currentline
-    )
+    local lineinfo = ('%s:%s'):format(vim.fs.basename(info.short_src), info.currentline)
     local fp = assert(io.open(outfile, 'a'))
-    fp:write(
-      ('%s [%s] .../%s: %s\n'):format(
-        os.date '%Y/%m/%d %H:%M:%S',
-        nameupper,
-        lineinfo,
-        msg
-      )
-    )
+    fp:write(('%s [%s] .../%s: %s\n'):format(os.date '%Y/%m/%d %H:%M:%S', nameupper, lineinfo, msg))
     fp:close()
   end)
 

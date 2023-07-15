@@ -99,11 +99,7 @@ function Format:run_lsp(formatter)
       end
       if result then
         local client = vim.lsp.get_client_by_id(ctx.client_id)
-        vim.lsp.util.apply_text_edits(
-          result,
-          self.bufnr,
-          client.offset_encoding
-        )
+        vim.lsp.util.apply_text_edits(result, self.bufnr, client.offset_encoding)
         self:write()
       end
     end

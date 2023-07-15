@@ -88,8 +88,7 @@ do
 
       local diagnostics = {}
       -- Current file path from the current working directory.
-      local current_file =
-        vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':.')
+      local current_file = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':.')
 
       for _, item in ipairs(decoded.Issues) do
         -- Publish diagnostics only for the current file.
@@ -175,8 +174,7 @@ do
     ignore_exitcode = true,
     parser = function(output, bufnr)
       local diagnostics = {}
-      local current_file =
-        vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':.')
+      local current_file = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':.')
 
       for line in vim.gsplit(output, '\n') do
         local diagnostic = vim.diagnostic.match(line, pat, groups, severity_map)
@@ -185,10 +183,7 @@ do
         -- from other files which will be displayed in the current buffer.
         if diagnostic and diagnostic.file == current_file then
           diagnostic.source = 'mypy'
-          if
-            diagnostic.severity == vim.diagnostic.severity.HINT
-            and #diagnostics > 0
-          then
+          if diagnostic.severity == vim.diagnostic.severity.HINT and #diagnostics > 0 then
             diagnostics[#diagnostics].message = diagnostics[#diagnostics].message
               .. '\n'
               .. diagnostic.message
@@ -241,8 +236,7 @@ register('yaml', {
   ignore_exitcode = true,
   enable = function(bufnr)
     -- Enable it only for GitHub workflow files.
-    return vim.api.nvim_buf_get_name(bufnr):match '^.*%.github/workflows/.*$'
-      ~= nil
+    return vim.api.nvim_buf_get_name(bufnr):match '^.*%.github/workflows/.*$' ~= nil
   end,
   parser = function(output)
     local diagnostics = {}

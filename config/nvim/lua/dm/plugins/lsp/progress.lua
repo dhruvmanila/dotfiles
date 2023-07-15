@@ -27,8 +27,7 @@ do
   local timeout = 3000
   local clear_message_timer
 
-  local group =
-    vim.api.nvim_create_augroup('dm__lsp_progress', { clear = true })
+  local group = vim.api.nvim_create_augroup('dm__lsp_progress', { clear = true })
 
   vim.api.nvim_create_autocmd('LspProgress', {
     group = group,

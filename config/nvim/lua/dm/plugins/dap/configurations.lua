@@ -107,19 +107,12 @@ local function get_advent_of_code_args()
   local bufname = vim.api.nvim_buf_get_name(0)
   local year, day = bufname:match '.*year(%d+)/sol(%d+)'
   if year == nil or day == nil then
-    dm.notify(
-      'Debug Advent of Code solution',
-      'Unable to determine year/day for: ' .. bufname,
-      4
-    )
+    dm.notify('Debug Advent of Code solution', 'Unable to determine year/day for: ' .. bufname, 4)
     return {}
   end
   day = day:gsub('^0', '')
   local args = { '-y', year, '-d', day }
-  if
-    vim.fn.confirm(('Use test input for %s/%s?'):format(year, day), '&Yes\n&No')
-    == 1
-  then
+  if vim.fn.confirm(('Use test input for %s/%s?'):format(year, day), '&Yes\n&No') == 1 then
     table.insert(args, '-t')
   end
   return args
@@ -161,8 +154,7 @@ dap.configurations.go = {
     name = 'Launch: file',
     request = 'launch',
     mode = function()
-      return vim.endswith(vim.api.nvim_buf_get_name(0), '_test.go') and 'test'
-        or 'debug'
+      return vim.endswith(vim.api.nvim_buf_get_name(0), '_test.go') and 'test' or 'debug'
     end,
     program = '${file}',
   },
@@ -179,8 +171,7 @@ dap.configurations.go = {
     name = 'Launch: program',
     request = 'launch',
     mode = function()
-      return vim.endswith(vim.api.nvim_buf_get_name(0), '_test.go') and 'test'
-        or 'debug'
+      return vim.endswith(vim.api.nvim_buf_get_name(0), '_test.go') and 'test' or 'debug'
     end,
     program = '${workspaceFolder}',
   },

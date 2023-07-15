@@ -52,15 +52,9 @@ return {
       })
 
       ls.add_snippets('lua', {
-        parse(
-          { trig = 'fmt', dscr = 'Format string' },
-          'string.format("${1:formatstring}", $2)$0'
-        ),
+        parse({ trig = 'fmt', dscr = 'Format string' }, 'string.format("${1:formatstring}", $2)$0'),
 
-        parse(
-          { trig = 'req', dscr = 'require a lua module' },
-          'require("${1:modname: string}")'
-        ),
+        parse({ trig = 'req', dscr = 'require a lua module' }, 'require("${1:modname: string}")'),
 
         parse(
           { trig = 'lreq', dscr = 'require and store a lua module' },

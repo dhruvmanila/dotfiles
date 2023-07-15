@@ -36,8 +36,7 @@ return {
             max_width = math.min(math.floor(vim.o.columns * 0.7), 100),
             max_height = math.min(math.floor(vim.o.lines * 0.3), 30),
           })
-          local bufnr, winnr =
-            default_open_floating_preview(contents, syntax, opts)
+          local bufnr, winnr = default_open_floating_preview(contents, syntax, opts)
           keymap.set('n', 'q', '<Cmd>bdelete<CR>', {
             buffer = bufnr,
             nowait = true,
@@ -193,40 +192,32 @@ return {
         end
 
         if supports_method 'textDocument/codeLens' then
-          local lsp_code_lens_group =
-            vim.api.nvim_create_augroup('dm__lsp_code_lens_refresh', {
-              clear = false,
-            })
+          local lsp_code_lens_group = vim.api.nvim_create_augroup('dm__lsp_code_lens_refresh', {
+            clear = false,
+          })
           vim.api.nvim_clear_autocmds {
             buffer = bufnr,
             group = lsp_code_lens_group,
           }
-          vim.api.nvim_create_autocmd(
-            { 'BufEnter', 'CursorHold', 'InsertLeave' },
-            {
-              group = lsp_code_lens_group,
-              buffer = bufnr,
-              callback = lsp.codelens.refresh,
-              desc = 'LSP: Refresh codelens',
-            }
-          )
+          vim.api.nvim_create_autocmd({ 'BufEnter', 'CursorHold', 'InsertLeave' }, {
+            group = lsp_code_lens_group,
+            buffer = bufnr,
+            callback = lsp.codelens.refresh,
+            desc = 'LSP: Refresh codelens',
+          })
           keymap.set('n', '<leader>cl', lsp.codelens.run, {
             buffer = bufnr,
             desc = 'LSP: Run codelens for current line',
           })
         end
 
-        if
-          dm.config.inlay_hints.enable
-          and supports_method 'textDocument/inlayHint'
-        then
+        if dm.config.inlay_hints.enable and supports_method 'textDocument/inlayHint' then
           vim.lsp.inlay_hint(bufnr, true)
           -- TODO: temporarily disable inlay hints in insert mode due to
           -- https://github.com/neovim/neovim/issues/24075
-          local lsp_inlay_hint_group =
-            vim.api.nvim_create_augroup('dm__lsp_inlay_hint', {
-              clear = false,
-            })
+          local lsp_inlay_hint_group = vim.api.nvim_create_augroup('dm__lsp_inlay_hint', {
+            clear = false,
+          })
           vim.api.nvim_clear_autocmds {
             buffer = bufnr,
             group = lsp_inlay_hint_group,
