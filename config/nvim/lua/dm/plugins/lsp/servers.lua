@@ -168,6 +168,7 @@ local servers = {
             enable = true,
           },
         },
+        -- Use `;c` or `:RustRunFlycheck` instead.
         checkOnSave = false,
         check = {
           command = 'clippy',
@@ -243,6 +244,8 @@ local servers = {
         },
         hint = {
           enable = true,
+          arrayIndex = 'Disable',
+          paramName = 'Disable',
         },
         format = {
           enable = false,
