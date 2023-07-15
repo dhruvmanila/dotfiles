@@ -5,24 +5,32 @@ local keymap = vim.keymap
 
 -- Command-Line {{{1
 
+---@param key string
+---@param fallback string
+---@return string
+local function navigate_wildmenu(key, fallback)
+  if vim.fn.wildmenumode() == 1 then
+    return key
+  end
+  return fallback
+end
+
 -- Make <C-p>/<C-n> as smart as <Up>/<Down> {{{
 --
 -- This will either recall older/recent command-line from history, whose
 -- beginning matches the current command-line or move through the wildmenu
 -- completion.
 -- }}}
-keymap.set('c', '<C-p>', "wildmenumode() ? '<C-p>' : '<Up>'", {
-  expr = true,
-  replace_keycodes = false,
-})
-keymap.set('c', '<C-n>', "wildmenumode() ? '<C-n>' : '<Down>'", {
-  expr = true,
-  replace_keycodes = false,
-})
+keymap.set('c', '<C-p>', function()
+  return navigate_wildmenu('<C-p>', '<Up>')
+end, { expr = true })
+keymap.set('c', '<C-n>', function()
+  return navigate_wildmenu('<C-n>', '<Down>')
+end, { expr = true })
 
----Navigate search without leaving incremental mode.
 ---@param key string
 ---@param fallback string
+---@return string
 local function navigate_search(key, fallback)
   local cmdtype = vim.fn.getcmdtype()
   if cmdtype == '/' or cmdtype == '?' then
@@ -52,27 +60,16 @@ end, { expr = true })
 keymap.set('c', '<C-a>', '<Home>')
 keymap.set('c', '<C-e>', '<End>')
 
-keymap.set('c', '<C-f>', '<Right>', { remap = true })
-keymap.set('c', '<C-b>', '<Left>', { remap = true })
-
 -- Make <Left>/<Right> move the cursor instead of selecting a different match
 -- in the wildmenu. See :h 'wildmenu'
 keymap.set('c', '<Left>', '<Space><BS><Left>')
 keymap.set('c', '<Right>', '<Space><BS><Right>')
 
+-- This depends on the above mapping for `<Left>` and `<Right>`.
+keymap.set('c', '<C-f>', '<Right>', { remap = true })
+keymap.set('c', '<C-b>', '<Left>', { remap = true })
+
 -- Insert {{{1
-
--- Movement in insert mode
--- keymap.set("i", "<C-h>", "<C-o>h")
--- keymap.set("i", "<C-l>", "<C-o>l")
--- keymap.set("i", "<C-j>", "<C-o>j")
--- keymap.set("i", "<C-k>", "<C-o>k")
-
--- Change the case for the word under cursor in insert mode
--- '<C-u>': (u)ppercase
--- '<C-t>': (t)itlecase
--- keymap.set("i", "<C-u>", "<esc>viwUea")
-keymap.set('i', '<C-t>', '<esc>b~lea')
 
 -- Normal {{{1
 
@@ -87,7 +84,7 @@ keymap.set('n', '<leader>q', '<Cmd>silent xit<CR>')
 keymap.set('n', '<leader>Q', '<Cmd>xall<CR>')
 
 -- Toggle fold at current position.
----@see https://github.com/neovim/neovim/issues/14090#issuecomment-1113090354
+-- See: https://github.com/neovim/neovim/issues/14090#issuecomment-1113090354
 keymap.set('n', '<C-i>', '<C-i>')
 keymap.set('n', '<Tab>', 'za')
 
@@ -99,13 +96,14 @@ keymap.set('n', 'm<Space>', ':make ')
 -- '~' can also be made to accept motion if 'tildeop' is set to `true`.
 keymap.set({ 'n', 'x' }, 'gu', 'g~')
 
--- Source files (only for lua or vim files)
 keymap.set('n', '<leader>so', function()
   local filetype = vim.bo.filetype
   if filetype == 'lua' or filetype == 'vim' then
     vim.cmd 'source %'
   end
-end)
+end, {
+  desc = 'Source the current lua or vim file',
+})
 
 -- Buffers {{{2
 keymap.set('n', ']<Leader>', "<Cmd>execute v:count .. 'bnext'<CR>")
@@ -115,9 +113,10 @@ keymap.set('n', '<Leader><BS>', '<Cmd>bdelete<CR>')
 -- Fast switching between last and current file
 keymap.set('n', '<Leader><Leader>', '<Cmd>buffer#<CR>')
 
--- Close a buffer without closing the window
 -- See: https://stackoverflow.com/q/4465095/6064933
-keymap.set('n', '<leader>bd', '<Cmd>bprevious <bar> bdelete #<CR>')
+keymap.set('n', '<leader>bd', '<Cmd>bprevious <bar> bdelete #<CR>', {
+  desc = 'Delete a buffer without closing the window',
+})
 
 -- Jumps {{{2
 
@@ -168,7 +167,7 @@ local function quickfix_navigation(cmd, reset)
       -- No more items in the quickfix list; wrap around the edge
       --
       -- Reference: "Vim(cnext):E553: No more items"
-      if err:match '^Vim%(%a+%):E553:' then
+      if err:match 'Vim%(%a+%):E553:' then
         vim.cmd(reset)
       end
     end
@@ -198,9 +197,20 @@ keymap.set('n', '[Q', '<Cmd>cfirst<CR>')
 keymap.set('n', ']L', '<Cmd>llast<CR>')
 keymap.set('n', '[L', '<Cmd>lfirst<CR>')
 
--- Close location list or quickfix list if they are present,
 -- Source: https://superuser.com/q/355325/736190
-keymap.set('n', '<leader>x', '<Cmd>windo lclose <bar> cclose<CR>')
+keymap.set('n', '<leader>x', function()
+  vim.iter(vim.api.nvim_tabpage_list_wins(0)):map(function(winnr)
+    if
+      vim.api.nvim_get_option_value('filetype', {
+        buf = vim.api.nvim_win_get_buf(winnr),
+      }) == 'qf'
+    then
+      vim.api.nvim_win_close(winnr, true)
+    end
+  end)
+end, {
+  desc = 'Close any opened location and quickfix list in the current tabpage',
+})
 
 -- Registers {{{2
 
@@ -244,13 +254,9 @@ keymap.set('n', '#', '#``')
 
 -- Substitute {{{2
 
--- Multiple Cursor Replacement {{{
---
--- Use `cn/cN` to change the word under cursor or visually selected text and then
--- repeat using . (dot) n - 1 times. We can use `n/N` to skip some replacements.
+-- Multiple Cursor Replacement
 --
 -- Source: http://www.kevinli.co/posts/2017-01-19-multiple-cursors-in-500-bytes-of-vimscript/
--- }}}
 --
 --                     ┌ populate search register with word under cursor
 --                     │
@@ -258,17 +264,30 @@ keymap.set('n', '#', '#``')
 --                     ││
 --                     ││ ┌ change next occurrence of last used search pattern
 --                     │├┐├─┐
-keymap.set('n', 'cn', '*``cgn')
-keymap.set('n', 'cN', '*``cgN')
+keymap.set('n', 'cn', '*``cgn', {
+  desc = 'Change |word| under cursor, repeat (`.`) or skip (`n`) in forward direction',
+})
+keymap.set('n', 'cN', '*``cgN', {
+  desc = 'Change |word| under cursor, repeat (`.`) or skip (`N`) in backward direction',
+})
 
 -- Similarly in Visual mode
 vim.g.mc = vim.keycode [[y/\V<C-r>=escape(@", '/')<CR><CR>]]
-keymap.set('x', 'cn', [[g:mc . "``cgn"]], { expr = true })
-keymap.set('x', 'cN', [[g:mc . "``cgN"]], { expr = true })
+keymap.set('x', 'cn', [[g:mc . "``cgn"]], {
+  expr = true,
+  desc = 'Change visually selected text, repeat (`.`) or skip (`n`) in forward direction',
+})
+keymap.set('x', 'cN', [[g:mc . "``cgN"]], {
+  expr = true,
+  desc = 'Change visually selected text, repeat (`.`) or skip (`N`) in backward direction',
+})
 
--- Substitute the word on cursor or visually selected text globally
-keymap.set('n', '<Leader>su', [[:%s/\<<C-r><C-w>\>//g<Left><Left>]])
-keymap.set('x', '<leader>su', [["zy:%s/\<<C-r><C-o>"\>//g<Left><Left>]])
+keymap.set('n', '<Leader>su', [[:%s/\<<C-r><C-w>\>//g<Left><Left>]], {
+  desc = 'Substitute |word| under cursor globally',
+})
+keymap.set('x', '<leader>su', [["zy:%s/\<<C-r><C-o>"\>//g<Left><Left>]], {
+  desc = 'Substitute visually selected text globally',
+})
 
 -- Tabs {{{2
 
@@ -286,23 +305,29 @@ local function move_tabpage(forward)
   end
 end
 
--- Move the current tabpage in the forward or backward direction wrapping
--- around at the ends.
 keymap.set('n', ']t', function()
   move_tabpage(true)
-end)
+end, {
+  desc = 'Move the current tabpage in the forward direction wrapping around',
+})
 keymap.set('n', '[t', function()
   move_tabpage(false)
-end)
+end, {
+  desc = 'Move the current tabpage in the backward direction wrapping around',
+})
 
 -- Tab navigation
 --   - `<leader>n` goes to nth tab
 --   - `<leader>0` goes to the last tab as on a normal keyboard the
 --     numeric keys are from 1,2,...0.
 for i = 1, 9 do
-  keymap.set('n', '<leader>' .. i, i .. 'gt')
+  keymap.set('n', '<leader>' .. i, i .. 'gt', {
+    desc = ('Go to tabpage %d'):format(i),
+  })
 end
-keymap.set('n', '<leader>0', '<Cmd>tablast<CR>')
+keymap.set('n', '<leader>0', '<Cmd>tablast<CR>', {
+  desc = 'Go to the last tabpage',
+})
 
 -- Windows {{{2
 
