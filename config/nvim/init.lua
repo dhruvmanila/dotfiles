@@ -49,6 +49,9 @@ local namespace = {
 
     -- Provide VSCode like code action lightbulb.
     code_action_lightbulb = { enable = false },
+
+    -- LSP inlay hints.
+    inlay_hints = { enable = false },
   },
 }
 
