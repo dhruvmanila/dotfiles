@@ -154,7 +154,7 @@ return {
             buffer = bufnr,
             group = lsp_document_highlight_group,
           }
-          vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+          vim.api.nvim_create_autocmd('CursorHold', {
             group = lsp_document_highlight_group,
             buffer = bufnr,
             callback = lsp.buf.document_highlight,
@@ -178,7 +178,7 @@ return {
               buffer = bufnr,
               group = lsp_code_action_group,
             }
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+            vim.api.nvim_create_autocmd('CursorHold', {
               group = lsp_code_action_group,
               buffer = bufnr,
               callback = require('dm.plugins.lsp.code_action').listener,
