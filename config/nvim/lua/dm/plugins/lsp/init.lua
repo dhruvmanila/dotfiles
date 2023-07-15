@@ -202,7 +202,7 @@ return {
             group = lsp_code_lens_group,
           }
           vim.api.nvim_create_autocmd(
-            { 'BufEnter', 'InsertLeave', 'BufWritePost' },
+            { 'BufEnter', 'CursorHold', 'InsertLeave' },
             {
               group = lsp_code_lens_group,
               buffer = bufnr,
