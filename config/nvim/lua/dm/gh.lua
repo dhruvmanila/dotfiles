@@ -1,7 +1,5 @@
 local M = {}
 
-local job = require 'dm.job'
-
 ---@class GitHubStar
 ---@field name string
 ---@field description string
@@ -33,17 +31,17 @@ end
 -- `_CachedGithubStars` for the current Neovim session.
 ---@see telescope._extensions.github_stars
 function M.collect_stars()
-  job {
-    cmd = 'gh',
-    args = { 'api', 'user/starred', '--paginate', '--cache', '24h' },
-    on_exit = function(result)
+  vim.system(
+    { 'gh', 'api', 'user/starred', '--paginate', '--cache', '24h' },
+    ---@param result SystemCompleted
+    function(result)
       if result.code > 0 then
         dm.notify('Telescope', result.stderr, 4)
         return
       end
       parse_gh_stars_data(result.stdout)
-    end,
-  }
+    end
+  )
 end
 
 return M

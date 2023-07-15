@@ -26,4 +26,4 @@ vim.defer_fn(function()
     math.max(1, input_line_number) + cursor_line,
     cursor_column,
   })
-end, 40)
+end, 100)

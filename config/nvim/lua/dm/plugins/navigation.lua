@@ -62,7 +62,7 @@ return {
       ['<C-b>'] = 'actions.preview_scroll_up',
       ['~'] = {
         callback = function()
-          vim.cmd.edit(vim.g.os_homedir)
+          require('oil').open(vim.g.os_homedir)
         end,
         desc = 'Goto OS home directory',
       },
@@ -80,8 +80,9 @@ return {
       },
       ['gr'] = {
         callback = function()
+          local oil = require 'oil'
           local _, gitdir = next(vim.fs.find('.git', {
-            path = require('oil').get_current_dir(),
+            path = oil.get_current_dir(),
             upward = true,
             type = 'directory',
             stop = vim.g.os_homedir,
@@ -89,7 +90,7 @@ return {
           if gitdir == nil then
             return
           end
-          require('oil').open(vim.fs.dirname(gitdir))
+          oil.open(vim.fs.dirname(gitdir))
         end,
         desc = 'Goto to git root directory',
       },
