@@ -27,10 +27,12 @@ local cache = {
   runnable = nil,
 }
 
--- Spawns the command in a new terminal opened in a horizontal split at
--- the bottom.
+-- Spawns the command in a new terminal opened in a horizontal split at the bottom.
 --
--- This uses `vim.fn.termopen` to run the command.
+-- Implementation behavior:
+-- - Uses the `vim.fn.termopen` function to run the command.
+-- - The buffer is scrolled to the bottom on every new line.
+-- - The cursor is moved to the bottom for the first time the buffer is entered.
 --
 -- Keybindings:
 --    `q`: Quit the terminal window
@@ -38,26 +40,39 @@ local cache = {
 ---@param args string[]
 ---@param cwd string
 local function execute_command(cmd, args, cwd)
+  local original_winnr = vim.api.nvim_get_current_win()
   if cache.bufnr and vim.api.nvim_buf_is_valid(cache.bufnr) then
     vim.api.nvim_buf_delete(cache.bufnr, { force = true })
   end
   cache.bufnr = vim.api.nvim_create_buf(false, true)
 
   vim.cmd.split()
-  vim.api.nvim_win_set_buf(vim.api.nvim_get_current_win(), cache.bufnr)
-  vim.cmd.resize(-5)
+  local terminal_winnr = vim.api.nvim_get_current_win()
+  vim.api.nvim_win_set_buf(terminal_winnr, cache.bufnr)
+  vim.cmd.resize(math.ceil(vim.o.lines * 0.35))
   vim.api.nvim_buf_set_keymap(cache.bufnr, 'n', 'q', '<Cmd>q<CR>', {
     noremap = true,
   })
 
-  vim.cmd.stopinsert()
   vim.fn.termopen(('%s %s'):format(cmd, table.concat(args, ' ')), {
     cwd = cwd,
   })
+  vim.api.nvim_set_current_win(original_winnr)
 
   vim.api.nvim_buf_attach(cache.bufnr, false, {
+    on_lines = function(_, bufnr)
+      vim.api.nvim_win_set_cursor(terminal_winnr, { vim.api.nvim_buf_line_count(bufnr), 0 })
+    end,
     on_detach = function()
       cache.bufnr = nil
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('BufEnter', {
+    buffer = cache.bufnr,
+    once = true,
+    callback = function(event)
+      vim.api.nvim_win_set_cursor(terminal_winnr, { vim.api.nvim_buf_line_count(event.buf), 0 })
     end,
   })
 end
@@ -102,26 +117,28 @@ local function debug_runnable(runnable)
     end
   end
 
-  local notification =
-    dm.notify('Rust', 'Compiling a debug build for debugging. This might take some time...')
+  dm.notify('Rust', 'Compiling a debug build for debugging. This might take some time...', nil, {
+    timeout = false,
+  })
 
   vim.system(
     vim.tbl_flatten { 'cargo', cargo_args },
     { cwd = runnable.args.workspaceRoot },
     ---@param result SystemCompleted
-    function(result)
+    vim.schedule_wrap(function(result)
+      require('notify').dismiss()
       if result.code > 0 then
         dm.notify(
           'Rust',
           'An error occurred while compiling:\n' .. result.stderr,
-          vim.log.levels.ERROR,
-          { replace = notification }
+          vim.log.levels.ERROR
         )
         return
       end
+      dm.notify('Rust', 'Compilation successful')
 
       local executables = {}
-      for _, value in ipairs(vim.split(result.stdout, '\n', { trimempty = true })) do
+      for _, value in ipairs(vim.split(result.stdout or '', '\n', { trimempty = true })) do
         local artifact = vim.json.decode(value, { luanil = { object = true } })
         ---@cast artifact table
         if artifact.reason == 'compiler-artifact' and artifact.executable then
@@ -161,7 +178,7 @@ local function debug_runnable(runnable)
       }
       log.fmt_info('Launching DAP with config: %s', dap_config)
       require('dap').run(dap_config)
-    end
+    end)
   )
 end
 
