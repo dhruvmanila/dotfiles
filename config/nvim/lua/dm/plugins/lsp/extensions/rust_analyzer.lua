@@ -17,15 +17,45 @@ local log = require 'dm.log'
 ---@field kind 'cargo'
 ---@field args CargoRunnableArgs
 
+---@class ExpandedMacro
+---@field name string
+---@field expansion string
+
 local cache = {
   -- Bufnr for the latest executed command.
   ---@type number?
-  bufnr = nil,
+  run_single_bufnr = nil,
+
+  -- Bufnr for the latest expanded macro output.
+  ---@type number?
+  expand_macro_bufnr = nil,
 
   -- Last runnable.
   ---@type CargoRunnable?
   runnable = nil,
 }
+
+-- Delete the buffer if it exists.
+---@param bufnr number?
+local function delete_bufnr(bufnr)
+  if bufnr and vim.api.nvim_buf_is_valid(bufnr) then
+    vim.api.nvim_buf_delete(bufnr, { force = true })
+  end
+end
+
+-- Format the macro expansion output.
+---@param macro ExpandedMacro
+---@return string[]
+local function format_macro_expansion(macro)
+  local header = ('// Rescursive expansion of `%s` macro:'):format(macro.name)
+  return vim.tbl_flatten {
+    header,
+    '// ' .. string.rep('=', #header - 3),
+    '',
+    '',
+    vim.split(macro.expansion, '\n', { plain = true }),
+  }
+end
 
 -- Spawns the command in a new terminal opened in a horizontal split at the bottom.
 --
@@ -41,16 +71,14 @@ local cache = {
 ---@param cwd string
 local function execute_command(cmd, args, cwd)
   local original_winnr = vim.api.nvim_get_current_win()
-  if cache.bufnr and vim.api.nvim_buf_is_valid(cache.bufnr) then
-    vim.api.nvim_buf_delete(cache.bufnr, { force = true })
-  end
-  cache.bufnr = vim.api.nvim_create_buf(false, true)
+  delete_bufnr(cache.run_single_bufnr)
+  cache.run_single_bufnr = vim.api.nvim_create_buf(false, true)
 
   vim.cmd.split()
   local terminal_winnr = vim.api.nvim_get_current_win()
-  vim.api.nvim_win_set_buf(terminal_winnr, cache.bufnr)
+  vim.api.nvim_win_set_buf(terminal_winnr, cache.run_single_bufnr)
   vim.cmd.resize(math.ceil(vim.o.lines * 0.35))
-  vim.api.nvim_buf_set_keymap(cache.bufnr, 'n', 'q', '<Cmd>q<CR>', {
+  vim.api.nvim_buf_set_keymap(cache.run_single_bufnr, 'n', 'q', '<Cmd>q<CR>', {
     noremap = true,
   })
 
@@ -59,17 +87,17 @@ local function execute_command(cmd, args, cwd)
   })
   vim.api.nvim_set_current_win(original_winnr)
 
-  vim.api.nvim_buf_attach(cache.bufnr, false, {
+  vim.api.nvim_buf_attach(cache.run_single_bufnr, false, {
     on_lines = function(_, bufnr)
       vim.api.nvim_win_set_cursor(terminal_winnr, { vim.api.nvim_buf_line_count(bufnr), 0 })
     end,
     on_detach = function()
-      cache.bufnr = nil
+      cache.run_single_bufnr = nil
     end,
   })
 
   vim.api.nvim_create_autocmd('BufEnter', {
-    buffer = cache.bufnr,
+    buffer = cache.run_single_bufnr,
     once = true,
     callback = function(event)
       vim.api.nvim_win_set_cursor(terminal_winnr, { vim.api.nvim_buf_line_count(event.buf), 0 })
@@ -276,6 +304,40 @@ function M.run_flycheck()
   vim.lsp.buf_notify(0, 'rust-analyzer/runFlycheck', {
     textDocument = vim.lsp.util.make_text_document_params(),
   })
+end
+
+function M.expand_macro_recursively()
+  vim.lsp.buf_request(
+    0,
+    'rust-analyzer/expandMacro',
+    vim.lsp.util.make_position_params(),
+    ---@param expanded ExpandedMacro
+    function(_, expanded)
+      if expanded == nil then
+        dm.notify('Rust', 'No macro under cursor', vim.log.levels.WARN)
+        return
+      end
+
+      delete_bufnr(cache.expand_macro_bufnr)
+      cache.expand_macro_bufnr = vim.api.nvim_create_buf(false, true)
+      vim.cmd.split()
+      vim.api.nvim_win_set_buf(0, cache.expand_macro_bufnr)
+      vim.cmd.resize(math.ceil(vim.o.lines * 0.3))
+      vim.api.nvim_buf_set_keymap(cache.expand_macro_bufnr, 'n', 'q', '<Cmd>q<CR>', {
+        noremap = true,
+      })
+      vim.api.nvim_set_option_value('filetype', 'rust', { buf = cache.expand_macro_bufnr })
+      vim.api.nvim_buf_set_lines(
+        cache.expand_macro_bufnr,
+        0,
+        0,
+        false,
+        format_macro_expansion(expanded)
+      )
+      -- Move cursor to the start of the macro expansion.
+      vim.api.nvim_win_set_cursor(0, { 5, 0 })
+    end
+  )
 end
 
 return M

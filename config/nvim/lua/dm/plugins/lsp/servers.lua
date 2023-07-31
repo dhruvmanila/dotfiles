@@ -197,11 +197,15 @@ local servers = {
     },
     commands = {
       RustRunnables = {
-        extensions.rust_analyzer.runnables,
+        function()
+          extensions.rust_analyzer.runnables()
+        end,
         desc = 'rust-analyzer: runnables',
       },
       RustLastRun = {
-        extensions.rust_analyzer.execute_last_runnable,
+        function()
+          extensions.rust_analyzer.execute_last_runnable()
+        end,
         desc = 'rust-analyzer: execute last runnable',
       },
       RustViewCrateGraph = {
@@ -221,6 +225,12 @@ local servers = {
           extensions.rust_analyzer.run_flycheck()
         end,
         desc = 'rust-analyzer: Run Flycheck',
+      },
+      RustExpandMacro = {
+        function()
+          extensions.rust_analyzer.expand_macro_recursively()
+        end,
+        desc = 'rust-analyzer: Expand macro recursively',
       },
     },
   },

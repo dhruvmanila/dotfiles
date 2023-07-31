@@ -85,6 +85,10 @@ return {
             buffer = bufnr,
             desc = 'LSP (rust-analyzer): Run flycheck',
           })
+          keymap.set('n', '<leader>rm', rust_analyzer.expand_macro_recursively, {
+            buffer = bufnr,
+            desc = 'LSP (rust-analyzer): Expand macro recursively',
+          })
         end
 
         if supports_method 'textDocument/hover' then
