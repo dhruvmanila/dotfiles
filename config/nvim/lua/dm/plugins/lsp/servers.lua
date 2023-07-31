@@ -164,8 +164,7 @@ local servers = {
             enable = true,
           },
         },
-        -- Use `;c` or `:RustRunFlycheck` instead.
-        checkOnSave = false,
+        checkOnSave = true,
         check = {
           command = 'clippy',
         },
@@ -182,6 +181,16 @@ local servers = {
         },
       },
     },
+    on_init = function(client)
+      local path = client.workspace_folders[1].name
+      if vim.fs.basename(path) == 'ruff' then
+        -- Disable `checkOnSave` for Ruff monorepo as it takes too long.
+        -- Use `;c` or `:RustRunFlycheck` to manually check.
+        client.config.settings['rust-analyzer'].checkOnSave = false
+      end
+      client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+      return true
+    end,
     capabilities = {
       experimental = {
         commands = {
