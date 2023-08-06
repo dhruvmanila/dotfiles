@@ -1,90 +1,165 @@
-import argparse
 import shlex
+from collections.abc import Iterable
 from pathlib import Path
+from typing import Annotated, Optional
 
+import typer
 import watchfiles
 
 PLAYGROUND_DIR = Path.home().joinpath("playground", "ruff")
 RUFF_DIR = Path.home().joinpath("work", "astral", "ruff")
 RUFF_FIXTURES_DIR = RUFF_DIR.joinpath("crates", "ruff", "resources", "test", "fixtures")
 
-DESCRIPTION = """
-A tool to help in `ruff` development.
-"""
+app = typer.Typer(rich_markup_mode="rich")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=DESCRIPTION)
-    parser.add_argument("rule", nargs="?", help="rule to run")
-    parser.add_argument(
-        "--play", action="store_true", help="use the fixture from playground"
+def start_watchfiles(*paths: Path | str, command: Iterable[str]) -> None:
+    """Start a watchfiles process."""
+    typer.secho(
+        f"Starting watchfiles for '{typer.style(command, fg=typer.colors.GREEN, bold=True)}'..."  # noqa: E501
     )
-    parser.add_argument(
-        "ruff_args",
-        nargs="*",
-        metavar="-- RUFF_ARGS",
-        help="anything after -- will be passed to ruff",
+    typer.secho(
+        "Watching the following paths for changes:\n"
+        + "\n".join(f"  * {typer.style(path, bold=True)}" for path in paths)
     )
-    args = parser.parse_intermixed_args()
+    watchfiles.run_process(
+        *paths,
+        target=" ".join(command),
+        target_type="command",
+    )
 
-    if Path.cwd() != RUFF_DIR:
-        print(f"This script must be run from {str(RUFF_DIR)!r}")
-        return 1
 
-    if args.rule is None:
-        watchfiles.run_process(
+@app.command()
+def docs() -> None:
+    """Watch for changes in docs and generate them."""
+    start_watchfiles(
+        "crates/ruff",
+        "mkdocs.template.yml",
+        "mkdocs.insiders.yml",
+        "scripts/generate_mkdocs.py",
+        # Only include the files that aren't auto-generated.
+        "docs/tutorial.md",
+        "docs/installation.md",
+        "docs/usage.md",
+        "docs/configuration.md",
+        "docs/editor-integrations.md",
+        "docs/faq.md",
+        command=["python", "scripts/generate_mkdocs.py"],
+    )
+
+
+@app.command()
+def formatter() -> None:
+    """Watch for changes in `ruff_python_formatter` and build it."""
+    start_watchfiles(
+        "crates/ruff_python_formatter",
+        command=["cargo", "build", "--bin", "ruff_python_formatter"],
+    )
+
+
+@app.command()
+def linter(
+    rule: Annotated[
+        Optional[str],
+        typer.Option("--rule", "-r", metavar="[RULE]", help="Rule code to run"),
+    ] = None,
+    play: Annotated[
+        bool,
+        typer.Option("--play", "-p", help="Use the fixture from playground"),
+    ] = False,
+    ruff_args: Annotated[
+        Optional[list[str]],
+        typer.Argument(
+            metavar="-- [RUFF_ARGS]...",
+            help="Anything after -- will be passed to [cyan bold]ruff check ...[/]",
+            show_default=False,
+        ),
+    ] = None,
+) -> None:
+    """Help with Ruff rule development.
+
+    If no rule is specified, it will watch for changes in the `ruff` crate and build it.
+
+    If a rule is specified, it will watch for changes in the fixture files related to
+    that rule and run the `check` command for that rule. If unable to find any fixture
+    file, it will exit with an error.
+
+    If `--play` is specified, it will use the fixture file from the playground instead,
+    and create it if it doesn't exist.
+    """
+    if rule is None:
+        start_watchfiles(
             RUFF_DIR.joinpath("crates", "ruff"),
-            target=" ".join(
-                [
-                    "cargo",
-                    "build",
-                    "--all-features",
-                    "--bin=ruff",
-                ]
-            ),
-            target_type="command",
+            command=[
+                "cargo",
+                "build",
+                "--all-features",
+                "--bin=ruff",
+                "--package=ruff_cli",
+            ],
         )
-        return 0
+        return
 
-    if args.play:
-        playground_file = PLAYGROUND_DIR.joinpath("src", f"{args.rule}.py")
+    if play:
+        playground_file = PLAYGROUND_DIR.joinpath("src", f"{rule}.py")
         if not playground_file.exists():
-            print(f"Creating {str(playground_file)!r}...")
+            typer.secho(
+                f"Creating {typer.style(playground_file, fg=typer.colors.GREEN)}..."
+            )
             playground_file.parent.mkdir(parents=True, exist_ok=True)
             playground_file.touch()
         fixture_paths = [shlex.quote(str(playground_file))]
     else:
         fixture_paths = [
             shlex.quote(str(fixture_path.relative_to(RUFF_DIR)))
-            for fixture_path in RUFF_FIXTURES_DIR.glob(f"**/*{args.rule}*.py*")
+            for fixture_path in RUFF_FIXTURES_DIR.glob(f"**/*{rule}*.py*")
         ]
 
     if not fixture_paths:
-        print(f"Unable to find any fixture file for rule {args.rule!r}")
-        return 1
+        typer.secho(
+            (
+                "Unable to find any fixture file for rule "
+                + typer.style(repr(rule), bold=True)
+            ),
+            err=True,
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
 
-    watchfiles.run_process(
-        RUFF_DIR.joinpath("crates", "ruff"),
+    start_watchfiles(
+        "crates/ruff",
         *fixture_paths,
-        target=" ".join(
-            [
-                "cargo",
-                "run",
-                "--all-features",
-                "--bin=ruff",
-                "--",
-                "check",
-                f"--select={args.rule}",
-                "--no-cache",
-                "--show-source",
-                *args.ruff_args,
-                " ".join(fixture_paths),
-            ]
-        ),
-        target_type="command",
+        command=[
+            "cargo",
+            "run",
+            "--all-features",
+            "--bin=ruff",
+            "--package=ruff_cli",
+            "--",
+            "check",
+            f"--select={rule}",
+            "--no-cache",
+            "--show-source",
+            *(ruff_args or []),
+            " ".join(fixture_paths),
+        ],
     )
-    return 0
+
+
+@app.callback(
+    invoke_without_command=True,
+    no_args_is_help=True,
+)
+def main() -> None:
+    """A CLI tool to help with Ruff development."""
+    if Path.cwd() != RUFF_DIR:
+        typer.secho(
+            "This script must be run from " + typer.style(RUFF_DIR, bold=True),
+            err=True,
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(1)
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    app()
