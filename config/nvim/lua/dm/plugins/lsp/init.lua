@@ -7,6 +7,7 @@ return {
     },
     config = function()
       local lsp = vim.lsp
+      local M = vim.lsp.protocol.Methods
       local keymap = vim.keymap
 
       local lspconfig = require 'lspconfig'
@@ -91,56 +92,56 @@ return {
           })
         end
 
-        if supports_method 'textDocument/hover' then
+        if supports_method(M.textDocument_hover) then
           keymap.set('n', 'K', lsp.buf.hover, {
             buffer = bufnr,
             desc = 'LSP: Hover',
           })
         end
 
-        if supports_method 'textDocument/definition' then
+        if supports_method(M.textDocument_definition) then
           keymap.set('n', 'gd', lsp.buf.definition, {
             buffer = bufnr,
             desc = 'LSP: Goto definition',
           })
         end
 
-        if supports_method 'textDocument/declaration' then
+        if supports_method(M.textDocument_declaration) then
           keymap.set('n', 'gD', lsp.buf.declaration, {
             buffer = bufnr,
             desc = 'LSP: Goto declaration',
           })
         end
 
-        if supports_method 'textDocument/typeDefinition' then
+        if supports_method(M.textDocument_typeDefinition) then
           keymap.set('n', 'gy', lsp.buf.type_definition, {
             buffer = bufnr,
             desc = 'LSP: Goto type definition',
           })
         end
 
-        if supports_method 'textDocument/implementation' then
+        if supports_method(M.textDocument_implementation) then
           keymap.set('n', 'gi', lsp.buf.implementation, {
             buffer = bufnr,
             desc = 'LSP: Goto implementation',
           })
         end
 
-        if supports_method 'textDocument/references' then
+        if supports_method(M.textDocument_references) then
           keymap.set('n', 'gr', lsp.buf.references, {
             buffer = bufnr,
             desc = 'LSP: Goto references',
           })
         end
 
-        if supports_method 'textDocument/rename' then
+        if supports_method(M.textDocument_rename) then
           keymap.set('n', '<leader>rn', lsp.buf.rename, {
             buffer = bufnr,
             desc = 'LSP: Rename',
           })
         end
 
-        if supports_method 'textDocument/signatureHelp' then
+        if supports_method(M.textDocument_signatureHelp) then
           keymap.set('n', '<C-s>', lsp.buf.signature_help, {
             buffer = bufnr,
             desc = 'LSP: Signature help',
@@ -148,7 +149,7 @@ return {
         end
 
         -- Hl groups: LspReferenceText, LspReferenceRead, LspReferenceWrite
-        if supports_method 'textDocument/documentHighlight' then
+        if supports_method(M.textDocument_documentHighlight) then
           local lsp_document_highlight_group =
             vim.api.nvim_create_augroup('dm__lsp_document_highlight', {
               clear = false,
@@ -171,7 +172,7 @@ return {
           })
         end
 
-        if supports_method 'textDocument/codeAction' then
+        if supports_method(M.textDocument_codeAction) then
           if dm.config.code_action_lightbulb.enable then
             local lsp_code_action_group =
               vim.api.nvim_create_augroup('dm__lsp_code_action_lightbulb', {
@@ -195,7 +196,7 @@ return {
           })
         end
 
-        if supports_method 'textDocument/codeLens' then
+        if supports_method(M.textDocument_codeLens) then
           local lsp_code_lens_group = vim.api.nvim_create_augroup('dm__lsp_code_lens_refresh', {
             clear = false,
           })
@@ -215,7 +216,7 @@ return {
           })
         end
 
-        if dm.config.inlay_hints.enable and supports_method 'textDocument/inlayHint' then
+        if dm.config.inlay_hints.enable and supports_method(M.textDocument_inlayHint) then
           vim.lsp.inlay_hint(bufnr, true)
           -- TODO: temporarily disable inlay hints in insert mode due to
           -- https://github.com/neovim/neovim/issues/24075

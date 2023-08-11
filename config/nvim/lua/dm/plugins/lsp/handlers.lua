@@ -1,5 +1,7 @@
 ---@diagnostic disable: duplicate-set-field
 
+local M = vim.lsp.protocol.Methods
+
 -- Modified version of the original handler. This will open the quickfix
 -- window only if the response is a list and the count is greater than 1.
 local function location_handler(err, result, ctx)
@@ -31,10 +33,10 @@ local function location_handler(err, result, ctx)
   end
 end
 
-vim.lsp.handlers['textDocument/definition'] = location_handler
-vim.lsp.handlers['textDocument/declaration'] = location_handler
-vim.lsp.handlers['textDocument/typeDefinition'] = location_handler
-vim.lsp.handlers['textDocument/implementation'] = location_handler
+vim.lsp.handlers[M.textDocument_definition] = location_handler
+vim.lsp.handlers[M.textDocument_declaration] = location_handler
+vim.lsp.handlers[M.textDocument_typeDefinition] = location_handler
+vim.lsp.handlers[M.textDocument_implementation] = location_handler
 
 do
   local levels = {
@@ -45,7 +47,7 @@ do
   }
 
   -- See: https://github.com/neovim/nvim-lspconfig/wiki/User-contributed-tips#use-nvim-notify-to-display-lsp-messages
-  vim.lsp.handlers['window/showMessage'] = function(err, result, ctx)
+  vim.lsp.handlers[M.window_showMessage] = function(err, result, ctx)
     if err then
       dm.notify('LSP', tostring(err), vim.log.levels.ERROR)
       return
@@ -66,7 +68,7 @@ end
 --
 -- TODO: Remove this once a PR for this is merged
 do
-  local original_handler = vim.lsp.handlers['textDocument/publishDiagnostics']
+  local original_handler = vim.lsp.handlers[M.textDocument_publishDiagnostics]
 
   -- See: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticRelatedInformation
   local function show_related_information(diagnostic)
@@ -86,7 +88,7 @@ do
     return diagnostic
   end
 
-  vim.lsp.handlers['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
+  vim.lsp.handlers[M.textDocument_publishDiagnostics] = function(err, result, ctx, config)
     result.diagnostics = vim.tbl_map(show_related_information, result.diagnostics)
     original_handler(err, result, ctx, config)
   end

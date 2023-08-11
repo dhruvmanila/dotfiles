@@ -1,3 +1,5 @@
+local M = vim.lsp.protocol.Methods
+
 local extensions = require 'dm.plugins.lsp.extensions'
 
 -- LSP server configurations
@@ -59,7 +61,7 @@ local servers = {
           client.config.settings.gopls['local'] = vim.split(line, ' ', { plain = true })[2]
         end
       end
-      client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+      client.notify(M.workspace_didChangeConfiguration, { settings = client.config.settings })
       return true
     end,
   },
@@ -155,7 +157,6 @@ local servers = {
   --
   -- Settings: https://rust-analyzer.github.io/manual.html#configuration
   rust_analyzer = {
-    cmd = { 'rustup', 'run', 'nightly', 'rust-analyzer' },
     settings = {
       ['rust-analyzer'] = {
         cargo = {
@@ -188,7 +189,7 @@ local servers = {
         -- Use `;c` or `:RustRunFlycheck` to manually check.
         client.config.settings['rust-analyzer'].checkOnSave = false
       end
-      client.notify('workspace/didChangeConfiguration', { settings = client.config.settings })
+      client.notify(M.workspace_didChangeConfiguration, { settings = client.config.settings })
       return true
     end,
     capabilities = {
