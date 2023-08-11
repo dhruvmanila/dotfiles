@@ -107,7 +107,7 @@ local client_completion = function(arglead, line)
       end,
       vim.tbl_filter(function(client)
         return client.name:match(arglead)
-      end, vim.lsp.get_active_clients())
+      end, vim.lsp.get_clients())
     )
   elseif count == 1 then
     -- Autocomplete client object fields
@@ -121,7 +121,7 @@ local client_completion = function(arglead, line)
 end
 
 nvim_create_user_command('LspClient', function(opts)
-  local _, info = next(vim.lsp.get_active_clients {
+  local _, info = next(vim.lsp.get_clients {
     name = opts.fargs[1],
   })
   if opts.fargs[2] ~= nil then
