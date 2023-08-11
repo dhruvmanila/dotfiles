@@ -31,7 +31,7 @@ end
 ---@param question string
 ---@return boolean
 local function confirm(question)
-  return fn.confirm(question .. '?', '&Yes\n&No') == 1
+  return fn.confirm(question, '&Yes\n&No') == 1
 end
 
 -- Return the `git` branch for the current project.
@@ -49,6 +49,18 @@ local function current_git_branch()
   if branch ~= '' then
     return branch
   end
+end
+
+-- Return `true` if the given `git` branch exists for the given project, `false`
+-- otherwise.
+---@param project string
+---@param branch string
+---@return boolean
+local function git_branch_exists(project, branch)
+  local result = vim
+    .system({ 'git', 'show-ref', '--heads', '--quiet', branch }, { cwd = project })
+    :wait()
+  return result.code == 0
 end
 
 ---@class Session
@@ -114,6 +126,18 @@ function Session:is_active()
   return self.path == vim.v.this_session
 end
 
+-- Return `true` if the session is dangling, `false` otherwise. A session is
+-- dangling if it's not active, either the project directory or the `git` branch
+-- doesn't exist.
+---@return boolean
+function Session:is_dangling()
+  return not self:is_active()
+    and (
+      fn.isdirectory(self.project) == 0
+      or (self.branch ~= nil and not git_branch_exists(self.project, self.branch))
+    )
+end
+
 -- Return `true` if the session file exists, `false` otherwise.
 ---@return boolean
 function Session:exists()
@@ -165,7 +189,7 @@ end
 local function session_delete(session)
   if not session:exists() then
     dm.notify(TITLE, 'No such session: ' .. session.name, vim.log.levels.WARN)
-  elseif confirm('Remove ' .. session.name) then
+  elseif confirm('Remove ' .. session.name .. '?') then
     local ok, err = uv.fs_unlink(session.path)
     if ok then
       if session.path == vim.v.this_session then
@@ -199,6 +223,42 @@ function M.active_session()
     project = active_session.project,
     branch = active_session.branch,
   }
+end
+
+-- Delete the dangling sessions after prompting for confirmation.
+function M.clean()
+  local dangling_sessions = {}
+  for _, session in ipairs(M.list()) do
+    if session:is_dangling() then
+      table.insert(dangling_sessions, session)
+    end
+  end
+  if #dangling_sessions == 0 then
+    dm.notify(TITLE, 'No dangling sessions to delete')
+    return
+  end
+  local prompt = ('Delete the following %d dangling sessions?\n  %s'):format(
+    #dangling_sessions,
+    table.concat(vim.tbl_map(tostring, dangling_sessions), '\n  ')
+  )
+  if confirm(prompt) then
+    local deleted = 0
+    for _, session in ipairs(dangling_sessions) do
+      local ok, err = uv.fs_unlink(session.path)
+      if ok then
+        deleted = deleted + 1
+      else
+        dm.notify(
+          TITLE,
+          { 'Failed to delete session ' .. session.name .. ':', '', err },
+          vim.log.levels.ERROR
+        )
+      end
+    end
+    dm.notify(TITLE, ('Deleted %d dangling sessions'):format(deleted))
+  else
+    dm.notify(TITLE, 'Deletion aborted')
+  end
 end
 
 -- Close the current session if it exists and open the Dashboard.

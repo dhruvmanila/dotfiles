@@ -34,6 +34,9 @@ vim.keymap.set('n', '<leader>st', session.stop, { desc = 'session: stop' })
 api.nvim_create_user_command('SessionActive', function()
   vim.print(session.active_session())
 end, { desc = 'session: print the active session' })
+api.nvim_create_user_command('SessionClean', function()
+  vim.print(session.clean())
+end, { desc = 'session: delete dangling sessions' })
 
 -- One caveat for storing 'curdir': {{{
 --
