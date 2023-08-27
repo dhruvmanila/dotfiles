@@ -36,6 +36,7 @@ return {
           'markdown_inline',
           'python',
           'query',
+          'requirements',
           'ruby',
           'rust',
           'scheme',
