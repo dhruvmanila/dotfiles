@@ -47,6 +47,7 @@ function usage() {
   echo "  versions     list all the installed Python versions"
   echo "  link         link all available Python versions to '$HOME/.local/bin'"
   echo "  root         display root directory where versions are kept"
+  echo "  update-deps  update installed dependencies"
 }
 
 # Install/Update the `python-build` command under $PREFIX (default: /use/local)
@@ -232,9 +233,14 @@ case "$1" in
         for path in "$PYENV_ROOT/versions"/*; do
           if [[ -d "$path" ]]; then
             version="${path##*/}"
-            # Extract out the "major.minor" part from the version string and
-            # concatenate it to the end to make it valid pythonX.Y string.
-            symlink="$HOME/.local/bin/python${version%.*}"
+            if [[ "$version" = *"-dev" ]]; then
+              # If it's a dev version, let's keep it as it is.
+              symlink="$HOME/.local/bin/python${version}"
+            else
+              # Extract out the "major.minor" part from the version string and
+              # concatenate it to the end to make it valid pythonX.Y string.
+              symlink="$HOME/.local/bin/python${version%.*}"
+            fi
             if ((FORCE)) || [[ ! -e "$symlink" ]]; then
               ln -vsf "$path/bin/python" "$symlink"
             fi
