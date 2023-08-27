@@ -43,6 +43,15 @@ local function delete_bufnr(bufnr)
   end
 end
 
+-- Return the `rust_analyzer` client for the current buffer.
+---@return lsp.Client
+local function lsp_client()
+  return assert(
+    vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf(), name = 'rust_analyzer' })[1],
+    'No rust-analyzer client found for the current buffer'
+  )
+end
+
 -- Format the macro expansion output.
 ---@param macro ExpandedMacro
 ---@return string[]
@@ -220,6 +229,9 @@ end
 
 vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
   local client = vim.lsp.get_client_by_id(ctx.client_id)
+  if client == nil then
+    return
+  end
   vim.lsp.util.jump_to_location(command.arguments[1], client.offset_encoding, true)
 end
 
@@ -228,7 +240,7 @@ vim.lsp.commands['rust-analyzer.showReferences'] = function()
 end
 
 function M.runnables()
-  vim.lsp.buf_request(0, 'experimental/runnables', {
+  lsp_client().request('experimental/runnables', {
     textDocument = vim.lsp.util.make_text_document_params(0),
     position = nil,
   }, function(_, runnables)
@@ -261,7 +273,7 @@ end
 -- View crate graph.
 ---@param full boolean #If true, include all crates, not just crates in the workspace.
 function M.view_crate_graph(full)
-  vim.lsp.buf_request(0, 'rust-analyzer/viewCrateGraph', { full = full }, function(err, graph)
+  lsp_client().request('rust-analyzer/viewCrateGraph', { full = full }, function(err, graph)
     if err ~= nil then
       dm.notify('rust-analyzer', tostring(err), vim.log.levels.ERROR)
       return
@@ -301,14 +313,13 @@ function M.view_crate_graph(full)
 end
 
 function M.run_flycheck()
-  vim.lsp.buf_notify(0, 'rust-analyzer/runFlycheck', {
+  lsp_client().notify('rust-analyzer/runFlycheck', {
     textDocument = vim.lsp.util.make_text_document_params(),
   })
 end
 
 function M.expand_macro_recursively()
-  vim.lsp.buf_request(
-    0,
+  lsp_client().request(
     'rust-analyzer/expandMacro',
     vim.lsp.util.make_position_params(),
     ---@param expanded ExpandedMacro
