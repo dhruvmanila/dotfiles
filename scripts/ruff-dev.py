@@ -13,6 +13,18 @@ RUFF_FIXTURES_DIR = RUFF_DIR.joinpath("crates", "ruff", "resources", "test", "fi
 app = typer.Typer(rich_markup_mode="rich")
 
 
+def playground_file(filename: str) -> Path:
+    """Get the playground file path, creating it if it doesn't exist."""
+    playground_file = PLAYGROUND_DIR.joinpath("src", filename)
+    if not playground_file.exists():
+        typer.secho(
+            f"Creating {typer.style(playground_file, fg=typer.colors.GREEN)}..."
+        )
+        playground_file.parent.mkdir(parents=True, exist_ok=True)
+        playground_file.touch()
+    return playground_file
+
+
 def start_watchfiles(*paths: Path | str, command: Iterable[str]) -> None:
     """Start a watchfiles process."""
     typer.secho(
@@ -58,9 +70,59 @@ def formatter() -> None:
 
 
 @app.command()
+def tokens(
+    file: Annotated[Optional[Path], typer.Argument(...)] = None,
+    play: Annotated[
+        bool,
+        typer.Option("--play", "-p", help="Use the fixture from playground"),
+    ] = False,
+) -> None:
+    """Print the tokens in watch mode.
+
+    If the file is not specified or if `--play` is specified, it will use the file
+    from the playground instead, and create it if it doesn't exist. The playground
+    file is at `~/playground/ruff/src/tokens.py`.
+    """
+    if file is None or play:
+        file = playground_file("tokens.py")
+    start_watchfiles(
+        "crates/ruff_dev",
+        "crates/ruff_python_ast",
+        "crates/ruff_python_parser",
+        str(file),
+        command=["cargo", "dev", "print-tokens", str(file)],
+    )
+
+
+@app.command()
+def ast(
+    file: Annotated[Optional[Path], typer.Argument(...)] = None,
+    play: Annotated[
+        bool,
+        typer.Option("--play", "-p", help="Use the fixture from playground"),
+    ] = False,
+) -> None:
+    """Print the AST in watch mode.
+
+    If the file is not specified or if `--play` is specified, it will use the file
+    from the playground instead, and create it if it doesn't exist. The playground
+    file is at `~/playground/ruff/src/ast.py`.
+    """
+    if file is None or play:
+        file = playground_file("ast.py")
+    start_watchfiles(
+        "crates/ruff_dev",
+        "crates/ruff_python_ast",
+        "crates/ruff_python_parser",
+        str(file),
+        command=["cargo", "dev", "print-ast", str(file)],
+    )
+
+
+@app.command()
 def linter(
-    rule: Annotated[
-        Optional[str],
+    rules: Annotated[
+        Optional[list[str]],
         typer.Option("--rule", "-r", metavar="[RULE]", help="Rule code to run"),
     ] = None,
     play: Annotated[
@@ -78,16 +140,19 @@ def linter(
 ) -> None:
     """Help with Ruff rule development.
 
-    If no rule is specified, it will watch for changes in the `ruff` crate and build it.
+    If no rules are specified, it will watch for changes in the `ruff` crate and
+    build it.
 
-    If a rule is specified, it will watch for changes in the fixture files related to
-    that rule and run the `check` command for that rule. If unable to find any fixture
-    file, it will exit with an error.
+    If any rules are specified, it will watch for changes in the fixture files related
+    to that rule and run the `check` command for that rule. If it's unable to find any
+    fixture file, it will exit with an error.
+
+    Multiple rules can be specified by repeating the `--rule` option.
 
     If `--play` is specified, it will use the fixture file from the playground instead,
     and create it if it doesn't exist.
     """
-    if rule is None:
+    if rules is None:
         start_watchfiles(
             RUFF_DIR.joinpath("crates", "ruff"),
             command=[
@@ -100,26 +165,22 @@ def linter(
         )
         return
 
-    if play:
-        playground_file = PLAYGROUND_DIR.joinpath("src", f"{rule}.py")
-        if not playground_file.exists():
-            typer.secho(
-                f"Creating {typer.style(playground_file, fg=typer.colors.GREEN)}..."
+    fixture_paths = []
+    for rule in rules:
+        if play:
+            fixture_paths.append(shlex.quote(str(playground_file(f"{rule}.py"))))
+        else:
+            fixture_paths.extend(
+                shlex.quote(str(fixture_path.relative_to(RUFF_DIR)))
+                for fixture_path in RUFF_FIXTURES_DIR.glob(f"**/*{rule}*.py*")
             )
-            playground_file.parent.mkdir(parents=True, exist_ok=True)
-            playground_file.touch()
-        fixture_paths = [shlex.quote(str(playground_file))]
-    else:
-        fixture_paths = [
-            shlex.quote(str(fixture_path.relative_to(RUFF_DIR)))
-            for fixture_path in RUFF_FIXTURES_DIR.glob(f"**/*{rule}*.py*")
-        ]
 
     if not fixture_paths:
+        s = "s" if len(rules) > 1 else ""
         typer.secho(
             (
-                "Unable to find any fixture file for rule "
-                + typer.style(repr(rule), bold=True)
+                f"Unable to find any fixture file for rule{s} "
+                + typer.style(", ".join(rules), bold=True)
             ),
             err=True,
             fg=typer.colors.RED,
@@ -137,7 +198,8 @@ def linter(
             "--package=ruff_cli",
             "--",
             "check",
-            f"--select={rule}",
+            f"--select={','.join(rules)}",
+            "--isolated",
             "--no-cache",
             "--show-source",
             *(ruff_args or []),
