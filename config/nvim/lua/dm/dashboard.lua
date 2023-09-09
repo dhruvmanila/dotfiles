@@ -2,18 +2,12 @@ local fn = vim.fn
 local api = vim.api
 
 local Text = require 'dm.text'
+local utils = require 'dm.utils'
 
 -- Variables {{{1
 
 -- Entry description length.
 local DESC_LENGTH = 50
-
--- `guicursor` option value to hide the cursor using the `HiddenCursor`
--- highlight group. This is defined in our colorscheme.
-local HIDDEN_CURSOR = 'a:HiddenCursor/lCursor'
-
--- Dashboard namespace
-local dashboard = {}
 
 ---@class DashboardEntry
 ---@field key string keymap to trigger the `command`
@@ -69,21 +63,70 @@ vim.list_extend(entries, {
   },
 })
 
--- Functions {{{1
-
----@return string[]
-local function generate_header()
-  return {
-    '',
-    '',
-    '',
+local headers = {
+  {
+    '    ▄▄▄▄▄███████████████████▄▄▄▄▄    ',
+    '  ▄██████████▀▀▀▀▀▀▀▀▀▀██████▀████▄  ',
+    ' █▀████████▄             ▀▀████ ▀██▄ ',
+    '█▄▄██████████████████▄▄▄         ▄██▀',
+    ' ▀█████████████████████████▄    ▄██▀ ',
+    '   ▀████▀▀▀▀▀▀▀▀▀▀▀▀█████████▄▄██▀   ',
+    '     ▀███▄              ▀██████▀     ',
+    '       ▀██████▄        ▄████▀        ',
+    '          ▀█████▄▄▄▄▄▄▄███▀          ',
+    '            ▀████▀▀▀████▀            ',
+    '              ▀███▄███▀              ',
+    '                 ▀█▀                 ',
+  },
+  {
+    '           ▄▄▄▄▄▄▄▄▄           ',
+    '        ▄█████████████▄        ',
+    '█████  █████████████████  █████',
+    '▐████▌ ▀███▄       ▄███▀ ▐████▌',
+    ' █████▄  ▀███▄   ▄███▀  ▄█████ ',
+    ' ▐██▀███▄  ▀███▄███▀  ▄███▀██▌ ',
+    '  ███▄▀███▄  ▀███▀  ▄███▀▄███  ',
+    '  ▐█▄▀█▄▀███ ▄ ▀ ▄ ███▀▄█▀▄█▌  ',
+    '   ███▄▀█▄██ ██▄██ ██▄█▀▄███   ',
+    '    ▀███▄▀██ █████ ██▀▄███▀    ',
+    '   █▄ ▀█████ █████ █████▀ ▄█   ',
+    '   ███        ███        ███   ',
+    '   ███▄    ▄█ ███ █▄    ▄███   ',
+    '   █████ ▄███ ███ ███▄ █████   ',
+    '   █████ ████ ███ ████ █████   ',
+    '   █████ ████▄▄▄▄▄████ █████   ',
+    '    ▀███ █████████████ ███▀    ',
+    '      ▀█ ███ ▄▄▄▄▄ ███ █▀      ',
+    '         ▀█▌▐█████▌▐█▀         ',
+    '            ███████            ',
+  },
+  {
+    '        ▀████▀▄▄              ▄█',
+    '          █▀    ▀▀▄▄▄▄▄    ▄▄▀▀█',
+    '  ▄        █          ▀▀▀▀▄  ▄▀ ',
+    ' ▄▀ ▀▄      ▀▄              ▀▄▀ ',
+    '▄▀    █     █▀   ▄█▀▄      ▄█   ',
+    '▀▄     ▀▄  █     ▀██▀     ██▄█  ',
+    ' ▀▄    ▄▀ █   ▄██▄   ▄  ▄  ▀▀ █ ',
+    '  █  ▄▀  █    ▀██▀    ▀▀ ▀▀  ▄▀ ',
+    ' █   █  █      ▄▄           ▄▀  ',
+  },
+  {
     '███╗   ██╗ ███████╗  ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗',
     '████╗  ██║ ██╔════╝ ██╔═══██╗ ██║   ██║ ██║ ████╗ ████║',
     '██╔██╗ ██║ █████╗   ██║   ██║ ██║   ██║ ██║ ██╔████╔██║',
     '██║╚██╗██║ ██╔══╝   ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║',
     '██║ ╚████║ ███████╗ ╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║',
     '╚═╝  ╚═══╝ ╚══════╝  ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝',
-  }
+  },
+}
+
+-- Functions {{{1
+
+---@return string[]
+local function generate_header()
+  math.randomseed(os.time())
+  return vim.tbl_flatten { '', '', '', headers[math.random(#headers)] }
 end
 
 ---@return string[]
@@ -165,15 +208,6 @@ local function close()
   end
 end
 
-local cursor = {
-  hide = function()
-    vim.o.guicursor = HIDDEN_CURSOR
-  end,
-  show = function()
-    vim.o.guicursor = dashboard.guicursor
-  end,
-}
-
 -- Setup the required mappings which includes:
 --   - q: quit the dashboard buffer
 --   - `key`: open the entry for the registered entry
@@ -189,44 +223,16 @@ local function setup_mappings()
   end
 end
 
--- Setup the required autocmds for the dashboard buffer:
---   - Hide the cursor when entering the dashboard buffer
---   - Show the cursor on the command-line or leaving the dashboard buffer
---   - Reset the options when deleting the dashboard buffer
-local function setup_autocmds()
-  api.nvim_create_autocmd({ 'BufEnter', 'CmdlineLeave' }, {
-    pattern = '<buffer>',
-    callback = cursor.hide,
-  })
-  api.nvim_create_autocmd({ 'BufLeave', 'CmdlineEnter' }, {
-    pattern = '<buffer>',
-    callback = cursor.show,
-  })
-end
-
 --- Open the dashboard buffer in the current buffer if it is empty or create
 --- a new buffer for the current window.
----@param on_vimenter boolean
-local function open(on_vimenter)
-  vim.validate { on_vimenter = { on_vimenter, 'boolean', true } }
-  if on_vimenter and (vim.o.insertmode or not vim.bo.modifiable) then
+local function open()
+  if api.nvim_get_mode().mode == 'i' or not vim.bo.modifiable then
     return
   end
 
-  -- We will ignore all events while creating the dashboard buffer as it might
-  -- result in unintended effect when dashboard is called in a nested fashion.
-  vim.o.eventignore = 'all'
-
-  -- Save the current window/buffer options
-  -- If we are being called from a dashboard buffer, then we should not save
-  -- the options as it will save the dashboard buffer specific options.
-  if vim.bo.filetype ~= 'dashboard' then
-    dashboard.guicursor = vim.o.guicursor
-  end
-
   -- Create a new, unnamed buffer
-  if fn.line2byte '$' ~= -1 then
-    local bufnr = api.nvim_create_buf(true, true)
+  if not utils.buf_is_empty() then
+    local bufnr = api.nvim_create_buf(false, true)
     -- If we are being called from a dashboard buffer in a nested fashion, we
     -- should keep the alternate buffer which is the one we go to when we
     -- quit the dashboard buffer.
@@ -237,40 +243,33 @@ local function open(on_vimenter)
     end
   end
 
-  -- Set this flag for other plugins to check if the dashboard was opened
-  -- on vimenter.
-  vim.b.dashboard_on_vimenter = on_vimenter
-
   -- Set the dashboard buffer options
-  api.nvim_set_option_value('bufhidden', 'wipe', { scope = 'local' })
-  api.nvim_set_option_value('buflisted', false, { scope = 'local' })
-  api.nvim_set_option_value('colorcolumn', '', { scope = 'local' })
-  api.nvim_set_option_value('cursorcolumn', false, { scope = 'local' })
-  api.nvim_set_option_value('cursorline', false, { scope = 'local' })
-  api.nvim_set_option_value('foldcolumn', '0', { scope = 'local' })
-  api.nvim_set_option_value('list', false, { scope = 'local' })
-  api.nvim_set_option_value('modifiable', true, { scope = 'local' })
-  api.nvim_set_option_value('number', false, { scope = 'local' })
-  api.nvim_set_option_value('readonly', false, { scope = 'local' })
-  api.nvim_set_option_value('relativenumber', false, { scope = 'local' })
-  api.nvim_set_option_value('signcolumn', 'no', { scope = 'local' })
-  api.nvim_set_option_value('spell', false, { scope = 'local' })
-  api.nvim_set_option_value('swapfile', false, { scope = 'local' })
-  api.nvim_set_option_value('wrap', false, { scope = 'local' })
+  vim.opt_local.bufhidden = 'wipe'
+  vim.opt_local.buflisted = false
+  vim.opt_local.colorcolumn = ''
+  vim.opt_local.cursorcolumn = false
+  vim.opt_local.cursorline = false
+  vim.opt_local.foldcolumn = '0'
+  vim.opt_local.list = false
+  vim.opt_local.modifiable = true
+  vim.opt_local.number = false
+  vim.opt_local.readonly = false
+  vim.opt_local.relativenumber = false
+  vim.opt_local.signcolumn = 'no'
+  vim.opt_local.spell = false
+  vim.opt_local.statuscolumn = ''
+  vim.opt_local.swapfile = false
+  vim.opt_local.winbar = ''
+  vim.opt_local.wrap = false
 
   -- Render the text and lock the buffer
   render_text()
-  api.nvim_set_option_value('modifiable', false, { scope = 'local' })
-  api.nvim_set_option_value('modified', false, { scope = 'local' })
-  api.nvim_set_option_value('filetype', 'dashboard', { scope = 'local' })
+  vim.opt_local.modifiable = false
+  vim.opt_local.modified = false
+  vim.opt_local.filetype = 'dashboard'
 
   api.nvim_buf_set_name(0, '[Dashboard]')
   setup_mappings()
-  setup_autocmds()
-
-  -- Hide the cursor as everything is invoked through keys
-  cursor.hide()
-  vim.o.eventignore = ''
 end
 
 -- }}}1
