@@ -21,6 +21,10 @@ local log = require 'dm.log'
 ---@field name string
 ---@field expansion string
 
+---@class ExternalDocsResponse
+---@field web string?
+---@field local string?
+
 local cache = {
   -- Bufnr for the latest executed command.
   ---@type number?
@@ -239,6 +243,7 @@ vim.lsp.commands['rust-analyzer.showReferences'] = function()
   vim.lsp.buf.implementation()
 end
 
+-- Show the list of runnables and execute the selected runnable.
 function M.runnables()
   lsp_client().request('experimental/runnables', {
     textDocument = vim.lsp.util.make_text_document_params(0),
@@ -262,6 +267,7 @@ function M.runnables()
   end)
 end
 
+-- Execute the last runnable if there is one, otherwise show the list of runnables to execute.
 function M.execute_last_runnable()
   if cache.runnable then
     execute_runnable(cache.runnable)
@@ -312,12 +318,30 @@ function M.view_crate_graph(full)
   end)
 end
 
+-- Trigger the flycheck process for the current buffer.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
 function M.run_flycheck()
   lsp_client().notify('rust-analyzer/runFlycheck', {
     textDocument = vim.lsp.util.make_text_document_params(),
   })
 end
 
+-- Cancel all the running flycheck processes.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
+function M.cancel_flycheck()
+  lsp_client().notify 'rust-analyzer/cancelFlycheck'
+end
+
+-- Clears all the flycheck diagnostics.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
+function M.clear_flycheck()
+  lsp_client().notify 'rust-analyzer/clearFlycheck'
+end
+
+-- Expand the macro under the cursor recursively and show the output in a new buffer.
 function M.expand_macro_recursively()
   lsp_client().request(
     'rust-analyzer/expandMacro',
@@ -347,6 +371,25 @@ function M.expand_macro_recursively()
       )
       -- Move cursor to the start of the macro expansion.
       vim.api.nvim_win_set_cursor(0, { 5, 0 })
+    end
+  )
+end
+
+-- Open the documentation for the symbol under the cursor.
+--
+-- This assumes that the `localDocs` experimental feature is enabled.
+function M.open_external_docs()
+  lsp_client().request(
+    'experimental/externalDocs',
+    vim.lsp.util.make_position_params(),
+    ---@param result ExternalDocsResponse
+    function(_, result)
+      local url = result['local'] or result.web
+      if url == nil then
+        dm.notify('Rust', 'No documentation found', vim.log.levels.WARN)
+        return
+      end
+      vim.ui.open(url)
     end
   )
 end

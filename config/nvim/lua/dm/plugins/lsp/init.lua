@@ -90,6 +90,10 @@ return {
             buffer = bufnr,
             desc = 'LSP (rust-analyzer): Expand macro recursively',
           })
+          keymap.set('n', '<leader>rd', rust_analyzer.open_external_docs, {
+            buffer = bufnr,
+            desc = 'LSP (rust-analyzer): Open external docs',
+          })
         end
 
         if supports_method(M.textDocument_hover) then

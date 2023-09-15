@@ -184,7 +184,7 @@ local servers = {
     },
     on_init = function(client)
       local path = client.workspace_folders[1].name
-      if vim.fs.basename(path) == 'ruff' then
+      if vim.tbl_contains({ 'ruff', 'ruff-test' }, vim.fs.basename(path)) then
         -- Disable `checkOnSave` for Ruff monorepo as it takes too long.
         -- Use `;c` or `:RustRunFlycheck` to manually check.
         client.config.settings['rust-analyzer'].checkOnSave = false
@@ -194,6 +194,7 @@ local servers = {
     end,
     capabilities = {
       experimental = {
+        localDocs = true,
         commands = {
           -- See: ./extensions/rust_analyzer.lua
           commands = {
@@ -236,11 +237,29 @@ local servers = {
         end,
         desc = 'rust-analyzer: Run Flycheck',
       },
+      RustCancelFlycheck = {
+        function()
+          extensions.rust_analyzer.cancel_flycheck()
+        end,
+        desc = 'rust-analyzer: Cancel Flycheck',
+      },
+      RustClearFlycheck = {
+        function()
+          extensions.rust_analyzer.clear_flycheck()
+        end,
+        desc = 'rust-analyzer: Clear Flycheck',
+      },
       RustExpandMacro = {
         function()
           extensions.rust_analyzer.expand_macro_recursively()
         end,
         desc = 'rust-analyzer: Expand macro recursively',
+      },
+      RustOpenExternalDocs = {
+        function()
+          extensions.rust_analyzer.open_external_docs()
+        end,
+        desc = 'rust-analyzer: Open external docs',
       },
     },
   },
