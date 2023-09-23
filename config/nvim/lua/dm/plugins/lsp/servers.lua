@@ -77,6 +77,7 @@ local servers = {
   -- Settings: https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server#settings
   jsonls = function()
     return {
+      filetypes = { 'json', 'jsonc' },
       settings = {
         json = {
           schemas = vim.list_extend({

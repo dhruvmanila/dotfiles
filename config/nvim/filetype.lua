@@ -1,6 +1,7 @@
 vim.filetype.add {
   extension = {
     just = 'just',
+    json = 'jsonc',
     lalrpop = 'lalrpop',
     pip = 'requirements',
   },
