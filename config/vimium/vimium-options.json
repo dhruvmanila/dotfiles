@@ -1,5 +1,5 @@
 {
-  "settingsVersion": "1.67.4",
+  "settingsVersion": "1.67.7",
   "exclusionRules": [
     {
       "pattern": "https?://mail.google.com/*",
@@ -36,6 +36,18 @@
     {
       "pattern": "https?://github.com/*",
       "passKeys": "/"
+    },
+    {
+      "pattern": "https?://asciiflow.com/*",
+      "passKeys": ""
+    },
+    {
+      "pattern": "https?://localhost:8889/*",
+      "passKeys": ""
+    },
+    {
+      "pattern": "https?://play.rust-lang.org/*",
+      "passKeys": ""
     }
   ],
   "filterLinkHints": false,

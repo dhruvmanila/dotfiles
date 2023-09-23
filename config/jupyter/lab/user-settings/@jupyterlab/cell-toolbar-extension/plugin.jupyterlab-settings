@@ -2,36 +2,42 @@
     "toolbar": [
         {
             "name": "duplicate-cell",
+            "args": {},
             "command": "notebook:duplicate-below",
             "disabled": false,
             "rank": 50
         },
         {
             "name": "move-cell-up",
+            "args": {},
             "command": "notebook:move-cell-up",
             "disabled": false,
             "rank": 50
         },
         {
             "name": "move-cell-down",
+            "args": {},
             "command": "notebook:move-cell-down",
             "disabled": false,
             "rank": 50
         },
         {
             "name": "insert-cell-above",
+            "args": {},
             "command": "notebook:insert-cell-above",
             "disabled": false,
             "rank": 50
         },
         {
             "name": "insert-cell-below",
+            "args": {},
             "command": "notebook:insert-cell-below",
             "disabled": false,
             "rank": 50
         },
         {
             "name": "delete-cell",
+            "args": {},
             "command": "notebook:delete-cell",
             "disabled": false,
             "icon": "ui-components:delete",
