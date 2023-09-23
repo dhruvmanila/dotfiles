@@ -22,23 +22,22 @@
   "gruvboxMaterial.colorfulSyntax": true,
   "editor.semanticHighlighting.enabled": true,
 
-  // Font sizes
+  // Font settings
   "editor.fontSize": 17,
   "debug.console.fontSize": 17,
   "terminal.integrated.fontSize": 17,
   "editor.fontFamily": "JetBrains Mono",
   "editor.fontLigatures": true,
-  "editor.lineHeight": 20,
 
   // Editor settings
+  "editor.lineHeight": 20,
   "editor.wordWrap": "on",
   "editor.scrollBeyondLastLine": false,
   "editor.minimap.enabled": false,
   "editor.inlineSuggest.enabled": true,
   "editor.comments.ignoreEmptyLines": false,
-
-  // No autoupdate for extensions
-  "extensions.autoUpdate": false,
+  "editor.formatOnSave": false,
+  "editor.suggestSelection": "first",
 
   // Terminal settings
   "terminal.integrated.inheritEnv": true,
@@ -46,56 +45,25 @@
     "terminal.background": "#242424"
   },
 
-  // Executes file in file directory
+  // Python
+  "python.languageServer": "Pyright",
   "python.terminal.executeInFileDir": true,
-
-  // Directory path where all virtualenvs are stored
   "python.venvPath": "~/Library/Application Support/pie",
-
-  // Python formatter
   "python.formatting.provider": "black",
-  "editor.formatOnSave": false,
-
-  // Python isort imports
   "python.sortImports.args": ["--profile=black"],
-
-  // Run isort automatically on save
   "[python]": {
     "editor.codeActionsOnSave": {
       "source.organizeImports": false
     }
   },
-
-  // Python Linter
   "python.linting.pylintEnabled": false,
   "python.linting.flake8Enabled": true,
   "python.linting.mypyEnabled": true,
   "python.linting.flake8Path": "~/.local/bin/flake8",
   "python.formatting.blackPath": "~/.local/bin/black",
 
-  // Python autocomplete
-  "python.languageServer": "Pylance",
-
-  // Python docstring format
+  // Python docstring
   "autoDocstring.docstringFormat": "numpy-notypes",
-
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-
-  // Controls the dimensions of opening a new window when at least one window is already opened.
-  "window.newWindowDimensions": "maximized",
-
-  // Python doc string foreground color and font style
   "editor.tokenColorCustomizations": {
     "textMateRules": [
       {
@@ -108,20 +76,12 @@
     ]
   },
 
-  // Completion
-  "editor.suggestSelection": "first",
+  // Rust
+  // I only use VSCode for `python.lalrpop`, so no point in running clippy
+  // which just slows down my work in Neovim.
+  "rust-analyzer.checkOnSave": false,
 
-  // Set association for non-standard files to help syntax highlighting
-  "files.associations": {
-    "Brewfile": "ruby",
-    "Vagrantfile": "ruby"
-  },
-  "workbench.editorAssociations": {
-    "*.ipynb": "jupyter-notebook",
-    "*.hdl": "vhdl"
-  },
-
-  // Lua language server settings
+  // Lua
   "Lua.diagnostics.globals": ["vim"],
   "Lua.runtime.version": "LuaJIT",
   "Lua.workspace.preloadFileSize": 1000,
@@ -134,22 +94,56 @@
   ],
 
   // Language specific settings
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[yaml]": {
     "editor.tabSize": 4
   },
 
+  // Controls the dimensions of opening a new window when at least one window is already opened.
+  "window.newWindowDimensions": "maximized",
+
+  // Set association for non-standard files to help syntax highlighting
+  "files.associations": {
+    "Brewfile": "ruby",
+    "Vagrantfile": "ruby"
+  },
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook",
+    "*.hdl": "vhdl"
+  },
+
+  // GitHub Copilot
   "github.copilot.enable": {
     "*": false,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false,
     "python": true,
     "javascript": true,
     "html": true,
-    "css": true
+    "css": true,
+    "lalrpop": true
   },
   "github.copilot.advanced": {},
+
+  // No autoupdate for extensions
+  "extensions.autoUpdate": false,
 
   // No telemetry
   "telemetry.telemetryLevel": "off",
   "Lua.telemetry.enable": false,
   "redhat.telemetry.enabled": false,
-  "git.openRepositoryInParentFolders": "never"
+  "git.openRepositoryInParentFolders": "never",
+  "window.zoomLevel": 1
 }

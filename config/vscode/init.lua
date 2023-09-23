@@ -3,12 +3,19 @@ vim.opt.runtimepath = { vim.env.VIMRUNTIME }
 -- Remove the plugin paths on non-Windows machines.
 if vim.loop.os_uname().sysname ~= 'Windows_NT' then
   local homedir = vim.loop.os_homedir()
-  vim.opt.packpath:remove({
-    homedir .. "/.config/nvim",
-    homedir .. "/.config/nvim/after",
-    homedir .. "/.local/share/nvim/site",
-    homedir .. "/.local/share/nvim/site/after"
-  })
+  vim.opt.packpath:remove {
+    homedir .. '/.config/nvim',
+    homedir .. '/.config/nvim/after',
+    homedir .. '/.local/share/nvim/site',
+    homedir .. '/.local/share/nvim/site/after',
+  }
+end
+
+---Create a `VSCodeNotify` command call.
+---@param command string
+---@return string
+local function VSCodeNotify(command)
+  return '<Cmd>call VSCodeNotify("' .. command .. '")<CR>'
 end
 
 -- Leader
@@ -34,10 +41,10 @@ vim.keymap.set({ 'n', 'x' }, 'c', '"_c')
 vim.keymap.set({ 'n', 'x' }, 'C', '"_C')
 
 -- Quicker window movement
-vim.keymap.set('n', '<C-j>', '<Cmd>call VSCodeNotify("workbench.action.focusBelowGroup")<CR>')
-vim.keymap.set('n', '<C-k>', '<Cmd>call VSCodeNotify("workbench.action.focusAboveGroup")<CR>')
-vim.keymap.set('n', '<C-h>', '<Cmd>call VSCodeNotify("workbench.action.focusLeftGroup")<CR>')
-vim.keymap.set('n', '<C-l>', '<Cmd>call VSCodeNotify("workbench.action.focusRightGroup")<CR>')
+vim.keymap.set('n', '<C-j>', VSCodeNotify 'workbench.action.focusBelowGroup')
+vim.keymap.set('n', '<C-k>', VSCodeNotify 'workbench.action.focusAboveGroup')
+vim.keymap.set('n', '<C-h>', VSCodeNotify 'workbench.action.focusLeftGroup')
+vim.keymap.set('n', '<C-l>', VSCodeNotify 'workbench.action.focusRightGroup')
 
 -- Tab movement
 vim.keymap.set('n', '[t', '<Cmd>Tabprevious<CR>')
@@ -52,20 +59,20 @@ vim.keymap.set('x', '<', '<gv')
 vim.keymap.set('x', '>', '>gv')
 
 -- Comment
-vim.keymap.set({'x', 'n', 'o'}, 'gc', '<Plug>VSCodeCommentary')
+vim.keymap.set({ 'x', 'n', 'o' }, 'gc', '<Plug>VSCodeCommentary')
 vim.keymap.set('n', 'gcc', '<Plug>VSCodeCommentaryLine')
 
 -- Git
-vim.keymap.set('n', ']c', '<Cmd>call VSCodeNotify("workbench.action.editor.nextChange")<CR>')
-vim.keymap.set('n', '[c', '<Cmd>call VSCodeNotify("workbench.action.editor.previousChange")<CR>')
+vim.keymap.set('n', ']c', VSCodeNotify 'workbench.action.editor.nextChange')
+vim.keymap.set('n', '[c', VSCodeNotify 'workbench.action.editor.previousChange')
 
 -- LSP
-vim.keymap.set({'n', 'x'}, 'gD', '<Cmd>call VSCodeNotify("editor.action.revealDeclaration")<CR>')
-vim.keymap.set({'n', 'x'}, 'gr', '<Cmd>call VSCodeNotify("editor.action.referenceSearch.trigger")<CR>')
-vim.keymap.set({'n', 'x'}, '<leader>pd', '<Cmd>call VSCodeNotify("editor.action.peekDefinition")<CR>')
-vim.keymap.set({'n', 'x'}, '<leader>pD', '<Cmd>call VSCodeNotify("editor.action.peekDeclaration")<CR>')
-vim.keymap.set('n', '<leader>rn', '<Cmd>call VSCodeNotify("editor.action.rename")<CR>')
-vim.keymap.set('n', '<leader>ft', '<Cmd>call VSCodeNotify("workbench.action.gotoSymbol")<CR>')
+vim.keymap.set({ 'n', 'x' }, 'gD', VSCodeNotify 'editor.action.revealDeclaration')
+vim.keymap.set({ 'n', 'x' }, 'gr', VSCodeNotify 'editor.action.referenceSearch.trigger')
+vim.keymap.set({ 'n', 'x' }, '<leader>pd', VSCodeNotify 'editor.action.peekDefinition')
+vim.keymap.set({ 'n', 'x' }, '<leader>pD', VSCodeNotify 'editor.action.peekDeclaration')
+vim.keymap.set('n', '<leader>rn', VSCodeNotify 'editor.action.rename')
+vim.keymap.set('n', '<leader>ft', VSCodeNotify 'workbench.action.gotoSymbol')
 
 -- Format
-vim.keymap.set('n', ';f', '<Cmd>call VSCodeNotify("editor.action.formatDocument")<CR>')
+vim.keymap.set('n', ';f', VSCodeNotify 'editor.action.formatDocument')
