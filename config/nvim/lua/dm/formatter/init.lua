@@ -39,6 +39,7 @@ register({
   'html',
   'javascript',
   'json',
+  'jsonc',
   'typescript',
   'yaml',
 }, {
