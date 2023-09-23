@@ -108,8 +108,8 @@ upgrade_plugins() { # {{{1
   header "Upgrading vim plugins..."
   vim +PlugUpgrade +PlugClean +PlugUpdate
 
-  header "Upgrading neovim plugins..."
-  nvim +PackerSync
+  # header "Upgrading neovim plugins..."
+  # nvim +Lazy sync
 
   header "Cleaning and updating tmux plugins..."
   ~/.tmux/plugins/tpm/bin/clean_plugins
