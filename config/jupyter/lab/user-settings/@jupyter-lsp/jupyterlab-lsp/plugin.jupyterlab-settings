@@ -1,0 +1,166 @@
+{
+    "loggingConsole": "browser",
+    "loggingLevel": "debug",
+    "logAllCommunication": true,
+    "language_servers": {
+        "dockerfile-language-server-nodejs": {
+            "serverSettings": {
+                "docker.defaultRegistryPath": "",
+                "docker.explorerRefreshInterval": 2000,
+                "docker.containers.groupBy": "None",
+                "docker.containers.description": [
+                    "ContainerName",
+                    "Status"
+                ],
+                "docker.containers.label": "FullTag",
+                "docker.containers.sortBy": "CreatedTime",
+                "docker.images.groupBy": "Repository",
+                "docker.images.description": [
+                    "CreatedTime"
+                ],
+                "docker.images.label": "Tag",
+                "docker.images.sortBy": "CreatedTime",
+                "docker.networks.groupBy": "None",
+                "docker.networks.description": [
+                    "NetworkDriver",
+                    "CreatedTime"
+                ],
+                "docker.networks.label": "NetworkName",
+                "docker.networks.sortBy": "CreatedTime",
+                "docker.volumes.groupBy": "None",
+                "docker.volumes.description": [
+                    "CreatedTime"
+                ],
+                "docker.volumes.label": "VolumeName",
+                "docker.volumes.sortBy": "CreatedTime",
+                "docker.imageBuildContextPath": "",
+                "docker.truncateLongRegistryPaths": false,
+                "docker.truncateMaxLength": 10,
+                "docker.host": "",
+                "docker.certPath": "",
+                "docker.tlsVerify": "",
+                "docker.machineName": "",
+                "docker.languageserver.diagnostics.deprecatedMaintainer": "warning",
+                "docker.languageserver.diagnostics.emptyContinuationLine": "warning",
+                "docker.languageserver.diagnostics.directiveCasing": "warning",
+                "docker.languageserver.diagnostics.instructionCasing": "warning",
+                "docker.languageserver.diagnostics.instructionCmdMultiple": "warning",
+                "docker.languageserver.diagnostics.instructionEntrypointMultiple": "warning",
+                "docker.languageserver.diagnostics.instructionHealthcheckMultiple": "warning",
+                "docker.languageserver.diagnostics.instructionJSONInSingleQuotes": "warning",
+                "docker.languageserver.diagnostics.instructionWorkdirRelative": "warning",
+                "docker.attachShellCommand.linuxContainer": "/bin/sh -c \"[ -e /bin/bash ] && /bin/bash || /bin/sh\"",
+                "docker.attachShellCommand.windowsContainer": "powershell",
+                "docker.dockerComposeBuild": true,
+                "docker.dockerComposeDetached": true,
+                "docker.showRemoteWorkspaceWarning": true,
+                "docker.dockerPath": "docker",
+                "docker.enableDockerComposeLanguageService": true
+            },
+            "priority": 50
+        },
+        "julia-language-server": {
+            "serverSettings": {
+                "julia.lint.run": true,
+                "julia.lint.missingrefs": "none",
+                "julia.lint.disabledDirs": [
+                    "docs",
+                    "test"
+                ],
+                "julia.lint.call": true,
+                "julia.lint.iter": true,
+                "julia.lint.nothingcomp": true,
+                "julia.lint.constif": true,
+                "julia.lint.lazy": true,
+                "julia.lint.datadecl": true,
+                "julia.lint.typeparam": true,
+                "julia.lint.modname": true,
+                "julia.lint.pirates": true,
+                "julia.lint.useoffuncargs": true,
+                "julia.completionmode": "qualify"
+            },
+            "priority": 50
+        },
+        "pyright": {
+            "serverSettings": {
+                "python.analysis.autoImportCompletions": true,
+                "python.analysis.autoSearchPaths": true,
+                "python.analysis.extraPaths": [],
+                "python.analysis.stubPath": "typings",
+                "python.analysis.diagnosticMode": "openFilesOnly",
+                "python.analysis.logLevel": "Information",
+                "python.analysis.typeCheckingMode": "basic",
+                "python.analysis.typeshedPaths": [],
+                "python.analysis.useLibraryCodeForTypes": true,
+                "pyright.disableLanguageServices": false,
+                "pyright.disableOrganizeImports": false,
+                "python.pythonPath": "python",
+                "python.venvPath": ""
+            },
+            "priority": 50
+        },
+        "r-languageserver": {
+            "serverSettings": {
+                "r.lsp.debug": true,
+                "r.lsp.log_file": null,
+                "r.lsp.diagnostics": true,
+                "r.lsp.rich_documentation": true,
+                "r.lsp.snippet_support": true,
+                "r.lsp.max_completions": 200,
+                "r.lsp.lint_cache": false,
+                "r.lsp.link_file_size_limit": 16384
+            },
+            "priority": 50
+        },
+        "texlab": {
+            "serverSettings": {
+                "rootDirectory": null,
+                "build.executable": "latexmk",
+                "build.args": [
+                    "-pdf",
+                    "-interaction=nonstopmode",
+                    "-synctex=1",
+                    "%f"
+                ],
+                "build.onSave": false,
+                "build.outputDirectory": ".",
+                "build.forwardSearchAfter": false,
+                "forwardSearch.executable": null,
+                "forwardSearch.args": [],
+                "chktex.onOpenAndSave": false,
+                "chktex.onEdit": false,
+                "diagnosticsDelay": 300,
+                "formatterLineLength": 80,
+                "latexFormatter": "latexindent",
+                "latexindent.local": null,
+                "latexindent.modifyLineBreaks": false
+            },
+            "priority": 50
+        },
+        "yaml-language-server": {
+            "serverSettings": {
+                "yamlVersion": "1.2",
+                "yaml.trace.server": "off",
+                "yaml.schemas": {},
+                "yaml.format.enable": true,
+                "yaml.format.singleQuote": false,
+                "yaml.format.bracketSpacing": true,
+                "yaml.format.proseWrap": "preserve",
+                "yaml.format.printWidth": 80,
+                "yaml.validate": true,
+                "yaml.hover": true,
+                "yaml.completion": true,
+                "yaml.customTags": [],
+                "yaml.schemaStore.enable": true,
+                "yaml.schemaStore.url": "",
+                "yaml.maxItemsComputed": 5000,
+                "editor.tabSize": 2,
+                "http.proxy": "",
+                "http.proxyStrictSSL": false,
+                "yaml.disableDefaultProperties": false
+            },
+            "priority": 50
+        }
+    },
+    "setTrace": null
+}
