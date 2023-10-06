@@ -1,2 +1,8 @@
 cargo-insta
+cargo-instruments
+critcmp
+flamegraph
+flamegraph
+lalrpop
 rustlings
+samply
