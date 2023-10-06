@@ -23,6 +23,14 @@ commands:
   - name: sync
     help: sync lib files with global package list
 
+    dependencies:
+      awk: install with $(green brew install awk)
+      brew: visit $(blue_underlined https://brew.sh/) to install
+      cargo: visit $(blue_underlined https://rustup.rs/) to install
+      jq: install with $(green brew install jq)
+      npm: install with $(green brew install node)
+      pipx: install with $(green python -m pip install pipx)
+
     flags:
       - long: --brew
         short: -b

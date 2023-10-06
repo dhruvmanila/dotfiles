@@ -31,8 +31,11 @@ NNN_DIRECTORY="${HOME}/git/nnn"
 # Python versions to be installed on the system.
 # First version will be the global one
 PYTHON_VERSIONS=(
-  "3.10.2"
-  "3.9.10"
+  "3.12.0"
+  "3.11.5"
+  "3.10.13"
+  "3.9.18"
+  "3.8.18"
 )
 
 # Packages file
