@@ -1,6 +1,6 @@
 # Neovim Configuration
 
-### Overview:
+## Overview:
 
 ```bash
 .

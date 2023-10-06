@@ -9,7 +9,7 @@ _Magical objects that make certain computers extremely use-able for me._
 ## Installation
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bin/dot setup)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dhruvmanila/dotfiles/master/bin/dotbot setup)"
 ```
 
 The installation script is auto-generated using
