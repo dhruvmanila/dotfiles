@@ -36,12 +36,6 @@ opt.completeopt = {
 -- Maxmimum number of items to show in the popup menu (|inc-completion-menu|)
 opt.pumheight = 20
 
--- colorscheme {{{1
-
--- Enables 24-bit RGB colors. This will use the 'gui' highlight attributes
--- instead of 'cterm' attributes.
-opt.termguicolors = true
-
 -- conceal {{{1
 
 -- Hide the conceal characters unless the cursor is on that line.
