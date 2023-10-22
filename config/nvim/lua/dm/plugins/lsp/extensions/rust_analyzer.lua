@@ -165,7 +165,7 @@ local function debug_runnable(runnable)
   vim.system(
     vim.tbl_flatten { 'cargo', cargo_args },
     { cwd = runnable.args.workspaceRoot },
-    ---@param result SystemCompleted
+    ---@param result vim.SystemCompleted
     vim.schedule_wrap(function(result)
       require('notify').dismiss()
       if result.code > 0 then
@@ -294,7 +294,7 @@ function M.view_crate_graph(full)
     vim.system(
       { 'dot', '-Tsvg' },
       { stdin = graph },
-      ---@param result SystemCompleted
+      ---@param result vim.SystemCompleted
       function(result)
         if result.code > 0 then
           dm.notify(

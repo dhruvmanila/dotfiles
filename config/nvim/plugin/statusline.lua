@@ -77,7 +77,7 @@ end
 ---@return string
 local function lsp_icon_and_messages()
   local result = ''
-  local clients = vim.lsp.get_active_clients { bufnr = 0 }
+  local clients = vim.lsp.get_clients { bufnr = 0 }
   if not vim.tbl_isempty(clients) then
     result = '%@v:lua.st_open_lsp_info@' .. '%T'
   end

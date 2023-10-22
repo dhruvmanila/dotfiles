@@ -17,7 +17,7 @@ local hl_id
 ---@return number
 local function get_preview_winid()
   for _, winid in ipairs(api.nvim_tabpage_list_wins(0)) do
-    if api.nvim_win_get_option(winid, 'previewwindow') then
+    if api.nvim_get_option_value('previewwindow', { win = winid }) then
       return winid
     end
   end

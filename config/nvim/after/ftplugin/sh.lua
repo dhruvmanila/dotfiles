@@ -8,7 +8,7 @@ local namespace
 ---@return string[]
 local function buf_shellcheck_error_codes()
   if namespace == nil then
-    local client_id = vim.lsp.get_active_clients({
+    local client_id = vim.lsp.get_clients({
       bufnr = vim.api.nvim_get_current_buf(),
       name = server_name,
     })[1].id
