@@ -1,7 +1,6 @@
 local M = {}
 
 local api = vim.api
-local job = require 'dm.job'
 local log = require 'dm.log'
 
 -- Types {{{
@@ -11,13 +10,6 @@ local log = require 'dm.log'
 ---@field cmd? string formatter command (default: nil)
 ---@field args? string[]|fun(bufnr: number):string[] arguments to pass (default: nil)
 ---@field lsp? { format?: boolean, opts?: table }
-
----@class Format
----@field bufnr number
----@field formatters Formatter[]
----@field input string[]
----@field output string[]
----@field changedtick number
 
 -- }}}
 
@@ -32,7 +24,12 @@ local format_write = false
 ---@type table<string, Formatter[]>
 local registered_formatters = {}
 
----@type Format
+---@class Format
+---@field bufnr number
+---@field formatters Formatter[]
+---@field input string[]
+---@field output string[]
+---@field changedtick number
 local Format = {}
 Format.__index = Format
 
@@ -56,24 +53,19 @@ end
 -- Run the given formatter asynchronously.
 ---@param formatter Formatter
 function Format:run(formatter)
-  local args = formatter.args
-  if args and type(args) == 'function' then
-    args = args(self.bufnr)
+  local cmd = { formatter.cmd }
+  if formatter.args and type(formatter.args) == 'function' then
+    vim.list_extend(cmd, formatter.args(self.bufnr))
   end
 
-  job {
-    cmd = formatter.cmd,
-    args = args,
-    writer = self.output,
-    on_exit = function(result)
-      if result.code > 0 then
-        log.error(result.stderr)
-        return self:step()
-      end
-      self.output = vim.split(result.stdout, '\n', { trimempty = true })
+  vim.system(cmd, { stdin = self.output }, function(result)
+    if result.code > 0 then
+      log.error(result.stderr)
       return self:step()
-    end,
-  }
+    end
+    self.output = vim.split(result.stdout, '\n', { trimempty = true })
+    return self:step()
+  end)
 end
 
 -- Format:run_lsp {{{1

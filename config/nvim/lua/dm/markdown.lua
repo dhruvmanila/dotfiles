@@ -5,8 +5,6 @@
 --     $ npm -g install
 -- }}}
 
-local job = require 'dm.job'
-
 -- Variables {{{1
 
 -- Default request url.
@@ -72,7 +70,7 @@ local function cleanup()
   --
   -- Source: https://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
   -- }}}
-  job { cmd = 'curl', args = { '-X', 'DELETE', API_URL } }
+  vim.system { 'curl', '-X', 'DELETE', API_URL }
   state.active = false
   os.execute(RESIZE_KITTY_WINDOW_CMD)
 end
@@ -110,9 +108,13 @@ local function toggle_preview()
       group = id,
       pattern = '<buffer>',
       callback = function()
-        job {
-          cmd = 'curl',
-          args = { '-X', 'PUT', '--data-raw', get_lines(), API_URL },
+        vim.system {
+          'curl',
+          '-X',
+          'PUT',
+          '--data-raw',
+          get_lines(),
+          API_URL,
         }
       end,
     })

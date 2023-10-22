@@ -1,6 +1,5 @@
 local icons = dm.icons
 
-local job = require 'dm.job'
 local provider = require 'dm.provider'
 
 -- Pad the given component with a space on both sides, if it's given.
@@ -161,13 +160,14 @@ local function set_interval_callback(interval, callback)
 end
 
 local function set_python_version()
-  job {
-    cmd = 'python',
-    args = { '--version' },
-    on_exit = function(result)
+  vim.system(
+    { 'python', '--version' },
+    nil,
+    ---@param result vim.SystemCompleted
+    function(result)
       vim.g.current_python_version = result.stdout:gsub('\r\n', ''):gsub('\n', '')
-    end,
-  }
+    end
+  )
 end
 
 -- Set the current Python virtual environment name if we are in one.

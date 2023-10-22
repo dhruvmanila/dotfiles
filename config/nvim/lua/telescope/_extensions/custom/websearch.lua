@@ -12,7 +12,6 @@ local actions = require 'telescope.actions'
 local entry_display = require 'telescope.pickers.entry_display'
 
 local custom_actions = require 'dm.plugins.telescope.actions'
-local job = require 'dm.job'
 
 local state = {}
 
@@ -81,7 +80,7 @@ end
 
 -- Set the telescope finder according to the provided information.
 ---@param new_mode string (default: `mode.QUERY`)
----@param results table
+---@param results? table
 local function set_finder(new_mode, results)
   new_mode = new_mode or mode.QUERY
   state.mode = new_mode
@@ -118,6 +117,7 @@ local function do_search()
     state.anim_timer = vim.fn.timer_start(100, in_progress_animation, { ['repeat'] = -1 })
   end
 
+  ---@param result vim.SystemCompleted
   local function on_exit(result)
     if result.code > 0 then
       vim.api.nvim_err_writeln('Telescope (websearch): ' .. result.stderr)
@@ -135,18 +135,15 @@ local function do_search()
     end
   end
 
-  job {
-    cmd = executable[config.search_engine],
-    args = {
-      '--nocolor',
-      '-n',
-      config.max_results,
-      '--json',
-      '--noprompt',
-      query_text,
-    },
-    on_exit = on_exit,
-  }
+  vim.system({
+    executable[config.search_engine],
+    '--nocolor',
+    '-n',
+    config.max_results,
+    '--json',
+    '--noprompt',
+    query_text,
+  }, on_exit)
 end
 
 -- Define the default action of either searching or opening the URL(s) depending

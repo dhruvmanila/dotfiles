@@ -33,7 +33,7 @@ end
 function M.collect_stars()
   vim.system(
     { 'gh', 'api', 'user/starred', '--paginate', '--cache', '24h' },
-    ---@param result SystemCompleted
+    ---@param result vim.SystemCompleted
     function(result)
       if result.code > 0 then
         dm.notify('Telescope', result.stderr, 4)
