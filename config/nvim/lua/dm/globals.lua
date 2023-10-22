@@ -113,7 +113,6 @@ do
     notify = require 'notify'
     notify.setup {
       stages = 'fade',
-      background_colour = '#282828',
       icons = {
         ERROR = dm.icons.error,
         WARN = dm.icons.warn,

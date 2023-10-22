@@ -91,6 +91,7 @@ local base_light = {
 ---@param background "dark"|"light"
 function M.load(background)
   local palette, base
+
   if background == 'dark' then
     palette = vim.tbl_extend('error', base_dark, palette_dark)
     base = base_dark

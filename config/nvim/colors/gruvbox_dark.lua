@@ -3,6 +3,7 @@ if vim.g.colors_name then
 end
 
 vim.g.colors_name = 'gruvbox_dark'
+vim.o.background = 'dark'
 vim.o.termguicolors = true
 
 require('dm.themes.gruvbox').load 'dark'

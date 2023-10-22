@@ -1,6 +1,7 @@
 local icons = dm.icons
 
 local provider = require 'dm.provider'
+local utils = require 'dm.utils'
 
 -- Pad the given component with a space on both sides, if it's given.
 ---@param component string
@@ -146,19 +147,6 @@ function _G.nvim_statusline()
     .. buffer_info()
 end
 
--- Create a timer for the given callback to be invoked every `interval` ms.
----@param interval number (ms)
----@param callback function
----@return number #timer handle (uv_timer_t)
-local function set_interval_callback(interval, callback)
-  vim.defer_fn(callback, 100)
-  local timer = vim.loop.new_timer()
-  timer:start(interval, interval, function()
-    callback()
-  end)
-  return timer
-end
-
 local function set_python_version()
   vim.system(
     { 'python', '--version' },
@@ -192,8 +180,8 @@ vim.api.nvim_create_autocmd('FileType', {
   pattern = 'python',
   callback = function()
     if dm.executable 'python' then
-      set_interval_callback(5 * 1000, set_python_version)
-      set_interval_callback(5 * 1000, set_python_venv_name)
+      utils.set_interval_callback(5 * 1000, set_python_version)
+      utils.set_interval_callback(5 * 1000, set_python_venv_name)
     end
   end,
 })

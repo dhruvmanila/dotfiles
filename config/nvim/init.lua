@@ -45,11 +45,28 @@ local namespace = {
     ---@type 'edge'|'single'|'double'|'shadow'|'rounded'|'solid'
     border_style = 'edge',
 
+    colorscheme = {
+      -- Automatically switch between light and dark color schemes based on macOS appearance.
+      auto = {
+        enable = true,
+      },
+
+      -- Dark color scheme
+      dark = 'gruvbox_dark',
+
+      -- Light color scheme
+      light = 'gruvbox_light',
+    },
+
     -- Provide VSCode like code action lightbulb.
-    code_action_lightbulb = { enable = false },
+    code_action_lightbulb = {
+      enable = false,
+    },
 
     -- LSP inlay hints.
-    inlay_hints = { enable = false },
+    inlay_hints = {
+      enable = false,
+    },
   },
 }
 
@@ -109,4 +126,9 @@ require('lazy').setup('dm.plugins', {
   },
 })
 
-vim.cmd.colorscheme 'gruvbox_dark'
+-- Default to a dark color scheme.
+vim.cmd.colorscheme(dm.config.colorscheme.dark)
+
+if dm.config.colorscheme.auto.enable then
+  require('dm.themes.auto').enable()
+end
