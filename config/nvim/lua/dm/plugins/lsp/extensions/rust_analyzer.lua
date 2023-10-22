@@ -79,9 +79,9 @@ end
 --
 -- Keybindings:
 --    `q`: Quit the terminal window
----@param cmd string
----@param args string[]
----@param cwd string
+---@param cmd string #Command to execute.
+---@param args string[] #Arguments to pass to the command.
+---@param cwd string #Current working directory for the command.
 local function execute_command(cmd, args, cwd)
   local original_winnr = vim.api.nvim_get_current_win()
   delete_bufnr(cache.run_single_bufnr)
@@ -91,14 +91,19 @@ local function execute_command(cmd, args, cwd)
   local terminal_winnr = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_buf(terminal_winnr, cache.run_single_bufnr)
   vim.cmd.resize(math.ceil(vim.o.lines * 0.35))
-  vim.api.nvim_buf_set_keymap(cache.run_single_bufnr, 'n', 'q', '<Cmd>q<CR>', {
-    noremap = true,
-  })
 
-  vim.fn.termopen(('%s %s'):format(cmd, table.concat(args, ' ')), {
+  local job_id = vim.fn.termopen(('%s %s'):format(cmd, table.concat(args, ' ')), {
     cwd = cwd,
   })
   vim.api.nvim_set_current_win(original_winnr)
+
+  vim.api.nvim_buf_set_keymap(cache.run_single_bufnr, 'n', 'q', '', {
+    callback = function()
+      vim.fn.jobstop(job_id)
+      delete_bufnr(cache.run_single_bufnr)
+    end,
+    noremap = true,
+  })
 
   vim.api.nvim_buf_attach(cache.run_single_bufnr, false, {
     on_lines = function(_, bufnr)
