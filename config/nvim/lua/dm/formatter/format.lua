@@ -54,18 +54,27 @@ end
 ---@param formatter Formatter
 function Format:run(formatter)
   local cmd = { formatter.cmd }
-  if formatter.args and type(formatter.args) == 'function' then
-    vim.list_extend(cmd, formatter.args(self.bufnr))
+  if formatter.args then
+    if type(formatter.args) == 'function' then
+      vim.list_extend(cmd, formatter.args(self.bufnr))
+    else
+      vim.list_extend(cmd, formatter.args)
+    end
   end
 
-  vim.system(cmd, { stdin = self.output }, function(result)
-    if result.code > 0 then
-      log.error(result.stderr)
+  vim.system(
+    cmd,
+    { stdin = self.output },
+    ---@param result vim.SystemCompleted
+    vim.schedule_wrap(function(result)
+      if result.code > 0 then
+        log.error(result.stderr)
+        return self:step()
+      end
+      self.output = vim.split(result.stdout, '\n', { trimempty = true })
       return self:step()
-    end
-    self.output = vim.split(result.stdout, '\n', { trimempty = true })
-    return self:step()
-  end)
+    end)
+  )
 end
 
 -- Format:run_lsp {{{1
