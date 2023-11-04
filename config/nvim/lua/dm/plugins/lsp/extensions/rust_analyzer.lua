@@ -3,6 +3,7 @@ local M = {}
 
 local dap_utils = require 'dm.plugins.dap.utils'
 local log = require 'dm.log'
+local lsp_utils = require 'dm.plugins.lsp.utils'
 
 -- Refer: https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts#L139
 
@@ -45,15 +46,6 @@ local function delete_bufnr(bufnr)
   if bufnr and vim.api.nvim_buf_is_valid(bufnr) then
     vim.api.nvim_buf_delete(bufnr, { force = true })
   end
-end
-
--- Return the `rust_analyzer` client for the current buffer.
----@return lsp.Client
-local function lsp_client()
-  return assert(
-    vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf(), name = 'rust_analyzer' })[1],
-    'No rust-analyzer client found for the current buffer'
-  )
 end
 
 -- Format the macro expansion output.
@@ -250,7 +242,7 @@ end
 
 -- Show the list of runnables and execute the selected runnable.
 function M.runnables()
-  lsp_client().request('experimental/runnables', {
+  lsp_utils.get_client('rust_analyzer').request('experimental/runnables', {
     textDocument = vim.lsp.util.make_text_document_params(0),
     position = nil,
   }, function(_, runnables)
@@ -284,50 +276,52 @@ end
 -- View crate graph.
 ---@param full boolean #If true, include all crates, not just crates in the workspace.
 function M.view_crate_graph(full)
-  lsp_client().request('rust-analyzer/viewCrateGraph', { full = full }, function(err, graph)
-    if err ~= nil then
-      dm.notify('rust-analyzer', tostring(err), vim.log.levels.ERROR)
-      return
-    end
-
-    local notification =
-      dm.notify('rust-analyzer', 'Processing crate graph. This may take a while...')
-
-    -- TODO(dhruvmanila): Make layout engine and output format as an argument?
-    -- Layout engines: https://graphviz.org/docs/layouts/
-    -- Output formats: https://graphviz.org/docs/outputs/
-    vim.system(
-      { 'dot', '-Tsvg' },
-      { stdin = graph },
-      ---@param result vim.SystemCompleted
-      function(result)
-        if result.code > 0 then
-          dm.notify(
-            'rust-analyzer',
-            'Failed to process crate graph:\n\n' .. result.stderr,
-            vim.log.levels.ERROR,
-            { replace = notification }
-          )
-          return
-        end
-
-        local tmpfile = vim.fs.joinpath(vim.fn.stdpath 'run', 'rust_analyzer_crate_graph.svg')
-        local file = assert(io.open(tmpfile, 'w+'))
-        file:write(result.stdout)
-        file:flush()
-        file:close()
-
-        os.execute(vim.g.open_command .. ' ' .. tmpfile)
+  lsp_utils
+    .get_client('rust_analyzer')
+    .request('rust-analyzer/viewCrateGraph', { full = full }, function(err, graph)
+      if err ~= nil then
+        dm.notify('rust-analyzer', tostring(err), vim.log.levels.ERROR)
+        return
       end
-    )
-  end)
+
+      local notification =
+        dm.notify('rust-analyzer', 'Processing crate graph. This may take a while...')
+
+      -- TODO(dhruvmanila): Make layout engine and output format as an argument?
+      -- Layout engines: https://graphviz.org/docs/layouts/
+      -- Output formats: https://graphviz.org/docs/outputs/
+      vim.system(
+        { 'dot', '-Tsvg' },
+        { stdin = graph },
+        ---@param result vim.SystemCompleted
+        function(result)
+          if result.code > 0 then
+            dm.notify(
+              'rust-analyzer',
+              'Failed to process crate graph:\n\n' .. result.stderr,
+              vim.log.levels.ERROR,
+              { replace = notification }
+            )
+            return
+          end
+
+          local tmpfile = vim.fs.joinpath(vim.fn.stdpath 'run', 'rust_analyzer_crate_graph.svg')
+          local file = assert(io.open(tmpfile, 'w+'))
+          file:write(result.stdout)
+          file:flush()
+          file:close()
+
+          os.execute(vim.g.open_command .. ' ' .. tmpfile)
+        end
+      )
+    end)
 end
 
 -- Trigger the flycheck process for the current buffer.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
 function M.run_flycheck()
-  lsp_client().notify('rust-analyzer/runFlycheck', {
+  lsp_utils.get_client('rust_analyzer').notify('rust-analyzer/runFlycheck', {
     textDocument = vim.lsp.util.make_text_document_params(),
   })
 end
@@ -336,19 +330,19 @@ end
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
 function M.cancel_flycheck()
-  lsp_client().notify 'rust-analyzer/cancelFlycheck'
+  lsp_utils.get_client('rust_analyzer').notify 'rust-analyzer/cancelFlycheck'
 end
 
 -- Clears all the flycheck diagnostics.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
 function M.clear_flycheck()
-  lsp_client().notify 'rust-analyzer/clearFlycheck'
+  lsp_utils.get_client('rust_analyzer').notify 'rust-analyzer/clearFlycheck'
 end
 
 -- Expand the macro under the cursor recursively and show the output in a new buffer.
 function M.expand_macro_recursively()
-  lsp_client().request(
+  lsp_utils.get_client('rust_analyzer').request(
     'rust-analyzer/expandMacro',
     vim.lsp.util.make_position_params(),
     ---@param expanded ExpandedMacro
@@ -384,7 +378,7 @@ end
 --
 -- This assumes that the `localDocs` experimental feature is enabled.
 function M.open_external_docs()
-  lsp_client().request(
+  lsp_utils.get_client('rust_analyzer').request(
     'experimental/externalDocs',
     vim.lsp.util.make_position_params(),
     ---@param result ExternalDocsResponse

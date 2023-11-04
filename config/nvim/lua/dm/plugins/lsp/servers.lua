@@ -1,6 +1,7 @@
 local M = vim.lsp.protocol.Methods
 
 local extensions = require 'dm.plugins.lsp.extensions'
+local lsp_utils = require 'dm.plugins.lsp.utils'
 
 -- LSP server configurations
 ---@type table<string, table|function>
@@ -126,23 +127,27 @@ local servers = {
     commands = {
       RuffAutofix = {
         function()
-          vim.lsp.buf.execute_command {
-            command = 'ruff.applyAutofix',
-            arguments = {
-              { uri = vim.uri_from_bufnr(0) },
-            },
-          }
+          lsp_utils
+            .get_client('ruff_lsp')
+            .request(vim.lsp.protocol.Methods.workspace_executeCommand, {
+              command = 'ruff.applyAutofix',
+              arguments = {
+                { uri = vim.uri_from_bufnr(0) },
+              },
+            })
         end,
         description = 'Ruff: Fix all auto-fixable problems',
       },
       RuffOrganizeImports = {
         function()
-          vim.lsp.buf.execute_command {
-            command = 'ruff.applyOrganizeImports',
-            arguments = {
-              { uri = vim.uri_from_bufnr(0) },
-            },
-          }
+          lsp_utils
+            .get_client('ruff_lsp')
+            .request(vim.lsp.protocol.Methods.workspace_executeCommand, {
+              command = 'ruff.applyOrganizeImports',
+              arguments = {
+                { uri = vim.uri_from_bufnr(0) },
+              },
+            })
         end,
         description = 'Ruff: Format imports',
       },
@@ -185,8 +190,8 @@ local servers = {
     },
     on_init = function(client)
       local path = client.workspace_folders[1].name
-      if vim.tbl_contains({ 'ruff', 'ruff-test' }, vim.fs.basename(path)) then
-        -- Disable `checkOnSave` for Ruff monorepo as it takes too long.
+      if vim.tbl_contains({ 'ruff', 'ruff-test', 'biome' }, vim.fs.basename(path)) then
+        -- Disable `checkOnSave` for monorepo as it takes too long.
         -- Use `;c` or `:RustRunFlycheck` to manually check.
         client.config.settings['rust-analyzer'].checkOnSave = false
       end
