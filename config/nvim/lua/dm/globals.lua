@@ -144,7 +144,8 @@ do
   -- Override the default `vim.notify` to open a floating window.
   ---@param msg string|string[]
   ---@param level? number|string
-  ---@param opts? table `:help NotifyOptions`
+  ---@param opts? notify.Options
+  ---@diagnostic disable-next-line: duplicate-set-field
   vim.notify = function(msg, level, opts)
     -- Defer the plugin setup until the first notification call.
     if not notify then

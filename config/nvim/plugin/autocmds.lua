@@ -111,6 +111,7 @@ do
   -- 'colorcolumn' value for specific filetypes
   local ft_colorcolumn = {
     gitcommit = '72',
+    lua = '100',
     python = '88',
   }
 
@@ -273,8 +274,7 @@ do
 
   vim.api.nvim_create_user_command('ToggleAutoRelativeNumber', toggle_auto_relative_number, {})
 
-  -- It's on by default.
-  toggle_auto_relative_number(false)
+  -- toggle_auto_relative_number(false)
 end
 
 -- Terminal {{{1

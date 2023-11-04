@@ -29,6 +29,8 @@ vim.keymap.set('n', '<leader>rg', builtin.live_grep, {
   desc = 'Telescope: Live grep',
 })
 
+vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = 'Telescope: Diagnostics' })
+
 -- Smart tags picker which uses either the LSP symbols, treesitter symbols or
 -- buffer tags, whichever is available first.
 vim.keymap.set('n', '<leader>ft', function()
@@ -51,6 +53,9 @@ vim.keymap.set('n', '<leader>gc', builtin.git_commits, {
 vim.keymap.set('n', '<leader>bc', builtin.git_bcommits, {
   desc = 'Telescope: Git commits (buffer)',
 })
+vim.keymap.set('x', '<leader>bc', builtin.git_bcommits_range, {
+  desc = 'Telescope: Git commits (selected lines in buffer)',
+})
 
 -- Neovim
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {
@@ -67,13 +72,6 @@ vim.keymap.set('n', '<leader>/', builtin.search_history, {
 })
 
 -- Custom pickers
-
-vim.keymap.set('n', '<leader>fd', function()
-  builtin.git_files {
-    prompt_title = 'Find dotfiles',
-    cwd = '~/dotfiles',
-  }
-end, { desc = 'Telescope: Find dotfiles' })
 
 -- This is mainly to avoid .gitignore patterns.
 vim.keymap.set('n', '<leader>fa', function()

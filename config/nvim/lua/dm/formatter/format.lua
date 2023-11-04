@@ -54,11 +54,12 @@ end
 ---@param formatter Formatter
 function Format:run(formatter)
   local cmd = { formatter.cmd }
-  if formatter.args then
-    if type(formatter.args) == 'function' then
-      vim.list_extend(cmd, formatter.args(self.bufnr))
+  local args = formatter.args
+  if args then
+    if type(args) == 'function' then
+      vim.list_extend(cmd, args(self.bufnr))
     else
-      vim.list_extend(cmd, formatter.args)
+      vim.list_extend(cmd, args)
     end
   end
 

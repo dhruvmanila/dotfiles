@@ -143,7 +143,7 @@ function _G.nvim_statusline()
     .. '%2*'
     .. pad(filetype())
     .. '%1*'
-    .. ' %2p%%  %2l/%L:%-2c '
+    .. ' %2l/%L:%-2c '
     .. buffer_info()
 end
 

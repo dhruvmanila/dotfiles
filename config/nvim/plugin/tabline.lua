@@ -4,7 +4,7 @@ local api = vim.api
 local provider = require 'dm.provider'
 
 ---@class Tabpage
----@field id integer
+---@field index integer
 ---@field name string
 ---@field flags string
 ---@field is_active boolean
@@ -15,10 +15,10 @@ local provider = require 'dm.provider'
 local function tabpage_label(tabpage)
   return (tabpage.is_active and '%#TabLineSel#' or '%#TabLine#')
     .. '%'
-    .. tabpage.id
+    .. tabpage.index
     .. 'T' -- Starts mouse click target region
     .. '  '
-    .. tabpage.id
+    .. tabpage.index
     .. ': '
     .. tabpage.name
     .. tabpage.flags
@@ -35,7 +35,7 @@ local function collect_tabpages()
     local winnr = fn.tabpagewinnr(tabpagenr)
     local bufnr = fn.tabpagebuflist(tabpagenr)[winnr]
     local tabpage = {
-      id = tabpagenr,
+      index = tabpagenr,
       name = api.nvim_buf_get_name(bufnr),
       flags = provider.buffer_flags(bufnr),
       is_active = tabpagenr == current_tabpagenr,
@@ -56,12 +56,12 @@ function _G.nvim_tabline()
     if #tabpages == 1 then
       local tabpage = tabpages[1]
       tabpage.name = filename
-      labels[tabpage.id] = tabpage_label(tabpage)
+      labels[tabpage.index] = tabpage_label(tabpage)
     else
       for _, tabpage in ipairs(tabpages) do
         local parts = vim.split(tabpage.name, '/', { trimempty = true })
         tabpage.name = parts[#parts - 1] .. '/' .. parts[#parts]
-        labels[tabpage.id] = tabpage_label(tabpage)
+        labels[tabpage.index] = tabpage_label(tabpage)
       end
     end
   end

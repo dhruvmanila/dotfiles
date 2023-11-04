@@ -34,7 +34,7 @@ end
 -- window in a new tab.
 ---@param prompt_bufnr number
 function M.qflist_tab_session(prompt_bufnr)
-  actions.smart_add_to_qflist(prompt_bufnr)
+  actions.smart_send_to_qflist(prompt_bufnr)
   vim.cmd 'tabnew | copen | cfirst'
 end
 

@@ -81,10 +81,11 @@ local function run_linter(bufnr, linter)
   -- Create a local copy of the command and arguments.
   local cmd = { linter.cmd }
   if linter.args then
-    if type(linter.args) == 'function' then
-      vim.list_extend(cmd, linter.args(bufnr))
+    local args = linter.args
+    if type(args) == 'function' then
+      vim.list_extend(cmd, args(bufnr))
     else
-      vim.list_extend(cmd, linter.args)
+      vim.list_extend(cmd, args)
     end
   end
 

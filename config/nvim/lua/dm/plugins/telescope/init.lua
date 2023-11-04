@@ -94,6 +94,9 @@ return {
             include_extensions = true,
             use_default_opts = true,
           },
+          diagnostics = {
+            sort_by = 'severity',
+          },
           git_commits = {
             layout_strategy = 'vertical',
           },
@@ -117,8 +120,6 @@ return {
           live_grep = {
             path_display = { truncate = 3 },
           },
-          lsp_document_diagnostics = { line_width = 60 },
-          lsp_workspace_diagnostics = { line_width = 60 },
         },
         extensions = {
           fzf = {
