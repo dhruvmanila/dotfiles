@@ -4,8 +4,6 @@ local lsp_util = vim.lsp.util
 local format = require 'dm.formatter.format'
 local register = format.register
 
--- c, cpp {{{1
-
 register({ 'c', 'cpp' }, {
   cmd = 'clang-format',
   args = function(bufnr)
@@ -25,15 +23,11 @@ register({ 'c', 'cpp' }, {
   end,
 })
 
--- go {{{1
-
 register('go', {
   lsp = {
     format = true,
   },
 })
-
--- html, javascript, json, typescript, yaml {{{1
 
 register({
   'html',
@@ -54,9 +48,6 @@ register({
   end,
 })
 
--- }}}1
--- lua {{{1
-
 do
   local stylua_config_path
 
@@ -76,12 +67,17 @@ do
   })
 end
 
--- python {{{1
-
 register('python', {
   {
-    cmd = 'black',
-    args = { '--fast', '--quiet', '--target-version', 'py310', '-' },
+    cmd = 'ruff',
+    args = function(bufnr)
+      return {
+        'format',
+        '--stdin-filename',
+        vim.fn.fnamemodify(':.', vim.api.nvim_buf_get_name(bufnr)),
+        '-',
+      }
+    end,
   },
   {
     cmd = 'ruff',
@@ -97,15 +93,11 @@ register('python', {
   },
 })
 
--- rust {{{1
-
 register('rust', {
   lsp = {
     format = true,
   },
 })
-
--- sh {{{1
 
 register('sh', {
   cmd = 'shfmt',
@@ -114,8 +106,6 @@ register('sh', {
     return { '-i', indent_size, '-bn', '-ci', '-sr', '-' }
   end,
 })
-
--- sql {{{1
 
 -- FIXME: This doesn't work if there are unfixable violations detected as the
 -- exit code will then be 1.
@@ -130,8 +120,6 @@ register('sh', {
 --     '-',
 --   },
 -- })
-
--- xml {{{1
 
 register('xml', {
   cmd = 'xmllint',
