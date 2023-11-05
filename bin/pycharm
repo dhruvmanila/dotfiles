@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# A small utility script to open PyCharm using the Python interpreter from the
+# current virtual environment if any.
+
+if [[ -n "$VIRTUAL_ENV" ]]; then
+  PYCHARM_PYTHON_PATH="$VIRTUAL_ENV/bin/python" open "/Applications/PyCharm CE.app"
+else
+  open "/Applications/PyCharm CE.app"
+fi
