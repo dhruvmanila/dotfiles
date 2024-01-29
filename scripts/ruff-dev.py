@@ -8,7 +8,9 @@ import watchfiles
 
 PLAYGROUND_DIR = Path.home().joinpath("playground", "ruff")
 RUFF_DIR = Path.home().joinpath("work", "astral", "ruff")
-RUFF_FIXTURES_DIR = RUFF_DIR.joinpath("crates", "ruff", "resources", "test", "fixtures")
+RUFF_FIXTURES_DIR = RUFF_DIR.joinpath(
+    "crates", "ruff_linter", "resources", "test", "fixtures"
+)
 
 app = typer.Typer(rich_markup_mode="rich")
 
@@ -23,6 +25,18 @@ def playground_file(filename: str) -> Path:
         playground_file.parent.mkdir(parents=True, exist_ok=True)
         playground_file.touch()
     return playground_file
+
+
+def playground_config_file() -> Path:
+    """Return the playground config file, creating it if it doesn't exist."""
+    config_file = PLAYGROUND_DIR.joinpath("ruff.toml")
+    if not config_file.exists():
+        typer.secho(
+            f"Creating {typer.style(config_file, fg=typer.colors.GREEN)}...",
+        )
+        config_file.parent.mkdir(parents=True, exist_ok=True)
+        config_file.touch()
+    return config_file
 
 
 def start_watchfiles(*paths: Path | str, command: Iterable[str]) -> None:
@@ -45,16 +59,19 @@ def start_watchfiles(*paths: Path | str, command: Iterable[str]) -> None:
 def docs() -> None:
     """Watch for changes in docs and generate them."""
     start_watchfiles(
-        "crates/ruff",
+        "crates/ruff_linter",
         "mkdocs.template.yml",
         "mkdocs.insiders.yml",
         "scripts/generate_mkdocs.py",
         # Only include the files that aren't auto-generated.
         "docs/tutorial.md",
         "docs/installation.md",
-        "docs/usage.md",
+        "docs/linter.md",
+        "docs/formatter.md",
         "docs/configuration.md",
-        "docs/editor-integrations.md",
+        "docs/preview.md",
+        "docs/versioning.md",
+        "docs/integrations.md",
         "docs/faq.md",
         command=["python", "scripts/generate_mkdocs.py"],
     )
@@ -154,7 +171,7 @@ def linter(
     """
     if rules is None:
         start_watchfiles(
-            RUFF_DIR.joinpath("crates", "ruff"),
+            RUFF_DIR.joinpath("crates", "ruff_linter"),
             command=[
                 "cargo",
                 "build",
@@ -187,8 +204,15 @@ def linter(
         )
         raise typer.Exit(1)
 
+    if play:
+        config_file = shlex.quote(str(playground_config_file()))
+        config_option = f"--config={config_file}"
+        fixture_paths.append(config_file)
+    else:
+        config_option = "--isolated"
+
     start_watchfiles(
-        "crates/ruff",
+        "crates/ruff_linter",
         *fixture_paths,
         command=[
             "cargo",
@@ -199,7 +223,7 @@ def linter(
             "--",
             "check",
             f"--select={','.join(rules)}",
-            "--isolated",
+            config_option,
             "--no-cache",
             "--show-source",
             *(ruff_args or []),

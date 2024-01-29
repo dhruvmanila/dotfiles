@@ -258,8 +258,10 @@ function M.runnables()
         return runnable.label
       end,
     }, function(runnable)
-      cache.runnable = runnable
-      execute_runnable(runnable)
+      if runnable then
+        cache.runnable = runnable
+        execute_runnable(runnable)
+      end
     end)
   end)
 end

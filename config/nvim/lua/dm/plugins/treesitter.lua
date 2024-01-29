@@ -11,8 +11,6 @@ return {
       require('nvim-treesitter.configs').setup {
         -- A list of parser names, or "all"
         ensure_installed = {
-          'bash',
-          'c',
           'cmake',
           'comment',
           'cpp',
@@ -30,20 +28,14 @@ return {
           'jsonc',
           -- 'just',
           'lalrpop',
-          'lua',
           'make',
-          'markdown',
-          'markdown_inline',
-          'python',
-          'query',
           'requirements',
           'ruby',
           'rust',
           'scheme',
+          'swift',
           'toml',
           'typescript',
-          'vim',
-          'vimdoc',
           'yaml',
         },
 
@@ -118,21 +110,29 @@ return {
 
   {
     'nvim-treesitter/nvim-treesitter-context',
-    event = 'BufReadPre',
     opts = {
+      enable = false,
       mode = 'cursor',
       separator = '─',
+      max_lines = math.floor(vim.o.lines * 0.2),
     },
+    config = function(_, opts)
+      require('treesitter-context').setup(opts)
+
+      vim.keymap.set('n', '<leader>tc', '<Cmd>TSContextToggle<CR>')
+    end,
   },
 
   {
     'nvim-treesitter/playground',
     cmd = { 'TSPlaygroundToggle' },
     keys = {
-      { '<Leader>tp', '<Cmd>TSPlaygroundToggle<CR>' },
-      { '<Leader>th', '<Cmd>TSHighlightCapturesUnderCursor<CR>' },
+      { '<leader>tp', '<Cmd>TSPlaygroundToggle<CR>' },
+      { '<leader>th', '<Cmd>TSHighlightCapturesUnderCursor<CR>' },
     },
-    dependencies = { 'nvim-treesitter' },
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+    },
   },
 
   {

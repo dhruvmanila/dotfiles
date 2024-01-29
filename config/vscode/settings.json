@@ -1,5 +1,22 @@
 {
   "files.autoSave": "onFocusChange",
+  
+  "pygls.server.launchScript": "inlay_hints.py",
+  "pygls.trace.server": "verbose",
+  "pygls.client.documentSelector": [
+    {
+      "scheme": "file",
+      "language": "json"
+    },
+    {
+      "scheme": "file",
+      "language": "plaintext"
+    },
+    {
+      "notebook": "*",
+      "language": "python"
+    }
+  ],
 
   // Neovim
   "vscode-neovim.neovimExecutablePaths.darwin": "nvim",
@@ -36,7 +53,6 @@
   "editor.minimap.enabled": false,
   "editor.inlineSuggest.enabled": true,
   "editor.comments.ignoreEmptyLines": false,
-  "editor.formatOnSave": false,
   "editor.suggestSelection": "first",
 
   // Terminal settings
@@ -49,19 +65,38 @@
   "python.languageServer": "Pyright",
   "python.terminal.executeInFileDir": true,
   "python.venvPath": "~/Library/Application Support/pie",
-  "python.formatting.provider": "black",
-  "python.sortImports.args": ["--profile=black"],
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": false
-    }
-  },
-  "python.linting.pylintEnabled": false,
-  "python.linting.flake8Enabled": true,
-  "python.linting.mypyEnabled": true,
-  "python.linting.flake8Path": "~/.local/bin/flake8",
-  "python.formatting.blackPath": "~/.local/bin/black",
+  
+  // Ruff (mainly for development)
+  "ruff.lint.enable": false,
+  // "ruff.lint.run": "onType",
+  "ruff.path": ["~/.local/bin/ruff"],
+  // "ruff.importStrategy": "useBundled",
 
+  // Reproduction settings
+  "workbench.editorAssociations": {
+      "*.ipynb": "jupyter.notebook.ipynb"
+  },
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "black-formatter.args": ["--skip-string-normalization"],
+  
+  // "notebook.formatOnSave.enabled": true,
+  "notebook.codeActionsOnSave": {
+    // "source.fixAll": "explicit",
+    // "source.organizeImports": "explicit"
+  },
+
+  // "[python]": {
+  //   "editor.defaultFormatter": "charliermarsh.ruff"
+  //   // "editor.formatOnSave": true
+  //   // "editor.codeActionsOnSave": {
+  //   //   "source.fixAll": true,
+  //     // "source.organizeImports": true
+  //   // }
+  // },
+  
   // Python docstring
   "autoDocstring.docstringFormat": "numpy-notypes",
   "editor.tokenColorCustomizations": {
@@ -110,6 +145,11 @@
     "editor.tabSize": 4
   },
 
+  // "[jupyter-notebook]": {
+  //   "editor.formatOnSave": true,
+  //   "editor.defaultFormatter": "charliermarsh.ruff"
+  // },
+
   // Controls the dimensions of opening a new window when at least one window is already opened.
   "window.newWindowDimensions": "maximized",
 
@@ -117,9 +157,10 @@
   "files.associations": {
     "Brewfile": "ruby",
     "Vagrantfile": "ruby"
+    // "*.ipynb": "python"
   },
   "workbench.editorAssociations": {
-    "*.ipynb": "jupyter-notebook",
+    // "*.ipynb": "jupyter-notebook",
     "*.hdl": "vhdl"
   },
 
@@ -145,5 +186,9 @@
   "Lua.telemetry.enable": false,
   "redhat.telemetry.enabled": false,
   "git.openRepositoryInParentFolders": "never",
-  "window.zoomLevel": 1
+  "notebook.lineNumbers": "on",
+  "extensions.experimental.affinity": {
+    "asvetliakov.vscode-neovim": 1
+  },
+  "editor.accessibilitySupport": "off",
 }

@@ -6,6 +6,7 @@ from docklib import Dock
 DOCK_APPS = [
     "/Applications/Arc.app",
     "/Applications/kitty.app",
+    "/Applications/Discord.app",
     "/System/Applications/Notes.app",
     "/System/Applications/Music.app",
     "/System/Applications/Books.app",

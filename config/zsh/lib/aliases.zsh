@@ -14,6 +14,7 @@ alias -g T='| tail'
 
 alias b='bookmarks'
 alias hn='clx --nerdfonts --comment-width=$((COLUMNS - 10))'
+alias gwip='git add --all && git commit -m "WIP"'
 
 # cd {{{1
 

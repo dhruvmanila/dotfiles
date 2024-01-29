@@ -1,16 +1,17 @@
 vim.filetype.add {
   extension = {
-    just = 'just',
     json = 'jsonc',
+    just = 'just',
     lalrpop = 'lalrpop',
+    mdx = 'markdown',
     pip = 'requirements',
   },
 
   filename = {
-    justfile = 'just',
-    Justfile = 'just',
     Brewfile = 'ruby',
+    Justfile = 'just',
     Vagrantfile = 'ruby',
+    justfile = 'just',
   },
 
   pattern = {

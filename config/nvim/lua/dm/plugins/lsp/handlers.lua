@@ -37,6 +37,7 @@ vim.lsp.handlers[M.textDocument_definition] = location_handler
 vim.lsp.handlers[M.textDocument_declaration] = location_handler
 vim.lsp.handlers[M.textDocument_typeDefinition] = location_handler
 vim.lsp.handlers[M.textDocument_implementation] = location_handler
+vim.lsp.handlers[M.textDocument_references] = location_handler
 
 do
   local levels = {

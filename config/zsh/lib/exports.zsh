@@ -1,7 +1,7 @@
 # CFLAGS, CPPFLAGS, LDFLAGS {{{1
 
 # The following softwares are installed via Homebrew but they're not symlinked
-# as they are key-only. The official instructions is to include them in common
+# as they are keg-only. The official instructions is to include them in common
 # compiler environment variables.
 #
 # NOTE: Homebrew installed `clang` compiler does not search for header and
@@ -10,18 +10,12 @@
 #
 #     $ clang -x c -v -E /dev/null
 
-if [[ -n "$HOMEBREW_PREFIX" ]]; then
-  export CFLAGS="\
-  -I$HOMEBREW_PREFIX/include \
-  -I$HOMEBREW_PREFIX/opt/openssl@3/include \
-  "
-  export CPPFLAGS="$CFLAGS"
+# if [[ -n "$HOMEBREW_PREFIX" ]]; then
+#   export CFLAGS="-I$HOMEBREW_PREFIX/include -I$HOMEBREW_PREFIX/opt/openssl@3/include"
+#   export CPPFLAGS="$CFLAGS"
 
-  export LDFLAGS="\
-  -L$HOMEBREW_PREFIX/lib \
-  -L$HOMEBREW_PREFIX/opt/openssl@3/lib \
-  "
-fi
+#   export LDFLAGS="-L$HOMEBREW_PREFIX/lib -L$HOMEBREW_PREFIX/opt/openssl@3/lib"
+# fi
 
 # bat {{{1
 
@@ -112,7 +106,7 @@ export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/lib/Brewfile"
 # Use `bat` for `brew cat` command.
 export HOMEBREW_BAT=1
 
-# Do not show environment variable hints. HOMBREW_* environment variables can
+# Do not show environment variable hints. HOMEBREW_* environment variables can
 # be found at `man brew /Environment`.
 export HOMEBREW_NO_ENV_HINTS=1
 

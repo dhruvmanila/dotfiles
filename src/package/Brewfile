@@ -1,11 +1,9 @@
 tap "charmbracelet/tap"
 tap "clementtsang/bottom"
-tap "heroku/brew"
 tap "homebrew/bundle"
 tap "homebrew/cask-fonts"
 tap "homebrew/cask-versions"
 tap "homebrew/services"
-tap "mongodb/brew"
 tap "render-oss/render"
 tap "romkatv/gitstatus"
 tap "withgraphite/tap"
@@ -19,10 +17,6 @@ brew "lz4"
 brew "xz"
 # Tool for generating GNU Standards-compliant Makefiles
 brew "automake"
-# Command-line interface for SQLite
-brew "sqlite"
-# Microsoft Azure CLI 2.0
-brew "azure-cli"
 # Bourne-Again SHell, a UNIX command interpreter
 brew "bash"
 # Programmable completion for Bash 4.2+
@@ -39,12 +33,8 @@ brew "brew-gem"
 brew "freetype"
 # GNU internationalization (i18n) and localization (l10n) library
 brew "gettext"
-# Portable Foreign Function Interface library
-brew "libffi"
 # Manage compile and link flags for libraries
 brew "pkg-config"
-# Tool Command Language
-brew "tcl-tk"
 # Vector graphics library with cross-device output support
 brew "cairo"
 # Pager program similar to more
@@ -61,18 +51,12 @@ brew "cmake"
 brew "cmatrix"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
-# Modern diagram scripting language that turns text to diagrams
-brew "d2"
-# Tool to perform numerical, textual & statistical operations
-brew "datamash"
+# Command-line interface for SQLite
+brew "sqlite"
 # DuckDuckGo from the terminal
 brew "ddgr"
 # Debugger for the Go programming language
 brew "delve"
-# Tool for exploring each layer in a docker image
-brew "dive"
-# Generate documentation for several programming languages
-brew "doxygen"
 # Maintain consistent coding style between multiple editors
 brew "editorconfig"
 # Modern replacement for 'ls'
@@ -106,8 +90,12 @@ brew "ruby"
 brew "gem-bashly"
 # GitHub command-line tool
 brew "gh"
+# GIF image/animation creator/editor
+brew "gifsicle"
 # Distributed revision control system
 brew "git"
+# Automatic git commit --fixup
+brew "git-absorb"
 # Syntax-highlighting pager for git and diff output
 brew "git-delta"
 # Git extension for versioning large files
@@ -137,13 +125,15 @@ brew "htop"
 # Command-line benchmarking tool
 brew "hyperfine"
 # Image manipulation library
-brew "jpeg", link: true
+brew "jpeg"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
 # Handy way to save and run project-specific commands
 brew "just"
 # User-friendly front-end to ssh-agent(1)
 brew "keychain"
+# Portable Foreign Function Interface library
+brew "libffi"
 # LLVM's OpenMP runtime library
 brew "libomp", link: true
 # Next-gen compiler infrastructure
@@ -162,8 +152,6 @@ brew "make"
 brew "mas"
 # Modern Linker
 brew "mold"
-# MongoDB CLI enables you to manage your MongoDB in the Cloud
-brew "mongocli"
 # Platform built on V8 to build network applications
 brew "node"
 # Collection of tools that nobody wrote when UNIX was young
@@ -178,12 +166,8 @@ brew "nginx"
 brew "ninja"
 # Development kit for the Java programming language
 brew "openjdk"
-# Tool for creating identical machine images for multiple platforms
-brew "packer"
 # Swiss-army knife of markup format conversion
 brew "pandoc"
-# Paragraph reflow for email
-brew "par"
 # Display directories as trees (with optional color/HTML output)
 brew "tree"
 # Password manager
@@ -212,6 +196,8 @@ brew "shfmt"
 brew "starship"
 # Opinionated Lua code formatter
 brew "stylua"
+# Tool Command Language
+brew "tcl-tk"
 # Very fast implementation of tldr in Rust
 brew "tealdeer"
 # Tool to build, change, and version infrastructure
@@ -222,6 +208,8 @@ brew "tmux"
 brew "tokei"
 # CLI tool that moves files or folder to the trash
 brew "trash"
+# Parser generator tool and incremental parsing library
+brew "tree-sitter"
 # Command-line tool for sharing terminal over the web
 brew "ttyd"
 # Maintained ctags implementation
@@ -240,10 +228,6 @@ brew "zsh"
 brew "charmbracelet/tap/vhs"
 # A cross-platform graphical process/system monitor with a customizable interface and a multitude of features.
 brew "clementtsang/bottom/bottom"
-# Everything you need to get started with Heroku
-brew "heroku/brew/heroku"
-# High-performance, schema-free, document-oriented database
-brew "mongodb/brew/mongodb-community"
 # Launch your next project into the cloud
 brew "render-oss/render/render"
 # Git status for Bash/Zsh prompt
@@ -268,6 +252,8 @@ cask "font-fira-code"
 cask "font-jetbrains-mono"
 # Developer targeted fonts with a high number of glyphs
 cask "font-jetbrains-mono-nerd-font"
+# Web browser
+cask "google-chrome"
 # Desktop automation application
 cask "hammerspoon"
 # Testing client for REST, GraphQL, and HTTP APIs
@@ -297,6 +283,7 @@ cask "warp"
 # GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm"
 mas "Azure VPN Client", id: 1553936137
+mas "GIPHY CAPTURE", id: 668208984
 mas "Hotspot Shield", id: 771076721
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409203825
@@ -313,9 +300,12 @@ vscode "charliermarsh.ruff"
 vscode "dbaeumer.vscode-eslint"
 vscode "esbenp.prettier-vscode"
 vscode "GitHub.copilot"
+vscode "GitHub.copilot-chat"
+vscode "GitHub.github-vscode-theme"
 vscode "golang.go"
 vscode "guyutongxue.lalrpop-syntax-highlight"
 vscode "ms-azuretools.vscode-docker"
+vscode "ms-python.black-formatter"
 vscode "ms-python.python"
 vscode "ms-python.vscode-pylance"
 vscode "ms-toolsai.jupyter"

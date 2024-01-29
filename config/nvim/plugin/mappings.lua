@@ -172,6 +172,7 @@ local function quickfix_navigation(cmd, reset)
       end
     end
   end
+  vim.cmd 'normal! zz'
 end
 
 local quickfix_mappings = {
@@ -191,11 +192,11 @@ for _, info in ipairs(quickfix_mappings) do
   end)
 end
 
-keymap.set('n', ']Q', '<Cmd>clast<CR>')
-keymap.set('n', '[Q', '<Cmd>cfirst<CR>')
+keymap.set('n', ']Q', '<Cmd>clast<CR>zz')
+keymap.set('n', '[Q', '<Cmd>cfirst<CR>zz')
 
-keymap.set('n', ']L', '<Cmd>llast<CR>')
-keymap.set('n', '[L', '<Cmd>lfirst<CR>')
+keymap.set('n', ']L', '<Cmd>llast<CR>zz')
+keymap.set('n', '[L', '<Cmd>lfirst<CR>zz')
 
 -- Source: https://superuser.com/q/355325/736190
 keymap.set('n', '<leader>x', function()
@@ -244,8 +245,8 @@ keymap.set({ 'n', 'x' }, 'C', '"_C')
 -- }}}
 -- FIXME: this does not open the folds by default as explained in `:h 'foldopen'`
 -- adding 'zv' at the end causes the highlighting to lose
-keymap.set('n', 'n', "'Nn'[v:searchforward] . 'zv'", { expr = true })
-keymap.set('n', 'N', "'nN'[v:searchforward] . 'zv'", { expr = true })
+keymap.set('n', 'n', "'Nn'[v:searchforward] . 'zvzz'", { expr = true })
+keymap.set('n', 'N', "'nN'[v:searchforward] . 'zvzz'", { expr = true })
 
 -- Don't move the cursor to the next match
 -- FIXME: if the cursor is not at the start of the word, it is not highlighted

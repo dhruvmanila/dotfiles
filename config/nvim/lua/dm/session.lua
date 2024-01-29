@@ -80,8 +80,6 @@ end
 ---
 ---The absolute path to the project directory for the session.
 ---@field project string
-
----@type Session
 local Session = {}
 Session.__index = Session
 
@@ -162,7 +160,7 @@ end
 
 -- Stop all the LSP clients.
 local function stop_lsp_clients()
-  vim.lsp.stop_client(vim.lsp.get_active_clients())
+  vim.lsp.stop_client(vim.lsp.get_clients())
 end
 
 -- Cleanup performed before saving the session. This includes:
@@ -270,7 +268,7 @@ function M.close()
   M.stop()
   stop_lsp_clients()
   delete_buffers()
-  dashboard.open(false)
+  dashboard.open()
 end
 
 -- Using `vim.ui.select`, prompt the user to select a session to delete.
@@ -295,6 +293,19 @@ function M.list()
       table.insert(sessions, Session:from_session_file(session_file))
     end
   end
+  -- Sort the sessions in a way that all of the sessions in the current project
+  -- are at the top.
+  local project = vim.fn.getcwd()
+  ---@param s1 Session
+  ---@param s2 Session
+  table.sort(sessions, function(s1, s2)
+    if s1.project == project and s2.project ~= project then
+      return true
+    elseif s1.project ~= project and s2.project == project then
+      return false
+    end
+    return s1.name < s2.name
+  end)
   return sessions
 end
 
