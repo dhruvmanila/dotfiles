@@ -74,8 +74,16 @@ export PYENV_ROOT="$HOME/.pyenv"
 
 case "$OSTYPE" in
   darwin*)
-    [[ -x "/usr/local/bin/brew" ]] && \
-      eval "$(/usr/local/bin/brew shellenv)"
+    case "$(uname -m)" in
+      x86_64)
+        [[ -x "/usr/local/bin/brew" ]] && \
+          eval "$(/usr/local/bin/brew shellenv)"
+        ;;
+      arm64)
+        [[ -x "/opt/homebrew/bin/brew" ]] && \
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+        ;;
+    esac
     ;;
 
   linux*)
