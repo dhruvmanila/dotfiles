@@ -29,12 +29,22 @@ for directory in "${REQUIRED_DIRECTORIES[@]}"; do
   fi
 done
 
+confirm() {
+  read -r -p "$1 [y/n] " -n 1
+  printf "\n"
+  [[ "$REPLY" =~ ^[Yy]$ ]]
+}
+
 link() {
   local source_file="${DOTFILES}/config/${1}"
   local target_file="${HOME}/${2}"
-  if ((FORCE)) || ! [[ -e "$target_file" ]]; then
+  if ((FORCE)); then
     echo "==> $target_file -> $source_file"
     ln -fs "$source_file" "$target_file"
+  elif ! [[ -e "$target_file" ]]; then
+    if confirm "==> $target_file -> $source_file"; then
+      ln -fs "$source_file" "$target_file"
+    fi
   fi
 }
 
