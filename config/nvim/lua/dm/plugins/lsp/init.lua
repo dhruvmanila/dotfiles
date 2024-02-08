@@ -219,7 +219,7 @@ return {
         end
 
         if dm.config.inlay_hints.enable and supports_method(M.textDocument_inlayHint) then
-          vim.lsp.inlay_hint(bufnr, true)
+          vim.lsp.inlay_hint.enable(bufnr, true)
           -- TODO: temporarily disable inlay hints in insert mode due to
           -- https://github.com/neovim/neovim/issues/24075
           local lsp_inlay_hint_group = vim.api.nvim_create_augroup('dm__lsp_inlay_hint', {
@@ -233,7 +233,7 @@ return {
             group = lsp_inlay_hint_group,
             buffer = bufnr,
             callback = function()
-              vim.lsp.inlay_hint(bufnr, false)
+              vim.lsp.inlay_hint.enable(bufnr, false)
             end,
             desc = 'LSP: Disable inlay hints',
           })
@@ -241,7 +241,7 @@ return {
             group = lsp_inlay_hint_group,
             buffer = bufnr,
             callback = function()
-              vim.lsp.inlay_hint(bufnr, true)
+              vim.lsp.inlay_hint.enable(bufnr, true)
             end,
             desc = 'LSP: Enable inlay hints',
           })
