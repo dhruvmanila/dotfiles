@@ -31,7 +31,7 @@ return {
       ls.add_snippets('all', {
         s({ trig = 'todo', dscr = 'Insert TODO comment with username' }, {
           f(function()
-            return vim.bo.commentstring:gsub('%%s', 'TODO(dhruvmanila): ')
+            return vim.bo.commentstring:gsub('%%s', ' TODO(dhruvmanila): ')
           end, {}),
         }),
       })
