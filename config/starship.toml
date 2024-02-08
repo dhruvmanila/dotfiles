@@ -11,7 +11,7 @@ error_symbol = "[✘](bold red)"
 min_time = 10_000
 
 [directory]
-read_only = " "
+read_only = " 󰌾"
 truncate_to_repo = false
 truncation_symbol = "…/"
 
@@ -36,7 +36,7 @@ symbol = " "
 symbol = "󰢱 "
 
 [package]
-symbol = " "
+symbol = "󰏗 "
 
 [python]
 symbol = " "

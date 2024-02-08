@@ -58,7 +58,7 @@ vim.list_extend(entries, {
   },
   {
     key = 'p',
-    description = '  Show detailed profiling',
+    description = '󰔛  Show detailed profiling',
     command = 'Lazy profile',
   },
 })
@@ -150,7 +150,7 @@ end
 ---@param key string
 ---@return string
 local function add_key(line, key)
-  return line .. string.rep(' ', DESC_LENGTH - #line) .. key
+  return line .. string.rep(' ', DESC_LENGTH - api.nvim_strwidth(line)) .. key
 end
 
 -- Add paddings on the left side of every line to make it look like its in the

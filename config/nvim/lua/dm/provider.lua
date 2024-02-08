@@ -13,7 +13,7 @@ function M.buffer_flags(bufnr)
   bufnr = bufnr or api.nvim_get_current_buf()
   local bo = vim.bo[bufnr]
   if bo.readonly then
-    return ' '
+    return ' 󰌾'
   elseif bo.modifiable and bo.buftype ~= 'prompt' then
     if bo.modified then
       return ' ●'
