@@ -144,7 +144,9 @@ function M.lint()
   for _, linter_name in ipairs(linter_names) do
     local linter = M.linters[linter_name]
     if not linter then
-      log.fmt_warn('Linter "%s" not found', linter_name)
+      vim.notify_once(('Linter "%s" not found'):format(linter_name), vim.log.levels.WARN)
+    elseif not dm.executable(linter.cmd) then
+      vim.notify_once(('Linter "%s" not installed'):format(linter_name), vim.log.levels.WARN)
     else
       run_linter(bufnr, linter)
     end
