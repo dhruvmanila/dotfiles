@@ -2,15 +2,14 @@
 	editor = nvim
 	excludesfile = ~/.ignore
 	ignorecase = false
-	pager = delta
+	pager = less -F -X
 
 [alias]
 	c = commit
-	cl = clone
 	br = branch
 	co = checkout
 	nb = checkout -b
-	st = status -sb
+	st = status --short --branch
 
 	# Sync with upstream HEAD branch
 	sync = !git pull upstream HEAD && git push
@@ -34,6 +33,10 @@
 	# Enhance git diff with delta
 	delta = "!f() { git diff \"$@\" | delta; }; f"
 
+[commit]
+	gpgsign = true
+	template = ~/.gitmessage
+
 [color "branch"]
 	current = yellow reverse
 	local = yellow
@@ -50,20 +53,11 @@
 	changed = green
 	untracked = cyan
 
-[commit]
-	gpgsign = true
-	template = ~/.gitmessage
-
 [diff]
 	# Enable experimental heuristics that shift diff hunk boundaries to make
 	# patches easier to read
 	indentHeuristic = true
-
-[gpg]
-	program = gpg
-
-[init]
-	defaultBranch = main
+	algorithm = histogram
 
 [delta]
 	syntax-theme = gruvbox-dark
@@ -77,6 +71,28 @@
 	file-style = bold yellow ul
 	file-decoration-style = none
 	hunk-header-decoration-style = cyan box ul
+
+[gpg]
+	program = gpg
+
+[help]
+	autocorrect = prompt
+
+[init]
+	defaultBranch = main
+
+[merge]
+	conflictStyle = zdiff3
+
+[push]
+	default = current
+
+[rebase]
+	autosquash = true
+	updateRefs = true
+
+[rerere]
+	enabled = true
 
 [include]
 	path = ~/.gitconfig.local
