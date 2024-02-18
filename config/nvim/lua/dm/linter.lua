@@ -37,6 +37,7 @@ M.enabled_linters_by_filetype = {
   },
   python = {
     'mypy',
+    'flake8',
   },
   sql = {
     'sqlfluff',
