@@ -108,6 +108,7 @@ local servers = {
       python = {
         analysis = {
           typeCheckingMode = 'off', -- Using mypy
+          ignore = { '*' }, -- Using Ruff
         },
       },
     },
