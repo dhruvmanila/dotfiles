@@ -188,16 +188,6 @@ local servers = {
         },
       },
     },
-    on_init = function(client)
-      local path = client.workspace_folders[1].name
-      if vim.tbl_contains({ 'ruff', 'ruff-test', 'biome' }, vim.fs.basename(path)) then
-        -- Disable `checkOnSave` for monorepo as it takes too long.
-        -- Use `;c` or `:RustRunFlycheck` to manually check.
-        client.config.settings['rust-analyzer'].checkOnSave = false
-      end
-      client.notify(M.workspace_didChangeConfiguration, { settings = client.config.settings })
-      return true
-    end,
     capabilities = {
       experimental = {
         localDocs = true,

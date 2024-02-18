@@ -80,10 +80,6 @@ return {
             buffer = bufnr,
             desc = 'LSP (rust-analyzer): Execute last runnable',
           })
-          keymap.set('n', ';c', rust_analyzer.run_flycheck, {
-            buffer = bufnr,
-            desc = 'LSP (rust-analyzer): Run flycheck',
-          })
           keymap.set('n', '<leader>rm', rust_analyzer.expand_macro_recursively, {
             buffer = bufnr,
             desc = 'LSP (rust-analyzer): Expand macro recursively',
