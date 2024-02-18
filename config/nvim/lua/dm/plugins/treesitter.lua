@@ -43,11 +43,6 @@ return {
           enable = true,
         },
 
-        playground = {
-          enable = true,
-          updatetime = 25,
-        },
-
         incremental_selection = {
           enable = true,
           keymaps = {
@@ -121,18 +116,6 @@ return {
 
       vim.keymap.set('n', '<leader>tc', '<Cmd>TSContextToggle<CR>')
     end,
-  },
-
-  {
-    'nvim-treesitter/playground',
-    cmd = { 'TSPlaygroundToggle' },
-    keys = {
-      { '<leader>tp', '<Cmd>TSPlaygroundToggle<CR>' },
-      { '<leader>th', '<Cmd>TSHighlightCapturesUnderCursor<CR>' },
-    },
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-    },
   },
 
   {

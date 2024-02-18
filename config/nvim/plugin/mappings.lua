@@ -92,6 +92,9 @@ keymap.set('n', '<Tab>', 'za')
 keymap.set('n', 'm<CR>', '<Cmd>make<CR>')
 keymap.set('n', 'm<Space>', ':make ')
 
+keymap.set('n', '<leader>th', '<Cmd>Inspect<CR>')
+keymap.set('n', '<leader>tp', '<Cmd>InspectTree<CR>')
+
 -- Make 'gu' toggle between upper and lower case instead of only upper.
 -- '~' can also be made to accept motion if 'tildeop' is set to `true`.
 keymap.set({ 'n', 'x' }, 'gu', 'g~')
