@@ -36,7 +36,6 @@ M.enabled_linters_by_filetype = {
     'golangci-lint',
   },
   python = {
-    'mypy',
     'flake8',
   },
   sql = {
