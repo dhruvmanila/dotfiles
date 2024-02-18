@@ -113,8 +113,8 @@ local function do_search()
   set_finder(mode.QUERY)
 
   -- start in-progress animation
-  if not state.anim_timer then
-    state.anim_timer = vim.fn.timer_start(100, in_progress_animation, { ['repeat'] = -1 })
+  if not state.animation_timer then
+    state.animation_timer = vim.fn.timer_start(100, in_progress_animation, { ['repeat'] = -1 })
   end
 
   ---@param result vim.SystemCompleted
@@ -124,8 +124,8 @@ local function do_search()
       return
     end
     local data = vim.json.decode(result.stdout)
-    vim.fn.timer_stop(state.anim_timer)
-    state.anim_timer = nil
+    vim.fn.timer_stop(state.animation_timer)
+    state.animation_timer = nil
     -- We will change the finder only if there are any results, otherwise reset
     -- the finder to be in QUERY mode.
     if vim.tbl_isempty(data) then
@@ -143,7 +143,7 @@ local function do_search()
     '--json',
     '--noprompt',
     query_text,
-  }, on_exit)
+  }, vim.schedule_wrap(on_exit))
 end
 
 -- Define the default action of either searching or opening the URL(s) depending
