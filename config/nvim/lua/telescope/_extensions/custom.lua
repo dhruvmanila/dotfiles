@@ -31,7 +31,6 @@ return telescope.register_extension {
     github_stars = require_on_module_call 'github_stars',
     icons = require_on_module_call 'icons',
     installed_plugins = require_on_module_call 'installed_plugins',
-    lir_cd = require_on_module_call 'lir_cd',
     sessions = require_on_module_call 'sessions',
     websearch = require_on_module_call 'websearch',
   },
