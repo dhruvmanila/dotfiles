@@ -33,6 +33,9 @@ do
     group = group,
     callback = function(event)
       local client = vim.lsp.get_client_by_id(event.data.client_id)
+      if client == nil then
+        return
+      end
       vim.api.nvim_echo({
         { format_message(event.data.result.value, client.name), 'Grey' },
       }, false, {})

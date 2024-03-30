@@ -1,6 +1,6 @@
 local dap = require 'dap'
 
-local utils = require 'dm.plugins.dap.utils'
+local utils = require 'dm.utils'
 
 -- Return the path to Python executable.
 ---@return string

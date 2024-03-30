@@ -1,8 +1,5 @@
 local M = vim.lsp.protocol.Methods
 
-local extensions = require 'dm.plugins.lsp.extensions'
-local lsp_utils = require 'dm.plugins.lsp.utils'
-
 -- LSP server configurations
 ---@type table<string, table|function>
 local servers = {
@@ -113,43 +110,24 @@ local servers = {
     },
   },
 
+  -- https://github.com/astral-sh/ruff
+  -- Install: `pipx install ruff`
+  ruff = {
+    cmd = {
+      '/Users/dhruv/work/astral/ruff-test/target/release/ruff',
+      'server',
+      '--preview',
+      -- '--verbose',
+    },
+  },
+
   -- https://github.com/astral-sh/ruff-lsp
   -- Install: `pipx install ruff-lsp`
   -- Settings: https://github.com/astral-sh/ruff-lsp#settings
   ruff_lsp = {
     init_options = {
       settings = {
-        -- Let's use the global executable. This can be upgraded irrespective
-        -- of the bundled version.
         path = { vim.fn.exepath 'ruff' },
-      },
-    },
-    commands = {
-      RuffAutofix = {
-        function()
-          lsp_utils
-            .get_client('ruff_lsp')
-            .request(vim.lsp.protocol.Methods.workspace_executeCommand, {
-              command = 'ruff.applyAutofix',
-              arguments = {
-                { uri = vim.uri_from_bufnr(0) },
-              },
-            })
-        end,
-        description = 'Ruff: Fix all auto-fixable problems',
-      },
-      RuffOrganizeImports = {
-        function()
-          lsp_utils
-            .get_client('ruff_lsp')
-            .request(vim.lsp.protocol.Methods.workspace_executeCommand, {
-              command = 'ruff.applyOrganizeImports',
-              arguments = {
-                { uri = vim.uri_from_bufnr(0) },
-              },
-            })
-        end,
-        description = 'Ruff: Format imports',
       },
     },
   },
@@ -200,62 +178,6 @@ local servers = {
             'rust-analyzer.gotoLocation',
           },
         },
-      },
-    },
-    commands = {
-      RustRunnables = {
-        function()
-          extensions.rust_analyzer.runnables()
-        end,
-        desc = 'rust-analyzer: runnables',
-      },
-      RustLastRun = {
-        function()
-          extensions.rust_analyzer.execute_last_runnable()
-        end,
-        desc = 'rust-analyzer: execute last runnable',
-      },
-      RustViewCrateGraph = {
-        function()
-          extensions.rust_analyzer.view_crate_graph(false)
-        end,
-        desc = 'rust-analyzer: View crate graph',
-      },
-      RustViewCrateGraphFull = {
-        function()
-          extensions.rust_analyzer.view_crate_graph(true)
-        end,
-        desc = 'rust-analyzer: View crate graph (full)',
-      },
-      RustRunFlycheck = {
-        function()
-          extensions.rust_analyzer.run_flycheck()
-        end,
-        desc = 'rust-analyzer: Run Flycheck',
-      },
-      RustCancelFlycheck = {
-        function()
-          extensions.rust_analyzer.cancel_flycheck()
-        end,
-        desc = 'rust-analyzer: Cancel Flycheck',
-      },
-      RustClearFlycheck = {
-        function()
-          extensions.rust_analyzer.clear_flycheck()
-        end,
-        desc = 'rust-analyzer: Clear Flycheck',
-      },
-      RustExpandMacro = {
-        function()
-          extensions.rust_analyzer.expand_macro_recursively()
-        end,
-        desc = 'rust-analyzer: Expand macro recursively',
-      },
-      RustOpenExternalDocs = {
-        function()
-          extensions.rust_analyzer.open_external_docs()
-        end,
-        desc = 'rust-analyzer: Open external docs',
       },
     },
   },
@@ -340,4 +262,36 @@ local servers = {
   },
 }
 
-return servers
+-- Overrides for language server capabilities. These are applied to all servers.
+local capability_overrides = {
+  workspace = {
+    -- PERF: didChangeWatchedFiles is too slow.
+    -- TODO: Remove this when https://github.com/neovim/neovim/issues/23291#issuecomment-1686709265 is fixed.
+    didChangeWatchedFiles = {
+      dynamicRegistration = false,
+    },
+  },
+}
+
+-- Returns the configuration for the given language server, `nil` if not found.
+---@param name string
+---@return table?
+local function get(name)
+  local config = servers[name]
+  if not config then
+    vim.notify_once('No LSP configuration found for ' .. name, vim.log.levels.WARN)
+    return
+  end
+  if type(config) == 'function' then
+    config = config()
+  end
+  local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
+  if ok then
+    config.capabilities = cmp_nvim_lsp.default_capabilities()
+  end
+  config.capabilities =
+    vim.tbl_deep_extend('force', config.capabilities or {}, capability_overrides)
+  return config
+end
+
+return { get = get }

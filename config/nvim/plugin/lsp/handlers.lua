@@ -1,5 +1,3 @@
----@diagnostic disable: duplicate-set-field
-
 local M = vim.lsp.protocol.Methods
 
 -- Modified version of the original handler. This will open the quickfix
@@ -7,7 +5,7 @@ local M = vim.lsp.protocol.Methods
 local function location_handler(err, result, ctx)
   local title = 'LSP (' .. ctx.method .. ')'
   if err then
-    dm.notify(title, tostring(err), 4)
+    dm.notify(title, tostring(err), vim.log.levels.ERROR)
     return
   end
   if result == nil or vim.tbl_isempty(result) then
@@ -19,6 +17,11 @@ local function location_handler(err, result, ctx)
   -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
 
   local client = vim.lsp.get_client_by_id(ctx.client_id)
+  if not client then
+    dm.notify(title, 'No client found', vim.log.levels.WARN)
+    return
+  end
+
   if vim.tbl_islist(result) then
     vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
     if vim.tbl_count(result) > 1 then
@@ -26,7 +29,7 @@ local function location_handler(err, result, ctx)
         title = title,
         items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
       })
-      vim.api.nvim_command 'copen | wincmd p'
+      vim.api.nvim_command 'copen | wincmd p | cc 1'
     end
   else
     vim.lsp.util.jump_to_location(result, client.offset_encoding, true)
