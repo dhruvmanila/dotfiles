@@ -1,33 +1,3 @@
--- Build and return Azure DevOps url for `gitlinker.nvim`.
----@param url_data table
----@return string
-local function get_azure_devops_url(url_data)
-  if url_data.host == 'ssh.dev.azure.com' then
-    -- Add the `_git` value right before the repository which is after the last
-    -- forward slash. This is already present if the host is `https`. Also,
-    -- remove the `v3/` part at the beginning which is the ssh version for
-    -- Azure DevOps.
-    url_data.repo = url_data.repo:gsub('/([^/]+)$', '/_git/%1'):gsub('^v3/', '')
-  end
-
-  local url = 'https://dev.azure.com/' .. url_data.repo
-  if not (url_data.file and url_data.rev) then
-    return url
-  end
-
-  url = url .. '?version=GC' .. url_data.rev .. '&path=' .. url_data.file
-  if url_data.lstart then
-    url = url
-      .. '&line='
-      .. url_data.lstart
-      .. '&lineEnd='
-      .. url_data.lend + 1
-      .. '&lineStartColumn=1&lineEndColumn=1&lineStyle=plain&_a=contents'
-  end
-
-  return url
-end
-
 -- Gitsigns `on_attach` callback to setup buffer mappings.
 ---@param bufnr number
 local function gitsigns_on_attach(bufnr)
@@ -152,9 +122,6 @@ return {
     },
     opts = {
       mappings = '<leader>go',
-      callbacks = {
-        ['dev.azure.com'] = get_azure_devops_url,
-      },
       opts = {
         -- Set the default action to open the url in the browser. This function
         -- only works on macOS and Linux.
