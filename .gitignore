@@ -3,6 +3,7 @@ local/
 .vagrant
 
 config/karabiner/automatic_backups/
+config/kitty/kitty.conf.bak
 config/bpytop/error.log
 config/nvim/scratch/
 config/vim/undo/*
@@ -11,3 +12,6 @@ config/vim/plugged
 config/vim/session
 config/vim/autoload/plug.vim
 config/vim/.netrwhist
+config/zed/conversations
+config/zed/embeddings
+config/zed/themes
