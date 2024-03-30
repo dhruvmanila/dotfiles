@@ -41,13 +41,14 @@ function usage() {
   echo "  $CMD --version | -v"
   echo ""
   echo "Commands:"
-  echo "  global       set or show the global Python version"
-  echo "  install      install Python version using python-build"
-  echo "  uninstall    uninstall a specific Python version"
-  echo "  versions     list all the installed Python versions"
-  echo "  link         link all available Python versions to '$HOME/.local/bin'"
-  echo "  root         display root directory where versions are kept"
-  echo "  update-deps  update installed dependencies"
+  echo "  global        set or show the global Python version"
+  echo "  install       install Python version using python-build"
+  echo "  uninstall     uninstall a specific Python version"
+  echo "  versions      list all the installed Python versions"
+  echo "  link          link all available Python versions to '$HOME/.local/bin'"
+  echo "  root          display root directory where versions are kept"
+  echo "  update-deps   update installed dependencies"
+  echo "  install-deps  install dependency (python-build)"
 }
 
 # Install/Update the `python-build` command under $PREFIX (default: /use/local)
@@ -256,6 +257,10 @@ case "$1" in
 
   update-deps)
     python-build "update"
+    ;;
+
+  install-deps)
+    python-build "install"
     ;;
 
   root)
