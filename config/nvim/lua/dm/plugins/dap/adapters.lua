@@ -7,22 +7,37 @@ dap.adapters.lldb = {
 }
 
 do
-  local extension_path = vim.fs.normalize '~/.vscode/extensions/vadimcn.vscode-lldb-1.9.2'
-  local codelldb_path = extension_path .. '/adapter/codelldb'
-  local liblldb_path = extension_path .. '/lldb/lib/liblldb.dylib'
+  -- Returns the path to the VS Code LLDB extension under `~/.vscode/extensions`.
+  ---@return string?
+  local function vscode_lldb_extension_path()
+    local extensions_dir = vim.fs.normalize '~/.vscode/extensions'
+    for name, type in vim.fs.dir(extensions_dir) do
+      if type == 'directory' and name:match '.+vscode%-lldb.+' ~= nil then
+        return vim.fs.joinpath(extensions_dir, name)
+      end
+    end
+  end
 
-  -- https://github.com/mfussenegger/nvim-dap/wiki/C-C---Rust-(via--codelldb)
-  -- Settings: https://github.com/vadimcn/codelldb/blob/master/MANUAL.md
-  dap.adapters.codelldb = {
-    name = 'codelldb',
-    type = 'server',
-    host = '127.0.0.1',
-    port = '${port}',
-    executable = {
-      command = codelldb_path,
-      args = { '--liblldb', liblldb_path, '--port', '${port}' },
-    },
-  }
+  local extension_path = vscode_lldb_extension_path()
+  if extension_path == nil then
+    vim.notify_once('VSCode LLDB extension not found', vim.log.levels.WARN)
+  else
+    local codelldb_path = extension_path .. '/adapter/codelldb'
+    local liblldb_path = extension_path .. '/lldb/lib/liblldb.dylib'
+
+    -- https://github.com/mfussenegger/nvim-dap/wiki/C-C---Rust-(via--codelldb)
+    -- Settings: https://github.com/vadimcn/codelldb/blob/master/MANUAL.md
+    dap.adapters.codelldb = {
+      name = 'codelldb',
+      type = 'server',
+      host = '127.0.0.1',
+      port = '${port}',
+      executable = {
+        command = codelldb_path,
+        args = { '--liblldb', liblldb_path, '--port', '${port}' },
+      },
+    }
+  end
 end
 
 -- https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation#go-using-delve-directly
