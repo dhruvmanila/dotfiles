@@ -13,4 +13,4 @@ __pycache__
 .ipynb_checkpoints
 
 # Neovim project local config
-.vimrc.lua
+.nvim.lua
