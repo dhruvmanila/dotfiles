@@ -162,9 +162,6 @@ return {
     'github/copilot.vim',
     event = 'InsertEnter',
     dependencies = { 'nvim-cmp' },
-    init = function()
-      vim.g.copilot_node_command = '/usr/local/opt/node@16/bin/node'
-    end,
     config = function()
       vim.g.copilot_filetypes = {
         ['*'] = false,
