@@ -198,6 +198,8 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
 #
 # Do NOT edit this line! The installer can recognize the presence of this line
 # and avoid duplication.
+#
+# To install: `/path/to/install --key-bindings --completion --update-rc --no-bash --no-fish`
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Powerlevel10k prompt
@@ -479,17 +481,14 @@ source $DOTFILES/config/zsh/lib/exports.zsh
 # `man zshmisc /SPECIAL FUNCTIONS/;/Hook Functions`
 autoload -Uz add-zsh-hook
 
-_python_auto_venv() { # {{{2
-  # Hook to activate/deactivate the Python virtual environment automagically.
-  #
+# Hook to activate/deactivate the Python virtual environment automagically.
+_python_auto_venv() {
   # We cannot use the `VIRTUAL_ENV` variable for this because it stays in the
-  # environment after a reload.
+  # environment after a shell reload.
   if ! typeset -f deactivate &> /dev/null; then
-    # This function is defined in `./lib/functions.zsh` so that it can be used
-    # from the command-line if needed.
     py-venv-activate
   elif [[ -n "$VIRTUAL_ENV" ]]; then
-    # Why '/' ? {{{
+    # Why '/' ? {{{2
     #
     # Take these two directories for example:
     #   1. ~/test         - contains virtual environment
@@ -501,18 +500,16 @@ _python_auto_venv() { # {{{2
     #
     #   `[[ "~/test-other"  != "~/test"*  ]]` -> false
     #   `[[ "~/test-other/" != "~/test/"* ]]` -> true
-    # }}}
+    # }}}2
     if [[ "$PWD/" != "${VIRTUAL_ENV:h}/"* ]]; then
-      deactivate
       # If we're changing a directory containing a virtual environment to
       # another directory with a virtual environment, then we should deactivate
       # the first one and activate the current one.
+      deactivate
       py-venv-activate
     fi
   fi
 }
-
-# }}}2
 
 # precmd: runs before showing the prompt
 add-zsh-hook -Uz precmd _python_auto_venv
