@@ -1,9 +1,20 @@
 [[language]]
 name = "python"
-language-server = { command = "pyright-langserver", args = ["--stdio"] }
+language-servers = ["pyright", "ruff-lsp"]
 
 [[language]]
 name = "rust"
-language-server = { command = "rustup", args = ["run", "nightly", "rust-analyzer"] }
-config.cargo.features = "all"
-config.rust-analyzer.checkOnSave.command = "clippy"
+
+[language-server.pyright]
+command = "pyright-langserver"
+args = ["--stdio"]
+
+[language-server.ruff]
+command = "ruff"
+args = ["server", "--preview"]
+
+[language-server.ruff-lsp]
+command = "ruff-lsp"
+
+[language-server.rust-analyzer]
+config = { cargo = { features = "all" }, checkOnSave = { command = "clippy" } }
