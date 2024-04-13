@@ -1,15 +1,21 @@
+---@enum Scope
+local Scope = {
+  GLOBAL = 1,
+  BUFFER = 2,
+}
+
 -- Notifies the user when auto-formatting is turned on or off globally or for
 -- the current buffer.
----@param buffer boolean?
-local function format_toggle_notify(buffer)
+---@param scope Scope
+local function format_toggle_notify(scope)
   local msg = 'Autoformatting turned '
-  if buffer then
+  if scope == Scope.BUFFER then
     if vim.b.disable_autoformat then
       msg = msg .. 'OFF for this buffer'
     else
       msg = msg .. 'ON for this buffer'
     end
-  else
+  elseif scope == Scope.GLOBAL then
     if vim.g.disable_autoformat then
       msg = msg .. 'OFF'
     else
@@ -76,10 +82,10 @@ return {
       if args.bang then
         -- FormatDisable! will disable formatting just for this buffer
         vim.b.disable_autoformat = not vim.b.disable_autoformat
-        format_toggle_notify(true)
+        format_toggle_notify(Scope.BUFFER)
       else
         vim.g.disable_autoformat = not vim.g.disable_autoformat
-        format_toggle_notify()
+        format_toggle_notify(Scope.GLOBAL)
       end
     end, {
       desc = 'Toggle auto-formatting',

@@ -102,7 +102,6 @@ return {
         row = 1,
         col = 1,
       },
-      attach_to_untracked = false,
       on_attach = gitsigns_on_attach,
     },
   },

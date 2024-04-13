@@ -65,7 +65,7 @@ local namespace = {
 
     -- LSP inlay hints.
     inlay_hints = {
-      enable = false,
+      enable = true,
     },
   },
 }
@@ -111,8 +111,6 @@ require('lazy').setup('dm.plugins', {
     rtp = {
       disabled_plugins = {
         'gzip',
-        -- 'matchit',
-        -- 'matchparen',
         'netrwPlugin',
         'tarPlugin',
         'tohtml',

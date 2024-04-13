@@ -106,10 +106,10 @@ return {
   {
     'nvim-treesitter/nvim-treesitter-context',
     opts = {
-      enable = false,
-      mode = 'cursor',
+      mode = 'topline',
       separator = '─',
       max_lines = math.floor(vim.o.lines * 0.2),
+      multiline_threshold = 1,
     },
     config = function(_, opts)
       require('treesitter-context').setup(opts)

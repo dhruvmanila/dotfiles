@@ -33,15 +33,15 @@ vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = 'Telescope: Diag
 
 -- Smart tags picker which uses either the LSP symbols, treesitter symbols or
 -- buffer tags, whichever is available first.
-vim.keymap.set('n', '<leader>ft', function()
-  if #vim.lsp.get_active_clients { bufnr = vim.api.nvim_get_current_buf() } > 0 then
+vim.keymap.set('n', '<leader>fs', function()
+  if #vim.lsp.get_clients { bufnr = vim.api.nvim_get_current_buf() } > 0 then
     builtin.lsp_document_symbols()
   elseif require('nvim-treesitter.parsers').has_parser() then
     builtin.treesitter()
   else
     builtin.current_buffer_tags()
   end
-end, { desc = 'Telescope: LSP symbols / treesitter symbols / buffer tags' })
+end, { desc = 'Telescope: Symbols (buffer)' })
 
 -- Git
 vim.keymap.set('n', ';b', builtin.git_branches, {

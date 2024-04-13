@@ -17,5 +17,6 @@ vim.filetype.add {
   pattern = {
     ['.*requirements.*%.txt'] = 'requirements',
     ['.*requirements.*%.in'] = 'requirements',
+    ['.*/work/astral/.*%.snap'] = 'markdown',
   },
 }

@@ -15,7 +15,7 @@ for _, info in ipairs(severity_info) do
 end
 
 -- Prefix each diagnostic in the floating window with an appropriate icon.
----@param diagnostic table
+---@param diagnostic vim.Diagnostic
 ---@return string #icon as per the diagnostic severity
 ---@return string #highlight group as per the diagnostic severity
 local function prefix_diagnostic(diagnostic)
@@ -30,8 +30,8 @@ vim.diagnostic.config {
   signs = true,
   severity_sort = true,
   float = {
-    header = false,
-    source = 'always',
+    header = '',
+    source = true,
     prefix = prefix_diagnostic,
   },
 }

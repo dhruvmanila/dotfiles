@@ -68,13 +68,8 @@ dm.icons = {
   hint = '󰌶',
 }
 
----@generic T
----@param ... T
----@return T
-P = function(...)
-  vim.print(...)
-  return ...
-end
+-- Alias to `vim.print`
+P = vim.print
 
 -- Clear the 'require' cache and 'luacache' for the module name.
 RELOAD = function(...)

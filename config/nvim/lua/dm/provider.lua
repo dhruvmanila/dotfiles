@@ -29,7 +29,7 @@ end
 function M.buffer_name(bufnr, modifier)
   bufnr = bufnr or api.nvim_get_current_buf()
   local name = api.nvim_buf_get_name(bufnr)
-  local buftype = api.nvim_buf_get_option(bufnr, 'buftype')
+  local buftype = api.nvim_get_option_value('buftype', { buf = bufnr })
   if buftype == 'terminal' then
     -- Extract the command part from the terminal title.
     -- Pattern: 'term://{pwd}//{pid}:{cmd} {args}'

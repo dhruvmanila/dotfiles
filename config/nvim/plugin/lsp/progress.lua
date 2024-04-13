@@ -1,8 +1,24 @@
+local ELLIPSIS = '...'
+
 -- Clear the cmdline.
 local function clear_cmdline()
   if vim.api.nvim_get_mode().mode == 'n' then
     vim.api.nvim_echo({}, false, {})
   end
+end
+
+-- Truncate the message to fit the command line. This is to avoid the "Press Enter" prompt
+-- which blocks the UI
+---@param message string
+---@return string
+local function truncate_message(message)
+  -- It seems like Neovim requires these many characters on the end of the command bar to display
+  -- certain things like the number of lines in visual mode or keymaps pressed.
+  local limit = vim.o.columns - 12
+  if string.len(message) > limit then
+    return string.sub(message, 1, limit - string.len(ELLIPSIS)) .. ELLIPSIS
+  end
+  return message
 end
 
 -- Format the LSP message data to be displayed.
@@ -20,7 +36,7 @@ local function format_message(data, client_name)
   if message then
     message = '[' .. client_name .. '] ' .. message
   end
-  return message
+  return truncate_message(message)
 end
 
 do

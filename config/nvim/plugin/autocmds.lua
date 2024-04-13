@@ -113,6 +113,7 @@ do
     gitcommit = '72',
     lua = '100',
     python = '88',
+    rust = '100',
   }
 
   ---@param leaving boolean indicating whether we are leaving insert mode

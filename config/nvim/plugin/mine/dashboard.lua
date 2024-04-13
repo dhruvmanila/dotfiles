@@ -7,11 +7,10 @@ local dashboard = require 'dm.dashboard'
 local utils = require 'dm.utils'
 
 -- Dashboard augroup id.
-local id = vim.api.nvim_create_augroup('dm__dashboard', { clear = true })
+local group = vim.api.nvim_create_augroup('dm__dashboard', { clear = true })
 
-vim.api.nvim_create_autocmd('User', {
-  group = id,
-  pattern = 'LazyVimStarted',
+vim.api.nvim_create_autocmd('UIEnter', {
+  group = group,
   callback = function()
     if vim.fn.argc() == 0 and utils.buf_is_empty() then
       dashboard.open()
@@ -21,7 +20,7 @@ vim.api.nvim_create_autocmd('User', {
 })
 
 vim.api.nvim_create_autocmd('VimResized', {
-  group = id,
+  group = group,
   callback = function()
     if vim.bo.filetype == 'dashboard' then
       dashboard.open()

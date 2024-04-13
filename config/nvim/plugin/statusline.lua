@@ -21,14 +21,12 @@ local function buffer_info()
   if encoding == '' then
     encoding = vim.o.encoding
   end
-  return (' %s:%d  %s %s ')
-    :format(
-      vim.bo.expandtab and 'S' or 'T',
-      vim.bo.shiftwidth,
-      encoding,
-      vim.bo.fileformat == 'unix' and 'lf' or 'crlf'
-    )
-    :upper()
+  return (' %s:%d  %s %s '):format(
+    vim.bo.expandtab and 'S' or 'T',
+    vim.bo.shiftwidth,
+    encoding:upper(),
+    vim.bo.fileformat == 'unix' and 'LF' or 'CRLF'
+  )
 end
 
 -- Return information regarding the current git repository which includes the
@@ -76,7 +74,7 @@ end
 -- Return an icon if there are active LSP client(s). If the region containing
 -- the icon is clicked, then the `LspInfo` command is ran.
 ---@return string
-local function lsp_icon_and_messages()
+local function lsp_icon()
   local result = ''
   local clients = vim.lsp.get_clients { bufnr = 0 }
   if not vim.tbl_isempty(clients) then
@@ -90,11 +88,7 @@ local DIAGNOSTIC_OPTS = {
   { severity = vim.diagnostic.severity.INFO, icon = icons.info, hl = '%6*' },
   { severity = vim.diagnostic.severity.HINT, icon = icons.hint, hl = '%7*' },
   { severity = vim.diagnostic.severity.WARN, icon = icons.warn, hl = '%8*' },
-  {
-    severity = vim.diagnostic.severity.ERROR,
-    icon = icons.error,
-    hl = '%9*',
-  },
+  { severity = vim.diagnostic.severity.ERROR, icon = icons.error, hl = '%9*' },
 }
 
 -- Return the diagnostics information if > 0.
@@ -139,7 +133,7 @@ function _G.nvim_statusline()
     .. '%*'
     .. '%='
     .. pad(dap_status())
-    .. pad(lsp_icon_and_messages())
+    .. pad(lsp_icon())
     .. '%2*'
     .. pad(filetype())
     .. '%1*'
@@ -148,14 +142,9 @@ function _G.nvim_statusline()
 end
 
 local function set_python_version()
-  vim.system(
-    { 'python', '--version' },
-    nil,
-    ---@param result vim.SystemCompleted
-    function(result)
-      vim.g.current_python_version = result.stdout:gsub('\r\n', ''):gsub('\n', '')
-    end
-  )
+  vim.system({ 'python', '--version' }, nil, function(result)
+    vim.g.current_python_version = result.stdout:gsub('\r\n', ''):gsub('\n', '')
+  end)
 end
 
 -- Set the current Python virtual environment name if we are in one.
