@@ -1,6 +1,6 @@
 local M = {}
 
-local log = require 'dm.log'
+local logging = require 'dm.logging'
 
 -- Create a namespace for the lightbulb extmark.
 local LIGHTBULB_EXTMARK_NS = vim.api.nvim_create_namespace 'dm__lsp_lightbulb'
@@ -19,9 +19,9 @@ function M.listener()
   vim.lsp.buf_request(0, 'textDocument/codeAction', params, function(err, result, ctx)
     if err then
       if err.message == RUST_ANALYZER_WAIT_MESSAGE then
-        return log.fmt_debug('LSP (%s): %s', ctx.method, err)
+        return logging.debug('LSP (%s): %s', ctx.method, err)
       end
-      return log.fmt_error('LSP (%s): %s', ctx.method, err)
+      return logging.error('LSP (%s): %s', ctx.method, err)
     end
     -- We've switched buffer by the time the server responded.
     if vim.api.nvim_get_current_buf() ~= bufnr then

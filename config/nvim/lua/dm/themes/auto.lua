@@ -1,9 +1,11 @@
 local M = {}
 
-local log = require 'dm.log'
+local logging = require 'dm.logging'
 local utils = require 'dm.utils'
 
 local default_interval = 3 * 1000
+
+local logger = logging.create 'dm.themes.auto'
 
 local function check()
   vim.system(
@@ -14,7 +16,7 @@ local function check()
       if result.code == 0 then
         appearance = vim.trim(result.stdout)
       else
-        log.fmt_debug('Failed to detect macOS appearance: %s (defaulting to light)', result.stderr)
+        logger.debug('Failed to detect macOS appearance: %s (defaulting to light)', result.stderr)
         appearance = 'Light'
       end
       if appearance == 'Dark' then
@@ -26,7 +28,7 @@ local function check()
           vim.cmd.colorscheme(dm.config.colorscheme.light)
         end
       else
-        log.fmt_warn('Unknown macOS appearance: %s', appearance)
+        logger.warn('Unknown macOS appearance: %s', appearance)
       end
     end)
   )

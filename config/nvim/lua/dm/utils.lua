@@ -44,4 +44,20 @@ function M.ask_for_arguments()
   return vim.split(args, ' +', { trimempty = true })
 end
 
+local ELLIPSIS = '...'
+
+-- Truncate the message to fit the command line.
+--
+-- This is to avoid the "Press Enter" prompt which blocks the UI. It uses the `v:echospace` to
+-- determine the limit.
+---@param message string
+---@return string
+function M.truncate_echo_message(message)
+  local limit = vim.v.echospace
+  if string.len(message) > limit then
+    return string.sub(message, 1, limit - string.len(ELLIPSIS)) .. ELLIPSIS
+  end
+  return message
+end
+
 return M

@@ -1,8 +1,7 @@
-local log = require('dm.log').new {
-  plugin = 'autocmds',
+local logger = require('dm.logging').create('dm.autocmds', {
   use_console = false,
-  level = dm.log.levels.INFO,
-}
+  level = dm.logging.levels.INFO,
+})
 
 ---@type string[]
 local events = {}
@@ -24,7 +23,7 @@ local function toggle_autocmds_logging()
     vim.api.nvim_create_autocmd(event, {
       group = id,
       callback = function(args)
-        log.info(('%s %s'):format(args.event, vim.fs.basename(args.match)))
+        logger.info('%s %s', args.event, vim.fs.basename(args.match))
       end,
     })
   end

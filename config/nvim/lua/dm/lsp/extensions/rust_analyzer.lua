@@ -1,7 +1,7 @@
 -- Client side extensions for `rust-analyzer` language server.
 local M = {}
 
-local log = require 'dm.log'
+local logging = require 'dm.logging'
 local utils = require 'dm.utils'
 
 -- Refer: https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts#L139
@@ -213,7 +213,7 @@ local function debug_runnable(runnable)
         console = 'internalConsole',
         stopOnEntry = false,
       }
-      log.fmt_info('Launching DAP with config: %s', dap_config)
+      logging.info('Launching DAP with config: %s', dap_config)
       require('dap').run(dap_config)
     end)
   )

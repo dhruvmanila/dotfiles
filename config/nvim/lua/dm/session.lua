@@ -5,7 +5,7 @@ local uv = vim.loop
 local api = vim.api
 
 local dashboard = require 'dm.dashboard'
-local log = require 'dm.log'
+local logging = require 'dm.logging'
 
 -- Notification title for the plugin
 local TITLE = 'Session Manager'
@@ -18,6 +18,8 @@ local SESSION_DIR = fn.stdpath 'data' .. '/sessions'
 
 ---@type Session?
 local active_session = nil
+
+local logger = logging.create 'dm.session'
 
 do
   local info = uv.fs_stat(SESSION_DIR)
@@ -41,7 +43,7 @@ local function current_git_branch()
   if branch == nil or branch == '' then
     local result = vim.system({ 'git', 'rev-parse', '--abbrev-ref', 'HEAD' }):wait()
     if result.code > 0 then
-      dm.notify(TITLE, { 'Failed to get git branch:', '', result.stderr }, vim.log.levels.ERROR)
+      logger.error('Failed to get git branch:\n%s', result.stderr)
       return
     end
     branch = vim.trim(result.stdout)
@@ -330,11 +332,11 @@ function M.load(session)
   if session.project ~= (active_session and active_session.project or vim.fn.getcwd()) then
     stop_lsp_clients()
   end
-  log.fmt_info('Loading session file: %s', session.path)
+  logger.info('Loading file: %s', session.path)
   local ok, err = pcall(vim.cmd.source, vim.fn.fnameescape(session.path))
   if not ok then
-    log.fmt_error('Failed to load session file: %s', err)
-    dashboard.open(false)
+    logger.error('Failed to load file: %s', err)
+    dashboard.open()
   else
     active_session = session
   end
@@ -389,7 +391,7 @@ end
 -- Make/save the current session to the given path.
 ---@param session_file string
 function M.write(session_file)
-  log.fmt_info('Writing session file: %s', session_file)
+  logger.info('Writing file: %s', session_file)
   session_cleanup()
   vim.cmd.mksession { vim.fn.fnameescape(session_file), bang = true }
 end

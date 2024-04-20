@@ -4,7 +4,7 @@ local M = lsp.protocol.Methods
 local extensions = require 'dm.lsp.extensions'
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-lsp.set_log_level(vim.env.NVIM_LSP_LOG_LEVEL or dm.current_log_level)
+lsp.set_log_level(vim.env.NVIM_LSP_LOG_LEVEL or dm.logging.get_level())
 require('vim.lsp.log').set_format_func(vim.inspect)
 
 -- Set the default options for all LSP floating windows.

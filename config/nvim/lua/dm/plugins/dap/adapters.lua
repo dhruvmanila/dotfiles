@@ -49,7 +49,7 @@ dap.adapters.go = function(callback)
     '--listen',
     '127.0.0.1:' .. port,
   }
-  if dm.current_log_level == dm.log.levels.DEBUG then
+  if dm.logging.should_log(dm.logging.levels.DEBUG) then
     vim.list_extend(cmd, {
       '--log',
       '--log-dest',

@@ -1,6 +1,8 @@
 local M = {}
 
-local log = require 'dm.log'
+local logging = require 'dm.logging'
+
+local logger = logging.create 'dm.linter'
 
 ---@class Linter
 ---@field cmd string
@@ -103,7 +105,7 @@ local function run_linter(bufnr, linter)
     end
   end
 
-  log.fmt_info('Running linter command: %s', cmd)
+  logger.info('Running linter command: %s', cmd)
 
   vim.system(
     cmd,
@@ -116,14 +118,15 @@ local function run_linter(bufnr, linter)
       if not linter.ignore_exitcode then
         local exit = false
         if type(linter.ignore_exitcode) == 'table' then
-          if vim.tbl_contains(linter.ignore_exitcode, result.code) then
+          if not vim.tbl_contains(linter.ignore_exitcode, result.code) then
+            logger.info('Ignoring exit code: %d', result.code)
             exit = true
           end
         elseif result.code > 0 then
           exit = true
         end
         if exit then
-          log.fmt_error('Linter command `%s` exited with code: %d', linter.cmd, result.code)
+          logger.error('Linter command `%s` exited with code: %d', linter.cmd, result.code)
           return
         end
       end
