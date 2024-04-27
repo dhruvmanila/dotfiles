@@ -119,7 +119,7 @@ return {
       local dap_python = require 'dap-python'
 
       -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-      dap.set_log_level(dm.logging.get_level_name())
+      dap.set_log_level(dm.log.get_level_name())
 
       -- Load VSCode configurations from `./.vscode/launch.json` file.
       --

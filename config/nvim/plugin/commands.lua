@@ -134,6 +134,8 @@ end, {
   desc = 'LspClient <client_name> [<client_field>]: Print information about the LSP client',
 })
 
+-- LspSetLogLevel {{{1
+
 nvim_create_user_command('LspSetLogLevel', function(opts)
   vim.lsp.set_log_level(opts.args)
 end, {

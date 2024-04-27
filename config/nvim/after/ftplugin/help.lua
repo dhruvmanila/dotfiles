@@ -1,15 +1,9 @@
 local fn = vim.fn
 local api = vim.api
 
--- Options {{{1
-
-vim.cmd [[
-setlocal nonumber
-setlocal norelativenumber
-setlocal nolist
-]]
-
--- Functions {{{1
+vim.opt_local.number = false
+vim.opt_local.relativenumber = false
+vim.opt_local.list = false
 
 local hl_id
 
@@ -53,8 +47,6 @@ local function highlight_tag()
     hl_id = fn.matchadd('Search', pattern)
   end)
 end
-
--- Mappings {{{1
 
 local opts = { buffer = true, nowait = true }
 

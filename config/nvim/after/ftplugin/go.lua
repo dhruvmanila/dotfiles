@@ -1,4 +1,4 @@
-vim.bo.makeprg = 'go run %'
+vim.opt_local.makeprg = 'go run %'
 
 vim.keymap.set('n', 'go', function()
   vim.lsp.buf.code_action {

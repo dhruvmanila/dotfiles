@@ -1,8 +1,6 @@
-vim.cmd 'wincmd L'
+vim.cmd.wincmd 'L'
 
-vim.cmd [[
-setlocal nonumber
-setlocal norelativenumber
-]]
+vim.opt_local.number = false
+vim.opt_local.relativenumber = false
 
 vim.keymap.set('n', 'q', '<Cmd>quit<CR>', { buffer = true, nowait = true })

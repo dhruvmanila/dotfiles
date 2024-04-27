@@ -1,5 +1,3 @@
-vim.cmd [[
-setlocal nolist
-setlocal nonumber
-setlocal norelativenumber
-]]
+vim.opt_local.number = false
+vim.opt_local.relativenumber = false
+vim.opt_local.list = false

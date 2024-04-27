@@ -1,10 +1,9 @@
 -- Gitsigns `on_attach` callback to setup buffer mappings.
 ---@param bufnr number
 local function gitsigns_on_attach(bufnr)
-  local gitsigns = package.loaded.gitsigns
+  local gitsigns = require 'gitsigns'
 
-  -- Navigation
-  vim.keymap.set('n', ']c', function()
+  local function next_hunk()
     if vim.wo.diff then
       return ']c'
     else
@@ -13,9 +12,9 @@ local function gitsigns_on_attach(bufnr)
       end)
       return '<Ignore>'
     end
-  end, { expr = true, desc = 'gitsigns: go to next hunk' })
+  end
 
-  vim.keymap.set('n', '[c', function()
+  local function prev_hunk()
     if vim.wo.diff then
       return '[c'
     else
@@ -24,42 +23,27 @@ local function gitsigns_on_attach(bufnr)
       end)
       return '<Ignore>'
     end
-  end, { expr = true, desc = 'gitsigns: go to previous hunk' })
+  end
 
-  -- Actions
-  vim.keymap.set({ 'n', 'v' }, '<leader>hs', gitsigns.stage_hunk, {
-    buffer = bufnr,
-    desc = 'gitsigns: stage hunk',
-  })
-  vim.keymap.set({ 'n', 'v' }, '<leader>hr', gitsigns.reset_hunk, {
-    buffer = bufnr,
-    desc = 'gitsigns: reset hunk',
-  })
-  vim.keymap.set('n', '<leader>hu', gitsigns.undo_stage_hunk, {
-    buffer = bufnr,
-    desc = 'gitsigns: undo the last stage hunk',
-  })
-  vim.keymap.set('n', '<leader>hR', gitsigns.reset_buffer, {
-    buffer = bufnr,
-    desc = 'gitsigns: reset buffer',
-  })
-  vim.keymap.set('n', '<leader>hp', gitsigns.preview_hunk, {
-    buffer = bufnr,
-    desc = 'gitsigns: preview hunk',
-  })
-  vim.keymap.set('n', '<leader>hb', gitsigns.toggle_current_line_blame, {
-    buffer = bufnr,
-    desc = 'gitsigns: toggle current line blame',
-  })
-  vim.keymap.set('n', '<leader>hd', gitsigns.toggle_deleted, {
-    buffer = bufnr,
-    desc = 'gitsigns: toggle deleted lines',
-  })
+  local mappings = {
+    -- Navigation
+    { 'n', ']c', next_hunk, desc = 'go to next hunk' },
+    { 'n', '[c', prev_hunk, desc = 'go to previous hunk' },
+    -- Actions
+    { { 'n', 'v' }, '<leader>hs', gitsigns.stage_hunk, desc = 'stage hunk' },
+    { { 'n', 'v' }, '<leader>hr', gitsigns.reset_hunk, desc = 'reset hunk' },
+    { 'n', '<leader>hu', gitsigns.undo_stage_hunk, desc = 'undo the last stage hunk' },
+    { 'n', '<leader>hR', gitsigns.reset_buffer, desc = 'reset buffer' },
+    { 'n', '<leader>hp', gitsigns.preview_hunk, desc = 'preview hunk' },
+    { 'n', '<leader>hb', gitsigns.toggle_current_line_blame, 'toggle current line blame' },
+    { 'n', '<leader>hd', gitsigns.toggle_deleted, 'toggle deleted lines' },
+    -- Text object
+    { { 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>' },
+  }
 
-  -- Text object
-  vim.keymap.set({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', {
-    buffer = bufnr,
-  })
+  for _, m in ipairs(mappings) do
+    vim.keymap.set(m[1], m[2], m[3], { buffer = bufnr, desc = m.desc })
+  end
 end
 
 return {
@@ -122,11 +106,8 @@ return {
     opts = {
       mappings = '<leader>go',
       opts = {
-        -- Set the default action to open the url in the browser. This function
-        -- only works on macOS and Linux.
-        action_callback = function(url)
-          require('gitlinker.actions').open_in_browser(url)
-        end,
+        add_current_line_on_normal_mode = false,
+        action_callback = vim.ui.open,
         print_url = false,
       },
     },

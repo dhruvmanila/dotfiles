@@ -81,16 +81,11 @@ return {
       ['gr'] = {
         callback = function()
           local oil = require 'oil'
-          local _, gitdir = next(vim.fs.find('.git', {
-            path = oil.get_current_dir(),
-            upward = true,
-            type = 'directory',
-            stop = vim.g.os_homedir,
-          }))
+          local gitdir = vim.fs.root(oil.get_current_dir(), '.git')
           if gitdir == nil then
             return
           end
-          oil.open(vim.fs.dirname(gitdir))
+          oil.open(gitdir)
         end,
         desc = 'Goto to git root directory',
       },

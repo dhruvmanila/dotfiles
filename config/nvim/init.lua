@@ -27,11 +27,11 @@ g.loaded_python3_provider = 0
 
 -- Operating system name
 ---@type 'Darwin'|'Linux'|'Windows_NT'
-g.os = vim.loop.os_uname().sysname
+g.os = vim.uv.os_uname().sysname
 
 -- Home directory path
 ---@type string
-g.os_homedir = assert(vim.loop.os_homedir())
+g.os_homedir = assert(vim.uv.os_homedir())
 
 -- Shell command used to open URL, files, etc.
 ---@type 'open'|'xdg-open'|'start'
@@ -78,8 +78,9 @@ require 'dm.options' -- Neovim options
 
 -- Plugins
 
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not vim.loop.fs_stat(lazypath) then
+---@diagnostic disable-next-line: param-type-mismatch 'data' always return a `string`
+local lazypath = vim.fs.joinpath(vim.fn.stdpath 'data', 'lazy', 'lazy.nvim')
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system {
     'git',
     'clone',

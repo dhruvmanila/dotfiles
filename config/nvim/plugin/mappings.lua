@@ -23,10 +23,10 @@ end
 -- }}}
 keymap.set('c', '<C-p>', function()
   return navigate_wildmenu('<C-p>', '<Up>')
-end, { expr = true })
+end, { expr = true, desc = 'Go up the command-line history or the wildmenu completion' })
 keymap.set('c', '<C-n>', function()
   return navigate_wildmenu('<C-n>', '<Down>')
-end, { expr = true })
+end, { expr = true, desc = 'Go down the command-line history or the wildmenu completion' })
 
 ---@param key string
 ---@param fallback string
@@ -69,8 +69,6 @@ keymap.set('c', '<Right>', '<Space><BS><Right>')
 keymap.set('c', '<C-f>', '<Right>', { remap = true })
 keymap.set('c', '<C-b>', '<Left>', { remap = true })
 
--- Insert {{{1
-
 -- Normal {{{1
 
 -- Shortcuts for faster save and quit {{{
@@ -109,15 +107,11 @@ end, {
 })
 
 -- Buffers {{{2
-keymap.set('n', ']<Leader>', "<Cmd>execute v:count .. 'bnext'<CR>")
-keymap.set('n', '[<Leader>', "<Cmd>execute v:count .. 'bprev'<CR>")
-keymap.set('n', '<Leader><BS>', '<Cmd>bdelete<CR>')
-
 -- Fast switching between last and current file
 keymap.set('n', '<Leader><Leader>', '<Cmd>buffer#<CR>')
 
 -- See: https://stackoverflow.com/q/4465095/6064933
-keymap.set('n', '<leader>bd', '<Cmd>bprevious <bar> bdelete #<CR>', {
+keymap.set('n', '<Leader><BS>', '<Cmd>bprevious <bar> bdelete #<CR>', {
   desc = 'Delete a buffer without closing the window',
 })
 
@@ -203,15 +197,12 @@ keymap.set('n', '[L', '<Cmd>lfirst<CR>zz')
 
 -- Source: https://superuser.com/q/355325/736190
 keymap.set('n', '<leader>x', function()
-  vim.iter(vim.api.nvim_tabpage_list_wins(0)):map(function(winnr)
-    if
-      vim.api.nvim_get_option_value('filetype', {
-        buf = vim.api.nvim_win_get_buf(winnr),
-      }) == 'qf'
-    then
+  for _, winnr in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    local bufnr = vim.api.nvim_win_get_buf(winnr)
+    if vim.bo[bufnr].filetype == 'qf' then
       vim.api.nvim_win_close(winnr, true)
     end
-  end)
+  end
 end, {
   desc = 'Close any opened location and quickfix list in the current tabpage',
 })
@@ -352,7 +343,7 @@ keymap.set('n', '<leader>z', function()
     vim.cmd 'wincmd |'
     vim.cmd 'wincmd _'
   end
-end)
+end, { desc = 'Toggle window zoom' })
 
 -- Quicker window movement
 keymap.set('n', '<C-j>', '<C-w>j')

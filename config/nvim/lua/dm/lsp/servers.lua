@@ -100,26 +100,14 @@ local servers = {
   pyright = {
     settings = {
       pyright = {
-        disableOrganizeImports = true, -- Using isort
-      },
-      python = {
-        analysis = {
-          ignore = { '*' }, -- Using Ruff
-        },
+        disableOrganizeImports = true, -- Using Ruff's import organizer
       },
     },
   },
 
   -- https://github.com/astral-sh/ruff
   -- Install: `pipx install ruff`
-  ruff = {
-    cmd = {
-      '/Users/dhruv/work/astral/ruff-test/target/release/ruff',
-      'server',
-      '--preview',
-      -- '--verbose',
-    },
-  },
+  ruff = {},
 
   -- https://github.com/astral-sh/ruff-lsp
   -- Install: `pipx install ruff-lsp`

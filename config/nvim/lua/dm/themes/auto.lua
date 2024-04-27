@@ -1,11 +1,10 @@
 local M = {}
 
-local logging = require 'dm.logging'
 local utils = require 'dm.utils'
 
 local default_interval = 3 * 1000
 
-local logger = logging.create 'dm.themes.auto'
+local logger = dm.log.get_logger 'dm.themes.auto'
 
 local function check()
   vim.system(

@@ -165,13 +165,7 @@ return {
     config = function()
       vim.g.copilot_filetypes = {
         ['*'] = false,
-        ['go'] = true,
-        ['html'] = true,
-        ['javascript'] = true,
-        ['lua'] = true,
         ['markdown'] = true,
-        ['python'] = true,
-        ['rust'] = true,
       }
     end,
   },

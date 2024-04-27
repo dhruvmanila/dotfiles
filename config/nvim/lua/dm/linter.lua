@@ -1,8 +1,6 @@
 local M = {}
 
-local logging = require 'dm.logging'
-
-local logger = logging.create 'dm.linter'
+local logger = dm.log.get_logger 'dm.linter'
 
 ---@class Linter
 ---@field cmd string

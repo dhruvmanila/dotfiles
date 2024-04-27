@@ -1,4 +1,4 @@
-dm.logging = require 'dm.logging'
+dm.log = require 'dm.log'
 
 -- If the border key is custom, then return the respective table otherwise
 -- return the string as it is.

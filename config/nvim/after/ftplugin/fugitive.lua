@@ -1,8 +1,6 @@
-vim.cmd [[
-setlocal nonumber
-setlocal norelativenumber
-setlocal nolist
-]]
+vim.opt_local.number = false
+vim.opt_local.relativenumber = false
+vim.opt_local.list = false
 
 -- Determine whether we have enough vertical space to move the fugitive buffer
 -- in a vertical position.

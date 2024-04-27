@@ -30,7 +30,6 @@ return telescope.register_extension {
   exports = {
     github_stars = require_on_module_call 'github_stars',
     installed_plugins = require_on_module_call 'installed_plugins',
-    sessions = require_on_module_call 'sessions',
     websearch = require_on_module_call 'websearch',
   },
 }

@@ -4,7 +4,7 @@ local M = lsp.protocol.Methods
 local extensions = require 'dm.lsp.extensions'
 
 -- Available: "trace", "debug", "info", "warn", "error" or `vim.lsp.log_levels`
-lsp.set_log_level(vim.env.NVIM_LSP_LOG_LEVEL or dm.logging.get_level())
+lsp.set_log_level(vim.env.NVIM_LSP_LOG_LEVEL or dm.log.get_level())
 require('vim.lsp.log').set_format_func(vim.inspect)
 
 -- Set the default options for all LSP floating windows.
@@ -38,14 +38,11 @@ end
 ---@param bufnr number
 local function setup_mappings(client, bufnr)
   local mappings = {
-    { 'n', 'K', lsp.buf.hover, capability = M.textDocument_hover },
     { 'n', 'gd', lsp.buf.definition, capability = M.textDocument_definition },
     { 'n', 'gD', lsp.buf.declaration, capability = M.textDocument_declaration },
     { 'n', 'gy', lsp.buf.type_definition, capability = M.textDocument_typeDefinition },
     { 'n', 'gi', lsp.buf.implementation, capability = M.textDocument_implementation },
-    { 'n', 'gr', lsp.buf.references, capability = M.textDocument_references },
     { 'n', '<leader>rn', lsp.buf.rename, capability = M.textDocument_rename },
-    { 'n', '<C-s>', lsp.buf.signature_help, capability = M.textDocument_signatureHelp },
     { { 'n', 'x' }, '<leader>ca', lsp.buf.code_action, capability = M.textDocument_codeAction },
     { 'n', '<leader>cl', lsp.codelens.run, capability = M.textDocument_codeLens },
   }
@@ -107,7 +104,7 @@ local function setup_autocmds(client, bufnr)
   end
 
   if dm.config.inlay_hints.enable and client.supports_method(M.textDocument_inlayHint) then
-    vim.lsp.inlay_hint.enable(bufnr, true)
+    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
   end
 end
 

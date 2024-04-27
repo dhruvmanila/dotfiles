@@ -1,8 +1,5 @@
-local api = vim.api
-local opt_local = vim.opt_local
-
-opt_local.formatoptions:remove 'o'
-opt_local.includeexpr = 'v:lua.LuaInclude()'
+vim.opt_local.formatoptions:remove 'o'
+vim.opt_local.includeexpr = 'v:lua.LuaInclude()'
 
 -- This function will be called if vim cannot determine the file path under
 -- cursor when using the variants of `gf`. So, it will allow us to jump directly
@@ -13,11 +10,11 @@ opt_local.includeexpr = 'v:lua.LuaInclude()'
 -- been found.
 function LuaInclude()
   local module = vim.v.fname:gsub('%.', '/')
-  local check = api.nvim_get_runtime_file('lua/' .. module .. '.lua', false)
+  local check = vim.api.nvim_get_runtime_file('lua/' .. module .. '.lua', false)
   if not vim.tbl_isempty(check) then
     return check[1]
   end
-  check = api.nvim_get_runtime_file('lua/' .. module .. '/init.lua', false)
+  check = vim.api.nvim_get_runtime_file('lua/' .. module .. '/init.lua', false)
   if not vim.tbl_isempty(check) then
     return check[1]
   end

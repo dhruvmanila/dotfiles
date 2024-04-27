@@ -5,7 +5,6 @@ local uv = vim.loop
 local api = vim.api
 
 local dashboard = require 'dm.dashboard'
-local logging = require 'dm.logging'
 
 -- Notification title for the plugin
 local TITLE = 'Session Manager'
@@ -16,15 +15,20 @@ local BRANCH_SEPARATOR = '@@'
 -- Default session directory.
 local SESSION_DIR = fn.stdpath 'data' .. '/sessions'
 
+-- Timeout (in seconds) for various `git` commands.
+local TIMEOUT = 3 * 1000
+-- Exit code when the process is timed out. This is set by `vim.system`.
+local TIMEOUT_EXIT_CODE = 124
+
 ---@type Session?
 local active_session = nil
 
-local logger = logging.create 'dm.session'
+local logger = dm.log.get_logger 'dm.session'
 
 do
   local info = uv.fs_stat(SESSION_DIR)
   if not info or info.type ~= 'directory' then
-    uv.fs_mkdir(SESSION_DIR, tonumber(755, 8))
+    uv.fs_mkdir(SESSION_DIR, tonumber('755', 8))
   end
 end
 
@@ -36,17 +40,24 @@ local function confirm(question)
   return fn.confirm(question, '&Yes\n&No') == 1
 end
 
--- Return the `git` branch for the current project.
+-- Return the `git` branch for the given project.
+---@param project string
 ---@return string?
-local function current_git_branch()
+local function project_git_branch(project)
   local branch = vim.b.gitsigns_head
   if branch == nil or branch == '' then
-    local result = vim.system({ 'git', 'rev-parse', '--abbrev-ref', 'HEAD' }):wait()
-    if result.code > 0 then
-      logger.error('Failed to get git branch:\n%s', result.stderr)
+    if vim.fs.root(project, '.git') == nil then
+      logger.debug('Not a git repository (or any of the parent directories): %s', project)
       return
     end
-    branch = vim.trim(result.stdout)
+    local result = vim.system({ 'git', 'rev-parse', '--abbrev-ref', 'HEAD' }):wait(TIMEOUT)
+    if result.code == TIMEOUT_EXIT_CODE then
+      logger.warn('Timeout while getting the git branch in %s', project)
+    elseif result.code > 0 then
+      logger.error('Failed to get git branch in %s: %s', project, result.stderr)
+    else
+      branch = vim.trim(result.stdout)
+    end
   end
   if branch ~= '' then
     return branch
@@ -61,7 +72,11 @@ end
 local function git_branch_exists(project, branch)
   local result = vim
     .system({ 'git', 'show-ref', '--heads', '--quiet', branch }, { cwd = project })
-    :wait()
+    :wait(TIMEOUT)
+  if result.code == TIMEOUT_EXIT_CODE then
+    logger.warn('Timeout while checking if the git branch (%s) exists in %s', branch, project)
+    return false
+  end
   return result.code == 0
 end
 
@@ -89,7 +104,7 @@ Session.__index = Session
 ---@return Session
 function Session:new()
   local project = vim.fn.getcwd()
-  local branch = current_git_branch()
+  local branch = project_git_branch(project)
   local name = project:gsub(vim.g.os_homedir, ''):sub(2)
   local path = project
   if branch ~= nil then
@@ -199,11 +214,7 @@ local function session_delete(session)
       dm.notify(TITLE, 'Deleted session ' .. session.name)
       return true
     else
-      dm.notify(
-        TITLE,
-        { 'Failed to delete session ' .. session.name .. ':', '', err },
-        vim.log.levels.ERROR
-      )
+      logger.error('Failed to delete session (%s): %s', session.name, err)
     end
   else
     dm.notify(TITLE, 'Deletion aborted')
@@ -248,11 +259,7 @@ function M.clean()
       if ok then
         deleted = deleted + 1
       else
-        dm.notify(
-          TITLE,
-          { 'Failed to delete session ' .. session.name .. ':', '', err },
-          vim.log.levels.ERROR
-        )
+        logger.error('Failed to delete session (%s): %s', session.name, err)
       end
     end
     dm.notify(TITLE, ('Deleted %d dangling sessions'):format(deleted))
@@ -362,13 +369,20 @@ function M.select()
         .system({ 'git', 'checkout', selection.branch }, {
           cwd = selection.project,
         })
-        :wait(1 * 1000) -- 1 second
-      if result.code > 0 then
-        dm.notify(TITLE, {
-          ('Failed to switch branch (%s):'):format(selection.branch),
-          '',
-          result.stderr,
-        })
+        :wait(TIMEOUT)
+      if result.code == TIMEOUT_EXIT_CODE then
+        logger.warn(
+          'Timeout while switching the git branch (%s) in %s',
+          selection.branch,
+          selection.project
+        )
+      elseif result.code > 0 then
+        logger.error(
+          'Failed to switch git branch (%s) in %s: %s',
+          selection.branch,
+          selection.project,
+          result.stderr
+        )
       else
         M.load(selection)
       end

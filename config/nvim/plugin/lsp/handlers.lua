@@ -22,7 +22,7 @@ local function location_handler(err, result, ctx)
     return
   end
 
-  if vim.tbl_islist(result) then
+  if vim.islist(result) then
     vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
     if vim.tbl_count(result) > 1 then
       vim.fn.setqflist({}, ' ', {
@@ -43,24 +43,54 @@ vim.lsp.handlers[M.textDocument_implementation] = location_handler
 vim.lsp.handlers[M.textDocument_references] = location_handler
 
 do
+  -- See: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#messageType
   local levels = {
-    vim.log.levels.ERROR,
-    vim.log.levels.WARN,
-    vim.log.levels.INFO,
-    vim.log.levels.DEBUG,
+    vim.log.levels.ERROR, -- MessageType.Error
+    vim.log.levels.WARN, -- MessageType.Warning
+    vim.log.levels.INFO, -- MessageType.Info
+    vim.log.levels.INFO, -- MessageType.Log
+    vim.log.levels.DEBUG, -- MessageType.Debug
   }
 
   -- See: https://github.com/neovim/nvim-lspconfig/wiki/User-contributed-tips#use-nvim-notify-to-display-lsp-messages
   vim.lsp.handlers[M.window_showMessage] = function(err, result, ctx)
-    if err then
-      dm.notify('LSP', tostring(err), vim.log.levels.ERROR)
+    local title = 'LSP (' .. ctx.method .. ')'
+    if err ~= nil then
+      dm.notify(title, tostring(err), vim.log.levels.ERROR)
       return
     end
-
     local client = vim.lsp.get_client_by_id(ctx.client_id)
-    local client_name = client and client.name or ('id=%d'):format(ctx.client_id)
+    if client == nil then
+      dm.notify(title, 'No client found', vim.log.levels.WARN)
+      return
+    end
+    dm.notify(('Server message (%s)'):format(client.name), result.message, levels[result.type])
+  end
+end
 
-    dm.notify(('LSP Message (%s)'):format(client_name), result.message, levels[result.type])
+do
+  local MessageType = vim.lsp.protocol.MessageType
+
+  -- Override the original handler to allow us to divert the log messages for each server in a
+  -- separate log file using the custom logging module.
+  vim.lsp.handlers[M.window_logMessage] = function(_, result, ctx)
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if client == nil then
+      dm.notify('LSP log message', 'No client found', vim.log.levels.WARN)
+      return
+    end
+    local logger = dm.log.get_logger('lsp.' .. client.name)
+    -- Keep the logger level in sync with `vim.lsp`. This is important for `LspSetLogLevel` command.
+    logger.set_level(vim.lsp.log.get_level())
+    if result.type == MessageType.Error then
+      logger.error(result.message)
+    elseif result.type == MessageType.Warning then
+      logger.warn(result.message)
+    elseif result.type == MessageType.Info or result.type == MessageType.Log then
+      logger.info(result.message)
+    else
+      logger.debug(result.message)
+    end
   end
 end
 

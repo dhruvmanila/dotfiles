@@ -1,7 +1,6 @@
 -- Client side extensions for `rust-analyzer` language server.
 local M = {}
 
-local logging = require 'dm.logging'
 local utils = require 'dm.utils'
 
 -- Refer: https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts#L139
@@ -34,6 +33,10 @@ local cache = {
   ---@type number?
   expand_macro_bufnr = nil,
 
+  -- Bufnr for the latest syntax tree output.
+  ---@type number?
+  syntax_tree_bufnr = nil,
+
   -- Last runnable.
   ---@type CargoRunnable?
   runnable = nil,
@@ -47,18 +50,20 @@ local function delete_bufnr(bufnr)
   end
 end
 
--- Format the macro expansion output.
+-- Format the expanded macro output.
 ---@param macro ExpandedMacro
 ---@return string[]
-local function format_macro_expansion(macro)
+local function format_expanded_macro(macro)
   local header = ('// Rescursive expansion of `%s` macro:'):format(macro.name)
-  return vim.tbl_flatten {
-    header,
-    '// ' .. string.rep('=', #header - 3),
-    '',
-    '',
-    vim.split(macro.expansion, '\n', { plain = true }),
-  }
+  return vim
+    .iter({
+      header,
+      '// ' .. string.rep('=', #header - 3),
+      '',
+      vim.split(macro.expansion, '\n', { plain = true, trimempty = true }),
+    })
+    :flatten()
+    :totable()
 end
 
 -- Spawns the command in a new terminal opened in a horizontal split at the bottom.
@@ -117,24 +122,16 @@ end
 -- Execute Cargo runnable.
 ---@param runnable CargoRunnable
 local function execute_runnable(runnable)
-  local args = vim.tbl_flatten {
-    runnable.args.cargoArgs,
-    runnable.args.cargoExtraArgs,
-    '--',
-    runnable.args.executableArgs,
-  }
+  local args = vim
+    .iter({
+      runnable.args.cargoArgs,
+      runnable.args.cargoExtraArgs,
+      '--',
+      runnable.args.executableArgs,
+    })
+    :flatten()
+    :totable()
   execute_command('cargo', args, runnable.args.workspaceRoot)
-end
-
--- Return the absolute path to the closest Cargo crate directory.
----@return string?
-local function cargo_crate_dir()
-  return vim.fs.dirname(vim.fs.find('Cargo.toml', {
-    upward = true,
-    type = 'file',
-    stop = vim.g.os_homedir,
-    path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
-  })[1])
 end
 
 -- Start the debugging session for the given runnable spec.
@@ -145,7 +142,8 @@ end
 ---@param runnable CargoRunnable
 local function debug_runnable(runnable)
   -- This creates a copy to avoid mutating the original table.
-  local cargo_args = vim.tbl_flatten { runnable.args.cargoArgs, '--message-format=json' }
+  local cargo_args =
+    vim.iter({ runnable.args.cargoArgs, '--message-format=json' }):flatten():totable()
   if cargo_args[1] == 'run' then
     cargo_args[1] = 'build'
   elseif cargo_args[1] == 'test' then
@@ -159,7 +157,7 @@ local function debug_runnable(runnable)
   })
 
   vim.system(
-    vim.tbl_flatten { 'cargo', cargo_args },
+    vim.iter({ 'cargo', cargo_args }):flatten():totable(),
     { cwd = runnable.args.workspaceRoot },
     ---@param result vim.SystemCompleted
     vim.schedule_wrap(function(result)
@@ -209,11 +207,11 @@ local function debug_runnable(runnable)
         request = 'launch',
         program = executables[1],
         args = args,
-        cwd = cargo_crate_dir() or runnable.args.workspaceRoot,
+        cwd = vim.fs.root(0, 'Cargo.toml') or runnable.args.workspaceRoot,
         console = 'internalConsole',
         stopOnEntry = false,
       }
-      logging.info('Launching DAP with config: %s', dap_config)
+      dm.log.info('Launching DAP with config: %s', dap_config)
       require('dap').run(dap_config)
     end)
   )
@@ -346,22 +344,16 @@ local function expand_macro_recursively()
 
       delete_bufnr(cache.expand_macro_bufnr)
       cache.expand_macro_bufnr = vim.api.nvim_create_buf(false, true)
-      vim.cmd.split()
+      vim.cmd.split { range = { math.ceil(vim.o.lines * 0.3) } } -- `:split` with 30% height.
       vim.api.nvim_win_set_buf(0, cache.expand_macro_bufnr)
-      vim.cmd.resize(math.ceil(vim.o.lines * 0.3))
-      vim.api.nvim_buf_set_keymap(cache.expand_macro_bufnr, 'n', 'q', '<Cmd>q<CR>', {
-        noremap = true,
-      })
-      vim.api.nvim_set_option_value('filetype', 'rust', { buf = cache.expand_macro_bufnr })
-      vim.api.nvim_buf_set_lines(
-        cache.expand_macro_bufnr,
-        0,
-        0,
-        false,
-        format_macro_expansion(expanded)
-      )
+
+      -- Once the buffer is set for the current window, we can use 0 to refer to it.
+      vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<Cmd>q<CR>', { noremap = true })
+      vim.bo[cache.expand_macro_bufnr].filetype = 'rust'
+      vim.api.nvim_buf_set_lines(0, 0, 0, false, format_expanded_macro(expanded))
+
       -- Move cursor to the start of the macro expansion.
-      vim.api.nvim_win_set_cursor(0, { 5, 0 })
+      vim.api.nvim_win_set_cursor(0, { 4, 0 })
     end
   )
 end
@@ -383,6 +375,27 @@ local function open_external_docs()
       vim.ui.open(url)
     end
   )
+end
+
+-- Show the syntax tree for the current buffer.
+local function syntax_tree()
+  utils
+    .get_client('rust_analyzer')
+    .request('rust-analyzer/syntaxTree', vim.lsp.util.make_range_params(), function(_, result)
+      delete_bufnr(cache.syntax_tree_bufnr)
+      cache.syntax_tree_bufnr = vim.api.nvim_create_buf(false, true)
+      vim.cmd.vsplit { range = { math.ceil(vim.o.columns * 0.4) } } -- `:vsplit` with 40% width.
+      vim.api.nvim_win_set_buf(0, cache.syntax_tree_bufnr)
+
+      -- Once the buffer is set for the current window, we can use 0 to refer to it.
+      vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<Cmd>q<CR>', { noremap = true })
+      vim.bo[cache.syntax_tree_bufnr].filetype = 'rust'
+      local lines = vim.split(result, '\n', { plain = true, trimempty = true })
+      vim.api.nvim_buf_set_lines(0, 0, 0, false, lines)
+
+      -- Move the cursor to the start of the syntax tree.
+      vim.api.nvim_win_set_cursor(0, { 1, 0 })
+    end)
 end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
@@ -422,6 +435,7 @@ local commands = {
   { 'RustClearFlycheck', clear_flycheck, desc = 'clear flycheck' },
   { 'RustViewCrateGraph', view_crate_graph, desc = 'view crate graph' },
   { 'RustViewCrateGraphFull', view_crate_graph_full, desc = 'view full crate graph' },
+  { 'RustSyntaxTree', syntax_tree, desc = 'syntax tree' },
 }
 
 -- Setup the buffer local mappings and commands for the `rust-analyzer` extension features.

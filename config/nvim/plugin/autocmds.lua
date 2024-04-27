@@ -312,15 +312,6 @@ do
     end,
     desc = 'Enter insert mode only if the cursor is at the last prompt line',
   })
-
-  nvim_create_autocmd('TermClose', {
-    group = id,
-    pattern = 'zsh',
-    callback = function()
-      api.nvim_input '<CR>'
-    end,
-    desc = "Avoid the annoying '[Process exited 0]' prompt",
-  })
 end
 
 -- VimResized {{{1

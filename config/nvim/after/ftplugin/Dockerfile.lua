@@ -12,7 +12,7 @@ local function buf_hadolint_error_codes()
 end
 
 vim.api.nvim_buf_create_user_command(0, 'HadolintWiki', function(opts)
-  vim.fn['external#browser']('https://github.com/hadolint/hadolint/wiki/' .. opts.args)
+  vim.ui.open('https://github.com/hadolint/hadolint/wiki/' .. opts.args)
 end, {
   nargs = 1,
   complete = buf_hadolint_error_codes,

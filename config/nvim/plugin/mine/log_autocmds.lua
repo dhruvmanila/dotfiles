@@ -1,7 +1,5 @@
-local logger = require('dm.logging').create('dm.autocmds', {
-  use_console = false,
-  level = dm.logging.levels.INFO,
-})
+local logger = dm.log.get_logger 'dm.autocmds'
+logger.set_level(dm.log.levels.INFO)
 
 ---@type string[]
 local events = {}
