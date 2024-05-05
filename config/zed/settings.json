@@ -7,26 +7,53 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "telemetry": {
-    "diagnostics": false,
-    "metrics": false
-  },
-  "theme": "Gruvbox Dark",
+  "autosave": "on_window_change",
   "buffer_font_size": 16,
   "buffer_font_family": "JetBrains Mono",
+  "cursor_blink": false,
+  "scrollbar": {
+    "show": "never"
+  },
+  "theme": {
+    "mode": "system",
+    "dark": "Gruvbox Dark",
+    "light": "Gruvbox Light"
+  },
+  "soft_wrap": "editor_width",
+  "preview_tabs": {
+    "enable_preview_from_file_finder": true
+  },
+  "show_copilot_suggestions": false,
   "vim_mode": true,
   "lsp": {
     "rust-analyzer": {
+      // These should match the ones in `./../nvim/lua/dm/lsp/servers.lua`
       "initialization_options": {
-        "checkOnSave": {
+        "cargo": {
+          "features": "all",
+          "buildScripts": {
+            "enable": true
+          }
+        },
+        "checkOnSave": true,
+        "check": {
           "command": "clippy"
+        },
+        "inlayHints": {
+          "closingBraceHints": {
+            "enable": false
+          }
+        },
+        "procMacro": {
+          "enable": true
+        },
+        "references": {
+          "excludeImports": true
         }
       }
     }
   },
-  "autosave": "on_window_change",
   "format_on_save": "off",
-  "soft_wrap": "editor_width",
   "language_overrides": {
     "Rust": {
       "format_on_save": "language_server"
@@ -34,5 +61,9 @@
     "JSON": {
       "format_on_save": "language_server"
     }
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
   }
 }
