@@ -68,6 +68,9 @@ local namespace = {
       enable = true,
     },
   },
+
+  -- Indicates whether Neovim is used as Kitty's scrollback buffer.
+  kitty_scrollback = vim.env.KITTY_SCROLLBACK ~= nil,
 }
 
 -- Custom global namespace.
@@ -99,11 +102,8 @@ require('lazy').setup('dm.plugins', {
     notify = false,
   },
   defaults = {
-    -- lazy = true,
-    -- default `cond` you can use to globally disable a lot of plugins
-    -- when running inside vscode for example
-    -- TODO: Maybe this could be useful to me to separate VSCode config?
-    -- cond = nil, ---@type boolean|fun(self:LazyPlugin):boolean|nil
+    -- Disable all plugins when using Neovim as Kitty scrollback buffer.
+    cond = not dm.kitty_scrollback,
   },
   dev = {
     path = '~/projects',
@@ -130,4 +130,8 @@ vim.cmd.colorscheme(dm.config.colorscheme.dark)
 
 if dm.config.colorscheme.auto.enable then
   require('dm.themes.auto').enable()
+end
+
+if dm.kitty_scrollback then
+  require 'dm.kitty'
 end

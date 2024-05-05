@@ -178,4 +178,8 @@ vim.api.nvim_create_autocmd('FileType', {
 -- :h qf.vim, disable quickfix statusline
 vim.g.qf_disable_statusline = 1
 
-vim.opt.statusline = '%!v:lua.nvim_statusline()'
+if dm.kitty_scrollback then
+  vim.opt.statusline = '%1* ' .. vim.uv.cwd() .. ' %*' .. '%=' .. '%1* %2l/%L:%-2c '
+else
+  vim.opt.statusline = '%!v:lua.nvim_statusline()'
+end
