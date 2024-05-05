@@ -5,7 +5,7 @@
 -- queried and updated using the `get_*` and `set_*` methods.
 --
 -- A root logger has been created to allow accessing all the methods from the logger directly via
--- module (e.g., `require('dm.logging').info(...)`).
+-- module (e.g., `require('dm.log').info(...)`).
 --
 -- This module is also available via the global namespace (`dm.log`).
 local M = {}
@@ -166,11 +166,11 @@ local function create_logger(name)
 
     local levelname = M.levels[level]
 
-    message = ('%s [%s] %s'):format(
-      os.date(log_date_format),
-      levelname,
-      string.format(message, unpack(convert_to_string(...)))
-    )
+    if select('#', ...) > 0 then
+      message = string.format(message, unpack(convert_to_string(...)))
+    end
+
+    message = ('%s [%s] %s'):format(os.date(log_date_format), levelname, message)
 
     if level >= M.levels.WARN then
       local highlight = level_highlight_group[level]
@@ -204,14 +204,14 @@ local function create_logger(name)
 
   -- Set the logging level of this logger.
   --
-  -- It must be either an integer or a string. Use `logging.levels`.
+  -- It must be either an integer or a string. Use `dm.log.levels`.
   ---@param level LoggingLevel | LoggingLevelName
   function logger.set_level(level)
     vim.validate {
       level = {
         level,
         function(value)
-          return M.levels[value] ~= nil, 'Use `dm.logging.levels`'
+          return M.levels[value] ~= nil, 'Use `dm.log.levels`'
         end,
         'one of ' .. vim.inspect(vim.tbl_keys(M.levels)),
       },
@@ -276,7 +276,7 @@ do
   end
 end
 
-local root_logger = create_logger 'dm'
+local root_logger = M.get_logger 'dm'
 
 M.should_log = root_logger.should_log
 M.get_level = root_logger.get_level

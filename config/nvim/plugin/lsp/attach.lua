@@ -115,6 +115,10 @@ local function on_attach(client, bufnr)
   setup_mappings(client, bufnr)
   setup_autocmds(client, bufnr)
 
+  if client.name == 'pyright' then
+    extensions.pyright.on_attach(bufnr)
+  end
+
   if client.name == 'ruff_lsp' then
     client.server_capabilities.hoverProvider = false
     extensions.ruff_lsp.on_attach(bufnr)

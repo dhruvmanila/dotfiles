@@ -162,7 +162,7 @@ return function(opts)
   opts = opts or {}
   local search_engine = config.search_engine
 
-  if not dm.executable(executable[search_engine]) then
+  if not dm.is_executable(executable[search_engine]) then
     dm.notify(
       'Telescope',
       ("'websearch' requires the `%s` executable for searching on '%s'"):format(

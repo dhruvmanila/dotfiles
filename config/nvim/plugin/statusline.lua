@@ -168,7 +168,7 @@ vim.api.nvim_create_autocmd('FileType', {
   group = vim.api.nvim_create_augroup('dm__statusline', { clear = true }),
   pattern = 'python',
   callback = function()
-    if dm.executable 'python' then
+    if dm.is_executable 'python' then
       utils.set_interval_callback(5 * 1000, set_python_version)
       utils.set_interval_callback(5 * 1000, set_python_venv_name)
     end

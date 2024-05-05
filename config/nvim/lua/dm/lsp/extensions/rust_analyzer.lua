@@ -219,6 +219,8 @@ end
 
 -- Show a list of runnables and execute the selected one. This uses the `vim.ui.select` function
 -- to provide a list of runnables for the user to choose from.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#runnables
 local function runnables()
   utils.get_client('rust_analyzer').request('experimental/runnables', {
     textDocument = vim.lsp.util.make_text_document_params(0),
@@ -298,11 +300,15 @@ local function view_crate_graph_impl(full)
 end
 
 -- View the full crate graph. This includes all the crates, not just the ones in the workspace.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#view-crate-graph
 local function view_crate_graph_full()
   view_crate_graph_impl(true)
 end
 
 -- View the crate graph.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#view-crate-graph
 local function view_crate_graph()
   view_crate_graph_impl(false)
 end
@@ -331,6 +337,8 @@ local function clear_flycheck()
 end
 
 -- Expand the macro under the cursor recursively and show the output in a new buffer.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#expand-macro
 local function expand_macro_recursively()
   utils.get_client('rust_analyzer').request(
     'rust-analyzer/expandMacro',
@@ -361,6 +369,10 @@ end
 -- Open the documentation for the symbol under the cursor.
 --
 -- This assumes that the `localDocs` experimental feature is enabled.
+--
+-- See:
+-- * https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#open-external-documentation
+-- * https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#local-documentation
 local function open_external_docs()
   utils.get_client('rust_analyzer').request(
     'experimental/externalDocs',
@@ -378,6 +390,8 @@ local function open_external_docs()
 end
 
 -- Show the syntax tree for the current buffer.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#syntax-tree
 local function syntax_tree()
   utils
     .get_client('rust_analyzer')
@@ -418,6 +432,8 @@ vim.lsp.commands['rust-analyzer.showReferences'] = function()
   vim.lsp.buf.implementation()
 end
 
+-- List of mappings to be defined on server attach.
+---@type { [1]: string, [2]: string, [3]: function, desc: string }[]
 local mappings = {
   { 'n', '<leader>rr', runnables, desc = 'runnables' },
   { 'n', '<leader>rl', execute_last_runnable, desc = 'execute last runnable' },
@@ -425,6 +441,8 @@ local mappings = {
   { 'n', '<leader>rd', open_external_docs, desc = 'open external docs' },
 }
 
+-- List of user commands to be defined on server attach.
+---@type { [1]: string, [2]: function, desc: string }[]
 local commands = {
   { 'RustRunnables', runnables, desc = 'runnables' },
   { 'RustLastRun', execute_last_runnable, desc = 'execute last runnable' },
@@ -441,18 +459,13 @@ local commands = {
 -- Setup the buffer local mappings and commands for the `rust-analyzer` extension features.
 ---@param bufnr number
 function M.on_attach(bufnr)
-  vim.iter(mappings):each(function(m)
-    vim.keymap.set(m[1], m[2], m[3], {
-      buffer = bufnr,
-      desc = ('rust-analyzer: %s'):format(m.desc),
-    })
-  end)
+  for _, m in ipairs(mappings) do
+    vim.keymap.set(m[1], m[2], m[3], { buffer = bufnr, desc = 'rust-analyzer: ' .. m.desc })
+  end
 
-  vim.iter(commands):each(function(c)
-    vim.api.nvim_buf_create_user_command(bufnr, c[1], c[2], {
-      desc = ('rust-analyzer: %s'):format(c.desc),
-    })
-  end)
+  for _, c in ipairs(commands) do
+    vim.api.nvim_buf_create_user_command(bufnr, c[1], c[2], { desc = 'rust-analyzer: ' .. c.desc })
+  end
 end
 
 return M

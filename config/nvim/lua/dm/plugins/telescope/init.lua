@@ -186,7 +186,7 @@ return {
 
       -- Start the background job for collecting the GitHub stars. This will be cached
       -- and used by `custom.github_stars` extension.
-      if dm.executable 'gh' then
+      if dm.is_executable 'gh' then
         require('dm.gh').collect_stars()
       end
     end,

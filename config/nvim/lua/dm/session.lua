@@ -1,7 +1,6 @@
 local M = {}
 
 local fn = vim.fn
-local uv = vim.loop
 local api = vim.api
 
 local dashboard = require 'dm.dashboard'
@@ -26,9 +25,9 @@ local active_session = nil
 local logger = dm.log.get_logger 'dm.session'
 
 do
-  local info = uv.fs_stat(SESSION_DIR)
+  local info = vim.uv.fs_stat(SESSION_DIR)
   if not info or info.type ~= 'directory' then
-    uv.fs_mkdir(SESSION_DIR, tonumber('755', 8))
+    vim.uv.fs_mkdir(SESSION_DIR, tonumber('755', 8))
   end
 end
 
@@ -205,7 +204,7 @@ local function session_delete(session)
   if not session:exists() then
     dm.notify(TITLE, 'No such session: ' .. session.name, vim.log.levels.WARN)
   elseif confirm('Remove ' .. session.name .. '?') then
-    local ok, err = uv.fs_unlink(session.path)
+    local ok, err = vim.uv.fs_unlink(session.path)
     if ok then
       if session.path == vim.v.this_session then
         active_session = nil
@@ -255,7 +254,7 @@ function M.clean()
   if confirm(prompt) then
     local deleted = 0
     for _, session in ipairs(dangling_sessions) do
-      local ok, err = uv.fs_unlink(session.path)
+      local ok, err = vim.uv.fs_unlink(session.path)
       if ok then
         deleted = deleted + 1
       else

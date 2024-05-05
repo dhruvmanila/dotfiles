@@ -3,9 +3,11 @@ local M = {}
 
 local utils = require 'dm.utils'
 
-local function execute_command(command_name)
+-- Send a request to the `ruff_lsp` server to execute the given command.
+---@param command string
+local function execute_command(command)
   utils.get_client('ruff_lsp').request(vim.lsp.protocol.Methods.workspace_executeCommand, {
-    command = command_name,
+    command = command,
     arguments = {
       { uri = vim.uri_from_bufnr(0) },
     },
@@ -24,18 +26,20 @@ local function apply_format()
   execute_command 'ruff.applyFormat'
 end
 
+-- List of user commands to be defined on server attach.
+---@type { [1]: string, [2]: function, desc: string }[]
+local commands = {
+  { 'RuffApplyAutofix', apply_autofix, desc = 'fix all auto-fixable problems' },
+  { 'RuffOrganizeImports', apply_organize_imports, desc = 'format imports' },
+  { 'RuffFormat', apply_format, desc = 'format document' },
+}
+
 -- Setup the buffer local commands for the `ruff_lsp` extension features.
 ---@param bufnr number
 function M.on_attach(bufnr)
-  vim.api.nvim_buf_create_user_command(bufnr, 'RuffApplyAutofix', apply_autofix, {
-    desc = 'Ruff: Fix all auto-fixable problems',
-  })
-  vim.api.nvim_buf_create_user_command(bufnr, 'RuffOrganizeImports', apply_organize_imports, {
-    desc = 'Ruff: Format imports',
-  })
-  vim.api.nvim_buf_create_user_command(bufnr, 'RuffFormat', apply_format, {
-    desc = 'Ruff: Format document',
-  })
+  for _, c in ipairs(commands) do
+    vim.api.nvim_buf_create_user_command(bufnr, c[1], c[2], { desc = 'ruff: ' .. c.desc })
+  end
 end
 
 return M

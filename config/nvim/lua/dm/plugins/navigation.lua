@@ -30,12 +30,15 @@ return {
   },
   dependencies = { 'nvim-tree/nvim-web-devicons' },
   opts = {
-    delete_to_trash = dm.executable 'trash-put',
+    delete_to_trash = dm.is_executable 'trash-put',
     columns = {
       'permissions',
       'size',
       'mtime',
       'icon',
+    },
+    buf_options = {
+      bufhidden = 'wipe',
     },
     win_options = {
       number = false,

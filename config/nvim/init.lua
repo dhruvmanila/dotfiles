@@ -1,13 +1,10 @@
 --
---          ███╗   ██╗ ███████╗  ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗
---          ████╗  ██║ ██╔════╝ ██╔═══██╗ ██║   ██║ ██║ ████╗ ████║
---          ██╔██╗ ██║ █████╗   ██║   ██║ ██║   ██║ ██║ ██╔████╔██║
---          ██║╚██╗██║ ██╔══╝   ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║
---          ██║ ╚████║ ███████╗ ╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║
---          ╚═╝  ╚═══╝ ╚══════╝  ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝
+--      ____     __  ___
+--     / __ \   /  |/  /
+--    / / / /  / /|_/ /    Dhruv Manilawala's Neovim config
+--   / /_/ /  / /  / /     https://github.com/dhruvmanila
+--  /_____/  /_/  /_/
 --
---           This is the Neovim configuration of Dhruv Manilawala
---                     https://github.com/dhruvmanila
 -------------------------------------------------------------------------------
 local g = vim.g
 
@@ -19,22 +16,15 @@ end
 g.mapleader = ' '
 g.maplocalleader = ' '
 
--- Setup neovim providers (`:h provider`)
+-- Disable Neovim providers (`:h provider`)
 g.loaded_node_provider = 0
 g.loaded_perl_provider = 0
 g.loaded_ruby_provider = 0
 g.loaded_python3_provider = 0
 
--- Operating system name
----@type 'Darwin'|'Linux'|'Windows_NT'
+-- OS specific information
 g.os = vim.uv.os_uname().sysname
-
--- Home directory path
----@type string
 g.os_homedir = assert(vim.uv.os_homedir())
-
--- Shell command used to open URL, files, etc.
----@type 'open'|'xdg-open'|'start'
 g.open_command = (g.os == 'Darwin' and 'open') or (g.os == 'Windows_NT' and 'start') or 'xdg-open'
 
 local namespace = {
@@ -45,27 +35,25 @@ local namespace = {
     ---@type 'edge'|'single'|'double'|'shadow'|'rounded'|'solid'
     border_style = 'edge',
 
+    -- Provide VS Code like code action lightbulb.
+    code_action_lightbulb = {
+      enable = false,
+    },
+
     colorscheme = {
       -- Automatically switch between light and dark color schemes based on macOS appearance.
       auto = {
         enable = true,
       },
-
-      -- Dark color scheme
+      -- Color scheme for dark mode.
       dark = 'gruvbox_dark',
-
-      -- Light color scheme
+      -- Color scheme for light mode.
       light = 'gruvbox_light',
-    },
-
-    -- Provide VSCode like code action lightbulb.
-    code_action_lightbulb = {
-      enable = false,
     },
 
     -- LSP inlay hints.
     inlay_hints = {
-      enable = true,
+      enable = false,
     },
   },
 
@@ -79,22 +67,24 @@ _G.dm = dm or namespace
 require 'dm.globals' -- Global functions and variables
 require 'dm.options' -- Neovim options
 
--- Plugins
+do
+  ---@diagnostic disable-next-line: param-type-mismatch 'data' always return a `string`
+  local lazypath = vim.fs.joinpath(vim.fn.stdpath 'data', 'lazy', 'lazy.nvim')
 
----@diagnostic disable-next-line: param-type-mismatch 'data' always return a `string`
-local lazypath = vim.fs.joinpath(vim.fn.stdpath 'data', 'lazy', 'lazy.nvim')
-if not vim.uv.fs_stat(lazypath) then
-  vim.fn.system {
-    'git',
-    'clone',
-    '--filter=blob:none',
-    '--branch=stable',
-    'https://github.com/folke/lazy.nvim.git',
-    lazypath,
-  }
-  vim.notify 'Installed lazy.nvim'
+  if not vim.uv.fs_stat(lazypath) then
+    vim.fn.system {
+      'git',
+      'clone',
+      '--filter=blob:none',
+      '--branch=stable',
+      'https://github.com/folke/lazy.nvim.git',
+      lazypath,
+    }
+    vim.notify 'Installed lazy.nvim'
+  end
+
+  vim.opt.runtimepath:prepend(lazypath)
 end
-vim.opt.runtimepath:prepend(lazypath)
 
 -- See: https://github.com/folke/lazy.nvim#%EF%B8%8F-configuration
 require('lazy').setup('dm.plugins', {

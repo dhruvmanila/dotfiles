@@ -15,10 +15,6 @@ return {
     }
   end,
   ignore_exitcode = true,
-  enable = function(bufnr)
-    -- Enable only for files in the playground directory.
-    return vim.startswith(vim.api.nvim_buf_get_name(bufnr), vim.g.os_homedir .. '/playground')
-  end,
   parser = function(output)
     local diagnostics = {}
     for line in vim.gsplit(output, '\n') do

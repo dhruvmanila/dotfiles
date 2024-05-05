@@ -2,13 +2,13 @@ local M = {}
 
 local logger = dm.log.get_logger 'dm.linter'
 
----@class Linter
+---@class LinterConfig
 ---@field cmd string
----@field args string[]|fun(bufnr: number):string[]
+---@field args? string[]|fun(bufnr: number):string[]
 ---@field enable? fun(bufnr: number):boolean?
 ---@field stdin? boolean (default: false)
 ---@field stream? '"stdout"'|'"stderr"' (default: "stdout")
----@field ignore_exitcode? boolean|number[] (default: false)
+---@field ignore_exitcode? boolean (default: false)
 ---@field env? table<string, string>
 ---@field parser fun(output: string, bufnr: number): table
 
@@ -35,9 +35,6 @@ M.enabled_linters_by_filetype = {
   go = {
     'golangci-lint',
   },
-  python = {
-    'flake8',
-  },
   sql = {
     'sqlfluff',
   },
@@ -46,7 +43,7 @@ M.enabled_linters_by_filetype = {
   },
 }
 
----@type table<string, Linter?>
+---@type table<string, LinterConfig?>
 M.linters = setmetatable({}, {
   __index = function(_, name)
     local ok, linter = pcall(require, 'dm.linters.' .. name)
@@ -72,16 +69,16 @@ local namespaces = setmetatable({}, {
 })
 
 ---@param bufnr number
----@param linter Linter
+---@param linter LinterConfig
 local function run_linter(bufnr, linter)
-  if type(linter.enable) == 'function' and linter.enable(bufnr) == false then
+  if linter.enable and linter.enable(bufnr) == false then
     return
   end
 
   -- Create a local copy of the command and arguments.
   local cmd = { linter.cmd }
-  if linter.args then
-    local args = linter.args
+  local args = linter.args
+  if args ~= nil then
     if type(args) == 'function' then
       vim.list_extend(cmd, args(bufnr))
     else
@@ -114,17 +111,8 @@ local function run_linter(bufnr, linter)
     ---@param result vim.SystemCompleted
     vim.schedule_wrap(function(result)
       if not linter.ignore_exitcode then
-        local exit = false
-        if type(linter.ignore_exitcode) == 'table' then
-          if not vim.tbl_contains(linter.ignore_exitcode, result.code) then
-            logger.info('Ignoring exit code: %d', result.code)
-            exit = true
-          end
-        elseif result.code > 0 then
-          exit = true
-        end
-        if exit then
-          logger.error('Linter command `%s` exited with code: %d', linter.cmd, result.code)
+        if result.code > 0 then
+          logger.error('Linter command "%s" exited with code: %d', linter.cmd, result.code)
           return
         end
       end
@@ -146,7 +134,7 @@ function M.lint()
     local linter = M.linters[linter_name]
     if not linter then
       vim.notify_once(('Linter "%s" not found'):format(linter_name), vim.log.levels.WARN)
-    elseif not dm.executable(linter.cmd) then
+    elseif not dm.is_executable(linter.cmd) then
       vim.notify_once(('Linter "%s" not installed'):format(linter_name), vim.log.levels.WARN)
     else
       run_linter(bufnr, linter)
