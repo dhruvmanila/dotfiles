@@ -1,6 +1,6 @@
 # Dependencies for custom Python scripts
 
-docklib==1.3.0
+docklib==2.0.0
 pyobjc-framework-cocoa==10.0
 typer[all]==0.9.0
 watchfiles==0.21.0
