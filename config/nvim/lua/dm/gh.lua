@@ -1,10 +1,5 @@
 local M = {}
 
----@class GitHubStar
----@field name string
----@field description string
----@field url string
-
 -- Keep the values around between reloads.
 ---@type GitHubStar[]
 _CachedGithubStars = _CachedGithubStars or {}

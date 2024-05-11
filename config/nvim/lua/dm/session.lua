@@ -80,22 +80,6 @@ local function git_branch_exists(project, branch)
 end
 
 ---@class Session
----
----The `git` branch for the session. This is `nil` if the project is not a
----`git` repository.
----@field branch string?
----
----The name of the session. This is automatically generated based on the
----project directory and the `git` branch. If the project is not a `git`
----repository, then the name is just the project directory name. This excludes
----the home directory.
----@field name string
----
----The absolute path to the session file.
----@field path string
----
----The absolute path to the project directory for the session.
----@field project string
 local Session = {}
 Session.__index = Session
 

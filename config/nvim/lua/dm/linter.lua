@@ -2,16 +2,6 @@ local M = {}
 
 local logger = dm.log.get_logger 'dm.linter'
 
----@class LinterConfig
----@field cmd string
----@field args? string[]|fun(bufnr: number):string[]
----@field enable? fun(bufnr: number):boolean?
----@field stdin? boolean (default: false)
----@field stream? '"stdout"'|'"stderr"' (default: "stdout")
----@field ignore_exitcode? boolean (default: false)
----@field env? table<string, string>
----@field parser fun(output: string, bufnr: number): table
-
 -- Enabled linters by filetype where the key is the filetype and the value is a
 -- list of linter names.
 --

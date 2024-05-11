@@ -3,20 +3,12 @@
 --
 -- This is currently being used for:
 --   - Dashboard
---   - LSP line diagnostics
 
 local api = vim.api
 local set_lines = api.nvim_buf_set_lines
 local highlight = api.nvim_buf_add_highlight
 
----@alias Highlight { hl_group: string, from: number, to: number }
-
 ---@class Text
----@field bufnr number
----@field longest_line number
----@field line number
----@field current string
----@field linehl Highlight[]
 local Text = {}
 Text.__index = Text
 

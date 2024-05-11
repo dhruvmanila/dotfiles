@@ -3,26 +3,10 @@ local M = {}
 
 local utils = require 'dm.utils'
 
--- Refer: https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/lsp_ext.ts#L139
+local logger = dm.log.get_logger 'lsp.rust_analyzer'
 
----@class CargoRunnableArgs
----@field cargoArgs string[]
----@field cargoExtraArgs string[]
----@field executableArgs string[]
----@field workspaceRoot string?
-
----@class CargoRunnable
----@field label string
----@field kind 'cargo'
----@field args CargoRunnableArgs
-
----@class ExpandedMacro
----@field name string
----@field expansion string
-
----@class ExternalDocsResponse
----@field web string?
----@field local string?
+-- Notification title.
+local TITLE = 'rust-analyzer'
 
 local cache = {
   -- Bufnr for the latest executed command.
@@ -152,7 +136,7 @@ local function debug_runnable(runnable)
     end
   end
 
-  dm.notify('Rust', 'Compiling a debug build for debugging. This might take some time...', nil, {
+  dm.notify(TITLE, 'Compiling a debug build for debugging. This might take some time...', nil, {
     timeout = false,
   })
 
@@ -164,13 +148,13 @@ local function debug_runnable(runnable)
       require('notify').dismiss()
       if result.code > 0 then
         dm.notify(
-          'Rust',
+          TITLE,
           'An error occurred while compiling:\n' .. result.stderr,
           vim.log.levels.ERROR
         )
         return
       end
-      dm.notify('Rust', 'Compilation successful')
+      dm.notify(TITLE, 'Compilation successful')
 
       local executables = {}
       for _, value in ipairs(vim.split(result.stdout or '', '\n', { trimempty = true })) do
@@ -189,10 +173,10 @@ local function debug_runnable(runnable)
       end
 
       if #executables == 0 then
-        dm.notify('Rust', 'No compilation artifacts', vim.log.levels.ERROR)
+        dm.notify(TITLE, 'No compilation artifacts', vim.log.levels.ERROR)
         return
       elseif #executables > 1 then
-        dm.notify('Rust', 'Multiple compilation artifacts are not supported', vim.log.levels.ERROR)
+        dm.notify(TITLE, 'Multiple compilation artifacts are not supported', vim.log.levels.ERROR)
         return
       end
 
@@ -211,7 +195,7 @@ local function debug_runnable(runnable)
         console = 'internalConsole',
         stopOnEntry = false,
       }
-      dm.log.info('Launching DAP with config: %s', dap_config)
+      logger.info('Launching DAP with config: %s', dap_config)
       require('dap').run(dap_config)
     end)
   )
@@ -262,12 +246,11 @@ local function view_crate_graph_impl(full)
     .get_client('rust_analyzer')
     .request('rust-analyzer/viewCrateGraph', { full = full }, function(err, graph)
       if err ~= nil then
-        dm.notify('rust-analyzer', tostring(err), vim.log.levels.ERROR)
+        dm.notify(TITLE, tostring(err), vim.log.levels.ERROR)
         return
       end
 
-      local notification =
-        dm.notify('rust-analyzer', 'Processing crate graph. This may take a while...')
+      local notification = dm.notify(TITLE, 'Processing crate graph. This may take a while...')
 
       -- TODO(dhruvmanila): Make layout engine and output format as an argument?
       -- Layout engines: https://graphviz.org/docs/layouts/
@@ -279,7 +262,7 @@ local function view_crate_graph_impl(full)
         function(result)
           if result.code > 0 then
             dm.notify(
-              'rust-analyzer',
+              TITLE,
               'Failed to process crate graph:\n\n' .. result.stderr,
               vim.log.levels.ERROR,
               { replace = notification }
@@ -287,6 +270,7 @@ local function view_crate_graph_impl(full)
             return
           end
 
+          ---@diagnostic disable-next-line: param-type-mismatch
           local tmpfile = vim.fs.joinpath(vim.fn.stdpath 'run', 'rust_analyzer_crate_graph.svg')
           local file = assert(io.open(tmpfile, 'w+'))
           file:write(result.stdout)
@@ -340,13 +324,12 @@ end
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#expand-macro
 local function expand_macro_recursively()
-  utils.get_client('rust_analyzer').request(
-    'rust-analyzer/expandMacro',
-    vim.lsp.util.make_position_params(),
-    ---@param expanded ExpandedMacro
-    function(_, expanded)
+  utils
+    .get_client('rust_analyzer')
+    .request('rust-analyzer/expandMacro', vim.lsp.util.make_position_params(), function(_, expanded)
+      ---@cast expanded ExpandedMacro
       if expanded == nil then
-        dm.notify('Rust', 'No macro under cursor', vim.log.levels.WARN)
+        dm.notify(TITLE, 'No macro under cursor', vim.log.levels.WARN)
         return
       end
 
@@ -362,8 +345,7 @@ local function expand_macro_recursively()
 
       -- Move cursor to the start of the macro expansion.
       vim.api.nvim_win_set_cursor(0, { 4, 0 })
-    end
-  )
+    end)
 end
 
 -- Open the documentation for the symbol under the cursor.
@@ -374,19 +356,17 @@ end
 -- * https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#open-external-documentation
 -- * https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#local-documentation
 local function open_external_docs()
-  utils.get_client('rust_analyzer').request(
-    'experimental/externalDocs',
-    vim.lsp.util.make_position_params(),
-    ---@param result ExternalDocsResponse
-    function(_, result)
+  utils
+    .get_client('rust_analyzer')
+    .request('experimental/externalDocs', vim.lsp.util.make_position_params(), function(_, result)
+      ---@cast result ExternalDocsResponse
       local url = result['local'] or result.web
       if url == nil then
-        dm.notify('Rust', 'No documentation found', vim.log.levels.WARN)
+        dm.notify(TITLE, 'No documentation found', vim.log.levels.WARN)
         return
       end
       vim.ui.open(url)
-    end
-  )
+    end)
 end
 
 -- Show the syntax tree for the current buffer.
@@ -410,6 +390,57 @@ local function syntax_tree()
       -- Move the cursor to the start of the syntax tree.
       vim.api.nvim_win_set_cursor(0, { 1, 0 })
     end)
+end
+
+-- Move the cursor to the matching brace for the one at the current position.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#matching-brace
+local function matching_brace()
+  local params = vim.lsp.util.make_position_params()
+  utils.get_client('rust_analyzer').request('experimental/matchingBrace', {
+    textDocument = params.textDocument,
+    positions = { params.position },
+  }, function(_, positions, ctx)
+    ---@cast positions lsp.Position[]
+    if vim.tbl_isempty(positions) then
+      logger.warn('%s: empty response', ctx.method)
+      return
+    end
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if client == nil then
+      return
+    end
+    local position = positions[1]
+    if #positions > 1 then
+      logger.warn('%s: multiple positions: %s (using the first position)', ctx.method, positions)
+    end
+    local offset =
+      vim.lsp.util._get_line_byte_from_position(ctx.bufnr, position, client.offset_encoding)
+    local winid = vim.fn.bufwinid(ctx.bufnr)
+    -- LSP's line is 0-indexed while Neovim's line is 1-indexed.
+    vim.api.nvim_win_set_cursor(winid, { position.line + 1, offset })
+  end)
+end
+
+-- Open current project's Cargo.toml file.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#open-cargotoml
+local function open_cargo_toml()
+  utils.get_client('rust_analyzer').request(
+    'experimental/openCargoToml',
+    { textDocument = vim.lsp.util.make_text_document_params() },
+    function(_, location, ctx)
+      ---@cast location lsp.Location?
+      if location == nil then
+        return
+      end
+      local client = vim.lsp.get_client_by_id(ctx.client_id)
+      if client == nil then
+        return
+      end
+      vim.lsp.util.jump_to_location(location, client.offset_encoding, true)
+    end
+  )
 end
 
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
@@ -439,6 +470,9 @@ local mappings = {
   { 'n', '<leader>rl', execute_last_runnable, desc = 'execute last runnable' },
   { 'n', '<leader>rm', expand_macro_recursively, desc = 'expand macro recursively' },
   { 'n', '<leader>rd', open_external_docs, desc = 'open external docs' },
+  { 'n', '<leader>rt', open_cargo_toml, desc = 'open Cargo.toml' },
+  -- A language server can understand this much better because it uses the parser instead of regex.
+  { 'n', '%', matching_brace, desc = 'matching brace' },
 }
 
 -- List of user commands to be defined on server attach.
@@ -448,12 +482,14 @@ local commands = {
   { 'RustLastRun', execute_last_runnable, desc = 'execute last runnable' },
   { 'RustExpandMacro', expand_macro_recursively, desc = 'expand macro recursively' },
   { 'RustOpenExternalDocs', open_external_docs, desc = 'open external docs' },
+  { 'RustOpenCargoToml', open_cargo_toml, desc = 'open Cargo.toml' },
   { 'RustRunFlycheck', run_flycheck, desc = 'run flycheck' },
   { 'RustCancelFlycheck', cancel_flycheck, desc = 'cancel flycheck' },
   { 'RustClearFlycheck', clear_flycheck, desc = 'clear flycheck' },
   { 'RustViewCrateGraph', view_crate_graph, desc = 'view crate graph' },
   { 'RustViewCrateGraphFull', view_crate_graph_full, desc = 'view full crate graph' },
   { 'RustSyntaxTree', syntax_tree, desc = 'syntax tree' },
+  { 'RustMatchingBrace', matching_brace, desc = 'matching brace' },
 }
 
 -- Setup the buffer local mappings and commands for the `rust-analyzer` extension features.

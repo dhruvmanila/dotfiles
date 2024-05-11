@@ -37,9 +37,6 @@ return {
       'mtime',
       'icon',
     },
-    buf_options = {
-      bufhidden = 'wipe',
-    },
     win_options = {
       number = false,
       relativenumber = false,

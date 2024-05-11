@@ -4,15 +4,8 @@ local api = vim.api
 local Text = require 'dm.text'
 local utils = require 'dm.utils'
 
--- Variables {{{1
-
 -- Entry description length.
 local DESC_LENGTH = 50
-
----@class DashboardEntry
----@field key string keymap to trigger the `command`
----@field description string|fun():string oneline command description
----@field command string|function execute the string/function on `key`
 
 ---@type DashboardEntry[]
 local entries = {}
@@ -62,8 +55,6 @@ vim.list_extend(entries, {
     command = 'Lazy profile',
   },
 })
-
--- Functions {{{1
 
 ---@return string[]
 local function generate_header()

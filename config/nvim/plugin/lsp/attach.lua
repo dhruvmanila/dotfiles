@@ -42,9 +42,11 @@ local function setup_mappings(client, bufnr)
     { 'n', 'gD', lsp.buf.declaration, capability = M.textDocument_declaration },
     { 'n', 'gy', lsp.buf.type_definition, capability = M.textDocument_typeDefinition },
     { 'n', 'gi', lsp.buf.implementation, capability = M.textDocument_implementation },
+    { 'n', 'gr', lsp.buf.references, capability = M.textDocument_references },
     { 'n', '<leader>rn', lsp.buf.rename, capability = M.textDocument_rename },
     { { 'n', 'x' }, '<leader>ca', lsp.buf.code_action, capability = M.textDocument_codeAction },
     { 'n', '<leader>cl', lsp.codelens.run, capability = M.textDocument_codeLens },
+    { 'i', '<C-s>', lsp.buf.signature_help, capability = M.textDocument_signatureHelp },
   }
 
   vim.iter(mappings):each(function(m)

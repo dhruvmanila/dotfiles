@@ -7,12 +7,6 @@ local api = vim.api
 
 local provider = require 'dm.provider'
 
----@class Tabpage
----@field index integer
----@field name string
----@field flags string
----@field is_active boolean
-
 -- Construct and return the tabline label.
 ---@param tabpage Tabpage
 ---@return string

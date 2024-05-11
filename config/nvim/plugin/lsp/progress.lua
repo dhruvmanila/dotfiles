@@ -39,7 +39,7 @@ do
         return
       end
       vim.api.nvim_echo({
-        { format_message(event.data.result.value, client.name), 'Grey' },
+        { format_message(event.data.params.value, client.name), 'Grey' },
       }, false, {})
     end,
     desc = 'LSP: echo progress message',

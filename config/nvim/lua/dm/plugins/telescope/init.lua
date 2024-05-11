@@ -176,13 +176,8 @@ return {
       -- Custom extensions. The extensions are lazily loaded whenever they're called.
       pcall(telescope.load_extension, 'custom')
 
-      -- Loading the extension will increase the startuptime, so defer it when the
-      -- function is called.
-      vim.ui.select = function(...)
-        -- This will override the `vim.ui.select` function with a new implementation.
-        telescope.load_extension 'ui-select'
-        vim.ui.select(...)
-      end
+      -- This will override the `vim.ui.select` function with a new implementation.
+      pcall(telescope.load_extension, 'ui-select')
 
       -- Start the background job for collecting the GitHub stars. This will be cached
       -- and used by `custom.github_stars` extension.

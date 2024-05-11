@@ -155,10 +155,9 @@ local servers = {
       },
     },
     capabilities = {
+      -- See: ./extensions/rust_analyzer.lua
       experimental = {
-        localDocs = true,
         commands = {
-          -- See: ./extensions/rust_analyzer.lua
           commands = {
             'rust-analyzer.runSingle',
             'rust-analyzer.debugSingle',
@@ -166,6 +165,9 @@ local servers = {
             'rust-analyzer.gotoLocation',
           },
         },
+        localDocs = true,
+        matchingBrace = true,
+        openCargoToml = true,
       },
     },
   },
