@@ -61,6 +61,7 @@ return {
           command = 'ruff',
           args = {
             'check',
+            '--force-exclude',
             '--select=I001',
             '--fix',
             '--exit-zero',

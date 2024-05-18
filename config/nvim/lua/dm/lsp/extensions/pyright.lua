@@ -32,8 +32,9 @@ local function dump_file_debug_info(kind)
 end
 
 -- Setup the buffer local commands for the `pyright` extension features.
+---@param _ vim.lsp.Client
 ---@param bufnr number
-function M.on_attach(bufnr)
+function M.on_attach(_, bufnr)
   vim.api.nvim_buf_create_user_command(bufnr, 'PyrightDumpFileDebugInfo', function(data)
     dump_file_debug_info(data.fargs[1])
   end, {

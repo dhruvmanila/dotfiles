@@ -35,8 +35,11 @@ local commands = {
 }
 
 -- Setup the buffer local commands for the `ruff_lsp` extension features.
+---@param client vim.lsp.Client
 ---@param bufnr number
-function M.on_attach(bufnr)
+function M.on_attach(client, bufnr)
+  client.server_capabilities.hoverProvider = false
+
   for _, c in ipairs(commands) do
     vim.api.nvim_buf_create_user_command(bufnr, c[1], c[2], { desc = 'ruff: ' .. c.desc })
   end

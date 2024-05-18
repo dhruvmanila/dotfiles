@@ -30,12 +30,14 @@ return {
           prompt_prefix = ' ',
           selection_caret = '❯ ',
           sorting_strategy = 'ascending',
+          dynamic_preview_title = true,
+          results_title = false,
           layout_strategy = 'flex',
           layout_config = {
             prompt_position = 'top',
             horizontal = {
-              width = { padding = 14 },
-              height = { padding = 3 },
+              width = { padding = 6 },
+              height = { padding = 1 },
               preview_width = 0.55,
             },
             vertical = {
@@ -52,23 +54,32 @@ return {
           preview = {
             hide_on_startup = true,
           },
+          cache_picker = {
+            ignore_empty_prompt = true,
+          },
           mappings = {
             i = {
               ['<C-x>'] = false,
-              ['<C-u>'] = false,
-              ['<C-d>'] = false,
-              ['<Esc>'] = actions.close,
-              ['<C-j>'] = actions.move_selection_next,
-              ['<C-k>'] = actions.move_selection_previous,
-              ['<Up>'] = actions.cycle_history_prev,
-              ['<Down>'] = actions.cycle_history_next,
-              ['<C-f>'] = actions.preview_scrolling_down,
-              ['<C-b>'] = actions.preview_scrolling_up,
-              ['<C-q>'] = actions.smart_send_to_qflist + actions.open_qflist,
               ['<C-s>'] = actions.select_horizontal,
               ['<C-p>'] = action_layout.toggle_preview,
               ['<C-y>'] = custom_actions.yank_entry,
+              -- By default, the binding is reversed
+              ['<Esc>'] = actions.close,
               ['<C-c>'] = custom_actions.stop_insert,
+              -- Current selection
+              ['<C-j>'] = actions.move_selection_next,
+              ['<C-k>'] = actions.move_selection_previous,
+              -- Prompt history
+              ['<Up>'] = actions.cycle_history_prev,
+              ['<Down>'] = actions.cycle_history_next,
+              ['<C-n>'] = false,
+              -- Preview scrolling
+              ['<C-u>'] = false,
+              ['<C-d>'] = false,
+              ['<C-f>'] = actions.preview_scrolling_down,
+              ['<C-b>'] = actions.preview_scrolling_up,
+              -- Quickfix list
+              ['<C-q>'] = actions.smart_send_to_qflist + actions.open_qflist,
               ['<A-q>'] = custom_actions.qflist_tab_session,
             },
           },
@@ -94,10 +105,19 @@ return {
             include_extensions = true,
             use_default_opts = true,
           },
+          colorscheme = {
+            enable_preview = true,
+          },
           diagnostics = {
             sort_by = 'severity',
           },
           git_commits = {
+            layout_strategy = 'vertical',
+          },
+          git_bcommits = {
+            layout_strategy = 'vertical',
+          },
+          git_bcommits_range = {
             layout_strategy = 'vertical',
           },
           git_files = {
@@ -119,6 +139,9 @@ return {
           },
           live_grep = {
             path_display = { truncate = 3 },
+          },
+          keymaps = {
+            show_plug = false,
           },
         },
         extensions = {

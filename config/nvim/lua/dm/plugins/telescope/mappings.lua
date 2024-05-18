@@ -95,7 +95,7 @@ local mappings = {
 }
 
 for _, m in ipairs(mappings) do
-  vim.keymap.set(m[1], m[2], m[3], { desc = ('Telescope: %s'):format(m.desc) })
+  vim.keymap.set(m[1], m[2], m[3], { desc = ('telescope: %s'):format(m.desc) })
 end
 
 -- Extensions

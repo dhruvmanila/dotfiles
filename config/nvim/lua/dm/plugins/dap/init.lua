@@ -88,6 +88,9 @@ return {
       'mfussenegger/nvim-dap-python',
       {
         'rcarriga/nvim-dap-ui',
+        dependencies = {
+          'nvim-neotest/nvim-nio',
+        },
         opts = {
           mappings = {
             expand = { '<CR>', '<2-LeftMouse>', '<Tab>' },

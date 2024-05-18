@@ -4,14 +4,12 @@ return {
   'fladson/vim-kitty',
   'vim-scripts/applescript.vim',
 
-  'tpope/vim-commentary',
   'tpope/vim-eunuch',
   'tpope/vim-repeat',
   'tpope/vim-scriptease',
   'tpope/vim-surround',
 
   'lambdalisue/vim-protocol',
-  'rcarriga/nvim-notify',
   'romainl/vim-cool',
 
   { 'nacro90/numb.nvim', event = 'CmdlineEnter', config = true },

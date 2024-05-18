@@ -97,8 +97,6 @@ local function setup_autocmds(client, bufnr)
       group = group,
       buffer = bufnr,
       callback = function()
-        -- TODO: Check if this is correct
-        -- TODO: It shows a lot of notifications if client doesn't support it, so silence them via vimscript
         lsp.codelens.refresh { bufnr = bufnr }
       end,
       desc = 'LSP: Refresh codelens',
@@ -117,17 +115,9 @@ local function on_attach(client, bufnr)
   setup_mappings(client, bufnr)
   setup_autocmds(client, bufnr)
 
-  if client.name == 'pyright' then
-    extensions.pyright.on_attach(bufnr)
-  end
-
-  if client.name == 'ruff_lsp' then
-    client.server_capabilities.hoverProvider = false
-    extensions.ruff_lsp.on_attach(bufnr)
-  end
-
-  if client.name == 'rust_analyzer' then
-    extensions.rust_analyzer.on_attach(bufnr)
+  local client_extension = extensions[client.name]
+  if client_extension then
+    client_extension.on_attach(client, bufnr)
   end
 end
 

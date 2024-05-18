@@ -66,11 +66,10 @@ local function execute_command(cmd, args, cwd)
   local original_winnr = vim.api.nvim_get_current_win()
   delete_bufnr(cache.run_single_bufnr)
   cache.run_single_bufnr = vim.api.nvim_create_buf(false, true)
-
-  vim.cmd.split()
-  local terminal_winnr = vim.api.nvim_get_current_win()
-  vim.api.nvim_win_set_buf(terminal_winnr, cache.run_single_bufnr)
-  vim.cmd.resize(math.ceil(vim.o.lines * 0.35))
+  local terminal_winnr = vim.api.nvim_open_win(cache.run_single_bufnr, true, {
+    split = 'below',
+    height = math.ceil(vim.o.lines * 0.35),
+  })
 
   local job_id = vim.fn.termopen(('%s %s'):format(cmd, table.concat(args, ' ')), {
     cwd = cwd,
@@ -335,8 +334,10 @@ local function expand_macro_recursively()
 
       delete_bufnr(cache.expand_macro_bufnr)
       cache.expand_macro_bufnr = vim.api.nvim_create_buf(false, true)
-      vim.cmd.split { range = { math.ceil(vim.o.lines * 0.3) } } -- `:split` with 30% height.
-      vim.api.nvim_win_set_buf(0, cache.expand_macro_bufnr)
+      vim.api.nvim_open_win(cache.expand_macro_bufnr, true, {
+        split = 'below',
+        height = math.ceil(vim.o.lines * 0.3),
+      })
 
       -- Once the buffer is set for the current window, we can use 0 to refer to it.
       vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<Cmd>q<CR>', { noremap = true })
@@ -378,8 +379,11 @@ local function syntax_tree()
     .request('rust-analyzer/syntaxTree', vim.lsp.util.make_range_params(), function(_, result)
       delete_bufnr(cache.syntax_tree_bufnr)
       cache.syntax_tree_bufnr = vim.api.nvim_create_buf(false, true)
-      vim.cmd.vsplit { range = { math.ceil(vim.o.columns * 0.4) } } -- `:vsplit` with 40% width.
-      vim.api.nvim_win_set_buf(0, cache.syntax_tree_bufnr)
+      vim.api.nvim_open_win(cache.syntax_tree_bufnr, true, {
+        vertical = true,
+        split = 'right',
+        width = math.ceil(vim.o.columns * 0.4),
+      })
 
       -- Once the buffer is set for the current window, we can use 0 to refer to it.
       vim.api.nvim_buf_set_keymap(0, 'n', 'q', '<Cmd>q<CR>', { noremap = true })
@@ -493,8 +497,9 @@ local commands = {
 }
 
 -- Setup the buffer local mappings and commands for the `rust-analyzer` extension features.
+---@param _ vim.lsp.Client
 ---@param bufnr number
-function M.on_attach(bufnr)
+function M.on_attach(_, bufnr)
   for _, m in ipairs(mappings) do
     vim.keymap.set(m[1], m[2], m[3], { buffer = bufnr, desc = 'rust-analyzer: ' .. m.desc })
   end

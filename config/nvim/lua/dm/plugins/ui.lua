@@ -31,4 +31,27 @@ return {
       end)
     end,
   },
+
+  {
+    'rcarriga/nvim-notify',
+    opts = {
+      stages = 'fade',
+      icons = {
+        ERROR = dm.icons.error,
+        WARN = dm.icons.warn,
+        INFO = dm.icons.info,
+        DEBUG = '',
+      },
+      on_open = function(winnr)
+        vim.api.nvim_win_set_config(winnr, { zindex = 100 })
+        vim.keymap.set('n', 'q', '<Cmd>bdelete<CR>', {
+          buffer = vim.api.nvim_win_get_buf(winnr),
+          nowait = true,
+        })
+        vim.wo[winnr].wrap = true
+        vim.wo[winnr].showbreak = 'NONE'
+      end,
+      max_width = math.floor(vim.o.columns * 0.4),
+    },
+  },
 }

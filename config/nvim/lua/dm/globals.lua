@@ -80,31 +80,7 @@ do
 end
 
 do
-  local notify
-
-  -- Setup `nvim-notify` plugin.
-  local function setup()
-    notify = require 'notify'
-    notify.setup {
-      stages = 'fade',
-      icons = {
-        ERROR = dm.icons.error,
-        WARN = dm.icons.warn,
-        INFO = dm.icons.info,
-        DEBUG = '',
-      },
-      on_open = function(winnr)
-        vim.api.nvim_win_set_config(winnr, { zindex = 100 })
-        vim.keymap.set('n', 'q', '<Cmd>bdelete<CR>', {
-          buffer = vim.api.nvim_win_get_buf(winnr),
-          nowait = true,
-        })
-        vim.wo[winnr].wrap = true
-        vim.wo[winnr].showbreak = 'NONE'
-      end,
-      max_width = math.floor(vim.o.columns * 0.4),
-    }
-  end
+  local nvim_notify = vim.notify
 
   -- Default values for the notification title as per the log level.
   local default_title = {
@@ -118,13 +94,9 @@ do
   -- Override the default `vim.notify` to open a floating window.
   ---@param msg string|string[]
   ---@param level? number|string
-  ---@param opts? notify.Options
+  ---@param opts? table
   ---@diagnostic disable-next-line: duplicate-set-field
   vim.notify = function(msg, level, opts)
-    -- Defer the plugin setup until the first notification call.
-    if not notify then
-      setup()
-    end
     level = level or vim.log.levels.INFO
     opts = opts or {}
     opts.title = opts.title or (type(level) == 'string' and level) or default_title[level]
@@ -136,7 +108,7 @@ do
     else
       msg = ' ' .. msg:gsub('\n', ' \n ')
     end
-    return notify(msg, level, opts)
+    return (package.loaded.notify or nvim_notify)(msg, level, opts)
   end
 
   -- Wrapper around `vim.notify` to simplify passing the `title` value.
