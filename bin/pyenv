@@ -10,7 +10,7 @@ version="v0.7.0"
 
 : "${CMD:=$(basename "$0")}"
 : "${PYENV_ROOT:="$HOME/.pyenv"}"
-: "${PYTHON_BUILD_PREFIX:="/usr/local"}"
+: "${PYTHON_BUILD_PREFIX:="$HOME/.local"}"
 : "${PYTHON_BUILD_CACHE_PATH:="$PYENV_ROOT/cache"}"
 
 PYTHON_BUILD_BIN="$PYTHON_BUILD_PREFIX/bin/python-build"
@@ -65,7 +65,7 @@ function python-build() {
       git -C "$PYENV_ROOT/pyenv" pull
       ;;
   esac
-  "$PYENV_ROOT"/pyenv/plugins/python-build/install.sh
+  PREFIX="$PYTHON_BUILD_PREFIX" "$PYENV_ROOT"/pyenv/plugins/python-build/install.sh
 }
 
 case "$1" in
