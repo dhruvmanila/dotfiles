@@ -1,8 +1,8 @@
 vim.opt.runtimepath = { vim.env.VIMRUNTIME }
 
 -- Remove the plugin paths on non-Windows machines.
-if vim.loop.os_uname().sysname ~= 'Windows_NT' then
-  local homedir = vim.loop.os_homedir()
+if vim.uv.os_uname().sysname ~= 'Windows_NT' then
+  local homedir = vim.uv.os_homedir()
   vim.opt.packpath:remove {
     homedir .. '/.config/nvim',
     homedir .. '/.config/nvim/after',

@@ -1,28 +1,33 @@
 {
   "files.autoSave": "onFocusChange",
-  
-  "pygls.server.launchScript": "inlay_hints.py",
-  "pygls.trace.server": "verbose",
-  "pygls.client.documentSelector": [
-    {
-      "scheme": "file",
-      "language": "json"
-    },
-    {
-      "scheme": "file",
-      "language": "plaintext"
-    },
-    {
-      "notebook": "*",
-      "language": "python"
-    }
-  ],
 
   // Neovim
   "vscode-neovim.neovimExecutablePaths.darwin": "nvim",
-  "vscode-neovim.neovimExecutablePaths.win32": "nvim",
   "vscode-neovim.neovimInitVimPaths.darwin": "~/dotfiles/config/vscode/init.lua",
-  "vscode-neovim.neovimInitVimPaths.win32": "~/dotfiles/config/vscode/init.lua",
+
+  // Ruff (mainly for development)
+  "ruff.nativeServer": true,
+  //"ruff.path": ["/Users/dhruv/work/astral/ruff-test/target/debug/ruff"],
+
+  // Python
+  "python.languageServer": "Pyright",
+  "python.terminal.executeInFileDir": true,
+
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+     "editor.codeActionsOnSave": {
+       "source.fixAll.ruff": "never",
+       "source.organizeImports.ruff": "never"
+     }
+  },
+
+  // Jupyter Notebook
+  "notebook.lineNumbers": "on",
+  "notebook.formatOnSave.enabled": false,
+  "notebook.codeActionsOnSave": {
+     "notebook.source.fixAll.ruff": "never",
+     "notebook.source.organizeImports.ruff": "never"
+  },
 
   // Settings viewer as JSON
   "workbench.settings.editor": "json",
@@ -61,44 +66,7 @@
     "terminal.background": "#242424"
   },
 
-  // Python
-  "python.languageServer": "Pyright",
-  "python.terminal.executeInFileDir": true,
-  "python.venvPath": "~/Library/Application Support/pie",
-  
-  // Ruff (mainly for development)
-  "ruff.lint.enable": false,
-  // "ruff.lint.run": "onType",
-  "ruff.path": ["~/.local/bin/ruff"],
-  // "ruff.importStrategy": "useBundled",
-
-  // Reproduction settings
-  "workbench.editorAssociations": {
-      "*.ipynb": "jupyter.notebook.ipynb"
-  },
-  "[python]": {
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "ms-python.black-formatter"
-  },
-  "black-formatter.args": ["--skip-string-normalization"],
-  
-  // "notebook.formatOnSave.enabled": true,
-  "notebook.codeActionsOnSave": {
-    // "source.fixAll": "explicit",
-    // "source.organizeImports": "explicit"
-  },
-
-  // "[python]": {
-  //   "editor.defaultFormatter": "charliermarsh.ruff"
-  //   // "editor.formatOnSave": true
-  //   // "editor.codeActionsOnSave": {
-  //   //   "source.fixAll": true,
-  //     // "source.organizeImports": true
-  //   // }
-  // },
-  
   // Python docstring
-  "autoDocstring.docstringFormat": "numpy-notypes",
   "editor.tokenColorCustomizations": {
     "textMateRules": [
       {
@@ -111,27 +79,18 @@
     ]
   },
 
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "never",
+      "source.fixAll.eslint": "always"
+    }
+  },
+
   // Rust
-  // I only use VSCode for `python.lalrpop`, so no point in running clippy
-  // which just slows down my work in Neovim.
   "rust-analyzer.checkOnSave": false,
 
-  // Lua
-  "Lua.diagnostics.globals": ["vim"],
-  "Lua.runtime.version": "LuaJIT",
-  "Lua.workspace.preloadFileSize": 1000,
-  "Lua.runtime.path": [
-    "?.lua",
-    "?/init.lua",
-    "?/?.lua",
-    "lua/?.lua",
-    "lua/?/init.lua"
-  ],
-
   // Language specific settings
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -145,50 +104,39 @@
     "editor.tabSize": 4
   },
 
-  // "[jupyter-notebook]": {
-  //   "editor.formatOnSave": true,
-  //   "editor.defaultFormatter": "charliermarsh.ruff"
-  // },
-
-  // Controls the dimensions of opening a new window when at least one window is already opened.
   "window.newWindowDimensions": "maximized",
 
   // Set association for non-standard files to help syntax highlighting
   "files.associations": {
     "Brewfile": "ruby",
     "Vagrantfile": "ruby"
-    // "*.ipynb": "python"
   },
   "workbench.editorAssociations": {
-    // "*.ipynb": "jupyter-notebook",
     "*.hdl": "vhdl"
   },
 
-  // GitHub Copilot
-  "github.copilot.enable": {
-    "*": false,
-    "plaintext": false,
-    "markdown": false,
-    "scminput": false,
-    "python": true,
-    "javascript": true,
-    "html": true,
-    "css": true,
-    "lalrpop": true
-  },
-  "github.copilot.advanced": {},
+  "git.openRepositoryInParentFolders": "never",
+  "githubPullRequests.queries": [
+    {
+      "label": "Waiting For My Review",
+      "query": "is:open review-requested:${user}"
+    },
+    {
+      "label": "Assigned To Me",
+      "query": "is:open assignee:${user}"
+    },
+    {
+      "label": "Created By Me",
+      "query": "is:open author:${user}"
+    }
+  ],
 
   // No autoupdate for extensions
   "extensions.autoUpdate": false,
-
-  // No telemetry
-  "telemetry.telemetryLevel": "off",
-  "Lua.telemetry.enable": false,
-  "redhat.telemetry.enabled": false,
-  "git.openRepositoryInParentFolders": "never",
-  "notebook.lineNumbers": "on",
   "extensions.experimental.affinity": {
     "asvetliakov.vscode-neovim": 1
   },
-  "editor.accessibilitySupport": "off",
+
+  // No telemetry
+  "telemetry.telemetryLevel": "off",
 }
