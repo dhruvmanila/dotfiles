@@ -11,12 +11,6 @@ commands:
         short: -f
         help: skip backup for the existing dotfiles
 
-  - name: shell
-    help: |
-      setup the default shell for the current user
-
-      Default shell path: "$DEFAULT_SHELL_PATH"
-
   - name: setup
     help: setup a new mac machine the way I like it
 

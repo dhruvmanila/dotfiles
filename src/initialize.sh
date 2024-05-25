@@ -19,9 +19,6 @@ esac
 
 HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
 
-# Default shell path. This can be set using `dot shell`.
-DEFAULT_SHELL_PATH="${HOMEBREW_PREFIX}/bin/zsh"
-
 # Common directories
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 NEOVIM_DIRECTORY="${HOME}/contributing/neovim"

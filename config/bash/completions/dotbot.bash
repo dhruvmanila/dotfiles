@@ -32,10 +32,6 @@ _dotbot_completions() {
       while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --ref -h -r all brew cargo mac neovim nnn npm plugins python")" -- "$cur" )
       ;;
 
-    'shell'*)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help -h")" -- "$cur" )
-      ;;
-
     'setup'*)
       while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help -h")" -- "$cur" )
       ;;
@@ -49,7 +45,7 @@ _dotbot_completions() {
       ;;
 
     *)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --version -h -v link setup shell sync upgrade")" -- "$cur" )
+      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --version -h -v link setup sync upgrade")" -- "$cur" )
       ;;
 
   esac

@@ -1,0 +1,28 @@
+#!/usr/bin/env zsh
+#
+# Setup the default shell to the path provided as the first argument.
+#
+# Reference: https://stackoverflow.com/a/41553295
+
+CMD="$(basename "$0")"
+
+if (( $# != 1 )); then
+  echo "Usage: $CMD <path>"
+  exit 1
+elif [[ ! -e "$1" ]]; then
+  echo "$CMD: $1: no such file"
+  exit 1
+fi
+
+if dscl . -read ~/ UserShell | grep "$1" &> /dev/null; then
+  echo "$CMD: $1 is already the default shell"
+  exit
+fi
+
+if ! grep -F -q "$1" /etc/shells; then
+  echo "Adding '$1' to /etc/shells..."
+  echo "$1" | sudo tee -a /etc/shells
+fi
+
+header "Switching to '$1' as the default shell..."
+chsh -s "$1"
