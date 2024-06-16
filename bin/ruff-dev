@@ -8,14 +8,21 @@ from typing import Annotated, Optional
 import typer
 import watchfiles
 
-PLAYGROUND_DIR = Path.home().joinpath("playground", "ruff")
-RUFF_DIR = Path.home().joinpath("work", "astral", "ruff")
-RUFF_FIXTURES_DIR = RUFF_DIR.joinpath(
-    "crates", "ruff_linter", "resources", "test", "fixtures"
-)
+PLAYGROUND_DIR = Path.home() / "playground" / "ruff"
+RUFF_DIR = Path.home() / "work" / "astral" / "ruff"
+RUFF_TEST_DIR = Path.home() / "work" / "astral" / "ruff-test"
+RUFF_DIR_CANDIDATES = (RUFF_DIR, RUFF_TEST_DIR)
 RUFF_CONFIG_FILENAMES = ("pyproject.toml", "ruff.toml", ".ruff.toml")
 
 app = typer.Typer(rich_markup_mode="rich")
+
+
+def ruff_fixtures_dir() -> Path:
+    """Returns the fixtures directory for the Ruff project.
+
+    This function assumes that the current working directory is in `RUFF_DIR_CANDIDATES`.
+    """
+    return Path.cwd() / "crates" / "ruff_linter" / "resources" / "test" / "fixtures"
 
 
 def playground_file(filepath: str) -> Path:
@@ -184,7 +191,7 @@ def linter(
         else:
             fixture_paths.extend(
                 shlex.quote(str(fixture_path.relative_to(RUFF_DIR)))
-                for fixture_path in RUFF_FIXTURES_DIR.glob(f"**/*{rule}*.py*")
+                for fixture_path in ruff_fixtures_dir().glob(f"**/*{rule}*.py*")
             )
 
     if not fixture_paths:
@@ -209,7 +216,23 @@ def linter(
         config_option = "--isolated"
 
     start_watchfiles(
+        # The linter crate itself...
         "crates/ruff_linter",
+        # ... and the dependencies of `ruff_linter`
+        "crates/ruff_cache",
+        "crates/ruff_diagnostics",
+        "crates/ruff_notebook",
+        "crates/ruff_macros",
+        "crates/ruff_python_ast",
+        "crates/ruff_python_codegen",
+        "crates/ruff_python_index",
+        "crates/ruff_python_literal",
+        "crates/ruff_python_semantic",
+        "crates/ruff_python_stdlib",
+        "crates/ruff_python_trivia",
+        "crates/ruff_python_parser",
+        "crates/ruff_source_file",
+        "crates/ruff_text_size",
         *watch_paths,
         command=[
             "cargo",
@@ -235,11 +258,19 @@ def linter(
 )
 def main() -> None:
     """A CLI tool to help with Ruff development."""
-    if Path.cwd() != RUFF_DIR:
-        typer.secho(
-            "This script must be run from " + typer.style(RUFF_DIR, bold=True),
+    if Path.cwd() not in RUFF_DIR_CANDIDATES:
+        typer.echo(
+            "\n".join(
+                (
+                    typer.style(
+                        "This script must be run from either of the following directories:",
+                        fg=typer.colors.YELLOW,
+                        bold=True,
+                    ),
+                    *map(lambda path: f"* {path}", RUFF_DIR_CANDIDATES),
+                ),
+            ),
             err=True,
-            fg=typer.colors.RED,
         )
         raise typer.Exit(1)
 
