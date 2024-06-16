@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# Reference: https://www.flow.app/help#documentation
+
+CMD="$(basename "$0")"
+
+function usage() {
+  echo "Control Flow via AppleScripts"
+  echo ""
+  echo "Usage:"
+  echo "  $CMD [command]"
+  echo "  $CMD --help | -h"
+  echo ""
+  echo "Commands:"
+  echo "  launch  launch the Flow application"
+  echo "  quit    quit the Flow application"
+  echo "  start   start or resume a flow or break"
+  echo "  stop    stop or pause a flow or break"
+  echo "  skip    skips the current break and automatically starts the next flow"
+  echo "          (only available during the break)"
+  echo "  reset   reset the current flow cycle"
+  echo "  hide    hide the app window"
+  echo "  show    show the app window"
+}
+
+case "$1" in
+  "" | --help | -h)
+    usage
+    ;;
+
+  "launch" | "quit" | "start" | "stop" | "skip" | "reset" | "hide" | "show")
+    osascript -e "tell application \"Flow\" to $1"
+    ;;
+esac
