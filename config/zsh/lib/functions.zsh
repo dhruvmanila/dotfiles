@@ -1,35 +1,3 @@
-checksum() { # {{{1
-  # Usage:
-  # To download and verify a script pass the URL and the CHECKSUM:
-  #
-  #   checksum <URL> <CHECKSUM>
-  #
-  # The script will be printed out by default so you can inspect it.
-  # If you’re happy with it, you can pipe the script to sh to execute it:
-  #
-  #   checksum <URL> <CHECKSUM> | sh
-  #
-  # If you just want to calculate the checksum for a URL you can omit the CHECKSUM:
-  #
-  #   checksum <URL>
-  #
-  # Ref: https://checksum.sh
-  script=$(curl --fail --silent --show-error --location "$1")
-  if ! command -v shasum >/dev/null; then
-    shasum() { sha1sum "$@"; }
-  fi
-  value=$(printf '%s\n' "$script" | shasum | awk '{print $1}')
-  if [[ -z "$2" ]]; then
-    printf '%s\n' "$value"
-  elif [[ "$value" = "$2" ]]; then
-    printf '%s\n' "$script"
-  else
-    echo "Invalid checksum: $2 (expected $value)" 1>&2;
-  fi
-  unset script
-  unset value
-}
-
 dsh() { # {{{1
   # Start a bash shell for the given docker container.
   if (( $# == 0 )); then
@@ -39,27 +7,6 @@ dsh() { # {{{1
   container_id=$(docker ps --format='{{.ID}}' --filter name="$1" | head -1)
   echo "==> Starting bash in $container_id..."
   docker exec --interactive --tty "$container_id" bash
-}
-
-explain() { # {{{1
-  # Explain whole commands using https://mankier.com
-  local api_url
-  api_url="https://www.mankier.com/api/v2/explain/?cols=$(($(tput cols) - 3))"
-  if (( $# == 0 )); then
-    while read -r "$(printf "?\e[1;37mCommand: \e[0m")" cmd; do
-      if [[ "$cmd" == "" ]]; then
-        break
-      fi
-      curl -s --get "$api_url" --data-urlencode "q=$cmd"
-    done
-  elif (( $# == 1 )); then
-    curl -s --get "$api_url" --data-urlencode "q=$*"
-  else
-    echo "Usage:"
-    echo "  $0                  interactive mode"
-    echo "  $0 'cmd -o | ...'   one quoted command to explain it"
-    return 1
-  fi
 }
 
 git-stats() { # {{{1
@@ -170,43 +117,6 @@ py-venv-activate() { # {{{1
   if [[ -e "$project_root/.venv/bin/activate" ]]; then
     source "$project_root/.venv/bin/activate"
   fi
-}
-
-py-cleanup() { # {{{1
-  # Remove all the cache files generated for a Python project.
-  if ! (( $+commands[fd] )) {
-    echo "$0: 'fd' command not found"
-    return 1
-  }
-  for pattern in "pytest_cache" "mypy_cache" "__pycache__" "ruff_cache"; do
-    echo "==> Removing '$pattern'"
-    fd \
-      --hidden \
-      --no-ignore \
-      --type="directory" \
-      --exclude="*venv" \
-      "$pattern" \
-      --exec echo "    {}" \; \
-      --exec rm -r {}
-  done
-}
-
-py-kernel() { # {{{1
-  # Create an IPython kernel for the current Python virtual environment.
-  # This is useful to have one Jupyter installation but different Python kernels
-  # for individual environments.
-  #
-  # $1 (string): name and display name of the kernal
-  if (( $# != 1 )); then
-    echo "Usage: $0 <name>"
-    return 1
-  elif [[ -z "$VIRTUAL_ENV" ]]; then
-    echo "$0: not in a virtual environment"
-    return 1
-  fi
-  python -m pip install --quiet ipykernel
-  python -m ipykernel install --user --name "$1" --display-name "Python ($1)"
-  echo "Use the 'Python ($1)' kernel for current venv in Jupyter"
 }
 
 py-upgrade-venv() { # {{{1

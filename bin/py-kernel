@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Create an IPython kernel for the current Python virtual environment.
+#
+# This is useful to have one Jupyter installation but different Python kernels
+# for individual environments.
+#
+# $1 (string): name and display name of the kernal
+
+CMD="$(basename "$0")"
+
+if (($# != 1)); then
+  echo "Usage: $CMD <name>"
+  exit 1
+elif [[ -z "$VIRTUAL_ENV" ]]; then
+  echo "$CMD: not in a virtual environment"
+  exit 1
+fi
+
+echo "Installing ipykernel in '$VIRTUAL_ENV_PROMPT' virtual environment..."
+uv pip install ipykernel
+
+python -m ipykernel install --user --name "$1" --display-name "Python ($1)"
+echo "Use the 'Python ($1)' kernel for current venv in Jupyter"

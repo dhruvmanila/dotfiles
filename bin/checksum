@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+CMD="$(basename "$0")"
+
+function usage() {
+  echo "Usage:"
+  echo ""
+  echo "To download and verify a script pass the URL and the CHECKSUM:"
+  echo ""
+  echo "  $CMD <URL> <CHECKSUM>"
+  echo ""
+  echo "The script will be printed out by default so you can inspect it."
+  echo "If you’re happy with it, you can pipe the script to sh to execute it:"
+  echo ""
+  echo "  $CMD <URL> <CHECKSUM> | sh"
+  echo ""
+  echo "If you just want to calculate the checksum for a URL you can omit the CHECKSUM:"
+  echo ""
+  echo "  $CMD <URL>"
+  echo ""
+  echo "Reference: https://checksum.sh"
+}
+
+if (($# == 0)); then
+  usage
+  exit 1
+fi
+
+if ! command -v shasum > /dev/null; then
+  shasum() { sha1sum "$1"; }
+fi
+
+script=$(curl --fail --silent --show-error --location "$1")
+value=$(printf '%s\n' "$script" | shasum "$@" | awk '{print $1}')
+
+if [[ -z "$2" ]]; then
+  printf '%s\n' "$value"
+elif [[ "$value" = "$2" ]]; then
+  printf '%s\n' "$script"
+else
+  echo "$CMD: invalid checksum: $2 (expected $value)" 1>&2
+fi

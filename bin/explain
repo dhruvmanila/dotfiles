@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Explain whole commands using https://mankier.com
+
+CMD="$(basename "$0")"
+API_URL="https://www.mankier.com/api/v2/explain/?cols=$(($(tput cols) - 3))"
+
+case $# in
+  0)
+    # Interactive mode
+    while read -r "$(printf "?\e[1;37mCommand: \e[0m")" query; do
+      if [[ "$query" == "" ]]; then
+        break
+      fi
+      curl -s --get "$API_URL" --data-urlencode "q=$query"
+    done
+    ;;
+  1)
+    # Explain the given command
+    curl -s --get "$API_URL" --data-urlencode "q=$*"
+    ;;
+  *)
+    echo "Usage:"
+    echo "  $CMD                            interactive mode"
+    echo "  $CMD 'command --option | ...'   one quoted command to explain it"
+    exit 1
+    ;;
+esac

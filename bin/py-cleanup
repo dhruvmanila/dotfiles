@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+# Remove all the cache files generated for a Python project.
+
+CMD="$(basename "$0")"
+
+if ! (( $+commands[fd] )) {
+  echo "$CMD: 'fd' command not found"
+  exit 1
+}
+
+for pattern in "pytest_cache" "mypy_cache" "__pycache__" "ruff_cache"; do
+  echo "==> Removing '$pattern'"
+
+  fd \
+    --hidden \
+    --no-ignore \
+    --type="directory" \
+    --exclude="*venv" \
+    "$pattern" \
+    --exec echo "    {}" \; \
+    --exec rm -r {}
+done
