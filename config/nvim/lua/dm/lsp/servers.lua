@@ -6,7 +6,17 @@ local servers = {
   -- https://github.com/bash-lsp/bash-language-server
   -- Install: `npm install --global bash-language-server`
   -- Settings: https://github.com/bash-lsp/bash-language-server/blob/master/server/src/config.ts
-  bashls = {},
+  bashls = {
+    settings = {
+      bashIde = {
+        shfmt = {
+          binaryNextLine = true,
+          caseIndent = true,
+          spaceRedirects = true,
+        },
+      },
+    },
+  },
 
   -- https://github.com/microsoft/vscode/tree/main/extensions/css-language-features/server
   -- Install: `npm install --global vscode-langservers-extracted`
@@ -107,7 +117,16 @@ local servers = {
 
   -- https://github.com/astral-sh/ruff
   -- Install: `pipx install ruff`
-  ruff = {},
+  ruff = {
+    cmd_env = {
+      RUFF_TRACE = 'messages',
+    },
+    init_options = {
+      settings = {
+        logFile = vim.fn.stdpath 'log' .. '/lsp.ruff.log',
+      },
+    },
+  },
 
   -- https://github.com/astral-sh/ruff-lsp
   -- Install: `pipx install ruff-lsp`
@@ -137,12 +156,17 @@ local servers = {
             enable = true,
           },
         },
-        checkOnSave = true,
+        checkOnSave = false,
         check = {
           command = 'clippy',
         },
         inlayHints = {
           closingBraceHints = {
+            enable = false,
+          },
+        },
+        lens = {
+          implementations = {
             enable = false,
           },
         },
@@ -165,7 +189,6 @@ local servers = {
             'rust-analyzer.gotoLocation',
           },
         },
-        localDocs = true,
         matchingBrace = true,
         openCargoToml = true,
       },
@@ -275,12 +298,17 @@ local function get(name)
   if type(config) == 'function' then
     config = config()
   end
+  local cmp_nvim_capabilities = {}
   local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
   if ok then
-    config.capabilities = cmp_nvim_lsp.default_capabilities()
+    cmp_nvim_capabilities = cmp_nvim_lsp.default_capabilities()
   end
-  config.capabilities =
-    vim.tbl_deep_extend('force', config.capabilities or {}, capability_overrides)
+  config.capabilities = vim.tbl_deep_extend(
+    'force',
+    config.capabilities or {},
+    cmp_nvim_capabilities,
+    capability_overrides
+  )
   return config
 end
 

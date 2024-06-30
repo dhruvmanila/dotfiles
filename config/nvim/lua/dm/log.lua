@@ -118,7 +118,7 @@ local function file_output(outfile, message)
     if file == nil then
       return
     end
-    file:write(message .. '\n')
+    file:write(vim.trim(message) .. '\n')
     file:flush()
   end)
 end
@@ -135,13 +135,17 @@ local function console_output(name, message, highlight)
   -- variable, the message history will also have the truncated message.
   vim.schedule(function()
     vim.cmd.echohl(highlight)
-    -- Split the message if it contains newline characters to avoid the "Press ENTER" prompt
-    for _, line in ipairs(vim.split(message, '\n', { trimempty = true })) do
-      -- The surrounding quotes are required for `echomsg` as the argument is considered to be
-      -- an expression. So, we need to pass in a string. Thus, we also need to escape the quotes
-      -- and any backslash characters in the message.
-      vim.cmd.echomsg(('"[%s] %s"'):format(name, vim.fn.escape(line, [["\]])))
-    end
+    local lines = vim.split(message, '\n', { trimempty = true })
+    -- The surrounding quotes are required for `echomsg` as the argument is considered to be
+    -- an expression. So, we need to pass in a string. Thus, we also need to escape the quotes
+    -- and any backslash characters in the message.
+    vim.cmd.echomsg(
+      ('"[%s] %s (refer to \'%s.log\' for full message)"'):format(
+        name,
+        vim.fn.escape(lines[1], [["\]]),
+        name
+      )
+    )
     vim.cmd.echohl 'NONE'
   end)
 end

@@ -125,3 +125,5 @@ end
 if dm.kitty_scrollback then
   require 'dm.kitty'
 end
+
+require('dm.projects').setup()

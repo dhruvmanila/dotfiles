@@ -1,12 +1,12 @@
 local builtin = require 'telescope.builtin'
 local telescope = require 'telescope'
+local themes = require 'telescope.themes'
 
 local pickers = require 'dm.plugins.telescope.pickers'
-local themes = require 'dm.plugins.telescope.themes'
 
 -- Smart tags picker which uses either the LSP symbols, treesitter symbols or
 -- buffer tags, whichever is available first.
-local function symbols()
+local function document_symbols()
   if #vim.lsp.get_clients { bufnr = vim.api.nvim_get_current_buf() } > 0 then
     builtin.lsp_document_symbols()
   elseif require('nvim-treesitter.parsers').has_parser() then
@@ -14,18 +14,6 @@ local function symbols()
   else
     builtin.current_buffer_tags()
   end
-end
-
--- Find all files in the current working directory. This still avoids showing the `.git`
--- directory.
-local function find_all_files()
-  builtin.find_files {
-    prompt_title = 'Find All Files',
-    hidden = true,
-    follow = true,
-    no_ignore = true,
-    file_ignore_patterns = { '.git/' },
-  }
 end
 
 -- Grep the regex pattern over the current working directory.
@@ -72,7 +60,7 @@ local mappings = {
 
   -- IntelliSense
   { 'n', '<leader>fd', builtin.diagnostics, desc = 'diagnostics' },
-  { 'n', '<leader>fs', symbols, desc = 'document symbols' },
+  { 'n', '<leader>fs', document_symbols, desc = 'document symbols' },
   { 'n', '<leader>fS', builtin.lsp_dynamic_workspace_symbols, desc = 'dynamic workspace symbols' },
 
   -- Git
@@ -83,12 +71,8 @@ local mappings = {
 
   -- Neovim
   { 'n', '<leader>fh', builtin.help_tags, desc = 'help tags' },
-  { 'n', '<leader>fc', builtin.commands, desc = 'commands' },
-  { 'n', '<leader>:', builtin.command_history, desc = 'command history' },
-  { 'n', '<leader>/', builtin.search_history, desc = 'search history' },
 
   -- Custom pickers
-  { 'n', '<leader>fa', find_all_files, desc = 'find all files' },
   { 'n', '<leader>rp', grep_pattern, desc = 'grep pattern' },
   { 'n', '<leader>rw', grep_cword, desc = 'grep cword' },
   { 'n', '<leader>rW', grep_cword2, desc = 'grep cWORD' },
@@ -102,16 +86,14 @@ end
 
 vim.keymap.set('n', '<leader>gs', function()
   telescope.extensions.custom.github_stars()
-end, { desc = 'Telescope: GitHub stars' })
-
-vim.keymap.set('n', '<leader>fw', function()
-  telescope.extensions.custom.websearch()
-end, { desc = 'Telescope: websearch' })
+end, { desc = 'telescope: GitHub stars' })
 
 vim.keymap.set('n', '<leader>fp', function()
-  telescope.extensions.custom.installed_plugins(themes.dropdown_list)
-end, { desc = 'Telescope: installed plugins' })
-
-vim.keymap.set('n', '<leader>fb', function()
-  telescope.extensions.bookmarks.bookmarks()
-end, { desc = 'Telescope: browser bookmarks' })
+  telescope.extensions.custom.installed_plugins(themes.get_dropdown {
+    layout_config = {
+      width = 50,
+      height = 0.5,
+    },
+    previewer = false,
+  })
+end, { desc = 'telescope: installed plugins' })

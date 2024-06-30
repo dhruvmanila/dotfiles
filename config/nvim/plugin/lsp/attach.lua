@@ -51,9 +51,16 @@ local function setup_mappings(client, bufnr)
 
   vim.iter(mappings):each(function(m)
     if client.supports_method(m.capability) then
-      vim.keymap.set(m[1], m[2], m[3], { buffer = bufnr, desc = ('LSP: %s'):format(m.capability) })
+      vim.keymap.set(m[1], m[2], m[3], { buffer = bufnr, desc = ('lsp: %s'):format(m.capability) })
     end
   end)
+
+  if client.supports_method(M.textDocument_inlayHint) then
+    vim.keymap.set('n', '<leader>ih', function()
+      local is_enabled = lsp.inlay_hint.is_enabled { bufnr = bufnr }
+      lsp.inlay_hint.enable(not is_enabled, { bufnr = bufnr })
+    end, { desc = 'lsp: toggle [i]nlay [h]int' })
+  end
 end
 
 -- Setup the buffer local autocmds for the LSP client.

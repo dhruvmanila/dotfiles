@@ -26,6 +26,7 @@ cabbrev('so', 'source %')
 
 -- Session commands
 cabbrev('sa', 'SessionActive')
+cabbrev('sc', 'SessionClean')
 
 -- For better readability (`tpope/vim-scriptease`)
 cabbrev('mes', 'Message')

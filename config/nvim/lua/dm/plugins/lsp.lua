@@ -3,17 +3,9 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       'b0o/SchemaStore.nvim',
-      'folke/neodev.nvim',
+      { 'folke/lazydev.nvim', ft = 'lua', config = true },
     },
     config = function()
-      -- NOTE: Neodev should be setup before lspconfig
-      -- https://github.com/folke/neodev.nvim#%EF%B8%8F-configuration
-      require('neodev').setup {
-        library = {
-          plugins = false,
-        },
-      }
-
       local lspconfig = require 'lspconfig'
       local servers = require 'dm.lsp.servers'
 
@@ -31,8 +23,8 @@ return {
           'jsonls',
           'marksman',
           'pyright',
-          -- 'ruff',
-          'ruff_lsp',
+          'ruff',
+          -- 'ruff_lsp',
           'rust_analyzer',
           'lua_ls',
           'tsserver',

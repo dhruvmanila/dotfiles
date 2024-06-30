@@ -198,6 +198,7 @@ dap.configurations.go = {
 local function rust_program()
   local cwd = vim.uv.cwd() or '.'
   local debugdir = cwd .. '/target/debug'
+  ---@type { name: string, path: string }[]
   local executables = {}
   for name, itemtype in vim.fs.dir(debugdir) do
     if itemtype == 'file' and not vim.endswith(name, 'dylib') then
@@ -214,7 +215,11 @@ local function rust_program()
         return executable.name
       end,
     }, function(executable)
-      coroutine.resume(dap_run_co, executable.path)
+      if executable then
+        coroutine.resume(dap_run_co, executable.path)
+      else
+        coroutine.resume(dap_run_co, dap.ABORT)
+      end
     end)
   end)
 end

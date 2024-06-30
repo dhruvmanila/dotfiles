@@ -8,14 +8,6 @@ return {
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'make',
       },
-      {
-        'dhruvmanila/browser-bookmarks.nvim',
-        opts = {
-          selected_browser = 'brave',
-          url_open_command = vim.g.open_command,
-          full_path = false,
-        },
-      },
     },
     config = function()
       local action_layout = require 'telescope.actions.layout'
@@ -125,8 +117,9 @@ return {
           },
           git_branches = {
             theme = 'dropdown',
+            show_remote_tracking_branches = false,
             layout_config = {
-              width = 0.5,
+              width = 0.7,
             },
             mappings = {
               i = {
@@ -150,15 +143,6 @@ return {
             override_file_sorter = true,
             case_mode = 'smart_case',
           },
-          custom = {
-            websearch = {
-              search_engine = 'duckduckgo',
-              -- For DuckDuckGo max results can be either [1, 25] which is the actual
-              -- number of results to fetch or 0 which means to fetch all the results
-              -- from the first page.
-              max_results = 0,
-            },
-          },
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
             specific_opts = {
@@ -177,11 +161,18 @@ return {
                   return function(entry)
                     local session = entry.value.text
                     ---@cast session Session
-                    return displayer {
-                      { session:is_active() and '' or ' ', 'Green' },
-                      session.project:gsub(vim.g.os_homedir, ''):sub(2),
-                      { session.branch, 'AquaBold' },
-                    }
+                    if session.branch then
+                      return displayer {
+                        { session:is_active() and '' or ' ', 'Green' },
+                        session.project:gsub(vim.g.os_homedir, ''):sub(2),
+                        { session.branch, 'AquaBold' },
+                      }
+                    else
+                      return displayer {
+                        { session:is_active() and '' or ' ', 'Green' },
+                        session.project:gsub(vim.g.os_homedir, ''):sub(2),
+                      }
+                    end
                   end
                 end,
               },
@@ -193,14 +184,13 @@ return {
       -- Define the telescope mappings.
       require 'dm.plugins.telescope.mappings'
 
-      -- Load the telescope extensions without blowing up.
-      pcall(telescope.load_extension, 'fzf')
-
-      -- Custom extensions. The extensions are lazily loaded whenever they're called.
-      pcall(telescope.load_extension, 'custom')
-
-      -- This will override the `vim.ui.select` function with a new implementation.
-      pcall(telescope.load_extension, 'ui-select')
+      for _, extension in ipairs { 'fzf', 'custom', 'ui-select' } do
+        -- Load the telescope extensions without blowing up.
+        local ok, err = pcall(telescope.load_extension, extension)
+        if not ok then
+          dm.log.warn(err)
+        end
+      end
 
       -- Start the background job for collecting the GitHub stars. This will be cached
       -- and used by `custom.github_stars` extension.

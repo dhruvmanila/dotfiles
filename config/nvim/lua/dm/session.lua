@@ -92,8 +92,9 @@ function Session:new()
   local path = project
   if branch ~= nil then
     name = name .. BRANCH_SEPARATOR .. branch
-    path = (path .. BRANCH_SEPARATOR .. branch):gsub('/', '%%')
+    path = path .. BRANCH_SEPARATOR .. branch
   end
+  path = path:gsub('/', '%%')
   return setmetatable({
     name = name,
     project = project,

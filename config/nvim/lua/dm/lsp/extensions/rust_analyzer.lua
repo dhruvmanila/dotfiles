@@ -296,12 +296,12 @@ local function view_crate_graph()
   view_crate_graph_impl(false)
 end
 
--- Trigger the flycheck process for the current buffer.
+-- Trigger all the flycheck process.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
 local function run_flycheck()
   utils.get_client('rust_analyzer').notify('rust-analyzer/runFlycheck', {
-    textDocument = vim.lsp.util.make_text_document_params(),
+    textDocument = vim.NIL,
   })
 end
 
@@ -351,17 +351,14 @@ end
 
 -- Open the documentation for the symbol under the cursor.
 --
--- This assumes that the `localDocs` experimental feature is enabled.
---
 -- See:
 -- * https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#open-external-documentation
 -- * https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#local-documentation
 local function open_external_docs()
   utils
     .get_client('rust_analyzer')
-    .request('experimental/externalDocs', vim.lsp.util.make_position_params(), function(_, result)
-      ---@cast result ExternalDocsResponse
-      local url = result['local'] or result.web
+    .request('experimental/externalDocs', vim.lsp.util.make_position_params(), function(_, url)
+      ---@cast url string?
       if url == nil then
         dm.notify(TITLE, 'No documentation found', vim.log.levels.WARN)
         return
@@ -477,6 +474,9 @@ local mappings = {
   { 'n', '<leader>rt', open_cargo_toml, desc = 'open Cargo.toml' },
   -- A language server can understand this much better because it uses the parser instead of regex.
   { 'n', '%', matching_brace, desc = 'matching brace' },
+  -- Invoke clippy manually.
+  { 'n', ';c', run_flycheck, desc = 'run flycheck' },
+  { 'n', ';x', clear_flycheck, desc = 'clear flycheck' },
 }
 
 -- List of user commands to be defined on server attach.

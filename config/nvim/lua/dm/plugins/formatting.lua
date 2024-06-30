@@ -42,8 +42,10 @@ return {
   config = function()
     require('conform').setup {
       formatters_by_ft = {
+        json = { 'prettier' },
         lua = { 'stylua' },
         python = { 'ruff_format', 'ruff_organize_imports' },
+        swift = { 'swift_format' },
         yaml = { 'prettier' },
       },
       format_on_save = function(bufnr)
@@ -56,27 +58,6 @@ return {
           lsp_fallback = true,
         }
       end,
-      formatters = {
-        ruff_organize_imports = {
-          command = 'ruff',
-          args = {
-            'check',
-            '--force-exclude',
-            '--select=I001',
-            '--fix',
-            '--exit-zero',
-            '--stdin-filename',
-            '$FILENAME',
-            '-',
-          },
-          stdin = true,
-          cwd = require('conform.util').root_file {
-            'pyproject.toml',
-            'ruff.toml',
-            '.ruff.toml',
-          },
-        },
-      },
     }
 
     vim.api.nvim_create_user_command('FormatToggle', function(args)

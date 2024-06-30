@@ -35,5 +35,3 @@ end, {
   bar = true,
   desc = 'Open dashboard',
 })
-
-vim.keymap.set('n', ';d', '<Cmd>Dashboard<CR>')
