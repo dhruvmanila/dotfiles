@@ -29,8 +29,6 @@ dotbot_usage() {
   echo
 
   printf "%s\n" "Commands:"
-  printf "  %s   symlink dotfiles after backing up the existing ones\n" "link   "
-  printf "  %s   setup a new mac machine the way I like it\n" "setup  "
   printf "  %s   sync lib files with global package list\n" "sync   "
   printf "  %s   upgrade packages\n" "upgrade"
   echo
@@ -43,62 +41,6 @@ dotbot_usage() {
     echo
     printf "  %s\n" "--version, -v"
     printf "    Show version number\n"
-    echo
-
-  fi
-}
-
-dotbot_link_usage() {
-  if [[ -n $long_usage ]]; then
-    printf "dotbot link - symlink dotfiles after backing up the existing ones\n"
-    echo
-
-  else
-    printf "dotbot link - symlink dotfiles after backing up the existing ones\n"
-    echo
-
-  fi
-
-  printf "%s\n" "Usage:"
-  printf "  dotbot link [OPTIONS]\n"
-  printf "  dotbot link --help | -h\n"
-  echo
-
-  if [[ -n $long_usage ]]; then
-    printf "%s\n" "Options:"
-
-    printf "  %s\n" "--force, -f"
-    printf "    skip backup for the existing dotfiles\n"
-    echo
-
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
-    echo
-
-  fi
-}
-
-dotbot_setup_usage() {
-  if [[ -n $long_usage ]]; then
-    printf "dotbot setup - setup a new mac machine the way I like it\n"
-    echo
-
-  else
-    printf "dotbot setup - setup a new mac machine the way I like it\n"
-    echo
-
-  fi
-
-  printf "%s\n" "Usage:"
-  printf "  dotbot setup\n"
-  printf "  dotbot setup --help | -h\n"
-  echo
-
-  if [[ -n $long_usage ]]; then
-    printf "%s\n" "Options:"
-
-    printf "  %s\n" "--help, -h"
-    printf "    Show this help\n"
     echo
 
   fi
@@ -177,7 +119,7 @@ dotbot_upgrade_usage() {
 
     printf "  %s\n" "PACKAGE"
     printf "    package to upgrade\n"
-    printf "    Allowed: all, brew, cargo, mac, neovim, nnn, npm, plugins, python\n"
+    printf "    Allowed: all, brew, cargo, neovim, nnn, npm, plugins, python\n"
     printf "    Default: all\n"
     echo
 
@@ -261,304 +203,16 @@ warning() {
   yellow_bold "[!] $1"
 }
 
-declare -a PY_NEOVIM_PACKAGES=(
-  "pynvim"
-  "debugpy"
-)
-
-declare -A SYMLINKS=(
-  [".editorconfig"]=".editorconfig"
-  ["bash/bash_profile"]=".bash_profile"
-  ["bash/bashrc"]=".bashrc"
-  ["bat"]=".config/bat"
-  ["bottom"]="Library/Application Support/bottom"
-  ["bpytop"]=".config/bpytop"
-  ["gh/config.yml"]=".config/gh/config.yml"
-  ["git/config"]=".gitconfig"
-  ["git/message"]=".gitmessage"
-  ["glow"]="Library/Preferences/glow"
-  ["gpg/gpg-agent.conf"]=".gnupg/gpg-agent.conf"
-  ["gpg/gpg.conf"]=".gnupg/gpg.conf"
-  ["grip"]=".config/grip"
-  ["hammerspoon"]=".hammerspoon"
-  ["himalaya"]=".config/himalaya"
-  ["htop"]=".config/htop"
-  ["ignore"]=".ignore"
-  ["inputrc"]=".inputrc"
-  ["ipython/ipython_config.py"]=".ipython/profile_default/ipython_config.py"
-  ["ipython/startup"]=".ipython/profile_default/startup"
-  ["jupyter/jupyter_lab_config.py"]=".jupyter/jupyter_lab_config.py"
-  ["jupyter/jupyter_notebook_config.py"]=".jupyter/jupyter_notebook_config.py"
-  ["jupyter/lab/user-settings"]=".jupyter/lab/user-settings"
-  ["karabiner"]=".config/karabiner"
-  ["kitty"]=".config/kitty"
-  ["nvim"]=".config/nvim"
-  ["pip"]=".config/pip"
-  ["pypoetry"]="Library/Application Support/pypoetry"
-  ["ssh/config"]=".ssh/config"
-  ["starship.toml"]=".config/starship.toml"
-  ["tmux/tmux.conf"]=".tmux.conf"
-  ["vim"]=".vim"
-  ["vim/vimrc"]=".vimrc"
-  ["youtube-dl"]=".config/youtube-dl"
-  ["zsh/zshenv"]=".zshenv"
-  ["zsh/zshrc"]=".zshrc"
-)
-
-download_dotfiles() { # {{{1
-  header "Downloading the dotfiles..."
-  mkdir -p "${DOTFILES_DIRECTORY}"
-  curl -fsSLo ~/dotfiles.tar.gz https://github.com/dhruvmanila/dotfiles/tarball/master
-
-  header "Extracting the dotfiles..."
-  tar -zxf "${HOME}/dotfiles.tar.gz" --strip-components 1 -C "${DOTFILES_DIRECTORY}"
-  rm -rf ~/dotfiles.tar.gz
-}
-
-install_cargo_packages() { # {{{1
-  header "Installing global cargo packages from ${CARGO_GLOBAL_PACKAGES}..."
-  while IFS= read -r package; do
-    cargo install "$package"
-  done < "${CARGO_GLOBAL_PACKAGES}"
-}
-
-install_homebrew() { # {{{1
-  header "Installing Homebrew..."
-  set +e
-  if ! /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"; then
-    error "Failure occured during Homebrew installation"
-    # https://github.com/Homebrew/brew/pull/9383
-    core_location="/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core"
-
-    header "Checking if homebrew-core is a shallow clone..."
-    if [[ -f "${core_location}/.git/shallow" ]]; then
-      header "Fetching everything from homebrew/homebrew-core (this may take a while)..."
-
-      # This `git` is from the xcode command-line tools. By default, we will
-      # be using the brew installed `git` to keep up-to date.
-      git -C $core_location fetch --unshallow
-    else
-      error "Unknown error while installing homebrew, exiting..."
-      exit 1
-    fi
-  fi
-  set -e
-}
-
-install_homebrew_packages() { # {{{1
-  header "Installing homebrew bundle tap..."
-  brew tap homebrew/bundle
-
-  header "Installing packages from Brewfile..."
-  #  prints output from commands as they are run ┐
-  #                                              │
-  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install -v --no-lock --file "$HOMEBREW_BUNDLE_FILE"
-  #                                                  │
-  #         don't output a `Brewfile.lock.json` file ┘
-
-  header "Cleaning up..."
-  brew cleanup
-}
-
-install_npm_global_packages() { # {{{1
-  header "Installing global npm packages from ${NPM_GLOBAL_PACKAGES}..."
-  while IFS= read -r package; do
-    npm --location=global install "$package"
-  done < "${NPM_GLOBAL_PACKAGES}"
-}
-
-install_python() { # {{{1
-  # Setup the mentioned Python versions in from the constant $PYTHON_VERSIONS.
-  # The first element is made the global Python version.
-  #
-  # If the version is already installed, it will be skipped. `pip` will be
-  # upgraded for every mentioned version.
-  for python_version in "${PYTHON_VERSIONS[@]}"; do
-    if ! pyenv versions | grep -q "${python_version}"; then
-      header "Installing Python ${python_version}..."
-      pyenv install "${python_version}"
-    else
-      header "Python $python_version is already installed."
-    fi
-    header "Upgrading pip for Python ${python_version}..."
-    "$(pyenv root)/versions/${python_version}/bin/pip" install --upgrade pip
-  done
-
-  pyenv_global_python="${PYTHON_VERSIONS[0]}"
-  header "Making ${pyenv_global_python} as the global Python version..."
-  pyenv global "${pyenv_global_python}"
-
-  header "Initiating pyenv..."
-  eval "$(pyenv init -)"
-  eval "$(pyenv init --path)"
-}
-
-install_python_global_packages() { # {{{1
-  header "Installing pipx to manage global packages..."
-  python -m pip install pipx
-  pyenv rehash
-
-  header "Installing global Python packages from ${PYTHON_GLOBAL_REQUIREMENTS}..."
-  while IFS= read -r package; do
-    if [[ "$package" == "jupyter" ]]; then
-      # 'jupyter' is a metapackage used for installation of all packages related
-      # to the ecosystem.
-      pipx install --include-deps "$package"
-
-      # These packages needs to be injected in the same environment.
-      pipx inject --include-apps "$package" jupyterlab
-      pipx inject --include-apps "$package" jupytext
-    else
-      pipx install "$package"
-    fi
-  done < "${PYTHON_GLOBAL_REQUIREMENTS}"
-}
-
-install_xcode_command_line_tools() { # {{{1
-  header "Installing xcode command line tools..."
-  xcode-select --install
-  # wait until the tools are installed...
-  until xcode-select -p &> /dev/null; do
-    sleep 5
-  done
-}
-
-setup_aws() { # {{{1
-  # This is the recommended way of installing the tool.
-  # https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-mac.html#cliv2-mac-install-cmd
-  curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
-
-  # This requires root permission to create symlinks between `path/to/aws-cli/*`
-  # and `/usr/local/bin/*` where '*' indicates the necessary executables.
-  sudo installer -pkg AWSCLIV2.pkg -target /
-
-  rm AWSCLIV2.pkg
-}
-
-setup_dotfiles_git_repository() { # {{{1
-  header "Initializing Git repository..."
-  set -x
-  git init
-  git remote add origin https://github.com/dhruvmanila/dotfiles
-  git fetch --all
-  git reset --hard FETCH_HEAD
-  git branch --set-upstream-to origin/master master
-  set +x
-}
-
-setup_github_ssh() { # {{{1
-  # NOTE: This function should be called after symlinking the dotfiles
-  ssh -T git@github.com &> /dev/null
-  if [[ $? -eq 1 ]]; then
-    return
-  fi
-
-  local ssh_algorithm="ed25519"
-  local ssh_filename="github"
-
-  header "Generating SSH keys..."
-  ask "Please provide an email address"
-  ssh-keygen -f "${HOME}/.ssh/${ssh_filename}" -t "$ssh_algorithm" -C "$REPLY"
-
-  # shellcheck disable=SC1090
-  source "$(ssh-agent)"
-  header "Adding SSH key to the ssh-agent..."
-  ssh-add -K "${HOME}/.ssh/${ssh_filename}"
-
-  header "Copied public SSH key to clipboard. Please add it to GitHub.com..."
-  pbcopy < "${HOME}/.ssh/${ssh_filename}.pub"
-  open "https://github.com/settings/ssh"
-  for i in {1..6}; do
-    ssh -T git@github.com &> /dev/null
-    if [[ $? -eq 1 ]]; then
-      header "Authentication successful."
-      break
-    else
-      if [[ i -eq 6 ]]; then
-        error "Exceeded max retries. Authenticate using 'ssh -T git@github.com' command."
-        break
-      fi
-      error "Failed to authenticate. Retrying in 5 seconds..."
-    fi
-    sleep 5
-  done
-}
-
-setup_neovim_nightly() { # {{{1
-  header "Setting up Neovim nightly..."
-  git clone --depth=1 git@github.com:dhruvmanila/neovim.git "$NEOVIM_DIRECTORY"
-  (
-    cd "$NEOVIM_DIRECTORY" || exit 1
-    git checkout master
-    git remote add upstream git@github.com:neovim/neovim.git
-    build_neovim
-  )
-  header "Setting up Neovim Python environment..."
-  (
-    cd ~/.neovim || exit 1
-    python3 -m venv --prompt pynvim .venv
-    source venv/bin/activate
-    pip3 install "${PY_NEOVIM_PACKAGES[*]}"
-    deactivate
-  )
-}
-
-setup_nnn() { # {{{1
-  header "Setting up nnn..."
-  git clone git@github.com:jarun/nnn.git "$NNN_DIRECTORY"
-  (
-    cd "$NNN_DIRECTORY" || exit 1
-    git fetch origin --tags --force
-    git checkout "$(git describe --abbrev=0)"
-    build_nnn
-  )
-}
-
-setup_symlinks() { # {{{1
-  # What does this file do? {{{
-  #
-  #   > Immediately after logging a user in, login displays the system copyright
-  #   > notice, the date and time the user last logged in, the message of the day
-  #   > as well as other information. If the file .hushlogin exists in the user's
-  #   > home directory, all of these messages are suppressed.
-  #
-  # Source: `man login`
-  # }}}
-  if [[ ! -f "${HOME}/.hushlogin" ]]; then
-    touch ~/.hushlogin
-  fi
-
-  # Create the necessary symbolic links between the `dotfiles` and `HOME` directory.
-  header "Creating the necessary symlinks..."
-
-  #                ┌ list associative array keys
-  #                │
-  for source in "${!SYMLINKS[@]}"; do
-    link "$source" "${SYMLINKS[$source]}"
-  done
-}
-
-setup_tmux_plugins() { # {{{1
-  header "Installing tmux plugin manager..."
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-  header "Installing tmux plugins..."
-  ~/.tmux/plugins/tpm/bin/install_plugins
-}
-
-# }}}1
-
-upgrade_all() { # {{{1
+upgrade_all() {
   upgrade_brew
   upgrade_plugins
   upgrade_npm
   upgrade_python
   upgrade_neovim "$@"
   upgrade_nnn
-  upgrade_mac
 }
 
-upgrade_brew() { # {{{1
+upgrade_brew() {
   header "Updating homebrew..."
   brew update
 
@@ -573,7 +227,7 @@ upgrade_brew() { # {{{1
   brew cleanup --prune 1
 }
 
-upgrade_cargo() { # {{{1
+upgrade_cargo() {
   header "Upgrading global cargo packages..."
   while IFS= read -r package; do
     # The `install` command updates the package if there is a newer version.
@@ -581,24 +235,7 @@ upgrade_cargo() { # {{{1
   done < "${CARGO_GLOBAL_PACKAGES}"
 }
 
-upgrade_mac() { # {{{1
-  header "Upgrading macOS applications..."
-  mas upgrade
-
-  header "Finding available software..."
-  output="$(softwareupdate --list 2>&1)"
-  if (($? > 0)) && [[ "$output" = *"No new software available"* ]]; then
-    echo "No new software available."
-  else
-    echo "$output"
-    seek_confirmation "A system update is available. Do you wish to install it?"
-    if is_confirmed; then
-      softwareupdate --install --all
-    fi
-  fi
-}
-
-upgrade_neovim() { # {{{1
+upgrade_neovim() {
   header "Upgrading Neovim to ${1:-"the latest commit on master"}..."
   (
     cd "$NEOVIM_DIRECTORY" || exit 1
@@ -625,7 +262,7 @@ upgrade_neovim() { # {{{1
   )
 }
 
-upgrade_nnn() { # {{{1
+upgrade_nnn() {
   header "Upgrading nnn to the latest version..."
   (
     cd "$NNN_DIRECTORY" || exit 1
@@ -647,13 +284,13 @@ upgrade_nnn() { # {{{1
   sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)"
 }
 
-upgrade_npm() { # {{{1
+upgrade_npm() {
   header "Upgrading npm and packages..."
   npm --location=global install npm@latest
   npm --location=global upgrade
 }
 
-upgrade_plugins() { # {{{1
+upgrade_plugins() {
   # Not quiting vim/neovim to check what's new
   header "Upgrading vim plugins..."
   vim +PlugUpgrade +PlugClean +PlugUpdate
@@ -666,7 +303,7 @@ upgrade_plugins() { # {{{1
   ~/.tmux/plugins/tpm/bin/update_plugins all
 }
 
-upgrade_python() { # {{{1
+upgrade_python() {
   header "Upgrading pip for all pyenv Python versions..."
   for python_exec in "$PYENV_ROOT"/versions/*/bin/python; do
     $python_exec -m pip install --upgrade pip
@@ -679,149 +316,36 @@ upgrade_python() { # {{{1
   pipx upgrade-all --include-injected
 }
 
-# }}}1
-
-ask() { # {{{1
+ask() {
   yellow_bold "[?] $1"
   read -r -p "$(bold "> ")"
 }
 
-build_neovim() { # {{{1
+build_neovim() {
   make distclean
   make \
     CMAKE_BUILD_TYPE="${NEOVIM_BUILD_TYPE:-"Release"}" \
-    CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$NEOVIM_INSTALL_DIRECTORY"
+    CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=${NEOVIM_INSTALL_DIRECTORY:-"${HOME}/neovim"}"
   make install
 }
 
-build_nnn() { # {{{1
+build_nnn() {
   make uninstall
   make O_NERD=1 install
 }
 
-command_exists() { # {{{1
-  command -v "$1" &> /dev/null
-}
-
-function_exists() { # {{{1
+function_exists() {
   [[ "$(type -t "$1")" == "function" ]]
 }
 
-get_jupyter_app_dir() { # {{{1
-  printf "%s" "$(jupyter lab path \
-    | awk -F ':[ ]+' '{ if($1 == "Application directory") {print $2} }')"
-}
-
-is_confirmed() { # {{{1
+is_confirmed() {
   [[ "$REPLY" =~ ^[Yy]$ ]]
 }
 
-is_git_repo() { # {{{1
-  git rev-parse --is-inside-work-tree &> /dev/null
-}
-
-link() { # {{{1
-  local source_file="${DOTFILES_DIRECTORY}/config/${1}"
-  local target_file="${HOME}/${2}"
-  if ! [[ -e "$target_file" ]]; then
-    echo "==> $target_file -> $source_file"
-    ln -fs "$source_file" "$target_file"
-  fi
-}
-
-seek_confirmation() { # {{{1
+seek_confirmation() {
   warning "$1"
   read -r -p "$(bold "[y/n] ")" -n 1
   printf "\n"
-}
-
-setup_required_directories() { # {{{1
-  for directory in "${REQUIRED_DIRECTORIES[@]}"; do
-    if ! [[ -d $directory ]]; then
-      mkdir -p "$directory"
-      if [[ -z $1 ]]; then
-        echo "==> Created $directory"
-      fi
-    fi
-  done
-}
-
-# }}}1
-
-dotbot_link_command() {
-  # shellcheck disable=SC2154
-  force=${args[--force]}
-
-  if ! [[ $force ]]; then
-    declare -i count=0
-    backup_dir="${HOME}/dotfiles_$(date +"%Y_%m_%dT%H_%M_%S").backup"
-    mkdir "$backup_dir"
-
-    for location in "${BACKUP_DOTFILES[@]}"; do
-      if [[ -f $location || -d $location ]]; then
-        cp -R "$location" "$backup_dir"
-        ((count += 1))
-      fi
-    done
-
-    if ((count > 0)); then
-      header "Created backup in ${backup_dir}"
-    else
-      header "Skipped backup as there are no dotfiles"
-      rm -rf "$backup_dir"
-    fi
-  fi
-
-  setup_symlinks
-
-}
-
-dotbot_setup_command() {
-  seek_confirmation "'setup' command should only be invoked on a fresh setup"
-  if ! is_confirmed; then
-    exit
-  fi
-
-  setup_required_directories
-
-  if ! [[ -d "$DOTFILES_DIRECTORY" ]]; then
-    download_dotfiles
-  fi
-
-  header "Changing directory to $DOTFILES_DIRECTORY..."
-  cd "$DOTFILES_DIRECTORY" || exit 1
-
-  if ! xcode-select -p &> /dev/null; then
-    install_xcode_command_line_tools
-  fi
-
-  if ! command_exists 'brew'; then
-    install_homebrew
-  fi
-  install_homebrew_packages
-
-  if ! is_git_repo; then
-    setup_dotfiles_git_repository
-  fi
-
-  install_python
-  install_python_global_packages
-  install_global_npm_packages
-  install_cargo_packages
-
-  setup_aws
-
-  setup_neovim_nightly
-
-  # No backup as this is a fresh setup
-  setup_symlinks
-
-  setup_tmux_plugins
-  setup_github_ssh
-
-  update_macos_settings
-  update_macos_dock
-
 }
 
 dotbot_sync_command() {
@@ -906,20 +430,6 @@ parse_requirements() {
   case $action in
     -*) ;;
 
-    link)
-      action="link"
-      shift
-      dotbot_link_parse_requirements "$@"
-      shift $#
-      ;;
-
-    setup)
-      action="setup"
-      shift
-      dotbot_setup_parse_requirements "$@"
-      shift $#
-      ;;
-
     sync)
       action="sync"
       shift
@@ -967,92 +477,6 @@ parse_requirements() {
 
 }
 
-dotbot_link_parse_requirements() {
-
-  while [[ $# -gt 0 ]]; do
-    case "${1:-}" in
-      --help | -h)
-        long_usage=yes
-        dotbot_link_usage
-        exit
-        ;;
-
-      *)
-        break
-        ;;
-
-    esac
-  done
-
-  action="link"
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-      --force | -f)
-
-        args['--force']=1
-        shift
-        ;;
-
-      -?*)
-        printf "invalid option: %s\n" "$key" >&2
-        exit 1
-        ;;
-
-      *)
-
-        printf "invalid argument: %s\n" "$key" >&2
-        exit 1
-
-        ;;
-
-    esac
-  done
-
-}
-
-dotbot_setup_parse_requirements() {
-
-  while [[ $# -gt 0 ]]; do
-    case "${1:-}" in
-      --help | -h)
-        long_usage=yes
-        dotbot_setup_usage
-        exit
-        ;;
-
-      *)
-        break
-        ;;
-
-    esac
-  done
-
-  action="setup"
-
-  while [[ $# -gt 0 ]]; do
-    key="$1"
-    case "$key" in
-
-      -?*)
-        printf "invalid option: %s\n" "$key" >&2
-        exit 1
-        ;;
-
-      *)
-
-        printf "invalid argument: %s\n" "$key" >&2
-        exit 1
-
-        ;;
-
-    esac
-  done
-
-}
-
 dotbot_sync_parse_requirements() {
 
   while [[ $# -gt 0 ]]; do
@@ -1070,7 +494,7 @@ dotbot_sync_parse_requirements() {
     esac
   done
 
-  if command -v awk >/dev/null 2>&1; then
+  if command -v awk > /dev/null 2>&1; then
     deps['awk']="$(command -v awk | head -n1)"
   else
     printf "missing dependency: awk\n" >&2
@@ -1078,7 +502,7 @@ dotbot_sync_parse_requirements() {
     exit 1
   fi
 
-  if command -v brew >/dev/null 2>&1; then
+  if command -v brew > /dev/null 2>&1; then
     deps['brew']="$(command -v brew | head -n1)"
   else
     printf "missing dependency: brew\n" >&2
@@ -1086,7 +510,7 @@ dotbot_sync_parse_requirements() {
     exit 1
   fi
 
-  if command -v cargo >/dev/null 2>&1; then
+  if command -v cargo > /dev/null 2>&1; then
     deps['cargo']="$(command -v cargo | head -n1)"
   else
     printf "missing dependency: cargo\n" >&2
@@ -1094,7 +518,7 @@ dotbot_sync_parse_requirements() {
     exit 1
   fi
 
-  if command -v jq >/dev/null 2>&1; then
+  if command -v jq > /dev/null 2>&1; then
     deps['jq']="$(command -v jq | head -n1)"
   else
     printf "missing dependency: jq\n" >&2
@@ -1102,7 +526,7 @@ dotbot_sync_parse_requirements() {
     exit 1
   fi
 
-  if command -v npm >/dev/null 2>&1; then
+  if command -v npm > /dev/null 2>&1; then
     deps['npm']="$(command -v npm | head -n1)"
   else
     printf "missing dependency: npm\n" >&2
@@ -1110,7 +534,7 @@ dotbot_sync_parse_requirements() {
     exit 1
   fi
 
-  if command -v pipx >/dev/null 2>&1; then
+  if command -v pipx > /dev/null 2>&1; then
     deps['pipx']="$(command -v pipx | head -n1)"
   else
     printf "missing dependency: pipx\n" >&2
@@ -1222,8 +646,8 @@ dotbot_upgrade_parse_requirements() {
 
   [[ -n ${args['package']:-} ]] || args['package']="all"
 
-  if [[ -n ${args['package']:-} ]] && [[ ! ${args['package']:-} =~ ^(all|brew|cargo|mac|neovim|nnn|npm|plugins|python)$ ]]; then
-    printf "%s\n" "package must be one of: all, brew, cargo, mac, neovim, nnn, npm, plugins, python" >&2
+  if [[ -n ${args['package']:-} ]] && [[ ! ${args['package']:-} =~ ^(all|brew|cargo|neovim|nnn|npm|plugins|python)$ ]]; then
+    printf "%s\n" "package must be one of: all, brew, cargo, neovim, nnn, npm, plugins, python" >&2
     exit 1
   fi
 
@@ -1248,7 +672,7 @@ initialize() {
   case "$(uname)" in
     Darwin) ;;
     *)
-      error "'dot' command is only supported on a mac machine"
+      error "'dotbot' command is only supported on a mac machine"
       exit 1
       ;;
   esac
@@ -1261,50 +685,12 @@ initialize() {
   NEOVIM_INSTALL_DIRECTORY="${HOME}/neovim"
   NNN_DIRECTORY="${HOME}/git/nnn"
 
-  # Python versions to be installed on the system.
-  # First version will be the global one
-  PYTHON_VERSIONS=(
-    "3.12.0"
-    "3.11.5"
-    "3.10.13"
-    "3.9.18"
-    "3.8.18"
-  )
-
   # Packages file
   PACKAGE_DIR="${DOTFILES_DIRECTORY}/src/package"
   HOMEBREW_BUNDLE_FILE="${PACKAGE_DIR}/Brewfile"
   PYTHON_GLOBAL_REQUIREMENTS="${PACKAGE_DIR}/requirements.txt"
   NPM_GLOBAL_PACKAGES="${PACKAGE_DIR}/node_modules.txt"
   CARGO_GLOBAL_PACKAGES="${PACKAGE_DIR}/cargo_packages.txt"
-
-  # On initialization of the script, if these directories does not exist, then
-  # they will be created.
-  REQUIRED_DIRECTORIES=(
-    ~/.config
-    ~/.gnupg
-    ~/.ssh
-    ~/contributing
-    ~/git
-    ~/neovim
-    ~/playground
-    ~/projects
-    ~/work
-  )
-
-  # These files/directories will be backed up before symlinking, if they exists.
-  # This step can be skipped if `-f/--force` flag is passed to the `link` command.
-  BACKUP_DOTFILES=(
-    ~/.bash_profile
-    ~/.bashrc
-    ~/.config
-    ~/.gitconfig
-    ~/.inputrc
-    ~/.tmux.conf
-    ~/.vim
-  )
-
-  setup_required_directories silent
 
 }
 
@@ -1318,8 +704,6 @@ run() {
   parse_requirements "${input[@]}"
 
   case "$action" in
-    "link") dotbot_link_command ;;
-    "setup") dotbot_setup_command ;;
     "sync") dotbot_sync_command ;;
     "upgrade") dotbot_upgrade_command ;;
   esac

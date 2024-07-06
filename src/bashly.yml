@@ -3,17 +3,6 @@ help: Personal tool for managing dotfiles and packages
 version: 1.0.0
 
 commands:
-  - name: link
-    help: symlink dotfiles after backing up the existing ones
-
-    flags:
-      - long: --force
-        short: -f
-        help: skip backup for the existing dotfiles
-
-  - name: setup
-    help: setup a new mac machine the way I like it
-
   - name: sync
     help: sync lib files with global package list
 
@@ -64,7 +53,6 @@ commands:
           - all
           - brew
           - cargo
-          - mac
           - neovim
           - nnn
           - npm

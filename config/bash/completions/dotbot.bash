@@ -29,15 +29,7 @@ _dotbot_completions() {
 
   case "$compline" in
     'upgrade'*)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --ref -h -r all brew cargo mac neovim nnn npm plugins python")" -- "$cur" )
-      ;;
-
-    'setup'*)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help -h")" -- "$cur" )
-      ;;
-
-    'link'*)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--force --help -f -h")" -- "$cur" )
+      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --ref -h -r all brew cargo neovim nnn npm plugins python")" -- "$cur" )
       ;;
 
     'sync'*)
@@ -45,7 +37,7 @@ _dotbot_completions() {
       ;;
 
     *)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --version -h -v link setup sync upgrade")" -- "$cur" )
+      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --version -h -v sync upgrade")" -- "$cur" )
       ;;
 
   esac

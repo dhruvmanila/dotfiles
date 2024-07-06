@@ -1,14 +1,13 @@
-upgrade_all() { # {{{1
+upgrade_all() {
   upgrade_brew
   upgrade_plugins
   upgrade_npm
   upgrade_python
   upgrade_neovim "$@"
   upgrade_nnn
-  upgrade_mac
 }
 
-upgrade_brew() { # {{{1
+upgrade_brew() {
   header "Updating homebrew..."
   brew update
 
@@ -23,7 +22,7 @@ upgrade_brew() { # {{{1
   brew cleanup --prune 1
 }
 
-upgrade_cargo() { # {{{1
+upgrade_cargo() {
   header "Upgrading global cargo packages..."
   while IFS= read -r package; do
     # The `install` command updates the package if there is a newer version.
@@ -31,24 +30,7 @@ upgrade_cargo() { # {{{1
   done < "${CARGO_GLOBAL_PACKAGES}"
 }
 
-upgrade_mac() { # {{{1
-  header "Upgrading macOS applications..."
-  mas upgrade
-
-  header "Finding available software..."
-  output="$(softwareupdate --list 2>&1)"
-  if (($? > 0)) && [[ "$output" = *"No new software available"* ]]; then
-    echo "No new software available."
-  else
-    echo "$output"
-    seek_confirmation "A system update is available. Do you wish to install it?"
-    if is_confirmed; then
-      softwareupdate --install --all
-    fi
-  fi
-}
-
-upgrade_neovim() { # {{{1
+upgrade_neovim() {
   header "Upgrading Neovim to ${1:-"the latest commit on master"}..."
   (
     cd "$NEOVIM_DIRECTORY" || exit 1
@@ -75,7 +57,7 @@ upgrade_neovim() { # {{{1
   )
 }
 
-upgrade_nnn() { # {{{1
+upgrade_nnn() {
   header "Upgrading nnn to the latest version..."
   (
     cd "$NNN_DIRECTORY" || exit 1
@@ -97,13 +79,13 @@ upgrade_nnn() { # {{{1
   sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)"
 }
 
-upgrade_npm() { # {{{1
+upgrade_npm() {
   header "Upgrading npm and packages..."
   npm --location=global install npm@latest
   npm --location=global upgrade
 }
 
-upgrade_plugins() { # {{{1
+upgrade_plugins() {
   # Not quiting vim/neovim to check what's new
   header "Upgrading vim plugins..."
   vim +PlugUpgrade +PlugClean +PlugUpdate
@@ -116,7 +98,7 @@ upgrade_plugins() { # {{{1
   ~/.tmux/plugins/tpm/bin/update_plugins all
 }
 
-upgrade_python() { # {{{1
+upgrade_python() {
   header "Upgrading pip for all pyenv Python versions..."
   for python_exec in "$PYENV_ROOT"/versions/*/bin/python; do
     $python_exec -m pip install --upgrade pip
@@ -128,5 +110,3 @@ upgrade_python() { # {{{1
   header "Upgrading all Python global packages..."
   pipx upgrade-all --include-injected
 }
-
-# }}}1
