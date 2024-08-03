@@ -118,11 +118,10 @@ local servers = {
   -- https://github.com/astral-sh/ruff
   -- Install: `pipx install ruff`
   ruff = {
-    cmd_env = {
-      RUFF_TRACE = 'messages',
-    },
+    trace = 'messages',
     init_options = {
       settings = {
+        logLevel = 'debug',
         logFile = vim.fn.stdpath 'log' .. '/lsp.ruff.log',
       },
     },

@@ -88,7 +88,7 @@ Session.__index = Session
 function Session:new()
   local project = vim.fn.getcwd()
   local branch = project_git_branch(project)
-  local name = project:gsub(vim.g.os_homedir, ''):sub(2)
+  local name = project:gsub(dm.OS_HOMEDIR, ''):sub(2)
   local path = project
   if branch ~= nil then
     name = name .. BRANCH_SEPARATOR .. branch
@@ -111,7 +111,7 @@ function Session:from_session_file(path)
   local name = filename:gsub('%%', '/'):sub(1, -5)
   local parts = vim.split(name, BRANCH_SEPARATOR, { plain = true })
   return setmetatable({
-    name = name:gsub(vim.g.os_homedir, ''):sub(2),
+    name = name:gsub(dm.OS_HOMEDIR, ''):sub(2),
     project = parts[1],
     branch = parts[2],
     path = path,
@@ -144,7 +144,7 @@ function Session:exists()
 end
 
 function Session:__tostring()
-  local name = self.project:gsub(vim.g.os_homedir, ''):sub(2)
+  local name = self.project:gsub(dm.OS_HOMEDIR, ''):sub(2)
   if self.branch then
     name = name .. ' (' .. self.branch .. ')'
   end

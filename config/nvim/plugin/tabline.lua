@@ -1,4 +1,4 @@
-if dm.kitty_scrollback then
+if dm.KITTY_SCROLLBACK then
   return
 end
 

@@ -127,3 +127,35 @@ do
     original_handler(err, result, ctx, config)
   end
 end
+
+vim.lsp.handlers[M.workspace_diagnostic_refresh] = function(_, _, ctx, _)
+  local buffers = vim
+    .iter(vim.api.nvim_list_bufs())
+    :filter(function(bufnr)
+      if vim.fn.buflisted(bufnr) ~= 1 then
+        return false
+      end
+      if not vim.api.nvim_buf_is_loaded(bufnr) then
+        return false
+      end
+      return true
+    end)
+    :totable()
+
+  for _, bufnr in ipairs(buffers) do
+    local clients = vim.lsp.get_clients {
+      bufnr = bufnr,
+      method = M.textDocument_diagnostic,
+      id = ctx.client_id,
+    }
+    if #clients > 0 then
+      for _, client in ipairs(clients) do
+        client.request(M.textDocument_diagnostic, {
+          textDocument = vim.lsp.util.make_text_document_params(bufnr),
+        }, nil, bufnr)
+      end
+    end
+  end
+
+  return vim.NIL
+end

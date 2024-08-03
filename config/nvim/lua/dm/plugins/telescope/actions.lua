@@ -64,7 +64,7 @@ function M.open_in_browser(prompt_bufnr)
     return
   end
   actions.close(prompt_bufnr)
-  os.execute(vim.g.open_command .. urls)
+  os.execute(dm.OPEN_COMMAND .. urls)
 end
 
 return M

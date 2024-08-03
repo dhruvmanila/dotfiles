@@ -105,6 +105,10 @@ end
 -- Execute Cargo runnable.
 ---@param runnable CargoRunnable
 local function execute_runnable(runnable)
+  if runnable.kind ~= 'cargo' then
+    logger.warn('Unrecognized runnable kind: %s', runnable)
+    return
+  end
   local args = vim
     .iter({
       runnable.args.cargoArgs,
@@ -276,7 +280,7 @@ local function view_crate_graph_impl(full)
           file:flush()
           file:close()
 
-          os.execute(vim.g.open_command .. ' ' .. tmpfile)
+          os.execute(dm.OPEN_COMMAND .. ' ' .. tmpfile)
         end
       )
     end)

@@ -2,7 +2,9 @@ vim.opt_local.makeprg = 'go run %'
 
 vim.keymap.set('n', 'go', function()
   vim.lsp.buf.code_action {
-    context = { only = { 'source.organizeImports' } },
+    context = {
+      only = { vim.lsp.protocol.CodeActionKind.SourceOrganizeImports },
+    },
     apply = true,
   }
 end, {

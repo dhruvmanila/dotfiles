@@ -24,6 +24,7 @@ local function dump_file_debug_info(kind)
     command = 'pyright.dumpFileDebugInfo',
     arguments = { vim.uri_from_bufnr(0), kind },
   }, function()
+    ---@diagnostic disable-next-line: param-type-mismatch
     vim.cmd.tabedit(vim.fs.joinpath(vim.fn.stdpath 'log', 'lsp.pyright.log'))
     vim.keymap.set('n', 'q', '<Cmd>quit<CR>', { buffer = true })
     -- Reset the log level to what it was earlier.

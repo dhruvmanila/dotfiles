@@ -59,7 +59,12 @@ local function setup_mappings(client, bufnr)
     vim.keymap.set('n', '<leader>ih', function()
       local is_enabled = lsp.inlay_hint.is_enabled { bufnr = bufnr }
       lsp.inlay_hint.enable(not is_enabled, { bufnr = bufnr })
-    end, { desc = 'lsp: toggle [i]nlay [h]int' })
+    end, { desc = 'lsp: toggle [i]nlay [h]int for buffer' })
+
+    vim.keymap.set('n', '<leader>iH', function()
+      local is_enabled = lsp.inlay_hint.is_enabled()
+      lsp.inlay_hint.enable(not is_enabled)
+    end, { desc = 'lsp: toggle [i]nlay [H]int globally' })
   end
 end
 
@@ -74,13 +79,13 @@ local function setup_autocmds(client, bufnr)
       group = group,
       buffer = bufnr,
       callback = lsp.buf.document_highlight,
-      desc = 'LSP: Document highlight',
+      desc = 'lsp: document highlight',
     })
     vim.api.nvim_create_autocmd('CursorMoved', {
       group = group,
       buffer = bufnr,
       callback = lsp.buf.clear_references,
-      desc = 'LSP: Clear references',
+      desc = 'lsp: clear references',
     })
   end
 
@@ -93,7 +98,7 @@ local function setup_autocmds(client, bufnr)
       group = group,
       buffer = bufnr,
       callback = require('dm.lsp.code_action').listener,
-      desc = 'LSP: Code action (bulb)',
+      desc = 'lsp: code action (bulb)',
     })
   end
 
@@ -106,7 +111,7 @@ local function setup_autocmds(client, bufnr)
       callback = function()
         lsp.codelens.refresh { bufnr = bufnr }
       end,
-      desc = 'LSP: Refresh codelens',
+      desc = 'lsp: refresh codelens',
     })
   end
 
@@ -137,5 +142,5 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
     on_attach(client, args.buf)
   end,
-  desc = 'LSP: Setup language server',
+  desc = 'lsp: setup language server',
 })

@@ -62,7 +62,7 @@ return {
       ['<C-b>'] = 'actions.preview_scroll_up',
       ['~'] = {
         callback = function()
-          require('oil').open(vim.g.os_homedir)
+          require('oil').open(dm.OS_HOMEDIR)
         end,
         desc = 'Goto OS home directory',
       },

@@ -164,13 +164,13 @@ return {
                     if session.branch then
                       return displayer {
                         { session:is_active() and '' or ' ', 'Green' },
-                        session.project:gsub(vim.g.os_homedir, ''):sub(2),
+                        session.project:gsub(dm.OS_HOMEDIR, ''):sub(2),
                         { session.branch, 'AquaBold' },
                       }
                     else
                       return displayer {
                         { session:is_active() and '' or ' ', 'Green' },
-                        session.project:gsub(vim.g.os_homedir, ''):sub(2),
+                        session.project:gsub(dm.OS_HOMEDIR, ''):sub(2),
                       }
                     end
                   end

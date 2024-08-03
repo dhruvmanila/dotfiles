@@ -16,13 +16,14 @@ end
 
 -- Send a request to the `ruff_lsp` server to execute the given command.
 ---@param command string
-local function execute_command(command)
+---@param handler? function
+local function execute_command(command, handler)
   utils.get_client(client_name).request(vim.lsp.protocol.Methods.workspace_executeCommand, {
     command = command,
     arguments = {
-      { uri = vim.uri_from_bufnr(0) },
+      { uri = vim.uri_from_bufnr(0), version = 0 },
     },
-  })
+  }, handler)
 end
 
 local function apply_autofix()
@@ -38,7 +39,15 @@ local function apply_format()
 end
 
 local function print_debug_information()
-  execute_command 'ruff.printDebugInformation'
+  local current_lsp_log_level = vim.lsp.log.get_level()
+  vim.lsp.set_log_level(vim.log.levels.INFO)
+
+  execute_command('ruff.printDebugInformation', function()
+    ---@diagnostic disable-next-line: param-type-mismatch
+    vim.cmd.tabedit(vim.fs.joinpath(vim.fn.stdpath 'log', 'lsp.ruff.log'))
+    vim.keymap.set('n', 'q', '<Cmd>quit<CR>', { buffer = true })
+    vim.lsp.set_log_level(current_lsp_log_level)
+  end)
 end
 
 -- List of user commands to be defined on server attach.

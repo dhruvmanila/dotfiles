@@ -27,13 +27,11 @@ vim.api.nvim_create_autocmd('VimLeavePre', {
   group = vim.api.nvim_create_augroup('dm__session_persistence', { clear = true }),
   callback = function()
     local current_session = vim.v.this_session
-    if current_session == '' and auto_create_session() then
-      session.save()
-    elseif vim.fn.filewritable(current_session) == 1 then
+    if current_session ~= '' and vim.fn.filewritable(current_session) == 1 then
       session.write(current_session)
     end
   end,
-  desc = 'Save/Update the session when exiting Neovim',
+  desc = 'Save the current session when exiting Neovim',
 })
 
 -- Keybindings

@@ -45,7 +45,9 @@ return {
         json = { 'prettier' },
         lua = { 'stylua' },
         python = { 'ruff_format', 'ruff_organize_imports' },
+        rust = { lsp_format = 'prefer' },
         swift = { 'swift_format' },
+        typescript = { 'prettier' },
         yaml = { 'prettier' },
       },
       format_on_save = function(bufnr)
@@ -53,10 +55,7 @@ return {
         if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
           return
         end
-        return {
-          timeout_ms = 500,
-          lsp_fallback = true,
-        }
+        return {}
       end,
     }
 

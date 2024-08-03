@@ -50,19 +50,6 @@ dm.icons = {
 -- Alias to `vim.print`
 P = vim.print
 
--- Clear the 'require' cache and 'luacache' for the module name.
-RELOAD = function(...)
-  require('plenary.reload').reload_module(...)
-end
-
--- Reload and require the given module name.
----@param name string
----@return any
-R = function(name)
-  RELOAD(name)
-  return require(name)
-end
-
 do
   local output = '[timer]%s: %fms'
   local hrtime = vim.uv.hrtime

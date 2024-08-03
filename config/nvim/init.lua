@@ -22,11 +22,6 @@ g.loaded_perl_provider = 0
 g.loaded_ruby_provider = 0
 g.loaded_python3_provider = 0
 
--- OS specific information
-g.os = vim.uv.os_uname().sysname
-g.os_homedir = assert(vim.uv.os_homedir())
-g.open_command = (g.os == 'Darwin' and 'open') or (g.os == 'Windows_NT' and 'start') or 'xdg-open'
-
 local namespace = {
   config = {
     -- Global border style
@@ -57,12 +52,31 @@ local namespace = {
     },
   },
 
+  -- Constants
+
   -- Indicates whether Neovim is used as Kitty's scrollback buffer.
-  kitty_scrollback = vim.env.KITTY_SCROLLBACK ~= nil,
+  KITTY_SCROLLBACK = vim.env.KITTY_SCROLLBACK ~= nil,
+
+  -- System name.
+  ---@type 'Darwin'|'Windows_NT'|'Linux'
+  OS_UNAME = vim.loop.os_uname().sysname,
+
+  -- Path to the home directory.
+  ---@type string
+  OS_HOMEDIR = assert(vim.uv.os_homedir()),
+
+  -- Path to the current working directory.
+  ---@type string
+  CWD = assert(vim.uv.cwd()),
 }
 
 -- Custom global namespace.
 _G.dm = dm or namespace
+
+-- System-specific command to use for opening a path.
+dm.OPEN_COMMAND = (dm.OS_UNAME == 'Darwin' and 'open')
+  or (dm.OS_UNAME == 'Windows_NT' and 'start')
+  or 'xdg-open'
 
 require 'dm.globals' -- Global functions and variables
 require 'dm.options' -- Neovim options
@@ -93,7 +107,7 @@ require('lazy').setup('dm.plugins', {
   },
   defaults = {
     -- Disable all plugins when using Neovim as Kitty scrollback buffer.
-    cond = not dm.kitty_scrollback,
+    cond = not dm.KITTY_SCROLLBACK,
   },
   dev = {
     path = '~/projects',
@@ -122,8 +136,8 @@ if dm.config.colorscheme.auto.enable then
   require('dm.themes.auto').enable()
 end
 
-if dm.kitty_scrollback then
+if dm.KITTY_SCROLLBACK then
   require 'dm.kitty'
+else
+  require('dm.projects').setup()
 end
-
-require('dm.projects').setup()
