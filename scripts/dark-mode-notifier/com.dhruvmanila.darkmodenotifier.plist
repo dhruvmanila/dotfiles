@@ -6,7 +6,7 @@
     <string>com.dhruvmanila.darkmodenotifier</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/local/bin/dark-mode-notifier</string>
+        <string>/Users/dhruv/.local/bin/dark-mode-notifier</string>
     </array>
     <key>RunAtLoad</key>
     <true/>

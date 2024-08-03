@@ -1,5 +1,5 @@
 BIN := dark-mode-notifier
-INSTALL_DIR := /usr/local/bin
+INSTALL_DIR := $(HOME)/.local/bin
 
 PLIST = $(HOME)/Library/LaunchAgents/com.dhruvmanila.darkmodenotifier.plist
 
