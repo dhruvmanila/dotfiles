@@ -11,18 +11,6 @@
 #   specified function is called. If no function is specified, it defaults
 #   to the same name as the widget. For more info: `man zshzle(1)` /WIDGETS
 # }}}
-# Respect these principles for ordering the sections:{{{
-#
-# `Plugins` should be near the beginning because we need to be able to override
-# whatever interface they install.
-#
-# `Abbreviations` should be right after `Key Bindings` because it installs key
-# bindings.
-#
-# `Syntax Highlighting` should be at the end, because the documentation of the
-# plugin explains that it must be sourced after all custom widgets have been
-# created (i.e., after all `zle -N` calls).
-# }}}
 
 export DOTFILES="$HOME/dotfiles"
 
@@ -75,12 +63,6 @@ case "$OSTYPE" in
       arm64)
         [[ -x "/opt/homebrew/bin/brew" ]] && \
           eval "$(/opt/homebrew/bin/brew shellenv)"
-
-        path=(
-          "/usr/local/bin"(N-/)
-
-          $path
-        )
         ;;
     esac
     ;;
@@ -118,7 +100,7 @@ fpath=(
 # This will allow us to cd into any directory, within the specified ones in the
 # array, from anywhere.
 #
-# Alternative: `z.lua` (preferred), `autojump`, `fasd`, `z`
+# Alternative: `z.lua`, `autojump`, `fasd`, `z`
 cdpath=(
   "$HOME"
   "$HOME/work"
@@ -150,9 +132,6 @@ case "$OSTYPE" in
 esac
 
 path=(
-  # https://github.com/deta/deta-cli
-  "$HOME/.deta/bin"(N-/)
-
   # Docker bin directory containing the `docker` and `docker-compose` commands.
   "$HOME/.docker/bin"(N-/)
 
@@ -195,16 +174,11 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
 # To install: `/path/to/install --key-bindings --completion --update-rc --no-bash --no-fish`
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Powerlevel10k prompt
-# https://github.com/romkatv/powerlevel10k
-# source $DOTFILES/config/zsh/plugins/powerlevel10k/powerlevel10k.zsh-theme
-
-# To customize prompt, run `p10k configure` or edit $DOTFILES/config/zsh/lib/p10k.zsh.
-# [[ ! -f $DOTFILES/config/zsh/lib/p10k.zsh ]] || source $DOTFILES/config/zsh/lib/p10k.zsh
-
 # Starship prompt
 # https://github.com/starship/starship
-eval "$(starship init zsh)"
+if (( $+commands[starship] )); then
+  eval "$(starship init zsh)"
+fi
 
 # Completion {{{1
 
@@ -255,22 +229,6 @@ function source_completion {
 }
 
 source_completion "$DOTFILES/config/bash/completions/dotbot.bash"
-
-# source <(register-python-argcomplete pipx)
-# complete -C aws_completer aws
-# complete -o nospace -C /usr/local/bin/terraform terraform
-
-# pip zsh completion start
-function _pip_completion {
-  local words cword
-  read -Ac words
-  read -cn cword
-  reply=( $( COMP_WORDS="$words[*]" \
-             COMP_CWORD=$(( cword-1 )) \
-             PIP_AUTO_COMPLETE=1 $words[1] 2>/dev/null ))
-}
-compctl -K _pip_completion pip
-# pip zsh completion end
 
 # Zstyles {{{1
 

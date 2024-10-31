@@ -17,33 +17,14 @@
 #   export LDFLAGS="-L$HOMEBREW_PREFIX/lib -L$HOMEBREW_PREFIX/opt/openssl@3/lib"
 # fi
 
-# bat {{{1
-
-# Specify desired highlighting theme (e.g. "TwoDark"). Run `bat --list-themes`
-# for a list of all available themes
+# Run `bat --list-themes` for a list of all available themes
 export BAT_THEME="gruvbox-dark"
-
-# Specify the style
-# * full: enables all available components.
-# * auto: same as 'full', unless the output is piped (default).
-# * plain: disables all available components.
-# * changes: show Git modification markers.
-# * header: show filenames before the content.
-# * grid: vertical/horizontal lines to separate side bar
-#         and the header from the content.
-# * rule: horizontal lines to delimit files.
-# * numbers: show line numbers in the side bar.
-# * snip: draw separation lines between distinct line ranges.
 export BAT_STYLE="changes,header,numbers,rule"
-
-# EDITOR {{{1
 
 # Make Neovim the default editor.
 # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
 export EDITOR='nvim'
 export VISUAL="$EDITOR"
-
-# fzf {{{1
 
 # Fzf configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
@@ -78,13 +59,11 @@ export FZF_ALT_C_OPTS="
   --prompt='CD ❯ '
   --preview 'tree -C {} | head -100'"
 
-# gpg {{{1
-
 # Avoid issues with `gpg` as installed via Homebrew.
 # https://stackoverflow.com/a/42265848/96656
 export GPG_TTY="$(tty)"
 
-# history {{{1
+# export GOPROXY="https://proxy.golang.org/"
 
 # The variable is already set by system rc file but that can change and without
 # this, the history is not saved.
@@ -93,8 +72,6 @@ export HISTFILE="$HOME/.zsh_history"
 # Infinite history
 export HISTSIZE=999999999
 export SAVEHIST=$HISTSIZE
-
-# Homebrew {{{1
 
 # Opt-out of homebrew's analytics
 export HOMEBREW_NO_ANALYTICS=1
@@ -109,8 +86,6 @@ export HOMEBREW_BAT=1
 # Do not show environment variable hints. HOMEBREW_* environment variables can
 # be found at `man brew /Environment`.
 export HOMEBREW_NO_ENV_HINTS=1
-
-# less {{{1
 
 # `less(1)` default options to pass to the command.
 #
@@ -134,17 +109,11 @@ export LESS='i~JMRS'
 # `X` - leave content on-screen
 # `F` - quit automatically if less than one screenfull
 
-# locale {{{1
-
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
 
-# man {{{1
-
 export MANPAGER="nvim +Man!"
-
-# nnn {{{1
 
 # Options {{{
 #                ┌ detail mode
@@ -180,15 +149,16 @@ export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"
 
 unset NNN_SHELL_PLUGINS NNN_PLUGINS
 
-# Python {{{1
-
 # Disable virtual environment prompt.
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8'
 
-# ripgrep {{{1
+# By default, it uses the `~/Library/Application Support` directory which
+# contains a space in the path.
+export PIPX_HOME="$HOME/.local/state/pipx"
+export UV_TOOL_DIR="$HOME/.local/state/uv"
 
 # https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
 export RIPGREP_CONFIG_PATH="$HOME/dotfiles/config/ripgreprc"

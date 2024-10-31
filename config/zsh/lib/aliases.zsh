@@ -1,5 +1,3 @@
-# Zsh Aliases
-
 # List indivial path in separate line.
 alias path='echo -e ${PATH//:/\\n}'
 
@@ -10,13 +8,17 @@ alias reload='exec $SHELL -l'
 alias -g H='--help | less'
 alias -g L='| less'
 alias -g N='> /dev/null'
+alias -g E='2> /dev/null'
 alias -g T='| tail'
 
-alias b='bookmarks'
 alias hn='clx --nerdfonts --comment-width=$((COLUMNS - 10))'
-alias gwip='git add --all && git commit -m "WIP"'
 
-# cd {{{1
+# Quick access to programs
+alias d='docker'
+alias dc='docker compose'
+alias g='git'
+alias v='nvim'
+alias yt='yt-dlp'
 
 # Easier navigation to parent directories.
 alias ..='cd ..'
@@ -28,41 +30,14 @@ alias ......='cd ../../../../..'
 # cd to the previous directory.
 alias -- -='cd -'
 
-# defaults {{{1
-
-if [[ "$OSTYPE" = "darwin"* ]]; then
-  # Show/hide all desktop icons.
-  alias show='defaults write com.apple.finder CreateDesktop -bool true && killall Finder'
-  alias hide='defaults write com.apple.finder CreateDesktop -bool false && killall Finder'
-
-  # Show/hide hidden files in Finder.
-  alias showhidden='defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder'
-  alias hidehidden='defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder'
-fi
-
-# docker {{{1
-
-alias d='docker'
-alias dc='docker compose'
-
-# du {{{1
-
 # Always show size in human readable format.
 alias du='du -h'
 
 # List the sizes of all the directories in the current directory.
-alias usage='du -d 1'
-
-# find {{{1
+alias dud='du -d 1'
 
 # Recursively delete `.DS_Store` files from the current directory.
 alias cleanup='find . -type f -name "*.DS_Store" -ls -delete'
-
-# git {{{1
-
-alias g='git'
-
-# ls {{{1
 
 # Detect which `ls` flavor is in use along with the common options.
 #
@@ -83,12 +58,8 @@ alias la='ls -lA'
 # See `man zshexpn(1)` /Glob Qualifiers
 alias lsd='ls -ld *(-/DN)'
 
-# nnn {{{1
-
 # To reset `less`
 alias nnn='LESS=-R nnn'
-
-# nocorrect {{{1
 
 # From `man zshmisc(1)` /nocorrect
 #
@@ -101,11 +72,6 @@ alias man='nocorrect man'
 alias mkdir='nocorrect mkdir'
 alias mv='nocorrect mv'
 alias sudo='nocorrect sudo'
-
-# nvim {{{1
-
-alias v='nvim'
-alias vi='nvim'
 
 # Open Neovim with the minimal config file.
 alias vm='nvim -n -u ${HOME}/dotfiles/config/nvim/minimal.lua'
@@ -121,19 +87,12 @@ alias nvim-startuptime='\vim-startuptime -vimpath nvim | head -n 30'
 # Open Neovim in development mode.
 alias nvim-dev='cd ${HOME}/contributing/neovim && VIMRUNTIME=runtime ./build/bin/nvim && cd -'
 
-# ssh {{{1
-
 # This will copy the terminfo file kitty uses (xterm-kitty) to the server.
 # https://sw.kovidgoyal.net/kitty/faq/
 if [[ "$TERM" = "xterm-kitty" ]]; then
   alias ssh='kitty +kitten ssh'
 fi
 
-# trash {{{1
-
 # Default to using Finder for trash.
 alias trash='trash -F'
-
-# yt-dlp {{{1
-
-alias yt='yt-dlp'
+alias rm='trash'

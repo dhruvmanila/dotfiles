@@ -7,24 +7,46 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "auto_update_extensions": {
+    "ruff": false
+  },
   "autosave": "on_window_change",
   "buffer_font_size": 16,
   "buffer_font_family": "JetBrains Mono",
   "cursor_blink": false,
-  "scrollbar": {
-    "show": "never"
+  "format_on_save": "off",
+  "git": {
+    "inline_blame": {
+      "enabled": false
+    }
   },
-  "theme": {
-    "mode": "system",
-    "dark": "Gruvbox Dark",
-    "light": "Gruvbox Light"
+  "languages": {
+    "Python": {
+      "language_servers": [
+        "ruff"
+      ],
+      "formatter": [
+        {
+          "code_actions": {
+            "source.organizeImports.ruff": true,
+            "source.fixAll.ruff": true
+          }
+        },
+        {
+          "language_server": {
+            "name": "ruff"
+          }
+        }
+      ],
+      "format_on_save": "off"
+    },
+    "Rust": {
+      "format_on_save": "language_server"
+    },
+    "JSONC": {
+      "format_on_save": "language_server"
+    }
   },
-  "soft_wrap": "editor_width",
-  "preview_tabs": {
-    "enable_preview_from_file_finder": true
-  },
-  "show_copilot_suggestions": false,
-  "vim_mode": true,
   "lsp": {
     "rust-analyzer": {
       // These should match the ones in `./../nvim/lua/dm/lsp/servers.lua`
@@ -51,19 +73,42 @@
           "excludeImports": true
         }
       }
+    },
+    "ruff": {
+      "binary": {
+        "path": "/Users/dhruv/work/astral/ruff/target/debug/ruff",
+        "arguments": [
+          "server"
+        ]
+      },
+      "initialization_options": {
+        "settings": {
+          // Ruff server settings goes here
+          "logLevel": "debug",
+          "logFile": "~/.cache/zed/ruff.log"
+        }
+      }
     }
   },
-  "format_on_save": "off",
-  "language_overrides": {
-    "Rust": {
-      "format_on_save": "language_server"
-    },
-    "JSON": {
-      "format_on_save": "language_server"
-    }
+  "preview_tabs": {
+    "enable_preview_from_file_finder": true
+  },
+  "scrollbar": {
+    "show": "never"
+  },
+  "show_inline_completions": false,
+  "soft_wrap": "editor_width",
+  "tabs": {
+    "file_icons": true
   },
   "telemetry": {
     "diagnostics": false,
     "metrics": false
-  }
+  },
+  "theme": {
+    "mode": "system",
+    "dark": "Gruvbox Dark",
+    "light": "Gruvbox Light"
+  },
+  "vim_mode": true
 }

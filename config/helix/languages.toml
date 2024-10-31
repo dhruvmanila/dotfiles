@@ -1,6 +1,6 @@
 [[language]]
 name = "python"
-language-servers = ["pyright", "ruff-lsp"]
+language-servers = ["ruff", "pyright"]
 
 [[language]]
 name = "rust"
@@ -10,11 +10,17 @@ command = "pyright-langserver"
 args = ["--stdio"]
 
 [language-server.ruff]
-command = "ruff"
-args = ["server", "--preview"]
+command = "/Users/dhruv/work/astral/ruff/target/debug/ruff"
+args = ["server"]
+environment = { "RUFF_TRACE" = "messages" }
+
+[language-server.ruff.config.settings]
+logLevel = "debug"
+logFile = "/Users/dhruv/.cache/helix/ruff.log"
 
 [language-server.ruff-lsp]
 command = "ruff-lsp"
 
-[language-server.rust-analyzer]
-config = { cargo = { features = "all" }, checkOnSave = { command = "clippy" } }
+[language-server.rust-analyzer.config]
+cargo = { features = "all" }
+checkOnSave = { command = "clippy" }

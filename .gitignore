@@ -1,4 +1,3 @@
-*.DS_Store
 local/
 .vagrant
 
@@ -14,4 +13,6 @@ config/vim/autoload/plug.vim
 config/vim/.netrwhist
 config/zed/conversations
 config/zed/embeddings
+config/zed/prompts
 config/zed/themes
+config/zed/.tmp*

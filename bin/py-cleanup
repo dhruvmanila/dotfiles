@@ -8,7 +8,7 @@ if ! (( $+commands[fd] )) {
   exit 1
 }
 
-for pattern in "pytest_cache" "mypy_cache" "__pycache__" "ruff_cache"; do
+for pattern in "pytest_cache" "mypy_cache" "__pycache__" "ruff_cache" "ipynb_checkpoints"; do
   echo "==> Removing '$pattern'"
 
   fd \
