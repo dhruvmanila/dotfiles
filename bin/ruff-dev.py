@@ -1,4 +1,12 @@
-#!/Users/dhruv/dotfiles/.venv/bin/python
+#!/usr/bin/env -S uv run --quiet
+
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "typer[all]==0.9.0",
+#     "watchfiles==0.21.0",
+# ]
+# ///
 
 import shlex
 from collections.abc import Iterable
@@ -62,10 +70,12 @@ def docs() -> None:
     """Watch for changes in docs and generate them."""
     start_watchfiles(
         "crates/ruff_linter",
+        "crates/ruff_dev",
         "mkdocs.template.yml",
         "mkdocs.insiders.yml",
         "scripts/generate_mkdocs.py",
         # Only include the files that aren't auto-generated.
+        "docs/editors",
         "docs/tutorial.md",
         "docs/installation.md",
         "docs/linter.md",
@@ -186,12 +196,17 @@ def linter(
 
     fixture_paths: list[str] = []
     for rule in rules:
+        extension = "pyi" if rule.startswith("PYI") else "py"
         if play:
-            fixture_paths.append(shlex.quote(str(playground_file(f"src/{rule}.py"))))
+            fixture_paths.append(
+                shlex.quote(str(playground_file(f"src/{rule}.{extension}")))
+            )
         else:
             fixture_paths.extend(
                 shlex.quote(str(fixture_path.relative_to(RUFF_DIR)))
-                for fixture_path in ruff_fixtures_dir().glob(f"**/*{rule}*.py*")
+                for fixture_path in ruff_fixtures_dir().glob(
+                    f"**/*{rule}*.{extension}*"
+                )
             )
 
     if not fixture_paths:
@@ -245,7 +260,6 @@ def linter(
             f"--select={','.join(rules)}",
             config_option,
             "--no-cache",
-            "--output-format=full",
             *(ruff_args or []),
             " ".join(fixture_paths),
         ],

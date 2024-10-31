@@ -1,5 +1,12 @@
-#!/Users/dhruv/dotfiles/.venv/bin/python
-#
+#!/usr/bin/env -S uv run --quiet
+
+# /// script
+# dependencies = [
+#   "pyobjc-framework-cocoa==10.0",
+#   "docklib==2.0.0",
+# ]
+# ///
+
 import os.path
 
 from docklib import Dock
@@ -12,6 +19,7 @@ DOCK_APPS = [
     "/System/Applications/Notes.app",
     "/System/Applications/Music.app",
     "/System/Applications/Books.app",
+    "/System/Applications/iPhone Mirroring.app",
 ]
 
 
