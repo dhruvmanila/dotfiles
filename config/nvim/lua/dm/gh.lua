@@ -7,17 +7,15 @@ _CachedGithubStars = _CachedGithubStars or {}
 -- Parse the data received from running the GitHub stars job.
 ---@param data string
 local function parse_gh_stars_data(data)
-  -- As we're paginating the results, GitHub will separate the page results as:
-  -- [{...}, {...}][{...}, {...}] ...
-  -- Replace the middle "][" with a "," to make it a valid JSON string.
-  data = data:gsub('%]%[', ',')
   local json_data = vim.json.decode(data)
-  for _, repo in ipairs(json_data) do
-    table.insert(_CachedGithubStars, {
-      name = repo.full_name,
-      description = repo.description ~= vim.NIL and repo.description or '',
-      url = repo.html_url,
-    })
+  for _, repos in ipairs(json_data) do
+    for _, repo in ipairs(repos) do
+      table.insert(_CachedGithubStars, {
+        name = repo.full_name,
+        description = repo.description ~= vim.NIL and repo.description or '',
+        url = repo.html_url,
+      })
+    end
   end
 end
 
@@ -27,7 +25,7 @@ end
 ---@see telescope._extensions.github_stars
 function M.collect_stars()
   vim.system(
-    { 'gh', 'api', 'user/starred', '--paginate', '--cache', '24h' },
+    { 'gh', 'api', 'user/starred', '--paginate', '--slurp', '--cache', '24h' },
     ---@param result vim.SystemCompleted
     function(result)
       if result.code > 0 then

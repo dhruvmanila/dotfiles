@@ -56,7 +56,6 @@ function vim.ui.select(items, opts, on_choice) end
 
 ---@class CargoRunnableArgs
 ---@field cargoArgs string[]
----@field cargoExtraArgs string[]
 ---@field executableArgs string[]
 ---@field workspaceRoot string?
 

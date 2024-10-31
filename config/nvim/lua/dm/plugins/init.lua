@@ -33,5 +33,4 @@ return {
 
   -- Help docs
   'milisims/nvim-luaref',
-  'nanotee/luv-vimdocs',
 }

@@ -30,7 +30,11 @@ return {
       -- from other files which will be displayed in the current buffer.
       if diagnostic and diagnostic.file == current_file then
         diagnostic.source = 'mypy'
-        if diagnostic.severity == vim.diagnostic.severity.HINT and #diagnostics > 0 then
+        if
+          diagnostic.severity == vim.diagnostic.severity.HINT
+          and #diagnostics > 0
+          and diagnostics[#diagnostics].lnum == diagnostic.lnum
+        then
           diagnostics[#diagnostics].message = diagnostics[#diagnostics].message
             .. '\n'
             .. diagnostic.message

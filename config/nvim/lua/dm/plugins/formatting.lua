@@ -33,7 +33,7 @@ return {
     {
       ';f',
       function()
-        require('conform').format { async = true, lsp_fallback = true }
+        require('conform').format { async = true }
       end,
       mode = { 'n', 'x' },
       desc = 'Format buffer',
@@ -44,7 +44,7 @@ return {
       formatters_by_ft = {
         json = { 'prettier' },
         lua = { 'stylua' },
-        python = { 'ruff_format', 'ruff_organize_imports' },
+        python = { lsp_format = 'prefer' },
         rust = { lsp_format = 'prefer' },
         swift = { 'swift_format' },
         typescript = { 'prettier' },

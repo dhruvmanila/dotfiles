@@ -225,7 +225,7 @@ local servers = {
   -- https://github.com/typescript-language-server/typescript-language-server
   -- Install: `npm install --global typescript typescript-language-server`
   -- Settings: https://github.com/typescript-language-server/typescript-language-server#initializationoptions
-  tsserver = {
+  ts_ls = {
     settings = {
       typescript = {
         inlayHints = {

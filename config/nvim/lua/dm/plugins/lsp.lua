@@ -7,6 +7,8 @@ return {
     },
     config = function()
       local lspconfig = require 'lspconfig'
+      local configs = require 'lspconfig.configs'
+
       local servers = require 'dm.lsp.servers'
 
       -- Setup border for the `:LspInfo` window
@@ -27,7 +29,7 @@ return {
           -- 'ruff_lsp',
           'rust_analyzer',
           'lua_ls',
-          'tsserver',
+          'ts_ls',
         })
         :each(function(name)
           local config = servers.get(name)
@@ -35,6 +37,14 @@ return {
             lspconfig[name].setup(config)
           end
         end)
+
+      if not configs.red_knot then
+        configs.red_knot = {
+          default_config = vim.tbl_deep_extend('keep', {
+            cmd = { 'red_knot', 'server' },
+          }, configs.ruff.config_def.default_config),
+        }
+      end
     end,
   },
 

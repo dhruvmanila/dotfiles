@@ -1,3 +1,7 @@
+if vim.g.vscode then
+  return
+end
+
 local lsp = vim.lsp
 local M = lsp.protocol.Methods
 

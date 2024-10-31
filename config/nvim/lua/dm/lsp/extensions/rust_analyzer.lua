@@ -112,7 +112,6 @@ local function execute_runnable(runnable)
   local args = vim
     .iter({
       runnable.args.cargoArgs,
-      runnable.args.cargoExtraArgs,
       '--',
       runnable.args.executableArgs,
     })

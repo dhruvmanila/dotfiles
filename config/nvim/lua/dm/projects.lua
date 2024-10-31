@@ -85,11 +85,34 @@ local function setup_ruff_playground()
   require('dm.linter').enabled_linters_by_filetype.python = {
     'flake8',
     'pylint',
+    'mypy',
   }
 
   vim.diagnostic.config {
     underline = true,
+    severity_sort = true,
+    virtual_text = {
+      source = true,
+      spacing = 1,
+    },
   }
+
+  local ok, lspconfig = pcall(require, 'lspconfig')
+  if ok then
+    lspconfig['red_knot'].setup {
+      cmd = {
+        dm.OS_HOMEDIR .. '/work/astral/ruff-test/target/debug/red_knot',
+        'server',
+      },
+      trace = 'messages',
+      init_options = {
+        settings = {
+          logLevel = 'debug',
+          logFile = vim.fn.stdpath 'log' .. '/lsp.red_knot.log',
+        },
+      },
+    }
+  end
 end
 
 -- Perform project specific setup.

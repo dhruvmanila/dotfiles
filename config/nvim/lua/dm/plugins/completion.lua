@@ -100,8 +100,10 @@ return {
           --                        ┌ `:help complete-items`
           --                        │
           format = function(entry, item)
-            item.menu = item.kind:lower()
-            item.kind = lsp_kind[item.kind]
+            if item.kind then
+              item.menu = item.kind:lower()
+              item.kind = lsp_kind[item.kind]
+            end
             return item
           end,
         },
