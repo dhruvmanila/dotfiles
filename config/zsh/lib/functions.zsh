@@ -119,58 +119,6 @@ py-venv-activate() { # {{{1
   fi
 }
 
-py-upgrade-venv() { # {{{1
-  # Upgrade the Python version for the current virtual environment.
-  # NOTE: This assumes that we're using `pyenv` (custom script) to install
-  # Python versions.
-  #
-  # $1 (string): upgrade to this version
-  if [[ -z "$VIRTUAL_ENV" ]]; then
-    echo "$0: not in a virtual environment"
-    return 1
-  elif (( $# != 1 )); then
-    echo "Usage: $0 <version>"
-    return 1
-  fi
-  local DEFINITION="$1"
-  local PYTHON_EXEC="$PYENV_ROOT/versions/$DEFINITION/bin/python"
-  if [[ ! -e $PYTHON_EXEC ]]; then
-    echo "$0: version '$DEFINITION' not installed"
-    echo "$0: Use 'pyenv install $DEFINITION' to install it"
-    return 1
-  fi
-  # The `--upgrade` flag assumes that Python was upgraded in place, so we need
-  # to update the symlink to point to the desired Python version.
-  echo "$0: $VIRTUAL_ENV/bin/python -> $PYTHON_EXEC"
-  ln -sf "$PYTHON_EXEC" "$VIRTUAL_ENV/bin/python"
-  local VENV_PROMPT="${${VIRTUAL_ENV%-*}:t}"
-  $PYTHON_EXEC -m venv --upgrade "$VIRTUAL_ENV" --prompt "$VENV_PROMPT"
-  echo "$0: Upgraded to $DEFINITION"
-}
-
-rm-email() { # {{{1
-  if ! (( $+commands[himalaya] )); then
-    echo "$0: 'himalaya' command not found"
-    return 1
-  elif (( $# != 1 )); then
-    echo "Usage: $0 <query>"
-    return 1
-  elif [[ -z "$1" ]]; then
-   echo "$0: query cannot be empty"
-   return 1
-  fi
-
-  output=$(NO_COLOR=1 himalaya search "$1" --size=0)
-  printf "%s\n\n" "$output"
-
-  read -q "?Above emails will be removed. Continue? [y/n] " confirm
-  printf "\n"
-  if [[ "$confirm" = "y" ]]; then
-    himalaya delete \
-      $(echo $output | awk 'NR > 2 && $1 != "" {print $1}' | paste -s -d ',' -)
-  fi
-}
-
 viw() { # {{{1
   # Open a CLI script in vim
   # For `pyenv`, it will resolve path using the provided command.

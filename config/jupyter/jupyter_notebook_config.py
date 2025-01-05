@@ -1017,7 +1017,7 @@ c.ContentsManager.hide_globs = [
 # ------------------------------------------------------------------------------
 ## Allow access to hidden files
 #  See also: ContentsManager.allow_hidden
-# c.FileContentsManager.allow_hidden = False
+c.FileContentsManager.allow_hidden = True
 
 #  See also: ContentsManager.checkpoints
 # c.FileContentsManager.checkpoints = None

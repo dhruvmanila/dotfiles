@@ -36,7 +36,6 @@
       "] d": "editor::GoToDiagnostic",
       "[ d": "editor::GoToPrevDiagnostic",
       "g r": "editor::FindAllReferences",
-      "shift-k": "editor::Hover",
       "space c a": "editor::ToggleCodeActions",
       "space r n": "editor::Rename",
       "ctrl-p": "file_finder::Toggle"

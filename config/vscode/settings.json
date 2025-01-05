@@ -1,33 +1,53 @@
 {
-  "files.autoSave": "onFocusChange",
-
-  // Neovim
-  "vscode-neovim.neovimExecutablePaths.darwin": "nvim",
-  "vscode-neovim.neovimInitVimPaths.darwin": "~/dotfiles/config/vscode/init.lua",
-
-  // Ruff (mainly for development)
-  "ruff.nativeServer": true,
-  //"ruff.path": ["/Users/dhruv/work/astral/ruff-test/target/debug/ruff"],
+  // Ruff
+  "ruff.nativeServer": "on",
+  "ruff.path": ["/Users/dhruv/work/astral/ruff/target/debug/ruff"],
+  "ruff.trace.server": "off",
+  "ruff.logLevel": "debug",
 
   // Python
-  "python.languageServer": "Pyright",
+  "python.languageServer": "Pylance",
   "python.terminal.executeInFileDir": true,
-
   "[python]": {
+    "editor.formatOnSave": false,
     "editor.defaultFormatter": "charliermarsh.ruff",
-     "editor.codeActionsOnSave": {
-       "source.fixAll.ruff": "never",
-       "source.organizeImports.ruff": "never"
-     }
+    // "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "never",
+      "source.organizeImports.ruff": "never"
+    }
   },
+  // "python.analysis.diagnosticMode": "workspace",
+  // "python.analysis.logLevel": "Information",
 
   // Jupyter Notebook
   "notebook.lineNumbers": "on",
   "notebook.formatOnSave.enabled": false,
+  "notebook.defaultFormatter": "charliermarsh.ruff",
   "notebook.codeActionsOnSave": {
-     "notebook.source.fixAll.ruff": "never",
-     "notebook.source.organizeImports.ruff": "never"
+    "notebook.source.organizeImports.ruff": "never",
+    "notebook.source.fixAll.ruff": "never"
   },
+
+  // Rust
+  "rust-analyzer.checkOnSave": false,
+  "rust-analyzer.server.extraEnv": {
+    "RA_LOG": "warn,lsp_server=info",
+  },
+  // "rust-analyzer.trace.server": "messages",
+
+  // Biome
+  "biome_lsp.trace.server": "off",
+
+  // Global formatting settings
+  "editor.formatOnSave": false,
+  // "editor.formatOnSaveMode": "modifications",
+
+  "files.autoSave": "onFocusChange",
+
+  // Neovim
+  // "vscode-neovim.neovimExecutablePaths.darwin": "nvim",
+  // "vscode-neovim.neovimInitVimPaths.darwin": "~/dotfiles/config/vscode/init.lua",
 
   // Settings viewer as JSON
   "workbench.settings.editor": "json",
@@ -36,10 +56,15 @@
   "workbench.editor.enablePreview": false,
 
   // Theme
-  "workbench.colorTheme": "Gruvbox Material Dark",
+  "window.autoDetectColorScheme": true,
+  "workbench.preferredDarkColorTheme": "Gruvbox Material Dark",
+  "workbench.preferredLightColorTheme": "Gruvbox Material Light",
   "gruvboxMaterial.darkPalette": "original",
   "gruvboxMaterial.darkWorkbench": "high-contrast",
-  "gruvboxMaterial.darkContrast": "soft",
+  "gruvboxMaterial.darkContrast": "medium",
+  "gruvboxMaterial.lightPalette": "original",
+  "gruvboxMaterial.lightWorkbench": "high-contrast",
+  "gruvboxMaterial.lightContrast": "medium",
   "gruvboxMaterial.italicKeywords": true,
   "gruvboxMaterial.colorfulSyntax": true,
   "editor.semanticHighlighting.enabled": true,
@@ -59,12 +84,10 @@
   "editor.inlineSuggest.enabled": true,
   "editor.comments.ignoreEmptyLines": false,
   "editor.suggestSelection": "first",
+  "editor.accessibilitySupport": "off",
 
   // Terminal settings
   "terminal.integrated.inheritEnv": true,
-  "workbench.colorCustomizations": {
-    "terminal.background": "#242424"
-  },
 
   // Python docstring
   "editor.tokenColorCustomizations": {
@@ -79,19 +102,16 @@
     ]
   },
 
+  // Language specific settings
   "[javascript]": {
+    "editor.formatOnSave": false,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.codeActionsOnSave": {
-      "source.fixAll": "never",
-      "source.fixAll.eslint": "always"
+      "source.fixAll.eslint": "explicit"
     }
   },
-
-  // Rust
-  "rust-analyzer.checkOnSave": false,
-
-  // Language specific settings
   "[typescript]": {
+    "editor.formatOnSave": false,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[html]": {
@@ -103,33 +123,20 @@
   "[yaml]": {
     "editor.tabSize": 4
   },
-
   "window.newWindowDimensions": "maximized",
 
   // Set association for non-standard files to help syntax highlighting
   "files.associations": {
     "Brewfile": "ruby",
-    "Vagrantfile": "ruby"
+    "Vagrantfile": "ruby",
+    "uv.lock": "toml"
   },
   "workbench.editorAssociations": {
     "*.hdl": "vhdl"
   },
 
+  // git
   "git.openRepositoryInParentFolders": "never",
-  "githubPullRequests.queries": [
-    {
-      "label": "Waiting For My Review",
-      "query": "is:open review-requested:${user}"
-    },
-    {
-      "label": "Assigned To Me",
-      "query": "is:open assignee:${user}"
-    },
-    {
-      "label": "Created By Me",
-      "query": "is:open author:${user}"
-    }
-  ],
 
   // No autoupdate for extensions
   "extensions.autoUpdate": false,
@@ -139,4 +146,6 @@
 
   // No telemetry
   "telemetry.telemetryLevel": "off",
+  "extensions.ignoreRecommendations": true,
+  "workbench.settings.editor": "json",
 }

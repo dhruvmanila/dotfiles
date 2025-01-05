@@ -1,4 +1,4 @@
-# CFLAGS, CPPFLAGS, LDFLAGS {{{1
+# CFLAGS, CPPFLAGS, LDFLAGS
 
 # The following softwares are installed via Homebrew but they're not symlinked
 # as they are keg-only. The official instructions is to include them in common
@@ -87,32 +87,14 @@ export HOMEBREW_BAT=1
 # be found at `man brew /Environment`.
 export HOMEBREW_NO_ENV_HINTS=1
 
-# `less(1)` default options to pass to the command.
-#
-# `i` - ignore case in search pattern. This option is ignored if it contains
-#       uppercase characters
-# `~` - Normally lines after end of file are displayed as a single tilde (~).
-#       This option causes lines after end of file to be displayed as blank lines.
-# `J` - Show status column at the left edge of the screen
-# `M` - Make prompt more verbose. At the bottom of the screen, it prints info
-#       about our position with a percentage, and line numbers.
-# `R` - Send ANSI "color" escape sequences and OSC 8 hyperlink in "raw" form
-#       which will allow us to see colors. This is useful for commands such as
-#       `git log`. Without, you would see things like `ESC[33m ... ESC[m`.
-# `S` - Causes lines longer than the screen width to be chopped (truncated)
-#       rather than wrapped. That is, the portion of a long line that does
-#       not fit in the screen width is not displayed until you press RIGHT-
-#       ARROW. The default is to wrap long lines; that is, display the
-#       remainder on the next line.
-export LESS='i~JMRS'
-
-# `X` - leave content on-screen
-# `F` - quit automatically if less than one screenfull
+# Default options to pass to the `less(1)` command.
+export LESS='--ignore-case --tilde --status-column --LONG-PROMPT --RAW-CONTROL-CHARS --chop-long-lines'
 
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
 
+# Use Neovim as the man pager.
 export MANPAGER="nvim +Man!"
 
 # Options {{{
@@ -154,11 +136,7 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 # Make Python use UTF-8 encoding for output to stdin, stdout, and stderr.
 export PYTHONIOENCODING='UTF-8'
-
-# By default, it uses the `~/Library/Application Support` directory which
-# contains a space in the path.
-export PIPX_HOME="$HOME/.local/state/pipx"
-export UV_TOOL_DIR="$HOME/.local/state/uv"
+export PIP_REQUIRE_VIRTUALENV=true
 
 # https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
 export RIPGREP_CONFIG_PATH="$HOME/dotfiles/config/ripgreprc"

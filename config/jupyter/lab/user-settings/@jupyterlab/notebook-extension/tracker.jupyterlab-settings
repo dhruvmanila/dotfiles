@@ -1,13 +1,16 @@
-// vim: ft=javascript
 {
     // Notebook
     // @jupyterlab/notebook-extension:tracker
     // Notebook settings.
     // **************************************
 
+    // Automatically Start Preferred Kernel
+    // Whether to automatically start the preferred kernel.
+    "autoStartDefaultKernel": false,
+
     // Code Cell Configuration
-    // The configuration for all code cells.
+    // The configuration for all code cells; it will override the CodeMirror default configuration.
     "codeCellConfig": {
         "lineNumbers": true
-    },
+    }
 }

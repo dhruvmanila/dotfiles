@@ -57,6 +57,7 @@ case "$OSTYPE" in
     link "pypoetry" "Library/Application Support/pypoetry"
     link "vscode/settings.json" "Library/Application Support/Code/User/settings.json"
     link "zed" ".config/zed"
+    link "ghostty" ".config/ghostty"
     ;;
   linux*)
     link "bottom" ".config/bottom"

@@ -1,0 +1,54 @@
+# 👻
+
+# Let's stay on stable for a while
+auto-update-channel = stable
+
+# Font
+font-family = JetBrains Mono
+font-size = 18
+
+# Theme
+theme = light:GruvboxLight,dark:GruvboxDark
+window-theme = system
+
+# Use the block non-blinking cursor everywhere
+shell-integration-features = no-cursor
+cursor-style-blink = false
+
+# Mouse
+# mouse-hide-while-typing = true
+mouse-scroll-multiplier = 2
+
+# macOS specific
+macos-option-as-alt = left
+macos-titlebar-style = tabs
+
+# Use arbitrary large value to create a maximized-by-default window size
+window-height = 1000
+window-width = 1000
+
+# Keybindings
+# N.B. super is an alias to the command key
+keybind = super+shift+r=reload_config
+keybind = ctrl+shift+q=toggle_quick_terminal
+
+keybind = ctrl+shift+t=new_tab
+keybind = ctrl+shift+.=move_tab:+1
+keybind = ctrl+shift+,=move_tab:-1
+
+keybind = ctrl+shift+backslash=new_split:right
+keybind = ctrl+shift+-=new_split:down
+keybind = ctrl+shift+k=goto_split:top
+keybind = ctrl+shift+l=goto_split:right
+keybind = ctrl+shift+j=goto_split:bottom
+keybind = ctrl+shift+h=goto_split:left
+keybind = ctrl+shift+z=toggle_split_zoom
+
+keybind = ctrl+shift+p=jump_to_prompt:-1
+keybind = ctrl+shift+n=jump_to_prompt:+1
+
+# TODO: I still don't understand the difference between these two
+# keybind = ctrl+shift+h=write_scrollback_file:paste
+# keybind = ctrl+shift+g=write_screen_file:paste
+
+# vim: ft=ini commentstring=#\ %s
