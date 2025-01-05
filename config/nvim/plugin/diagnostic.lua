@@ -39,25 +39,25 @@ vim.diagnostic.config {
 -- For all types of diagnostics: `[d`, `]d`
 keymap.set('n', '[d', function()
   vim.diagnostic.goto_prev {
-    float = { focusable = false },
+    float = { focusable = false, scope = 'cursor' },
   }
 end, { desc = 'Diagnostic: Goto prev' })
 keymap.set('n', ']d', function()
   vim.diagnostic.goto_next {
-    float = { focusable = false },
+    float = { focusable = false, scope = 'cursor' },
   }
 end, { desc = 'Diagnostic: Goto next' })
 
 -- For warning and error diagnostics: `[w`, `]w`
 keymap.set('n', '[w', function()
   vim.diagnostic.goto_prev {
-    float = { focusable = false },
+    float = { focusable = false, scope = 'cursor' },
     severity = { min = vim.diagnostic.severity.WARN },
   }
 end, { desc = 'Diagnostic: Goto prev (warning/error)' })
 keymap.set('n', ']w', function()
   vim.diagnostic.goto_next {
-    float = { focusable = false },
+    float = { focusable = false, scope = 'cursor' },
     severity = { min = vim.diagnostic.severity.WARN },
   }
 end, { desc = 'Diagnostic: Goto next (warning/error)' })
@@ -65,3 +65,7 @@ end, { desc = 'Diagnostic: Goto next (warning/error)' })
 keymap.set('n', '<leader>l', function()
   vim.diagnostic.open_float { scope = 'line' }
 end, { desc = 'Show line diagnostics' })
+
+keymap.set('n', '<leader>dt', function()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = 'Toggle diagnostics' })

@@ -1,6 +1,7 @@
 local pattern = '[^:]+:(%d+):(%d+):(%w+):(.+)'
 local groups = { 'lnum', 'col', 'code', 'message' }
 
+---@type LinterConfig
 return {
   cmd = 'flake8',
   args = function(bufnr)

@@ -8,6 +8,7 @@ local severity_map = {
   convention = vim.diagnostic.severity.HINT,
 }
 
+---@type LinterConfig
 return {
   cmd = 'golangci-lint',
   args = function(bufnr)

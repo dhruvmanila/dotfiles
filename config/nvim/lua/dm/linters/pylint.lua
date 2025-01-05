@@ -7,6 +7,7 @@ local severity_map = {
   convention = vim.diagnostic.severity.HINT,
 }
 
+---@type LinterConfig
 return {
   cmd = 'pylint',
   args = { '--output-format', 'json' },

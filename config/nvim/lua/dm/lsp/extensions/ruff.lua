@@ -18,10 +18,17 @@ end
 ---@param command string
 ---@param handler? function
 local function execute_command(command, handler)
+  local bufnr = vim.api.nvim_get_current_buf()
   utils.get_client(client_name).request(vim.lsp.protocol.Methods.workspace_executeCommand, {
     command = command,
     arguments = {
-      { uri = vim.uri_from_bufnr(0), version = 0 },
+      {
+        uri = vim.uri_from_bufnr(bufnr),
+        version = assert(
+          vim.lsp.util.buf_versions[bufnr],
+          ('No version found for buffer %d'):format(bufnr)
+        ),
+      },
     },
   }, handler)
 end

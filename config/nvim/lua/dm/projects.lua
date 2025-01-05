@@ -96,12 +96,27 @@ local function setup_ruff_playground()
       spacing = 1,
     },
   }
+end
+
+local function setup_red_knot_playground()
+  require('dm.linter').enabled_linters_by_filetype.python = {
+    'mypy',
+  }
+
+  vim.diagnostic.config {
+    underline = true,
+    severity_sort = true,
+    virtual_text = {
+      source = true,
+      spacing = 1,
+    },
+  }
 
   local ok, lspconfig = pcall(require, 'lspconfig')
   if ok then
     lspconfig['red_knot'].setup {
       cmd = {
-        dm.OS_HOMEDIR .. '/work/astral/ruff-test/target/debug/red_knot',
+        dm.OS_HOMEDIR .. '/work/astral/ruff/target/debug/red_knot',
         'server',
       },
       trace = 'messages',
@@ -128,6 +143,8 @@ function M.setup()
     setup_ruff()
   elseif vim.endswith(project.path, 'playground/ruff') then
     setup_ruff_playground()
+  elseif vim.endswith(project.path, 'playground/red_knot') then
+    setup_red_knot_playground()
   end
 end
 

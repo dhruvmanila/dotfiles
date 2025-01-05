@@ -1,7 +1,5 @@
 local opt = vim.opt
 
--- cmdline: mode, ruler {{{1
-
 -- When `'statusline'` is empty, Vim displays the current line address, and
 -- column number, in the statusline. This region is called the “ruler bar“
 -- (`:help ruler`).
@@ -12,39 +10,22 @@ opt.ruler = false
 -- NOTE: If on, it can erase a message ouput by `:echo` or `:lua print`
 opt.showmode = false
 
--- clipboard {{{1
-
--- Use OS clipboard
---
---   > To ALWAYS use the clipboard for ALL operations (instead of interacting with
---   > the '+' and/or '*' registers explicitly)
---   >
---   >    `set clipboard+=unnamedplus`
---
 -- `:h provider-clipboard`
 opt.clipboard:append 'unnamedplus'
 
--- completion {{{1
-
 opt.completeopt = {
-  -- show menu even if there is only one match
   'menuone',
-  -- do not select any text until the user selects a match from the menu
   'noinsert',
 }
 
 -- Maxmimum number of items to show in the popup menu (|inc-completion-menu|)
 opt.pumheight = 20
 
--- conceal {{{1
-
 -- Hide the conceal characters unless the cursor is on that line.
 opt.conceallevel = 2
 
--- diffopt {{{1
-
 opt.diffopt:append {
-  -- Use the indent heuristic for the  internal diff library, because it gives
+  -- Use the indent heuristic for the internal diff library, because it gives
   -- more readable diffs.
   -- See: https://vimways.org/2018/the-power-of-diff/
   'indent-heuristic',
@@ -53,18 +34,11 @@ opt.diffopt:append {
   'vertical',
 }
 
--- emoji {{{1
-
 -- Might fix various issues when editing a line containing some emojis.
---
 -- See: https://www.youtube.com/watch?v=F91VWOelFNE&t=174s
 opt.emoji = false
 
--- exrc {{{1
-
 opt.exrc = true
-
--- fillchars {{{1
 
 opt.fillchars = {
   -- Don't print '~' at the start of the lines after the last buffer line
@@ -89,36 +63,21 @@ opt.fillchars = {
   verthoriz = '╋',
 }
 
--- format: options, listpat {{{1
-
--- 'formatoptions' handles the automatic formatting of text.
+-- See: `:h fo-table`
 opt.formatoptions = {
-  -- comments should respect textwidth
   c = true,
-
-  -- allow formatting of comments with 'gq'
   q = true,
-
-  -- insert comment leader when pressing Enter in Insert mode
   r = true,
-
-  -- where it makes sense, remove a comment Leader when joining lines.
   j = true,
-
-  -- when formatting text, use 'formatlistpat' to recognize numbered lists
-  -- IOW, use hanging indent on ordered/unordered list
-  n = true,
+  n = true, -- using 'formatlistpat'
 }
 
--- A pattern that is used to recognize a list header. This is used for the "n"
--- flag in 'formatoptions'.
+-- Used for the "n" flag in 'formatoptions'
 --                           ┌ recognize numbered lists (default)
 --                           ├─────────────┐
 opt.formatlistpat = [[^\s*\%(\d\+[\]:.)}\t ]\|[-*+]\)\s*]]
 --                                            ├───┘
 --                                            └ recognize unordered lists
-
--- folding {{{1
 
 -- Treesitter based folding (requires 'foldmethod=expr')
 -- opt.foldexpr = "nvim_treesitter#foldexpr()"
@@ -128,22 +87,6 @@ opt.foldmethod = 'marker'
 
 -- Close a fold even if it doesn't contain any line.
 opt.foldminlines = 0
-
--- grep {{{1
-
--- Define rg as the program to call when using the Ex commands: `:[l]grep[add]`.
-opt.grepprg = 'rg --vimgrep'
-
--- Define how the output of rg must be parsed:
---
---                         ┌ filename
---                         │  ┌ line number
---                         │  │  ┌ column number
---                         │  │  │  ┌ error message
---                         │  │  │  │
-opt.grepformat:prepend { '%f:%l:%c:%m' }
-
--- indentation {{{1
 
 -- copy the structure of existing lines indent
 opt.copyindent = true
@@ -188,8 +131,6 @@ opt.softtabstop = -1
 -- configure how Vim handles tabs, in all contexts, with a single option:
 -- 'shiftwidth'.
 
--- invisible characters: listchars {{{1
-
 -- Show invisible characters
 opt.list = true
 
@@ -210,8 +151,6 @@ opt.listchars = {
   -- eol = "↴",
 }
 
--- lazyredraw {{{1
-
 -- Prevent the screen from being redrawn while executing commands which haven't
 -- been typed (e.g.: macros, registers).
 -- Also, postpone the update of the window title.
@@ -220,32 +159,22 @@ opt.listchars = {
 -- (function called by a) mapping.
 opt.lazyredraw = true
 
--- mouse {{{1
-
 -- Enable mouse in all modes
 opt.mouse = 'a'
-
--- number {{{1
 
 -- Use the 'numberwidth' option to adjust the room for the line number.
 
 -- Print the line number in front of each line
 opt.number = true
 
--- scroll {{{1
-
 -- Display at least 'n' lines above/below the cursor
 opt.scrolloff = 5
-
--- search {{{1
 
 -- ignore the case when searching for a pattern containing only lowercase characters
 opt.ignorecase = true
 
 -- but don't ignore the case if it contains an uppercase character
 opt.smartcase = true
-
--- shortmess {{{1
 
 opt.shortmess:append {
   a = true, -- Enable all sorts of abbreviations in messages
@@ -255,8 +184,6 @@ opt.shortmess:append {
   W = true, -- Don't give "written" or "[w]" when writing a file
 }
 
--- signcolumn {{{1
-
 -- A margin between the left of the screen and the text to display signs
 --
 -- Used by:
@@ -265,21 +192,8 @@ opt.shortmess:append {
 --   - gitsigns.nvim
 opt.signcolumn = 'yes:1'
 
--- statusline {{{1
-
 -- Global statusline
 opt.laststatus = 3
-
--- synmaxcol {{{1
-
--- Don't syntax highlight long lines (Vim will become slow)
-opt.synmaxcol = 500
---               │
---               └ weight in bytes
---                 any character prefixed by a string heavier than that
---                 will NOT be syntax highlighted
-
--- temporary files: undo, swap, backup {{{1
 
 -- Disable swap files, living on the edge!
 opt.swapfile = false
@@ -287,20 +201,14 @@ opt.swapfile = false
 -- Enable persistent undo
 opt.undofile = true
 
--- title {{{1
-
 -- Set the title of the window to the value of 'titlestring'
 opt.title = true
 
 -- Set the custom title string
 opt.titlestring = "nvim: %t (%{fnamemodify(getcwd(), ':t')})"
 
--- updatetime {{{1
-
 -- Wait for 'n' number of milliseconds before executing `CursorHold`
 opt.updatetime = 300
-
--- wildmenu / wildcharm {{{1
 
 -- What does `vim.opt.wildcharm = 26` imply?{{{
 --
@@ -328,8 +236,6 @@ opt.wildmode = {
   'full',
 }
 
--- window {{{1
-
 -- When we create a new horizontal viewport, it should be displayed at the
 -- bottom of the screen
 opt.splitbelow = true
@@ -341,8 +247,6 @@ opt.splitright = true
 -- with `<leader>z`)
 opt.winminheight = 0
 opt.winminwidth = 0
-
--- word / line wrapping {{{1
 
 -- A soft-wrapped line should be displayed with the same level of indentation
 -- as the first one.

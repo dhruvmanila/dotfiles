@@ -5,6 +5,7 @@ local severity_map = {
   style = vim.diagnostic.severity.HINT,
 }
 
+---@type LinterConfig
 return {
   cmd = 'hadolint',
   args = { '--format', 'json' },

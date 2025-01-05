@@ -1,6 +1,7 @@
 return {
   {
     'klen/nvim-test',
+    enabled = false,
     keys = {
       { '<leader>ti', '<Cmd>TestInfo<CR>' },
       { '<leader>tn', '<Cmd>TestNearest<CR>' },

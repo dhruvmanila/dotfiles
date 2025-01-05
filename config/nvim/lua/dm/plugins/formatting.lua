@@ -44,7 +44,9 @@ return {
       formatters_by_ft = {
         json = { 'prettier' },
         lua = { 'stylua' },
-        python = { lsp_format = 'prefer' },
+        -- Run the ruff formatter first and then fix all auto-fixable issues.
+        -- Use this to organize imports by selecting the `I` rule
+        python = { lsp_format = 'first', 'ruff_fix' },
         rust = { lsp_format = 'prefer' },
         swift = { 'swift_format' },
         typescript = { 'prettier' },

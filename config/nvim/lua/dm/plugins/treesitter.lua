@@ -22,6 +22,7 @@ return {
           'gomod',
           'gowork',
           'hcl',
+          'ini',
           'java',
           'javascript',
           'json',

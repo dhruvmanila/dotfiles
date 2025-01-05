@@ -1,3 +1,4 @@
+---@type LinterConfig
 return {
   cmd = 'actionlint',
   args = { '-no-color', '-format', '{{json .}}' },

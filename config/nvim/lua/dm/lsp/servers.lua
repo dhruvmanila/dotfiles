@@ -1,7 +1,7 @@
 local M = vim.lsp.protocol.Methods
 
 -- LSP server configurations
----@type table<string, table|function>
+---@type table<string, lspconfig.Config>
 local servers = {
   -- https://github.com/bash-lsp/bash-language-server
   -- Install: `npm install --global bash-language-server`
@@ -70,7 +70,6 @@ local servers = {
         end
       end
       client.notify(M.workspace_didChangeConfiguration, { settings = client.config.settings })
-      return true
     end,
   },
 
@@ -83,22 +82,20 @@ local servers = {
   -- https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server
   -- Install: `npm install --global vscode-langservers-extracted`
   -- Settings: https://github.com/microsoft/vscode/tree/main/extensions/json-language-features/server#settings
-  jsonls = function()
-    return {
-      filetypes = { 'json', 'jsonc' },
-      settings = {
-        json = {
-          schemas = vim.list_extend({
-            {
-              description = 'Lua language server config file',
-              fileMatch = { '.luarc.json' },
-              url = 'https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json',
-            },
-          }, require('schemastore').json.schemas()),
-        },
+  jsonls = {
+    filetypes = { 'json', 'jsonc' },
+    settings = {
+      json = {
+        schemas = vim.list_extend({
+          {
+            description = 'Lua language server config file',
+            fileMatch = { '.luarc.json' },
+            url = 'https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json',
+          },
+        }, require('schemastore').json.schemas()),
       },
-    }
-  end,
+    },
+  },
 
   -- https://github.com/artempyanykh/marksman
   -- Install: Pre-built binaries from https://github.com/artempyanykh/marksman/releases
@@ -113,6 +110,13 @@ local servers = {
         disableOrganizeImports = true, -- Using Ruff's import organizer
       },
     },
+    before_init = function(_, config)
+      local venv_dir = vim.fs.joinpath(config.root_dir, '.venv')
+      if dm.path_exists(venv_dir) then
+        config.settings.python.venvPath = venv_dir
+        config.settings.python.pythonPath = vim.fs.joinpath(venv_dir, 'bin', 'python')
+      end
+    end,
   },
 
   -- https://github.com/astral-sh/ruff
@@ -131,11 +135,9 @@ local servers = {
   -- Install: `pipx install ruff-lsp`
   -- Settings: https://github.com/astral-sh/ruff-lsp#settings
   ruff_lsp = {
-    init_options = {
-      settings = {
-        path = { vim.fn.exepath 'ruff' },
-      },
-    },
+    before_init = function(_, config)
+      config.settings.path = { vim.fn.exepath 'ruff' }
+    end,
   },
 
   -- https://github.com/rust-lang/rust-analyzer
@@ -277,12 +279,17 @@ local servers = {
 -- Overrides for language server capabilities. These are applied to all servers.
 local capability_overrides = {
   workspace = {
-    -- PERF: didChangeWatchedFiles is too slow.
-    -- TODO: Remove this when https://github.com/neovim/neovim/issues/23291#issuecomment-1686709265 is fixed.
-    didChangeWatchedFiles = {
-      dynamicRegistration = false,
+    diagnostics = {
+      -- `./config/nvim/plugin/lsp/handlers.lua:131`
+      refreshSupport = true,
     },
   },
+  -- workspace = {
+  --   -- TODO: Remove this when https://github.com/neovim/neovim/issues/23291#issuecomment-1686709265 is fixed.
+  --   didChangeWatchedFiles = {
+  --     dynamicRegistration = false,
+  --   },
+  -- },
 }
 
 -- Returns the configuration for the given language server, `nil` if not found.
@@ -293,9 +300,6 @@ local function get(name)
   if not config then
     vim.notify_once('No LSP configuration found for ' .. name, vim.log.levels.WARN)
     return
-  end
-  if type(config) == 'function' then
-    config = config()
   end
   local cmp_nvim_capabilities = {}
   local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')

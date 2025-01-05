@@ -165,11 +165,5 @@ return {
     'github/copilot.vim',
     event = 'InsertEnter',
     dependencies = { 'nvim-cmp' },
-    config = function()
-      vim.g.copilot_filetypes = {
-        ['*'] = false,
-        ['markdown'] = true,
-      }
-    end,
   },
 }

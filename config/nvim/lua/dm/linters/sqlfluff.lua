@@ -1,3 +1,4 @@
+---@type LinterConfig
 return {
   cmd = 'sqlfluff',
   args = {

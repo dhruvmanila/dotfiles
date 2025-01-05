@@ -48,10 +48,9 @@ return {
           buffer = vim.api.nvim_win_get_buf(winnr),
           nowait = true,
         })
-        vim.wo[winnr].wrap = true
-        vim.wo[winnr].showbreak = 'NONE'
       end,
       max_width = math.floor(vim.o.columns * 0.4),
+      -- render = 'wrapped-default',
     },
   },
 }

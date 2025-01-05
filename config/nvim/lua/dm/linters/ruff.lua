@@ -15,6 +15,7 @@ local function code(value)
   return value
 end
 
+---@type LinterConfig
 return {
   cmd = 'ruff',
   args = {
