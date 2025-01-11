@@ -37,6 +37,37 @@ do
   end
 end
 
+---@param client vim.lsp.Client
+---@return function
+local function create_file_renamer(client)
+  return function()
+    local old_fname = vim.api.nvim_buf_get_name(0)
+    vim.ui.input({ prompt = 'New file name:' }, function(name)
+      if name == nil then
+        return
+      end
+      local new_fname = ('%s/%s'):format(vim.fs.dirname(old_fname), name)
+      local params = {
+        files = {
+          { oldUri = 'file://' .. old_fname, newUri = 'file://' .. new_fname },
+        },
+      }
+      ---@diagnostic disable-next-line: missing-parameter `bufnr` is optional
+      local response = client.request_sync(M.workspace_willRenameFiles, params, 1000)
+      if not response then
+        dm.log.warn('No response from %s client for %s', client.name, M.workspace_willRenameFiles)
+        return
+      end
+      if response.err then
+        dm.log.error('Failed to rename %s to %s', old_fname, new_fname)
+      else
+        vim.lsp.util.apply_workspace_edit(response.result, client.offset_encoding)
+        vim.lsp.util.rename(old_fname, new_fname)
+      end
+    end)
+  end
+end
+
 -- Setup the buffer local mappings for the LSP client.
 ---@param client vim.lsp.Client
 ---@param bufnr number
@@ -69,6 +100,10 @@ local function setup_mappings(client, bufnr)
       local is_enabled = lsp.inlay_hint.is_enabled()
       lsp.inlay_hint.enable(not is_enabled)
     end, { desc = 'lsp: toggle [i]nlay [H]int globally' })
+  end
+
+  if client.supports_method(M.workspace_willRenameFiles) then
+    vim.keymap.set('n', '<leader>rf', create_file_renamer(client), { desc = 'lsp: rename file' })
   end
 end
 
