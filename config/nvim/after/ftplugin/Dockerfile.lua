@@ -16,4 +16,5 @@ vim.api.nvim_buf_create_user_command(0, 'HadolintWiki', function(opts)
 end, {
   nargs = 1,
   complete = buf_hadolint_error_codes,
+  desc = 'Open Hadolint wiki for the given error code',
 })

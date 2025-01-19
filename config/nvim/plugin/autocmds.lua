@@ -116,29 +116,30 @@ do
     rust = '100',
   }
 
-  ---@param leaving boolean indicating whether we are leaving insert mode
-  local function set_colorcolumn(leaving)
-    if leaving or o.buftype == 'prompt' then
-      o.colorcolumn = ''
-    elseif o.colorcolumn == '' then
+  -- Set or unset the `colorcolumn`.
+  ---@param enable boolean
+  local function colorcolumn(enable)
+    if enable and o.buftype ~= 'prompt' then
       o.colorcolumn = ft_colorcolumn[o.filetype] or '80'
+    else
+      o.colorcolumn = ''
     end
   end
 
-  local id = nvim_create_augroup('dm__auto_colorcolumn', { clear = true })
+  local group = nvim_create_augroup('dm__auto_colorcolumn', { clear = true })
 
   nvim_create_autocmd('InsertEnter', {
-    group = id,
+    group = group,
     callback = function()
-      set_colorcolumn(false)
+      colorcolumn(true)
     end,
     desc = 'Set colorcolumn',
   })
 
   nvim_create_autocmd('InsertLeave', {
-    group = id,
+    group = group,
     callback = function()
-      set_colorcolumn(true)
+      colorcolumn(false)
     end,
     desc = 'Unset colorcolumn',
   })
@@ -146,42 +147,33 @@ end
 
 -- Set 'cursorline' {{{1
 
--- `'cursorline'` only in the active window and not in insert mode.
+-- Set 'cursorline':
+-- * In the active window
+-- * When not in insert mode
+-- * When switching to another OS window and in insert mode
 
 do
   -- When the cursor is on a long soft-wrapped line, and we enable 'cursorline',
   -- we want only the current *screen* line to be highlighted, not the whole
   -- *text* line.
-  local cursorlineopt_save = o.cursorlineopt
+  local saved_cursorlineopt = o.cursorlineopt
 
-  ---@param leaving boolean indicating whether we are leaving insert mode
-  local function set_cursorline(leaving)
-    if leaving and o.buftype ~= 'prompt' then
+  -- Set or unset the `cursorline`.
+  ---@param enable boolean
+  local function cursorline(enable)
+    if enable and o.buftype ~= 'prompt' then
       if o.filetype ~= 'dashboard' then
         o.cursorline = true
         o.cursorlineopt = 'screenline,number'
       end
     else
       o.cursorline = false
-      o.cursorlineopt = cursorlineopt_save
+      o.cursorlineopt = saved_cursorlineopt
     end
   end
 
-  local id = nvim_create_augroup('dm__auto_cursorline', { clear = true })
+  local group = nvim_create_augroup('dm__auto_cursorline', { clear = true })
 
-  -- Do NOT include `FocusGained`/`FocusLost` events {{{
-  --
-  -- When getting the focus back to Neovim while in terminal mode, the cursor
-  -- disppears as it is trying to set the cursorline. If we include `terminal`
-  -- filetype in `ignore_ft`, then the cursorline won't be set while scrolling
-  -- through the output in the terminal.
-  --
-  -- It's weird that Vim exhibits a different behavior in that it does not
-  -- *display* the cursorline while in terminal mode. The cursorline is set, but
-  -- it is not displayed.
-  --
-  -- https://github.com/neovim/neovim/issues/15355
-  -- }}}
   -- Why both `Buf*` and `Win*` events? {{{
   --
   -- Open a buffer (<file1>) and then open another buffer using `:split <file2>`.
@@ -200,17 +192,24 @@ do
   -- the window. If we set the option only on `BufLeave`, it won't affect the
   -- window. The same can be explained for `*Enter` events.
   -- }}}
-  nvim_create_autocmd({ 'BufEnter', 'InsertLeave', 'WinEnter' }, {
-    group = id,
-    callback = function()
-      set_cursorline(true)
+  nvim_create_autocmd({ 'BufEnter', 'InsertLeave', 'WinEnter', 'FocusLost' }, {
+    group = group,
+    callback = function(event)
+      if event.event == 'FocusLost' and api.nvim_get_mode().mode ~= 'i' then
+        return
+      end
+      cursorline(true)
     end,
     desc = 'Unset cursorline',
   })
-  nvim_create_autocmd({ 'BufLeave', 'InsertEnter', 'WinLeave' }, {
-    group = id,
-    callback = function()
-      set_cursorline(false)
+
+  nvim_create_autocmd({ 'BufLeave', 'InsertEnter', 'WinLeave', 'FocusGained' }, {
+    group = group,
+    callback = function(event)
+      if event.event == 'FocusGained' and api.nvim_get_mode().mode ~= 'i' then
+        return
+      end
+      cursorline(false)
     end,
     desc = 'Set cursorline',
   })
@@ -273,9 +272,12 @@ do
     end
   end
 
-  vim.api.nvim_create_user_command('ToggleAutoRelativeNumber', toggle_auto_relative_number, {})
+  vim.api.nvim_create_user_command('ToggleAutoRelativeNumber', toggle_auto_relative_number, {
+    desc = 'Toggle auto `relativenumber`',
+  })
 
-  -- toggle_auto_relative_number(false)
+  -- By default, this is ON.
+  toggle_auto_relative_number(false)
 end
 
 -- Terminal {{{1

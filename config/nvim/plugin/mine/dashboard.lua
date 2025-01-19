@@ -16,7 +16,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
       dashboard.open()
     end
   end,
-  desc = 'Open dashboard',
+  desc = 'Open the dashboard',
 })
 
 vim.api.nvim_create_autocmd('VimResized', {
@@ -33,5 +33,5 @@ vim.api.nvim_create_user_command('Dashboard', function()
   dashboard.open()
 end, {
   bar = true,
-  desc = 'Open dashboard',
+  desc = 'Open the dashboard',
 })

@@ -32,7 +32,7 @@ local function toggle_autocmds_logging()
   end
 end
 
-vim.api.nvim_create_user_command('LogAutocmds', toggle_autocmds_logging, {
+vim.api.nvim_create_user_command('ToggleAutocmdsLogging', toggle_autocmds_logging, {
   desc = 'Toggle autocmds logging',
 })
 

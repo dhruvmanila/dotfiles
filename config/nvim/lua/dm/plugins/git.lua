@@ -8,7 +8,7 @@ local function gitsigns_on_attach(bufnr)
       return ']c'
     else
       vim.schedule(function()
-        gitsigns.next_hunk { preview = true }
+        gitsigns.nav_hunk('next', { preview = true })
       end)
       return '<Ignore>'
     end
@@ -19,7 +19,7 @@ local function gitsigns_on_attach(bufnr)
       return '[c'
     else
       vim.schedule(function()
-        gitsigns.prev_hunk { preview = true }
+        gitsigns.nav_hunk('prev', { preview = true })
       end)
       return '<Ignore>'
     end

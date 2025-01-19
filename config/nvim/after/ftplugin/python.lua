@@ -130,6 +130,7 @@ vim.api.nvim_buf_create_user_command(0, 'PyDoc', function(opts)
   vim.bo.bufhidden = 'wipe'
 end, {
   nargs = '?',
+  desc = 'Provide documentation for the Python object at the cursor',
 })
 
 -- }}}

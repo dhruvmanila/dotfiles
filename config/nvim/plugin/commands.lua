@@ -1,4 +1,3 @@
-local fn = vim.fn
 local api = vim.api
 local nvim_create_user_command = api.nvim_create_user_command
 
@@ -58,7 +57,7 @@ end, {
       return fname:match(arglead)
     end, dap_functions)
   end,
-  desc = 'Custom command for all nvim-dap functions',
+  desc = 'Custom command for all `nvim-dap` functions',
 })
 
 -- LspClient {{{1
@@ -131,7 +130,7 @@ nvim_create_user_command('LspClient', function(opts)
 end, {
   nargs = '+',
   complete = client_completion,
-  desc = 'LspClient <client_name> [<client_field>]: Print information about the LSP client',
+  desc = 'Print information about the LSP client',
 })
 
 -- LspSetLogLevel {{{1
@@ -145,7 +144,7 @@ end, {
       return type(level) == 'string' and level:match(arglead)
     end, vim.tbl_keys(vim.lsp.log_levels))
   end,
-  desc = 'LSP: Set log level',
+  desc = 'Set the log level for the LSP',
 })
 
 -- Term / Vterm / Tterm {{{1
@@ -160,34 +159,4 @@ nvim_create_user_command('Vterm', 'vnew | wincmd L | term', {
 
 nvim_create_user_command('Tterm', 'tabnew | term', {
   desc = 'Open the terminal in a new tab',
-})
-
--- TrimLines {{{1
-
-nvim_create_user_command('TrimLines', function()
-  local pos = api.nvim_win_get_cursor(0)
-  local last_line = api.nvim_buf_line_count(0)
-  local last_non_blank_line = fn.prevnonblank(last_line)
-
-  if last_non_blank_line > 0 and last_line ~= last_non_blank_line then
-    api.nvim_buf_set_lines(0, last_non_blank_line, last_line, false, {})
-  end
-
-  api.nvim_win_set_cursor(0, pos)
-end, {
-  bar = true,
-  desc = 'Trim blank lines at the end of the current buffer, restoring the cursor position',
-})
-
--- TrimWhitespace {{{1
-
--- Purpose: Trim trailing whitespace for the current buffer, restoring the
--- cursor position. This command can be followed by another command.
-nvim_create_user_command('TrimWhitespace', function()
-  local pos = api.nvim_win_get_cursor(0)
-  vim.cmd [[keeppatterns keepjumps %s/\s\+$//e]]
-  api.nvim_win_set_cursor(0, pos)
-end, {
-  bar = true,
-  desc = 'Trim trailing whitespace for the current buffer, restoring the cursor position',
 })

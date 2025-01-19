@@ -61,7 +61,7 @@ return {
       end,
     }
 
-    vim.api.nvim_create_user_command('FormatToggle', function(args)
+    vim.api.nvim_create_user_command('ToggleAutoFormatting', function(args)
       if args.bang then
         -- FormatDisable! will disable formatting just for this buffer
         vim.b.disable_autoformat = not vim.b.disable_autoformat

@@ -155,7 +155,7 @@ end
 ---@return Logger
 local function create_logger(name)
   ---@type LoggingLevel
-  local log_level = M.levels.WARN
+  local log_level = M.levels.INFO
 
   ---@diagnostic disable-next-line: param-type-mismatch stdpath('log') always returns a `string`
   local outfile = vim.fs.joinpath(vim.fn.stdpath 'log', name .. '.log')
@@ -292,5 +292,9 @@ M.debug = root_logger.debug
 M.info = root_logger.info
 M.warn = root_logger.warn
 M.error = root_logger.error
+
+if vim.env.NVIM_LOG_LEVEL ~= nil then
+  M.set_level(vim.env.NVIM_LOG_LEVEL:upper())
+end
 
 return M

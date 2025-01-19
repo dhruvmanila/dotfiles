@@ -54,15 +54,17 @@ function vim.ui.select(items, opts, on_choice) end
 -- Rust analyzer type definitions for client side extensions.
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/crates/rust-analyzer/src/lsp/ext.rs
 
----@class CargoRunnableArgs
----@field cargoArgs string[]
----@field executableArgs string[]
----@field workspaceRoot string?
-
 ---@class CargoRunnable
 ---@field label string
 ---@field kind 'cargo'
 ---@field args CargoRunnableArgs
+
+---@class CargoRunnableArgs
+---@field cargoArgs string[]
+---@field executableArgs string[]
+---@field cwd string
+---@field workspaceRoot? string
+---@field environment? table<string, string>
 
 ---@class ExpandedMacro
 ---@field name string

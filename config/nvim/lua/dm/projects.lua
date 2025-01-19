@@ -130,6 +130,14 @@ local function setup_red_knot_playground()
   end
 end
 
+---@type table<string, function>
+local DIRECTORIES = {
+  ['~/work/astral/ruff'] = setup_ruff,
+  ['~/work/astral/ruff-test'] = setup_ruff,
+  ['~/playground/ruff'] = setup_ruff_playground,
+  ['~/playground/red_knot'] = setup_red_knot_playground,
+}
+
 -- Perform project specific setup.
 function M.setup()
   local project = {
@@ -137,14 +145,11 @@ function M.setup()
     name = vim.fs.basename(dm.CWD),
   }
 
-  if
-    vim.endswith(project.path, 'astral/ruff') or vim.endswith(project.path, 'astral/ruff-test')
-  then
-    setup_ruff()
-  elseif vim.endswith(project.path, 'playground/ruff') then
-    setup_ruff_playground()
-  elseif vim.endswith(project.path, 'playground/red_knot') then
-    setup_red_knot_playground()
+  for directory, setup_fn in pairs(DIRECTORIES) do
+    if vim.startswith(project.path, vim.fs.normalize(directory)) then
+      dm.log.info('Setting up project specific configuration under %s', directory)
+      setup_fn()
+    end
   end
 end
 

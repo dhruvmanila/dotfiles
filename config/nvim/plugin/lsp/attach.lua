@@ -37,6 +37,7 @@ do
   end
 end
 
+-- Create a function that will perform the file renaming operation using the given LSP `client`.
 ---@param client vim.lsp.Client
 ---@return function
 local function create_file_renamer(client)
@@ -61,8 +62,8 @@ local function create_file_renamer(client)
       if response.err then
         dm.log.error('Failed to rename %s to %s', old_fname, new_fname)
       else
-        vim.lsp.util.apply_workspace_edit(response.result, client.offset_encoding)
-        vim.lsp.util.rename(old_fname, new_fname)
+        lsp.util.apply_workspace_edit(response.result, client.offset_encoding)
+        lsp.util.rename(old_fname, new_fname)
       end
     end)
   end
@@ -103,7 +104,10 @@ local function setup_mappings(client, bufnr)
   end
 
   if client.supports_method(M.workspace_willRenameFiles) then
-    vim.keymap.set('n', '<leader>rf', create_file_renamer(client), { desc = 'lsp: rename file' })
+    vim.keymap.set('n', '<leader>rf', create_file_renamer(client), {
+      buffer = bufnr,
+      desc = 'lsp: [r]ename [f]ile',
+    })
   end
 end
 

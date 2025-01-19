@@ -48,7 +48,7 @@ function M.on_attach(_, bufnr)
         end)
         :totable()
     end,
-    desc = 'pyright: dump file debug info',
+    desc = 'Pyright: Dump debug info for the current buffer',
   })
 end
 

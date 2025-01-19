@@ -27,4 +27,5 @@ vim.api.nvim_buf_create_user_command(0, 'ShellCheckWiki', function(opts)
 end, {
   nargs = 1,
   complete = buf_shellcheck_error_codes,
+  desc = 'Open ShellCheck wiki for the given error code',
 })

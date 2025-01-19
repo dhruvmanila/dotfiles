@@ -60,9 +60,8 @@ end
 -- Keybindings:
 --    `q`: Quit the terminal window
 ---@param cmd string #Command to execute.
----@param args string[] #Arguments to pass to the command.
----@param cwd string #Current working directory for the command.
-local function execute_command(cmd, args, cwd)
+---@param opts table #Options for running the command.
+local function execute_command(cmd, opts)
   local original_winnr = vim.api.nvim_get_current_win()
   delete_bufnr(cache.run_single_bufnr)
   cache.run_single_bufnr = vim.api.nvim_create_buf(false, true)
@@ -71,9 +70,7 @@ local function execute_command(cmd, args, cwd)
     height = math.ceil(vim.o.lines * 0.35),
   })
 
-  local job_id = vim.fn.termopen(('%s %s'):format(cmd, table.concat(args, ' ')), {
-    cwd = cwd,
-  })
+  local job_id = vim.fn.termopen(cmd, opts)
   vim.api.nvim_set_current_win(original_winnr)
 
   vim.api.nvim_buf_set_keymap(cache.run_single_bufnr, 'n', 'q', '', {
@@ -106,18 +103,17 @@ end
 ---@param runnable CargoRunnable
 local function execute_runnable(runnable)
   if runnable.kind ~= 'cargo' then
-    logger.warn('Unrecognized runnable kind: %s', runnable)
+    logger.warn('Unrecognized runnable kind: %s', runnable.kind)
     return
   end
-  local args = vim
-    .iter({
-      runnable.args.cargoArgs,
-      '--',
-      runnable.args.executableArgs,
-    })
-    :flatten()
-    :totable()
-  execute_command('cargo', args, runnable.args.workspaceRoot)
+  local args = vim.iter(runnable.args.cargoArgs):totable() -- Should be a copy!
+  if #runnable.args.executableArgs > 0 then
+    vim.list_extend(args, vim.iter({ '--', runnable.args.executableArgs }):flatten():totable())
+  end
+  execute_command('cargo ' .. table.concat(args, ' '), {
+    cwd = runnable.args.workspaceRoot or '.',
+    env = runnable.args.environment,
+  })
 end
 
 -- Start the debugging session for the given runnable spec.

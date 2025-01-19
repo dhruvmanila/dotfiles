@@ -1,3 +1,4 @@
+-- This is being set in ~/neovim/share/nvim/runtime/ftplugin/lua.vim line 20
 vim.opt_local.formatoptions:remove 'o'
 vim.opt_local.includeexpr = 'v:lua.LuaInclude()'
 
