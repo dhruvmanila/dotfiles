@@ -12,8 +12,8 @@ build_neovim() {
 }
 
 build_nnn() {
-  make uninstall
-  make O_NERD=1 install
+  PREFIX="$HOME/.local" make uninstall
+  PREFIX="$HOME/.local" make O_NERD=1 install
 }
 
 function_exists() {

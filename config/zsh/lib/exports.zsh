@@ -27,6 +27,7 @@ export EDITOR='nvim'
 export VISUAL="$EDITOR"
 
 # Fzf configuration
+# TODO: Add light color scheme
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
 export FZF_DEFAULT_OPTS='
   --height=50%
@@ -97,14 +98,7 @@ export LC_ALL='en_US.UTF-8'
 # Use Neovim as the man pager.
 export MANPAGER="nvim +Man!"
 
-# Options {{{
-#                ┌ detail mode
-#                │┌ show directories in context color with NNN_FCOLORS set
-#                ││┌ open text files in $VISUAL/$EDITOR/vi
-#                │││┌ show hidden files (toggled with '.')
-#                ││││┌ use selection (no prompt)
-#                │││││┌ show user and group names in status bar
-#                ││││││ }}}
+# Default options to pass to the `nnn(1)` command.
 export NNN_OPTS="dDeHuU"
 export NNN_FIFO=/tmp/nnn.fifo
 

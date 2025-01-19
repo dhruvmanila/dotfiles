@@ -11,7 +11,7 @@ _dotbot_completions_filter() {
 
   if [[ "${cur:0:1}" == "-" ]]; then
     echo "$words"
-  
+
   else
     for word in $words; do
       [[ "${word:0:1}" != "-" ]] && result+=("$word")
@@ -29,19 +29,19 @@ _dotbot_completions() {
 
   case "$compline" in
     'upgrade'*)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --ref -h -r all brew cargo neovim nnn npm plugins python")" -- "$cur" )
+      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "$(_dotbot_completions_filter "--help --ref -h -r all brew cargo neovim nnn npm plugins python")" -- "$cur")
       ;;
 
     'sync'*)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--brew --cargo --help --node --python -b -c -h -n -p")" -- "$cur" )
+      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "$(_dotbot_completions_filter "--brew --cargo --help --node --python -b -c -h -n -p")" -- "$cur")
       ;;
 
     *)
-      while read -r; do COMPREPLY+=( "$REPLY" ); done < <( compgen -W "$(_dotbot_completions_filter "--help --version -h -v sync upgrade")" -- "$cur" )
+      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "$(_dotbot_completions_filter "--help --version -h -v sync upgrade")" -- "$cur")
       ;;
 
   esac
 } &&
-complete -F _dotbot_completions dotbot
+  complete -F _dotbot_completions dotbot
 
 # ex: filetype=sh

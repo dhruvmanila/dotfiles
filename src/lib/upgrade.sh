@@ -67,8 +67,10 @@ upgrade_nnn() {
     git fetch origin --tags --force
     latest_tag="$(git describe --abbrev=0)"
     if [[ "$current_tag" == "$latest_tag" ]]; then
-      echo "==> nnn is already up to date to $latest_tag"
-      return
+      seek_confirmation "nnn seems to be already up to date to $latest_tag"
+      if ! is_confirmed; then
+        return
+      fi
     fi
     git checkout "$latest_tag"
     build_nnn
