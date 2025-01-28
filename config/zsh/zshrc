@@ -433,6 +433,7 @@ source $DOTFILES/config/zsh/lib/exports.zsh
 autoload -Uz add-zsh-hook
 
 # Hook to activate/deactivate the Python virtual environment automagically.
+# TODO: nested virtual environments
 _python_auto_venv() {
   # We cannot use the `VIRTUAL_ENV` variable for this because it stays in the
   # environment after a shell reload.

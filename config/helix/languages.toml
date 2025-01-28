@@ -12,7 +12,6 @@ args = ["--stdio"]
 [language-server.ruff]
 command = "/Users/dhruv/work/astral/ruff/target/debug/ruff"
 args = ["server"]
-environment = { "RUFF_TRACE" = "messages" }
 
 [language-server.ruff.config.settings]
 logLevel = "debug"

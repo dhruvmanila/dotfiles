@@ -518,12 +518,12 @@ dotbot_sync_parse_requirements() {
     deps['npm']="$(command -v npm | head -n1)"
   fi
 
-  if ! command -v pipx > /dev/null 2>&1; then
-    printf "missing dependency: pipx\n" >&2
-    printf "%s\n\n" "install with $(green python -m pip install pipx)" >&2
+  if ! command -v uv > /dev/null 2>&1; then
+    printf "missing dependency: uv\n" >&2
+    printf "%s\n\n" "visit $(blue_underlined https://docs.astral.sh/uv/getting-started/installation/) to install" >&2
     missing_deps=1
   else
-    deps['pipx']="$(command -v pipx | head -n1)"
+    deps['uv']="$(command -v uv | head -n1)"
   fi
 
   if [[ -n $missing_deps ]]; then

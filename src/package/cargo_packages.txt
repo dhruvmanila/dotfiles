@@ -3,7 +3,4 @@ cargo-instruments
 counts
 critcmp
 flamegraph
-flamegraph
-lalrpop
-rustlings
 samply

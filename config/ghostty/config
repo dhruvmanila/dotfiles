@@ -1,7 +1,7 @@
 # 👻
 
-# Let's stay on stable for a while
-auto-update-channel = stable
+# tip is the nightly version
+auto-update-channel = tip
 
 # Font
 font-family = JetBrains Mono
@@ -30,7 +30,7 @@ window-width = 1000
 # Keybindings
 # N.B. super is an alias to the command key
 keybind = super+shift+r=reload_config
-keybind = ctrl+shift+q=toggle_quick_terminal
+keybind = global:ctrl+shift+q=toggle_quick_terminal
 
 keybind = ctrl+shift+t=new_tab
 keybind = ctrl+shift+.=move_tab:+1
@@ -42,7 +42,7 @@ keybind = ctrl+shift+k=goto_split:top
 keybind = ctrl+shift+l=goto_split:right
 keybind = ctrl+shift+j=goto_split:bottom
 keybind = ctrl+shift+h=goto_split:left
-keybind = ctrl+shift+z=toggle_split_zoom
+keybind = ctrl+shift+space=toggle_split_zoom
 
 keybind = ctrl+shift+p=jump_to_prompt:-1
 keybind = ctrl+shift+n=jump_to_prompt:+1

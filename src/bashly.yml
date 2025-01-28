@@ -12,7 +12,7 @@ commands:
       cargo: visit $(blue_underlined https://rustup.rs/) to install
       jq: install with $(green brew install jq)
       npm: install with $(green brew install node)
-      pipx: install with $(green python -m pip install pipx)
+      uv: visit $(blue_underlined https://docs.astral.sh/uv/getting-started/installation/) to install
 
     flags:
       - long: --brew
