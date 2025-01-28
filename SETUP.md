@@ -17,25 +17,41 @@ Install Homebrew as mentioned on the [official website](https://brew.sh/):
 
 Setup SSH keys for GitHub:
 
-```sh
-# Generate a new SSH key
-ssh-keygen -f ~/.ssh/github -t ed25519 -C "<email>"
+1. Generate a new SSH key
 
-# Start the ssh-agent in the background
-eval "$(ssh-agent -s)"
+    ```sh
+    ssh-keygen -f ~/.ssh/github -t ed25519 -C "<email>"
+    ```
 
-# Add your SSH private key to the ssh-agent
-ssh-add --apple-use-keychain ~/.ssh/github
+2. Start the ssh-agent in the background
 
-# Copy the SSH public key to the clipboard
-pbcopy < ~/.ssh/github.pub
+    ```sh
+    eval "$(ssh-agent -s)"
+    ```
 
-# Add the SSH public key to your GitHub account
-open "https://github.com/settings/ssh"
+3. Add your SSH private key to the ssh-agent
 
-# Verify that the SSH key is added successfully
-ssh -T git@github.com
-```
+    ```sh
+    ssh-add --apple-use-keychain ~/.ssh/github
+    ```
+
+4. Copy the SSH public key to the clipboard
+
+    ```sh
+    pbcopy < ~/.ssh/github.pub
+    ```
+
+5. Add the SSH public key to your GitHub account
+
+    ```sh
+    open "https://github.com/settings/ssh"
+    ```
+
+6. Verify that the SSH key is added successfully
+
+    ```sh
+    ssh -T git@github.com
+    ```
 
 Clone the `dotfiles` repository under the `~/dotfiles` directory:
 
@@ -45,17 +61,27 @@ git clone git@github.com:dhruvmanila/dotfiles.git
 
 Install the preferred packages mentioned in the [`Brewfile`](./src/package/Brewfile):
 
-```sh
-brew tap homebrew/bundle
+1. Install the bundler:
 
-#  prints output from commands as they are run ┐
-#                                              │
-HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install -v --no-lock --file ~/dotfiles/src/package/Brewfile
-#                                                  │
-#         don't output a `Brewfile.lock.json` file ┘
+    ```sh
+    brew tap homebrew/bundle
+    ```
 
-brew cleanup
-```
+2. Install the packages:
+
+    ```sh
+    #  prints output from commands as they are run ┐
+    #                                              │
+    HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install -v --no-lock --file ~/dotfiles/src/package/Brewfile
+    #                                                  │
+    #         don't output a `Brewfile.lock.json` file ┘
+    ```
+
+3. Cleanup the Homebrew installation:
+
+    ```sh
+    brew cleanup
+    ```
 
 > [!NOTE]
 >
@@ -80,10 +106,12 @@ Create the symlinks between the files in the `dotfiles` repository and the home 
 > You can force it to create the symlinks without prompting by passing the `--force` flag
 > but that's not recommended.
 
-Setup the Python development environment using the [`pyenv`](./bin/pyenv) script. Refer to `pyenv --help` for more information.
+Setup the Python development environment using [`uv`](https://docs.astral.sh/uv/getting-started/installation/):
+* Install Python versions using `uv python install ...`
+* Install global Python packages using `uv tool install ...`
 
 Install the global packages for multiple programming languages:
-* For Python, use [`pipx`](https://pipxproject.github.io/pipx/) with the [`requirements.txt`](./src/package/requirements.txt) file.
+* For Python, use [`uv`](https://docs.astral.sh/uv/) with the [`requirements.txt`](./src/package/requirements.txt) file.
 * For Node.js, use [`npm`](https://www.npmjs.com/) with the [`node_modules.txt`](./src/package/node_modules.txt) file.
 * For Rust, use [`cargo`](https://doc.rust-lang.org/cargo/) with the [`cargo_packages.txt`](./src/package/cargo_packages.txt) file.
 
@@ -94,28 +122,44 @@ Build the latest stable Neovim version:
 > Make sure the [build prerequisites](https://github.com/neovim/neovim/blob/master/BUILD.md#build-prerequisites)
 > are installed before building Neovim from source.
 
-```sh
-mkdir ~/git && cd ~/git
-git clone git@github.com:neovim/neovim.git && cd ~/git/neovim
+1. Clone the repository:
 
-# Install the latest stable version
-git checkout stable
+    ```sh
+    mkdir ~/git && cd ~/git
+    git clone git@github.com:neovim/neovim.git && cd ~/git/neovim
+    ```
 
-# Build Neovim
-make CMAKE_BUILD_TYPE="Release" CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=${HOME}/neovim" install
-```
+2. Checkout the `stable` branch (or `nightly`):
+
+    ```sh
+    git checkout stable
+    ```
+
+3. Build Neovim:
+
+    ```sh
+    make CMAKE_BUILD_TYPE="Release" CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=${HOME}/neovim" install
+    ```
 
 Build [`nnn`](https://github.com/jarun/nnn) terminal file manager with nerd-font icons:
 
-```sh
-mkdir ~/git && cd ~/git
-git clone git@github.com:jarun/nnn.git && cd ~/git/nnn
+1. Clone the repository:
 
-# Refer to https://github.com/jarun/nnn to get the latest stable version
-git checkout <latest>
+    ```sh
+    mkdir ~/git && cd ~/git
+    git clone git@github.com:jarun/nnn.git && cd ~/git/nnn
+    ```
 
-# Install with nerd-font icons
-PREFIX=~/.local make O_NERD=1 install
-```
+2. Checkout the [latest stable version](https://github.com/jarun/nnn/releases/latest):
+
+    ```sh
+    git checkout <latest>
+    ```
+
+3. Install with nerd-font icons
+
+    ```sh
+    PREFIX=~/.local make O_NERD=1 install
+    ```
 
 Setup MacOS [`dock`](./bin/dock) applications and [update the preferences](./src/mac/osxdefaults).
