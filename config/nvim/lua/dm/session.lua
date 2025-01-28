@@ -5,9 +5,6 @@ local api = vim.api
 
 local dashboard = require 'dm.dashboard'
 
--- Notification title for the plugin
-local TITLE = 'Session Manager'
-
 -- Separator used to separate the session name and the branch name.
 local BRANCH_SEPARATOR = '@@'
 
@@ -29,6 +26,12 @@ do
   if not info or info.type ~= 'directory' then
     vim.uv.fs_mkdir(SESSION_DIR, tonumber('755', 8))
   end
+end
+
+---@param msg string|string[]
+---@param level? number|string
+local function notify(msg, level)
+  dm.notify('Session Manager', msg, level)
 end
 
 -- Given a Yes/No question, return `true` if the user answered Yes, `false`
@@ -187,7 +190,7 @@ end
 ---@return boolean # `true` if the session was deleted, `false` otherwise.
 local function session_delete(session)
   if not session:exists() then
-    dm.notify(TITLE, 'No such session: ' .. session.name, vim.log.levels.WARN)
+    notify('No such session: ' .. session.name, vim.log.levels.WARN)
   elseif confirm('Remove ' .. session.name .. '?') then
     local ok, err = vim.uv.fs_unlink(session.path)
     if ok then
@@ -195,13 +198,13 @@ local function session_delete(session)
         active_session = nil
         vim.v.this_session = ''
       end
-      dm.notify(TITLE, 'Deleted session ' .. session.name)
+      notify('Deleted session ' .. session.name)
       return true
     else
       logger.error('Failed to delete session (%s): %s', session.name, err)
     end
   else
-    dm.notify(TITLE, 'Deletion aborted')
+    notify 'Deletion aborted'
   end
   return false
 end
@@ -229,7 +232,7 @@ function M.clean()
     end
   end
   if #dangling_sessions == 0 then
-    dm.notify(TITLE, 'No dangling sessions to delete')
+    notify 'No dangling sessions to delete'
     return
   end
   local prompt = ('Delete the following %d dangling sessions?\n  %s'):format(
@@ -246,16 +249,16 @@ function M.clean()
         logger.error('Failed to delete session (%s): %s', session.name, err)
       end
     end
-    dm.notify(TITLE, ('Deleted %d dangling sessions'):format(deleted))
+    notify(('Deleted %d dangling sessions'):format(deleted))
   else
-    dm.notify(TITLE, 'Deletion aborted')
+    notify 'Deletion aborted'
   end
 end
 
 -- Close the current session if it exists and open the Dashboard.
 function M.close()
   if active_session == nil then
-    dm.notify(TITLE, 'No active session to close')
+    notify 'No active session to close'
     return
   end
   M.stop()
@@ -308,12 +311,12 @@ end
 function M.load(session)
   session = session or Session:new()
   if not session:exists() then
-    dm.notify(TITLE, 'No such session: ' .. session.name, vim.log.levels.WARN)
+    notify('No such session: ' .. session.name, vim.log.levels.WARN)
     return
   end
   if active_session ~= nil then
     if session.path == active_session.path then
-      dm.notify(TITLE, 'Session is already active')
+      notify 'Session is already active'
       return
     end
     -- Save the current session first.
@@ -339,7 +342,7 @@ function M.save()
   local session = active_session or Session:new()
   M.write(session.path)
   active_session = session
-  dm.notify(TITLE, 'Session saved for ' .. session.name)
+  notify('Session saved for ' .. session.name)
 end
 
 -- Using `vim.ui.select`, prompt the user to select a session to load.
@@ -377,13 +380,13 @@ end
 -- Stop the active session, saving it first.
 function M.stop()
   if active_session == nil then
-    dm.notify(TITLE, 'No active session to stop')
+    notify 'No active session to stop'
     return
   end
   M.write(active_session.path)
   active_session = nil
   vim.v.this_session = ''
-  dm.notify(TITLE, 'Active session stopped')
+  notify 'Active session stopped'
 end
 
 -- Make/save the current session to the given path.

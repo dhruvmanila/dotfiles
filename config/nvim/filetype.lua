@@ -1,6 +1,5 @@
 vim.filetype.add {
   extension = {
-    json = 'jsonc',
     just = 'just',
     lalrpop = 'lalrpop',
     mdx = 'markdown',
@@ -11,12 +10,14 @@ vim.filetype.add {
     Brewfile = 'ruby',
     Justfile = 'just',
     Vagrantfile = 'ruby',
+    ['uv.lock'] = 'toml',
     justfile = 'just',
   },
 
   pattern = {
-    ['.*requirements.*%.txt'] = 'requirements',
-    ['.*requirements.*%.in'] = 'requirements',
+    ['.*/%.?vscode/settings.json'] = 'jsonc',
     ['.*/work/astral/.*%.snap'] = 'markdown',
+    ['.*requirements.*%.in'] = 'requirements',
+    ['.*requirements.*%.txt'] = 'requirements',
   },
 }

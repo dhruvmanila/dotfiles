@@ -32,11 +32,10 @@ local function gitsigns_on_attach(bufnr)
     -- Actions
     { { 'n', 'v' }, '<leader>hs', gitsigns.stage_hunk, desc = 'stage hunk' },
     { { 'n', 'v' }, '<leader>hr', gitsigns.reset_hunk, desc = 'reset hunk' },
-    { 'n', '<leader>hu', gitsigns.undo_stage_hunk, desc = 'undo the last stage hunk' },
     { 'n', '<leader>hR', gitsigns.reset_buffer, desc = 'reset buffer' },
     { 'n', '<leader>hp', gitsigns.preview_hunk, desc = 'preview hunk' },
     { 'n', '<leader>hb', gitsigns.toggle_current_line_blame, 'toggle current line blame' },
-    { 'n', '<leader>hd', gitsigns.toggle_deleted, 'toggle deleted lines' },
+    { 'n', '<leader>hd', gitsigns.preview_hunk_inline, 'toggle deleted lines' },
     -- Text object
     { { 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>' },
   }
@@ -79,13 +78,10 @@ return {
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
-      numhl = false,
-      linehl = false,
       preview_config = {
         border = dm.border,
-        row = 1,
-        col = 1,
       },
+      debug_mode = dm.log.should_log(dm.log.levels.DEBUG),
       on_attach = gitsigns_on_attach,
     },
   },

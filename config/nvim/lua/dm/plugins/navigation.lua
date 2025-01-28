@@ -51,13 +51,22 @@ return {
     },
     keymaps = {
       ['q'] = 'actions.close',
-      ['h'] = 'actions.parent',
-      ['l'] = 'actions.select',
+      -- ['h'] = 'actions.parent',
+      -- ['l'] = 'actions.select',
       ['<C-h>'] = false, -- Keep this for window switching
       ['<C-l>'] = false, -- Keep this for window switching
-      ['<C-s>'] = select_close { horizontal = true },
-      ['<C-v>'] = select_close { vertical = true },
-      ['<C-t>'] = select_close { tab = true },
+      ['<C-s>'] = {
+        callback = select_close { horizontal = true },
+        desc = 'Open the selection in a horizontal split and close the oil buffer',
+      },
+      ['<C-v>'] = {
+        callback = select_close { vertical = true },
+        desc = 'Open the selection in a vertical split and close the oil buffer',
+      },
+      ['<C-t>'] = {
+        callback = select_close { tab = true },
+        desc = 'Open the selection in a new tab and close the oil buffer',
+      },
       ['<C-f>'] = 'actions.preview_scroll_down',
       ['<C-b>'] = 'actions.preview_scroll_up',
       ['~'] = {
@@ -74,15 +83,25 @@ return {
       },
       ['gx'] = {
         callback = function()
-          vim.ui.open(require('oil').get_current_dir())
+          local current_dir = require('oil').get_current_dir()
+          if current_dir then
+            vim.ui.open(current_dir)
+          else
+            dm.log.warn 'Unable to get the current directory'
+          end
         end,
         desc = 'Open the current directory in finder',
       },
       ['gr'] = {
         callback = function()
           local oil = require 'oil'
-          local gitdir = vim.fs.root(oil.get_current_dir(), '.git')
-          if gitdir == nil then
+          local current_dir = oil.get_current_dir()
+          if not current_dir then
+            dm.log.warn 'Unable to get the current directory'
+            return
+          end
+          local gitdir = vim.fs.root(current_dir, '.git')
+          if not gitdir then
             return
           end
           oil.open(gitdir)

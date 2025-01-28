@@ -2,6 +2,7 @@ local M = vim.lsp.protocol.Methods
 
 -- LSP server configurations
 ---@type table<string, lspconfig.Config>
+---@diagnostic disable: missing-fields 'cmd' is provided by default
 local servers = {
   -- https://github.com/bash-lsp/bash-language-server
   -- Install: `npm install --global bash-language-server`
@@ -62,6 +63,7 @@ local servers = {
         path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
         upward = true,
         type = 'file',
+        stop = dm.OS_HOMEDIR,
       })[1]
       for line in io.lines(modfile) do
         if vim.startswith(line, 'module') then
@@ -111,6 +113,7 @@ local servers = {
       },
     },
     before_init = function(_, config)
+      -- We could use `vim.fs.find` if the need arises.
       local venv_dir = vim.fs.joinpath(config.root_dir, '.venv')
       if dm.path_exists(venv_dir) then
         config.settings.python.venvPath = venv_dir
@@ -122,7 +125,6 @@ local servers = {
   -- https://github.com/astral-sh/ruff
   -- Install: `pipx install ruff`
   ruff = {
-    trace = 'messages',
     init_options = {
       settings = {
         logLevel = 'debug',

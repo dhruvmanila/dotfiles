@@ -8,7 +8,7 @@ local function location_handler(err, result, ctx)
     dm.notify(title, tostring(err), vim.log.levels.ERROR)
     return
   end
-  if result == nil or vim.tbl_isempty(result) then
+  if not result or vim.tbl_isempty(result) then
     dm.notify(title, 'No results found')
     return
   end
@@ -18,7 +18,6 @@ local function location_handler(err, result, ctx)
 
   local client = vim.lsp.get_client_by_id(ctx.client_id)
   if not client then
-    dm.notify(title, 'No client found', vim.log.levels.WARN)
     return
   end
 
@@ -60,8 +59,7 @@ do
       return
     end
     local client = vim.lsp.get_client_by_id(ctx.client_id)
-    if client == nil then
-      dm.notify(title, 'No client found', vim.log.levels.WARN)
+    if not client then
       return
     end
     dm.notify(('Server message (%s)'):format(client.name), result.message, levels[result.type])
@@ -75,8 +73,7 @@ do
   -- separate log file using the custom logging module.
   vim.lsp.handlers[M.window_logMessage] = function(_, result, ctx)
     local client = vim.lsp.get_client_by_id(ctx.client_id)
-    if client == nil then
-      dm.notify('LSP log message', 'No client found', vim.log.levels.WARN)
+    if not client then
       return
     end
     local logger = dm.log.get_logger('lsp.' .. client.name)

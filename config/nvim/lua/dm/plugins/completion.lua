@@ -135,7 +135,7 @@ return {
         },
         -- By default, the order of the sources matter. That gives them priority.
         sources = {
-          { name = 'nvim_lsp', max_item_count = 20 },
+          { name = 'nvim_lsp' },
           { name = 'lazydev', group_index = 0 },
           { name = 'path' },
           { name = 'luasnip' },

@@ -17,9 +17,9 @@ end
 -- The callback is invoked immediately for the first time and then every `interval` ms.
 ---@param interval number in milliseconds
 ---@param callback function
----@return uv_timer_t #timer handle (uv_timer_t)
+---@return uv.uv_timer_t #timer handle (uv_timer_t)
 function M.set_interval_callback(interval, callback)
-  local timer = vim.uv.new_timer()
+  local timer = assert(vim.uv.new_timer())
   timer:start(0, interval, function()
     callback()
   end)

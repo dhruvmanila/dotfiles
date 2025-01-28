@@ -33,7 +33,7 @@ local function check()
   )
 end
 
----@type uv_timer_t?
+---@type uv.uv_timer_t?
 local timer
 
 ---@param interval? number in milliseconds

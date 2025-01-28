@@ -214,6 +214,4 @@ local function open()
   setup_mappings()
 end
 
--- }}}1
-
 return { open = open }

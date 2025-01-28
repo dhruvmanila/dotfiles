@@ -11,9 +11,9 @@ local function format_toggle_notify(scope)
   local msg = 'Autoformatting turned '
   if scope == Scope.BUFFER then
     if vim.b.disable_autoformat then
-      msg = msg .. 'OFF for this buffer'
+      msg = msg .. 'OFF for the current buffer'
     else
-      msg = msg .. 'ON for this buffer'
+      msg = msg .. 'ON for the current buffer'
     end
   elseif scope == Scope.GLOBAL then
     if vim.g.disable_autoformat then
@@ -22,13 +22,13 @@ local function format_toggle_notify(scope)
       msg = msg .. 'ON'
     end
   end
-  dm.notify('FormatToggle', msg)
+  dm.notify('Formatting', msg)
 end
 
 return {
   'stevearc/conform.nvim',
   event = { 'BufWritePre' },
-  cmd = { 'ConformInfo', 'FormatToggle' },
+  cmd = { 'ConformInfo', 'ToggleAutoFormatting' },
   keys = {
     {
       ';f',
@@ -59,11 +59,12 @@ return {
         end
         return {}
       end,
+      log_level = dm.log.get_level(),
     }
 
     vim.api.nvim_create_user_command('ToggleAutoFormatting', function(args)
       if args.bang then
-        -- FormatDisable! will disable formatting just for this buffer
+        -- ToggleAutoFormatting! will disable formatting just for this buffer
         vim.b.disable_autoformat = not vim.b.disable_autoformat
         format_toggle_notify(Scope.BUFFER)
       else

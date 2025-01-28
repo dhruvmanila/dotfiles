@@ -140,7 +140,7 @@ dap.configurations.c = {
     program = function()
       -- Build the `aoc` executable with debug symbols.
       vim.cmd '!make --always-make DEBUG=1'
-      return vim.uv.cwd() .. '/aoc'
+      return dm.CWD .. '/aoc'
     end,
     cwd = '${workspaceFolder}',
     args = get_advent_of_code_args,
@@ -196,8 +196,7 @@ dap.configurations.go = {
 -- Helper function to return the program value for Rust.
 ---@return string|thread
 local function rust_program()
-  local cwd = vim.uv.cwd() or '.'
-  local debugdir = cwd .. '/target/debug'
+  local debugdir = dm.CWD .. '/target/debug'
   ---@type { name: string, path: string }[]
   local executables = {}
   for name, itemtype in vim.fs.dir(debugdir) do

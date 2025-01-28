@@ -35,6 +35,7 @@ return {
       path = vim.fs.dirname(vim.api.nvim_buf_get_name(bufnr)),
       upward = true,
       type = 'file',
+      stop = dm.OS_HOMEDIR,
     })[1]
     return config_path ~= nil
   end,

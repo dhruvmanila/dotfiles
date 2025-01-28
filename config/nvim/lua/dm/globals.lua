@@ -118,7 +118,7 @@ function dm.is_executable(cmd)
   return vim.fn.executable(cmd) > 0
 end
 
--- Return `true` if the given path exists, `false` otherwise
+-- Return `true` if the given path exists.
 ---@param path string
 ---@return boolean
 function dm.path_exists(path)

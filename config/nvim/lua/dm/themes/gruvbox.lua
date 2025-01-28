@@ -169,7 +169,7 @@ function M.load(background)
   highlight('PmenuThumb', { bg = palette.grey0 })
 
   -- Floating window and border highlights according to the global border style.
-  if dm.config.border_style == 'edge' then
+  if vim.tbl_contains({ 'edge', 'solid' }, dm.config.border_style) then
     highlight('NormalFloat', { bg = palette.bg_float })
     highlight('FloatBorder', { fg = palette.grey1, bg = palette.bg_float })
   else

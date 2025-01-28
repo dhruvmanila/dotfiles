@@ -27,111 +27,125 @@ end, {
   desc = 'Delete all but the current buffer (ignores terminal buffers)',
 })
 
--- Dap {{{1
-
-local dap_functions = {
-  'clear_breakpoints',
-  'close',
-  'continue',
-  'disconnect',
-  'reverse_continue',
-  'run_last',
-  'run_to_cursor',
-  'set_breakpoint',
-  'set_exception_breakpoints',
-  'step_back',
-  'step_into',
-  'step_out',
-  'step_over',
-  'terminate',
-  'toggle_breakpoint',
-}
-
-nvim_create_user_command('Dap', function(opts)
-  require('dap')[opts.args]()
-end, {
-  nargs = 1,
-  complete = function(arglead)
-    arglead = arglead and ('.*' .. arglead .. '.*')
-    return vim.tbl_filter(function(fname)
-      return fname:match(arglead)
-    end, dap_functions)
-  end,
-  desc = 'Custom command for all `nvim-dap` functions',
-})
-
 -- LspClient {{{1
 
--- Available fields for LSP client object.
--- See: `:help vim.lsp.client`
-local lsp_client_fields = {
-  'attached_buffers',
-  'commands',
-  'config',
-  'dynamic_capabilities',
-  'handlers',
-  'id',
-  'initialized',
-  'messages',
-  'name',
-  'offset_encoding',
-  'progress',
-  'requests',
-  'rpc',
-  'server_capabilities',
-  'supports_method',
-  'workspace_folders',
-}
+do
+  -- Available fields for LSP client object.
+  -- See: `:help vim.lsp.client`
+  local lsp_client_fields = {
+    'attached_buffers',
+    'commands',
+    'config',
+    'dynamic_capabilities',
+    'handlers',
+    'id',
+    'initialized',
+    'messages',
+    'name',
+    'offset_encoding',
+    'progress',
+    'requests',
+    'rpc',
+    'server_capabilities',
+    'supports_method',
+    'workspace_folders',
+  }
 
--- Completion function for LSP clients.
----@param arglead string
----@param line string
----@return string[] #Client info in the format of `client_id (client_name)`
-local client_completion = function(arglead, line)
-  if arglead ~= '' then
-    arglead = '.*' .. arglead .. '.*'
+  -- Completion function for LSP clients.
+  ---@param arglead string
+  ---@param line string
+  ---@return string[] #Client info in the format of `client_id (client_name)`
+  local client_completion = function(arglead, line)
+    if arglead ~= '' then
+      arglead = '.*' .. arglead .. '.*'
+    end
+
+    -- `trimempty` shouldn't be used here to get the actual number of arguments
+    -- passed to the command. It'll be an empty string for the argument position
+    -- that is being completed or `arglead`.
+    local args = vim.split(line, '%s+')
+    local count = #args - 2
+
+    if count == 0 then
+      -- Autocomplete client name
+      return vim.tbl_map(
+        function(client)
+          return client.name
+        end,
+        vim.tbl_filter(function(client)
+          return client.name:match(arglead)
+        end, vim.lsp.get_clients())
+      )
+    elseif count == 1 then
+      -- Autocomplete client object fields
+      return vim.tbl_filter(function(field)
+        return field:match(arglead)
+      end, lsp_client_fields)
+    end
+
+    -- No completion for other arguments
+    return {}
   end
 
-  -- `trimempty` shouldn't be used here to get the actual number of arguments
-  -- passed to the command. It'll be an empty string for the argument position
-  -- that is being completed or `arglead`.
-  local args = vim.split(line, '%s+')
-  local count = #args - 2
-
-  if count == 0 then
-    -- Autocomplete client name
-    return vim.tbl_map(
-      function(client)
-        return client.name
-      end,
-      vim.tbl_filter(function(client)
-        return client.name:match(arglead)
-      end, vim.lsp.get_clients())
-    )
-  elseif count == 1 then
-    -- Autocomplete client object fields
-    return vim.tbl_filter(function(field)
-      return field:match(arglead)
-    end, lsp_client_fields)
-  end
-
-  -- No completion for other arguments
-  return {}
+  nvim_create_user_command('LspClient', function(opts)
+    local _, info = next(vim.lsp.get_clients {
+      name = opts.fargs[1],
+    })
+    if opts.fargs[2] ~= nil then
+      info = info[opts.fargs[2]]
+    end
+    vim.print(info)
+  end, {
+    nargs = '+',
+    complete = client_completion,
+    desc = 'Print information about the LSP client',
+  })
 end
 
-nvim_create_user_command('LspClient', function(opts)
-  local _, info = next(vim.lsp.get_clients {
-    name = opts.fargs[1],
+-- LspLog {{{1
+
+do
+  local logdir = vim.fn.stdpath 'log'
+  ---@cast logdir string
+
+  nvim_create_user_command('LspLog', function(opts)
+    local current = vim.api.nvim_get_current_tabpage()
+    if opts.args ~= '' then
+      vim.cmd.tabnew(vim.fs.joinpath(logdir, ('lsp.%s.log'):format(opts.args)))
+    else
+      vim.cmd.tabnew(vim.lsp.get_log_path())
+    end
+    vim.keymap.set('n', 'q', function()
+      vim.cmd.tabclose()
+      if vim.api.nvim_tabpage_is_valid(current) then
+        vim.api.nvim_set_current_tabpage(current)
+      end
+    end, { buffer = 0, nowait = true })
+  end, {
+    nargs = '?',
+    desc = 'Opens the LSP client log file, or Nvim LSP log file if no client name is provided',
+    complete = function(arglead)
+      local client_names = {}
+      for name, type in vim.fs.dir(logdir) do
+        if type == 'file' then
+          local match = name:match '^lsp%.([^%.]+)%.log$'
+          if match then
+            table.insert(client_names, match)
+          end
+        end
+      end
+
+      if arglead == '' then
+        return client_names
+      else
+        arglead = '.*' .. arglead .. '.*'
+        return vim.tbl_filter(function(client_name)
+          return client_name:match(arglead)
+        end, client_names)
+      end
+    end,
   })
-  if opts.fargs[2] ~= nil then
-    info = info[opts.fargs[2]]
-  end
-  vim.print(info)
-end, {
-  nargs = '+',
-  complete = client_completion,
-  desc = 'Print information about the LSP client',
-})
+end
 
 -- LspSetLogLevel {{{1
 

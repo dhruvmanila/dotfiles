@@ -3,7 +3,16 @@ return {
     'neovim/nvim-lspconfig',
     dependencies = {
       'b0o/SchemaStore.nvim',
-      { 'folke/lazydev.nvim', ft = 'lua', config = true },
+      {
+        'folke/lazydev.nvim',
+        ft = 'lua',
+        opts = {
+          library = {
+            -- Load luvit types for `vim.uv`
+            { path = '${3rd}/luv/library' },
+          },
+        },
+      },
     },
     config = function()
       local lspconfig = require 'lspconfig'

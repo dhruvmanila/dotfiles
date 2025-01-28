@@ -19,7 +19,7 @@ vim.o.scrolloff = 0
 vim.keymap.set('n', 'q', '<Cmd>qa<CR>', { noremap = true })
 
 do
-  local timer = vim.uv.new_timer()
+  local timer = assert(vim.uv.new_timer())
   local timer_stopped = false
 
   local function stop_timer()

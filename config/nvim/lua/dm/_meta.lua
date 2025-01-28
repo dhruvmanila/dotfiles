@@ -7,6 +7,10 @@ error 'Cannot require a meta file'
 ---@param on_choice fun(item: T|nil, idx: integer|nil)
 function vim.ui.select(items, opts, on_choice) end
 
+---@overload fun(cmd: string[], on_exit?: fun(result: vim.SystemCompleted))
+---@overload fun(cmd: string[], opts?: vim.SystemOpts, on_exit?: fun(result: vim.SystemCompleted))
+function vim.system(cmd, opts, on_exit) end
+
 ---@class DashboardEntry
 ---@field key string keymap to trigger the `command`
 ---@field description string|fun():string oneline command description
@@ -28,7 +32,7 @@ function vim.ui.select(items, opts, on_choice) end
 ---@field parser fun(output: string, bufnr: number): table
 
 ---@class Session
----@field branch string?
+---@field branch? string
 ---@field name string
 ---@field path string
 ---@field project string
@@ -71,5 +75,5 @@ function vim.ui.select(items, opts, on_choice) end
 ---@field expansion string
 
 ---@class ExternalDocsResponse
----@field web string?
----@field local string?
+---@field web? string
+---@field local? string

@@ -5,19 +5,6 @@ vim.g.loaded_session = true
 
 local session = require 'dm.session'
 
--- Return `true` if we can create a new session automatically on before exiting Neovim.
-local function auto_create_session()
-  if vim.fn.argc() > 0 then
-    return false
-  end
-  local wins = vim.api.nvim_list_wins()
-  if #wins > 1 then
-    return true
-  end
-  local bufnr = vim.api.nvim_win_get_buf(wins[1])
-  return vim.bo[bufnr].filetype ~= 'dashboard'
-end
-
 -- By default, every time we quit Neovim, we save the session. If it
 -- doesn't exist, we create a new one. If it does, we overwrite it.
 --

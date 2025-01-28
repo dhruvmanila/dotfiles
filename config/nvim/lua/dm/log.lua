@@ -1,8 +1,8 @@
 -- This module implements a logging system for different parts of the Neovim configuration.
 --
 -- Use the `get_logger` function to create a new logger or get an existing logger with the same
--- name. The `Logger` has methods to log messages each level. The level of each logger can be
--- queried and updated using the `get_*` and `set_*` methods.
+-- name. The `Logger` has methods to log messages at different level. The level of each logger can
+-- be queried and updated using the `get_*` and `set_*` methods.
 --
 -- A root logger has been created to allow accessing all the methods from the logger directly via
 -- module (e.g., `require('dm.log').info(...)`).
@@ -89,6 +89,17 @@ end
 ---@type table<string, file*>
 local file_handles = {}
 
+vim.api.nvim_create_autocmd('VimLeavePre', {
+  group = vim.api.nvim_create_augroup('dm__log_cleanup', { clear = true }),
+  callback = function()
+    for _, file in pairs(file_handles) do
+      file:close()
+    end
+    file_handles = {}
+  end,
+  desc = 'Close all the log files before exiting',
+})
+
 -- Opens a log file at the given path and caches the file handle. All the subsequent calls for the
 -- same filepath will return the same open handle.
 ---@param filepath string
@@ -99,7 +110,7 @@ local function open_logfile(filepath)
     if logfile == nil then
       dm.notify_once(
         'Logging',
-        { 'Failed to open log file: ' .. filepath, '', '', err },
+        { 'Failed to open log file at ' .. filepath, '', '', err },
         vim.log.levels.ERROR
       )
       return nil
@@ -151,11 +162,14 @@ local function console_output(name, message, highlight)
 end
 
 -- Create a new logger.
+--
+-- The default log level is `WARN` and the log file is created in the `stdpath('log')` directory
+-- with the name `<name>.log`.
 ---@param name string Name of the logger
 ---@return Logger
 local function create_logger(name)
   ---@type LoggingLevel
-  local log_level = M.levels.INFO
+  local log_level = M.levels.WARN
 
   ---@diagnostic disable-next-line: param-type-mismatch stdpath('log') always returns a `string`
   local outfile = vim.fs.joinpath(vim.fn.stdpath 'log', name .. '.log')
@@ -163,7 +177,7 @@ local function create_logger(name)
   ---@param level LoggingLevel
   ---@param message string
   ---@vararg any
-  local log = function(level, message, ...)
+  local function log(level, message, ...)
     if level < log_level then
       return
     end
@@ -204,6 +218,12 @@ local function create_logger(name)
   ---@return LoggingLevelName
   function logger.get_level_name()
     return M.levels[log_level]
+  end
+
+  -- Return the filename for this logger.
+  ---@return string
+  function logger.get_filename()
+    return outfile
   end
 
   -- Set the logging level of this logger.

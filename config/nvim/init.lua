@@ -6,6 +6,7 @@
 --  /_____/  /_/  /_/
 --
 -------------------------------------------------------------------------------
+
 local g = vim.g
 
 if vim.loader then
@@ -59,7 +60,7 @@ local namespace = {
 
   -- System name.
   ---@type 'Darwin'|'Windows_NT'|'Linux'
-  OS_UNAME = vim.loop.os_uname().sysname,
+  OS_UNAME = vim.uv.os_uname().sysname,
 
   -- Path to the home directory.
   ---@type string
