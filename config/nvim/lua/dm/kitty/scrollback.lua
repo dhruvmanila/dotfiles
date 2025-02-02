@@ -13,6 +13,7 @@ vim.w.kitty_scrollback = {
 }
 
 -- Override options.
+vim.o.cmdheight = 0
 vim.o.signcolumn = 'no'
 vim.o.scrolloff = 0
 

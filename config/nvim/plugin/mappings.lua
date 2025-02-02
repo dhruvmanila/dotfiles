@@ -346,10 +346,18 @@ keymap.set('n', '<leader>z', function()
 end, { desc = 'Toggle window zoom' })
 
 -- Quicker window movement
-keymap.set('n', '<C-j>', '<C-w>j')
-keymap.set('n', '<C-k>', '<C-w>k')
-keymap.set('n', '<C-h>', '<C-w>h')
-keymap.set('n', '<C-l>', '<C-w>l')
+if vim.env.TERM == 'xterm-kitty' then
+  local kitty_navigation = require 'dm.kitty.navigation'
+  keymap.set('n', '<C-h>', kitty_navigation.left)
+  keymap.set('n', '<C-j>', kitty_navigation.bottom)
+  keymap.set('n', '<C-k>', kitty_navigation.top)
+  keymap.set('n', '<C-l>', kitty_navigation.right)
+else
+  keymap.set('n', '<C-h>', '<C-w>h')
+  keymap.set('n', '<C-j>', '<C-w>j')
+  keymap.set('n', '<C-k>', '<C-w>k')
+  keymap.set('n', '<C-l>', '<C-w>l')
+end
 
 -- Use the arrow keys to resize windows
 keymap.set('n', '<Down>', '<Cmd>resize -2<CR>')

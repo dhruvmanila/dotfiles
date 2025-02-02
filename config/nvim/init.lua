@@ -138,7 +138,7 @@ if dm.config.colorscheme.auto.enable then
 end
 
 if dm.KITTY_SCROLLBACK then
-  require 'dm.kitty'
+  require 'dm.kitty.scrollback'
 else
   require('dm.projects').setup()
 end
