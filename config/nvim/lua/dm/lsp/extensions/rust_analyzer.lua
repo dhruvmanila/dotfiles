@@ -102,6 +102,7 @@ end
 -- Execute Cargo runnable.
 ---@param runnable CargoRunnable
 local function execute_runnable(runnable)
+  logger.debug('Execute runnable: %s', runnable)
   if runnable.kind ~= 'cargo' then
     logger.warn('Unrecognized runnable kind: %s', runnable.kind)
     return
@@ -123,6 +124,8 @@ end
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/editors/code/src/toolchain.ts
 ---@param runnable CargoRunnable
 local function debug_runnable(runnable)
+  logger.debug('Debug runnable: %s', runnable)
+
   -- This creates a copy to avoid mutating the original table.
   local cargo_args =
     vim.iter({ runnable.args.cargoArgs, '--message-format=json' }):flatten():totable()
@@ -138,6 +141,8 @@ local function debug_runnable(runnable)
     timeout = false,
   })
 
+  logger.debug('Compiling with args %s in %s', cargo_args, runnable.args.workspaceRoot)
+
   vim.system(
     vim.iter({ 'cargo', cargo_args }):flatten():totable(),
     { cwd = runnable.args.workspaceRoot },
@@ -147,9 +152,10 @@ local function debug_runnable(runnable)
       if result.code > 0 then
         dm.notify(
           TITLE,
-          'An error occurred while compiling:\n' .. result.stderr,
+          'An error occurred while compiling, refer to the log for more details',
           vim.log.levels.ERROR
         )
+        logger.error('Compilation failed with code %d: %s', result.code, result.stderr)
         return
       end
       dm.notify(TITLE, 'Compilation successful')
@@ -171,10 +177,10 @@ local function debug_runnable(runnable)
       end
 
       if #executables == 0 then
-        dm.notify(TITLE, 'No compilation artifacts', vim.log.levels.ERROR)
+        dm.notify(TITLE, 'No compilation artifacts found', vim.log.levels.WARN)
         return
       elseif #executables > 1 then
-        dm.notify(TITLE, 'Multiple compilation artifacts are not supported', vim.log.levels.ERROR)
+        dm.notify(TITLE, 'Multiple compilation artifacts are not supported', vim.log.levels.WARN)
         return
       end
 
@@ -193,7 +199,7 @@ local function debug_runnable(runnable)
         console = 'internalConsole',
         stopOnEntry = false,
       }
-      logger.info('Launching DAP with config: %s', dap_config)
+      logger.debug('Launching DAP with config: %s', dap_config)
       require('dap').run(dap_config)
     end)
   )
@@ -318,6 +324,13 @@ local function clear_flycheck()
   utils.get_client('rust_analyzer').notify 'rust-analyzer/clearFlycheck'
 end
 
+-- Rebuilds build scripts and proc-macros, and runs the build scripts to reseed the build data.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#rebuild-proc-macros
+local function rebuild_proc_macros()
+  utils.get_client('rust_analyzer').request('rust-analyzer/rebuildProcMacros', nil, function() end)
+end
+
 -- Expand the macro under the cursor recursively and show the output in a new buffer.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#expand-macro
@@ -327,7 +340,7 @@ local function expand_macro_recursively()
     .request('rust-analyzer/expandMacro', vim.lsp.util.make_position_params(), function(_, expanded)
       ---@cast expanded ExpandedMacro
       if expanded == nil then
-        dm.notify(TITLE, 'No macro under cursor', vim.log.levels.WARN)
+        dm.notify(TITLE, 'No macro under cursor', vim.log.levels.INFO)
         return
       end
 
@@ -359,7 +372,7 @@ local function open_external_docs()
     .request('experimental/externalDocs', vim.lsp.util.make_position_params(), function(_, url)
       ---@cast url string?
       if url == nil then
-        dm.notify(TITLE, 'No documentation found', vim.log.levels.WARN)
+        dm.notify(TITLE, 'No documentation found', vim.log.levels.INFO)
         return
       end
       vim.ui.open(url)
@@ -493,6 +506,7 @@ local commands = {
   { 'RustViewCrateGraphFull', view_crate_graph_full, desc = 'view full crate graph' },
   { 'RustSyntaxTree', syntax_tree, desc = 'syntax tree' },
   { 'RustMatchingBrace', matching_brace, desc = 'matching brace' },
+  { 'RustRebuildProcMacros', rebuild_proc_macros, desc = 'rebuild proc macros' },
 }
 
 -- Setup the buffer local mappings and commands for the `rust-analyzer` extension features.

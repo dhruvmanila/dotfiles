@@ -81,7 +81,7 @@ do
   -- Override the default `vim.notify` to open a floating window.
   ---@param msg string|string[]
   ---@param level? number|string
-  ---@param opts? table
+  ---@param opts? notify.Options
   ---@diagnostic disable-next-line: duplicate-set-field
   vim.notify = function(msg, level, opts)
     level = level or vim.log.levels.INFO
@@ -104,7 +104,8 @@ do
   ---@param title string
   ---@param msg string|string[]
   ---@param level? number|string
-  ---@param opts? table
+  ---@param opts? notify.Options
+  ---@return notify.Record
   dm.notify = function(title, msg, level, opts)
     opts = vim.tbl_extend('keep', opts or {}, { title = title })
     return vim.notify(msg, level, opts)
@@ -124,4 +125,10 @@ end
 function dm.path_exists(path)
   local _, err = vim.uv.fs_stat(path)
   return err == nil
+end
+
+-- Redraw the line at the center of the window, maintaining the cursor position.
+-- This is equivalent to `normal! zz`.
+function dm.center_cursor()
+  vim.cmd.normal { 'zz', bang = true }
 end

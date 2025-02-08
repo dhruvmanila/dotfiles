@@ -2,9 +2,8 @@ local M = {}
 
 local utils = require 'dm.utils'
 
-local default_interval = 3 * 1000
-
-local logger = dm.log.get_logger 'dm.themes.auto'
+-- Default interval to check macOS appearance (in milliseconds)
+local DEFAULT_INTERVAL = 3 * 1000
 
 local function check()
   vim.system(
@@ -15,7 +14,7 @@ local function check()
       if result.code == 0 then
         appearance = vim.trim(result.stdout)
       else
-        logger.debug('Failed to detect macOS appearance: %s (defaulting to light)', result.stderr)
+        dm.log.debug('Failed to detect macOS appearance: %s (defaulting to light)', result.stderr)
         appearance = 'Light'
       end
       if appearance == 'Dark' then
@@ -27,7 +26,7 @@ local function check()
           vim.cmd.colorscheme(dm.config.colorscheme.light)
         end
       else
-        logger.warn('Unknown macOS appearance: %s', appearance)
+        dm.log.warn('Unknown macOS appearance: %s', appearance)
       end
     end)
   )
@@ -38,7 +37,7 @@ local timer
 
 ---@param interval? number in milliseconds
 function M.enable(interval)
-  interval = interval or default_interval
+  interval = interval or DEFAULT_INTERVAL
   timer = utils.set_interval_callback(interval, check)
 end
 

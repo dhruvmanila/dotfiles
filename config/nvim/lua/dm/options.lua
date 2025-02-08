@@ -264,8 +264,5 @@ opt.linebreak = true
 -- Alternatives: "↳ ", "››› ", "↪ "
 opt.showbreak = '↳ '
 
--- do not automatically wrap text
-opt.textwidth = 0
-
 -- Visually wrap lines longer than window width
 opt.wrap = true

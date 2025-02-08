@@ -107,43 +107,43 @@ nvim_create_autocmd('BufReadPost', {
 
 -- Set 'colorcolumn' {{{1
 
-do
-  -- 'colorcolumn' value for specific filetypes
-  local ft_colorcolumn = {
-    gitcommit = '72',
-    lua = '100',
-    python = '88',
-    rust = '100',
-  }
-
-  -- Set or unset the `colorcolumn`.
-  ---@param enable boolean
-  local function colorcolumn(enable)
-    if enable and o.buftype ~= 'prompt' then
-      o.colorcolumn = ft_colorcolumn[o.filetype] or '80'
-    else
-      o.colorcolumn = ''
-    end
-  end
-
-  local group = nvim_create_augroup('dm__auto_colorcolumn', { clear = true })
-
-  nvim_create_autocmd('InsertEnter', {
-    group = group,
-    callback = function()
-      colorcolumn(true)
-    end,
-    desc = 'Set colorcolumn',
-  })
-
-  nvim_create_autocmd('InsertLeave', {
-    group = group,
-    callback = function()
-      colorcolumn(false)
-    end,
-    desc = 'Unset colorcolumn',
-  })
-end
+-- do
+--   -- 'colorcolumn' value for specific filetypes
+--   local ft_colorcolumn = {
+--     gitcommit = '72',
+--     lua = '100',
+--     python = '88',
+--     rust = '100',
+--   }
+--
+--   -- Set or unset the `colorcolumn`.
+--   ---@param enable boolean
+--   local function colorcolumn(enable)
+--     if enable and o.buftype ~= 'prompt' then
+--       o.colorcolumn = ft_colorcolumn[o.filetype] or '80'
+--     else
+--       o.colorcolumn = ''
+--     end
+--   end
+--
+--   local group = nvim_create_augroup('dm__auto_colorcolumn', { clear = true })
+--
+--   nvim_create_autocmd('InsertEnter', {
+--     group = group,
+--     callback = function()
+--       colorcolumn(true)
+--     end,
+--     desc = 'Set colorcolumn',
+--   })
+--
+--   nvim_create_autocmd('InsertLeave', {
+--     group = group,
+--     callback = function()
+--       colorcolumn(false)
+--     end,
+--     desc = 'Unset colorcolumn',
+--   })
+-- end
 
 -- Set 'cursorline' {{{1
 
@@ -277,7 +277,7 @@ do
   })
 
   -- By default, this is ON.
-  toggle_auto_relative_number(false)
+  -- toggle_auto_relative_number(false)
 end
 
 -- Terminal {{{1

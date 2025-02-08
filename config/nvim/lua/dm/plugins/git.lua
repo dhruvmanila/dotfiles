@@ -9,6 +9,7 @@ local function gitsigns_on_attach(bufnr)
     else
       vim.schedule(function()
         gitsigns.nav_hunk('next', { preview = true })
+        dm.center_cursor()
       end)
       return '<Ignore>'
     end
@@ -20,6 +21,7 @@ local function gitsigns_on_attach(bufnr)
     else
       vim.schedule(function()
         gitsigns.nav_hunk('prev', { preview = true })
+        dm.center_cursor()
       end)
       return '<Ignore>'
     end
@@ -80,6 +82,8 @@ return {
       },
       preview_config = {
         border = dm.border,
+        row = 1,
+        col = 0,
       },
       debug_mode = dm.log.should_log(dm.log.levels.DEBUG),
       on_attach = gitsigns_on_attach,

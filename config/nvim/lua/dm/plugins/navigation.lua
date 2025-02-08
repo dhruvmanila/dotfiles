@@ -51,8 +51,8 @@ return {
     },
     keymaps = {
       ['q'] = 'actions.close',
-      -- ['h'] = 'actions.parent',
-      -- ['l'] = 'actions.select',
+      ['h'] = 'actions.parent',
+      ['l'] = 'actions.select',
       ['<C-h>'] = false, -- Keep this for window switching
       ['<C-l>'] = false, -- Keep this for window switching
       ['<C-s>'] = {
