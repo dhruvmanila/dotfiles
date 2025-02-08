@@ -1,7 +1,7 @@
 # 👻
 
 # tip is the nightly version
-auto-update-channel = tip
+auto-update-channel = stable
 
 # Font
 font-family = JetBrains Mono
@@ -14,6 +14,10 @@ window-theme = system
 # Use the block non-blinking cursor everywhere
 shell-integration-features = no-cursor
 cursor-style-blink = false
+
+# Use a light color (cursor-color)
+# Refer: /Applications/Ghostty.app/Contents/Resources/ghostty/themes/GruvboxDark
+split-divider-color = "#ebdbb2"
 
 # Mouse
 # mouse-hide-while-typing = true
@@ -38,14 +42,16 @@ keybind = ctrl+shift+,=move_tab:-1
 
 keybind = ctrl+shift+backslash=new_split:right
 keybind = ctrl+shift+-=new_split:down
-keybind = ctrl+shift+k=goto_split:top
+
+keybind = ctrl+shift+k=goto_split:up
 keybind = ctrl+shift+l=goto_split:right
-keybind = ctrl+shift+j=goto_split:bottom
+keybind = ctrl+shift+j=goto_split:down
 keybind = ctrl+shift+h=goto_split:left
+
 keybind = ctrl+shift+space=toggle_split_zoom
 
-keybind = ctrl+shift+p=jump_to_prompt:-1
-keybind = ctrl+shift+n=jump_to_prompt:+1
+keybind = ctrl+shift+f=jump_to_prompt:-1
+keybind = ctrl+shift+b=jump_to_prompt:+1
 
 # TODO: I still don't understand the difference between these two
 # keybind = ctrl+shift+h=write_scrollback_file:paste
