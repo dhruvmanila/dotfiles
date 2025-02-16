@@ -96,7 +96,7 @@ nvim_create_autocmd('BufReadPost', {
   group = nvim_create_augroup('dm__restore_cursor', { clear = true }),
   callback = function()
     -- Cursor position when last exiting the current buffer.
-    ---@see :h 'quote
+    -- See :h 'quote
     local line, col = unpack(api.nvim_buf_get_mark(0, '"'))
     if o.filetype ~= 'gitcommit' and line > 0 and line < api.nvim_buf_line_count(0) then
       api.nvim_win_set_cursor(0, { line, col })

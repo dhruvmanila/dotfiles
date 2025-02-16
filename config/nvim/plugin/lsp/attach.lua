@@ -214,6 +214,10 @@ local function on_attach(client, bufnr)
   if client_extension then
     client_extension.on_attach(client, bufnr)
   end
+
+  if client.name == 'ruff' then
+    client.server_capabilities.hoverProvider = false
+  end
 end
 
 vim.api.nvim_create_autocmd('LspAttach', {

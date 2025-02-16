@@ -19,10 +19,10 @@ local function parse_gh_stars_data(data)
   end
 end
 
--- Start a new asynchronous job to collect the user GitHub stars using
--- GitHub's CLI tool `gh`. The data will be stored in a global variable
--- `_CachedGithubStars` for the current Neovim session.
----@see telescope._extensions.github_stars
+-- Start a new asynchronous job to collect the user GitHub stars using GitHub's CLI tool `gh`. The
+-- data will be stored in a global variable `_CachedGithubStars` for the current Neovim session.
+--
+-- See: `telescope._extensions.custom.github_stars`
 function M.collect_stars()
   vim.system(
     { 'gh', 'api', 'user/starred', '--paginate', '--slurp', '--cache', '24h' },
