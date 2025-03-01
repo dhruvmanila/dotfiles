@@ -37,10 +37,6 @@ local namespace = {
     },
 
     colorscheme = {
-      -- Automatically switch between light and dark color schemes based on macOS appearance.
-      auto = {
-        enable = true,
-      },
       -- Color scheme for dark mode.
       dark = 'gruvbox_dark',
       -- Color scheme for light mode.
@@ -129,13 +125,6 @@ require('lazy').setup('dm.plugins', {
     border = dm.border,
   },
 })
-
--- Default to a dark color scheme.
-vim.cmd.colorscheme(dm.config.colorscheme.dark)
-
-if dm.config.colorscheme.auto.enable then
-  require('dm.themes.auto').enable()
-end
 
 if dm.KITTY_SCROLLBACK then
   require 'dm.kitty.scrollback'

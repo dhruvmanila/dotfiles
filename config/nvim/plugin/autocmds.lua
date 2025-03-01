@@ -4,6 +4,28 @@ local api = vim.api
 local nvim_create_augroup = api.nvim_create_augroup
 local nvim_create_autocmd = api.nvim_create_autocmd
 
+-- Auto light / dark theme {{{1
+
+nvim_create_autocmd('OptionSet', {
+  group = nvim_create_augroup('dm__auto_background', { clear = true }),
+  pattern = 'background',
+  callback = function()
+    if o.background == 'dark' then
+      vim.cmd.colorscheme(dm.config.colorscheme.dark)
+    else
+      vim.cmd.colorscheme(dm.config.colorscheme.light)
+    end
+    -- Setup the indent-blankline highlights when changing the colorscheme otherwise it picks up the
+    -- default colors. What's happening is that the plugin is defining highlight groups like
+    -- `@ibl.whitespace.char.1` which are being cleared when changing the colorscheme but I couldn't
+    -- find any way to tell the plugin to redefine them so let's explicitly call it to setup again.
+    local ok, ibl_highlights = pcall(require, 'ibl.highlights')
+    if ok then
+      ibl_highlights.setup()
+    end
+  end,
+})
+
 -- Clear command-line messages {{{1
 
 do
