@@ -22,7 +22,6 @@ HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
 # Common directories
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 NEOVIM_DIRECTORY="${HOME}/contributing/neovim"
-NEOVIM_INSTALL_DIRECTORY="${HOME}/neovim"
 NNN_DIRECTORY="${HOME}/git/nnn"
 
 # Packages file
