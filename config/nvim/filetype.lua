@@ -16,6 +16,7 @@ vim.filetype.add {
 
   pattern = {
     ['.*/%.?vscode/settings.json'] = 'jsonc',
+    ['.*/zed/settings.json'] = 'jsonc',
     ['.*/work/astral/.*%.snap'] = 'markdown',
     ['.*requirements.*%.in'] = 'requirements',
     ['.*requirements.*%.txt'] = 'requirements',
