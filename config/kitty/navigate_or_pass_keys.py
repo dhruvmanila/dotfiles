@@ -5,7 +5,7 @@ from kitty.key_encoding import KeyEvent, parse_shortcut
 def is_nvim_window(window) -> bool:
     """Returns `True` if the window is running Neovim."""
     return any(
-        next(iter(process["cmdline"]), "") == "nvim"
+        next(iter(process["cmdline"]), "").endswith("nvim")
         for process in window.child.foreground_processes
     )
 
