@@ -1,12 +1,10 @@
 -- Inspired from @folke's trouble.nvim plugin with some enhancements.
--- https://github.com/folke/trouble.nvim/blob/main/lua/trouble/text.lua
+-- https://github.com/folke/trouble.nvim/blob/main/lua/trouble/view/text.lua
 --
 -- This is currently being used for:
 --   - Dashboard
 
-local api = vim.api
-local set_lines = api.nvim_buf_set_lines
-local highlight = api.nvim_buf_add_highlight
+local ns = vim.api.nvim_create_namespace 'dm.dashboard'
 
 ---@class Text
 local Text = {}
@@ -26,7 +24,7 @@ Text.__index = Text
 ---@return Text
 function Text:new(bufnr)
   return setmetatable({
-    bufnr = bufnr or api.nvim_get_current_buf(),
+    bufnr = bufnr or vim.api.nvim_get_current_buf(),
     longest_line = 0,
     line = 0,
     current = '',
@@ -86,13 +84,13 @@ end
 
 -- Render the current internal state.
 function Text:_render()
-  set_lines(self.bufnr, self.line, self.line, false, { self.current })
+  vim.api.nvim_buf_set_lines(self.bufnr, self.line, self.line, false, { self.current })
   for _, data in ipairs(self.linehl) do
-    highlight(self.bufnr, -1, data.hl_group, self.line, data.from, data.to)
+    vim.hl.range(self.bufnr, ns, data.hl_group, { self.line, data.from }, { self.line, data.to })
   end
   -- For the zeroth line, a newline is added at the end, so remove it.
   if self.line == 0 then
-    set_lines(self.bufnr, -2, -1, false, {})
+    vim.api.nvim_buf_set_lines(self.bufnr, -2, -1, false, {})
   end
 end
 

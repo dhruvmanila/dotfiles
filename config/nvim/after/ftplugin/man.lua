@@ -1,6 +1,5 @@
 local opts = { buffer = true, nowait = true }
 
-vim.keymap.set('n', 'q', '<Cmd>quit<CR>', opts)
 vim.keymap.set('n', '<CR>', '<C-]>', opts)
 vim.keymap.set('n', '<BS>', '<C-T>', opts)
 

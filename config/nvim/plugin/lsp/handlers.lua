@@ -1,46 +1,5 @@
 local M = vim.lsp.protocol.Methods
 
--- Modified version of the original handler. This will open the quickfix
--- window only if the response is a list and the count is greater than 1.
-local function location_handler(err, result, ctx)
-  local title = 'LSP (' .. ctx.method .. ')'
-  if err then
-    dm.notify(title, tostring(err), vim.log.levels.ERROR)
-    return
-  end
-  if not result or vim.tbl_isempty(result) then
-    dm.notify(title, 'No results found')
-    return
-  end
-
-  -- Response: Location | Location[] | LocationLink[] | null
-  -- https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_definition
-
-  local client = vim.lsp.get_client_by_id(ctx.client_id)
-  if not client then
-    return
-  end
-
-  if vim.islist(result) then
-    vim.lsp.util.jump_to_location(result[1], client.offset_encoding)
-    if vim.tbl_count(result) > 1 then
-      vim.fn.setqflist({}, ' ', {
-        title = title,
-        items = vim.lsp.util.locations_to_items(result, client.offset_encoding),
-      })
-      vim.api.nvim_command 'copen | wincmd p | cc 1'
-    end
-  else
-    vim.lsp.util.jump_to_location(result, client.offset_encoding, true)
-  end
-end
-
-vim.lsp.handlers[M.textDocument_definition] = location_handler
-vim.lsp.handlers[M.textDocument_declaration] = location_handler
-vim.lsp.handlers[M.textDocument_typeDefinition] = location_handler
-vim.lsp.handlers[M.textDocument_implementation] = location_handler
-vim.lsp.handlers[M.textDocument_references] = location_handler
-
 do
   -- See: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#messageType
   local levels = {
@@ -147,7 +106,7 @@ vim.lsp.handlers[M.workspace_diagnostic_refresh] = function(_, _, ctx, _)
     }
     if #clients > 0 then
       for _, client in ipairs(clients) do
-        client.request(M.textDocument_diagnostic, {
+        client:request(M.textDocument_diagnostic, {
           textDocument = vim.lsp.util.make_text_document_params(bufnr),
         }, nil, bufnr)
       end

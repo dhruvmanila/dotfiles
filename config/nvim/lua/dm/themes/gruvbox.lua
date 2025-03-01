@@ -160,11 +160,7 @@ function M.load(background)
 
   highlight('Pmenu', { fg = palette.fg, bg = palette.bg2 })
   highlight('PmenuSbar', { bg = palette.bg2 })
-  highlight('PmenuSel', {
-    fg = palette.bg2,
-    bg = palette.blue,
-    bold = true,
-  })
+  highlight('PmenuSel', { fg = palette.bg2, bg = palette.blue, bold = true })
   link('WildMenu', 'PmenuSel')
   highlight('PmenuThumb', { bg = palette.grey0 })
 
@@ -195,15 +191,9 @@ function M.load(background)
 
   -- Statusline
   highlight('StatusLine', { fg = palette.grey2, bg = palette.bg_statusline2 })
-  highlight('StatusLineTerm', {
-    fg = palette.grey2,
-    bg = palette.bg_statusline2,
-  })
+  highlight('StatusLineTerm', { fg = palette.grey2, bg = palette.bg_statusline2 })
   highlight('StatusLineNC', { fg = palette.grey0, bg = palette.bg_statusline1 })
-  highlight('StatusLineTermNC', {
-    fg = palette.grey0,
-    bg = palette.bg_statusline1,
-  })
+  highlight('StatusLineTermNC', { fg = palette.grey0, bg = palette.bg_statusline1 })
   -- Section highlight groups
   --
   --     ┌───────┬───────┬──────────────────────────────────┬───────┬───────┐
@@ -221,12 +211,7 @@ function M.load(background)
   highlight('User9', { fg = palette.red, bg = palette.bg_statusline2 })
 
   -- Tabline
-  highlight('TabLineSel', {
-    fg = palette.fg,
-    bg = palette.bg0,
-    bold = true,
-    underline = true,
-  })
+  highlight('TabLineSel', { fg = palette.fg, bg = palette.bg0, bold = true, underline = true })
   highlight('TabLine', { fg = palette.grey1, bg = palette.bg_float })
   highlight('TabLineFill', { fg = palette.grey1, bg = palette.bg_dim })
 
@@ -286,39 +271,27 @@ function M.load(background)
   vim.g.terminal_color_15 = palette.fg
 
   -- Neovim builtin LSP
-  -- Floating Diagnostics
-  highlight('DiagnosticFloatingError', {
-    fg = palette.red,
-    bg = palette.bg_float,
-  })
-  highlight('DiagnosticFloatingWarn', {
-    fg = palette.yellow,
-    bg = palette.bg_float,
-  })
-  highlight('DiagnosticFloatingInfo', {
-    fg = palette.blue,
-    bg = palette.bg_float,
-  })
-  highlight('DiagnosticFloatingHint', {
-    fg = palette.aqua,
-    bg = palette.bg_float,
-  })
-  -- Virtual Text Diagnostics
-  highlight('DiagnosticVirtualTextError', { fg = palette.red })
-  highlight('DiagnosticVirtualTextWarn', { fg = palette.yellow })
-  highlight('DiagnosticVirtualTextInfo', { fg = palette.blue })
-  highlight('DiagnosticVirtualTextHint', { fg = palette.aqua })
-  -- Underline Diagnostics
+  -- Floating diagnostics
+  highlight('DiagnosticFloatingError', { fg = palette.red, bg = palette.bg_float })
+  highlight('DiagnosticFloatingWarn', { fg = palette.yellow, bg = palette.bg_float })
+  highlight('DiagnosticFloatingInfo', { fg = palette.blue, bg = palette.bg_float })
+  highlight('DiagnosticFloatingHint', { fg = palette.aqua, bg = palette.bg_float })
+  -- Underline diagnostics
   highlight('DiagnosticUnderlineError', { undercurl = true, sp = palette.red })
   highlight('DiagnosticUnderlineWarn', { undercurl = true, sp = palette.yellow })
   highlight('DiagnosticUnderlineInfo', { undercurl = true, sp = palette.blue })
   highlight('DiagnosticUnderlineHint', { undercurl = true, sp = palette.aqua })
-  -- Sign Diagnostics
-  highlight('DiagnosticSignError', { fg = palette.red })
-  highlight('DiagnosticSignWarn', { fg = palette.yellow })
-  highlight('DiagnosticSignInfo', { fg = palette.blue })
-  highlight('DiagnosticSignHint', { fg = palette.aqua })
-  -- Reference Text
+  -- Sign, virtual text and virtual line diagnostics
+  highlight('DiagnosticError', { fg = palette.red })
+  highlight('DiagnosticWarn', { fg = palette.yellow })
+  highlight('DiagnosticInfo', { fg = palette.blue })
+  highlight('DiagnosticHint', { fg = palette.aqua })
+  -- Virtual text and virtual line diagnostics
+  highlight('DiagnosticVirtualLinesError', { fg = palette.red, bg = palette.bg1 })
+  highlight('DiagnosticVirtualLinesWarn', { fg = palette.yellow, bg = palette.bg1 })
+  highlight('DiagnosticVirtualLinesInfo', { fg = palette.blue, bg = palette.bg1 })
+  highlight('DiagnosticVirtualLinesHint', { fg = palette.aqua, bg = palette.bg1 })
+  -- Reference text
   highlight('LspReferenceText', { bg = palette.bg_current_word })
   highlight('LspReferenceRead', { bg = palette.bg_current_word })
   highlight('LspReferenceWrite', { bg = palette.bg_current_word })
@@ -363,12 +336,7 @@ function M.load(background)
   link('GitSignsChangeDelete', 'Purple')
 
   -- leap.nvim
-  highlight('LeapMatch', {
-    fg = 'White',
-    bold = true,
-    italic = true,
-    underline = true,
-  })
+  highlight('LeapMatch', { fg = 'White', bold = true, italic = true, underline = true })
 
   -- nvim-cmp
   link('CmpItemAbbr', 'Grey')

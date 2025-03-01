@@ -20,16 +20,21 @@ local function dump_file_debug_info(kind)
   local current_lsp_log_level = vim.lsp.log.get_level()
   vim.lsp.set_log_level(vim.log.levels.INFO)
 
-  utils.get_client('pyright').request(vim.lsp.protocol.Methods.workspace_executeCommand, {
-    command = 'pyright.dumpFileDebugInfo',
-    arguments = { vim.uri_from_bufnr(0), kind },
-  }, function()
-    ---@diagnostic disable-next-line: param-type-mismatch
-    vim.cmd.tabedit(vim.fs.joinpath(vim.fn.stdpath 'log', 'lsp.pyright.log'))
-    vim.keymap.set('n', 'q', '<Cmd>quit<CR>', { buffer = true })
-    -- Reset the log level to what it was earlier.
-    vim.lsp.set_log_level(current_lsp_log_level)
-  end)
+  utils.get_client('pyright'):exec_cmd(
+    {
+      title = 'Pyright: Dump debug info',
+      command = 'pyright.dumpFileDebugInfo',
+      arguments = { vim.uri_from_bufnr(0), kind },
+    },
+    nil,
+    function()
+      ---@diagnostic disable-next-line: param-type-mismatch
+      vim.cmd.tabedit(vim.fs.joinpath(vim.fn.stdpath 'log', 'lsp.pyright.log'))
+      vim.keymap.set('n', 'q', '<Cmd>quit<CR>', { buffer = true })
+      -- Reset the log level to what it was earlier.
+      vim.lsp.set_log_level(current_lsp_log_level)
+    end
+  )
 end
 
 -- Setup the buffer local commands for the `pyright` extension features.

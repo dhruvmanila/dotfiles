@@ -70,7 +70,7 @@ local function execute_command(cmd, opts)
     height = math.ceil(vim.o.lines * 0.35),
   })
 
-  local job_id = vim.fn.termopen(cmd, opts)
+  local job_id = vim.fn.jobstart(cmd, vim.tbl_extend('error', { term = true }, opts))
   vim.api.nvim_set_current_win(original_winnr)
 
   vim.api.nvim_buf_set_keymap(cache.run_single_bufnr, 'n', 'q', '', {
@@ -210,7 +210,7 @@ end
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#runnables
 local function runnables()
-  utils.get_client('rust_analyzer').request('experimental/runnables', {
+  utils.get_client('rust_analyzer'):request('experimental/runnables', {
     textDocument = vim.lsp.util.make_text_document_params(0),
     position = nil,
   }, function(_, result)
@@ -248,7 +248,7 @@ end
 local function view_crate_graph_impl(full)
   utils
     .get_client('rust_analyzer')
-    .request('rust-analyzer/viewCrateGraph', { full = full }, function(err, graph)
+    :request('rust-analyzer/viewCrateGraph', { full = full }, function(err, graph)
       if err ~= nil then
         dm.notify(TITLE, tostring(err), vim.log.levels.ERROR)
         return
@@ -305,7 +305,7 @@ end
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
 local function run_flycheck()
-  utils.get_client('rust_analyzer').notify('rust-analyzer/runFlycheck', {
+  utils.get_client('rust_analyzer'):notify('rust-analyzer/runFlycheck', {
     textDocument = vim.NIL,
   })
 end
@@ -314,30 +314,32 @@ end
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
 local function cancel_flycheck()
-  utils.get_client('rust_analyzer').notify 'rust-analyzer/cancelFlycheck'
+  utils.get_client('rust_analyzer'):notify 'rust-analyzer/cancelFlycheck'
 end
 
 -- Clears all the flycheck diagnostics.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#controlling-flycheck
 local function clear_flycheck()
-  utils.get_client('rust_analyzer').notify 'rust-analyzer/clearFlycheck'
+  utils.get_client('rust_analyzer'):notify 'rust-analyzer/clearFlycheck'
 end
 
 -- Rebuilds build scripts and proc-macros, and runs the build scripts to reseed the build data.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#rebuild-proc-macros
 local function rebuild_proc_macros()
-  utils.get_client('rust_analyzer').request('rust-analyzer/rebuildProcMacros', nil, function() end)
+  utils.get_client('rust_analyzer'):request('rust-analyzer/rebuildProcMacros', nil, function() end)
 end
 
 -- Expand the macro under the cursor recursively and show the output in a new buffer.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#expand-macro
 local function expand_macro_recursively()
-  utils
-    .get_client('rust_analyzer')
-    .request('rust-analyzer/expandMacro', vim.lsp.util.make_position_params(), function(_, expanded)
+  local client = utils.get_client 'rust_analyzer'
+  client:request(
+    'rust-analyzer/expandMacro',
+    vim.lsp.util.make_position_params(0, client.offset_encoding),
+    function(_, expanded)
       ---@cast expanded ExpandedMacro
       if expanded == nil then
         dm.notify(TITLE, 'No macro under cursor', vim.log.levels.INFO)
@@ -358,7 +360,8 @@ local function expand_macro_recursively()
 
       -- Move cursor to the start of the macro expansion.
       vim.api.nvim_win_set_cursor(0, { 4, 0 })
-    end)
+    end
+  )
 end
 
 -- Open the documentation for the symbol under the cursor.
@@ -367,25 +370,30 @@ end
 -- * https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#open-external-documentation
 -- * https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#local-documentation
 local function open_external_docs()
-  utils
-    .get_client('rust_analyzer')
-    .request('experimental/externalDocs', vim.lsp.util.make_position_params(), function(_, url)
+  local client = utils.get_client 'rust_analyzer'
+  client:request(
+    'experimental/externalDocs',
+    vim.lsp.util.make_position_params(0, client.offset_encoding),
+    function(_, url)
       ---@cast url string?
       if url == nil then
         dm.notify(TITLE, 'No documentation found', vim.log.levels.INFO)
         return
       end
       vim.ui.open(url)
-    end)
+    end
+  )
 end
 
 -- Show the syntax tree for the current buffer.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#syntax-tree
 local function syntax_tree()
-  utils
-    .get_client('rust_analyzer')
-    .request('rust-analyzer/syntaxTree', vim.lsp.util.make_range_params(), function(_, result)
+  local client = utils.get_client 'rust_analyzer'
+  client:request(
+    'rust-analyzer/syntaxTree',
+    vim.lsp.util.make_range_params(0, client.offset_encoding),
+    function(_, result)
       delete_bufnr(cache.syntax_tree_bufnr)
       cache.syntax_tree_bufnr = vim.api.nvim_create_buf(false, true)
       vim.api.nvim_open_win(cache.syntax_tree_bufnr, true, {
@@ -402,25 +410,23 @@ local function syntax_tree()
 
       -- Move the cursor to the start of the syntax tree.
       vim.api.nvim_win_set_cursor(0, { 1, 0 })
-    end)
+    end
+  )
 end
 
 -- Move the cursor to the matching brace for the one at the current position.
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#matching-brace
 local function matching_brace()
-  local params = vim.lsp.util.make_position_params()
-  utils.get_client('rust_analyzer').request('experimental/matchingBrace', {
+  local client = utils.get_client 'rust_analyzer'
+  local params = vim.lsp.util.make_position_params(0, client.offset_encoding)
+  client:request('experimental/matchingBrace', {
     textDocument = params.textDocument,
     positions = { params.position },
   }, function(_, positions, ctx)
     ---@cast positions lsp.Position[]
     if vim.tbl_isempty(positions) then
       logger.warn('%s: empty response', ctx.method)
-      return
-    end
-    local client = vim.lsp.get_client_by_id(ctx.client_id)
-    if client == nil then
       return
     end
     local position = positions[1]
@@ -439,7 +445,7 @@ end
 --
 -- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/dev/lsp-extensions.md#open-cargotoml
 local function open_cargo_toml()
-  utils.get_client('rust_analyzer').request(
+  utils.get_client('rust_analyzer'):request(
     'experimental/openCargoToml',
     { textDocument = vim.lsp.util.make_text_document_params() },
     function(_, location, ctx)
@@ -451,7 +457,7 @@ local function open_cargo_toml()
       if client == nil then
         return
       end
-      vim.lsp.util.jump_to_location(location, client.offset_encoding, true)
+      vim.lsp.util.show_document(location, client.offset_encoding, { reuse_win = true })
     end
   )
 end
@@ -469,7 +475,7 @@ vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
   if client == nil then
     return
   end
-  vim.lsp.util.jump_to_location(command.arguments[1], client.offset_encoding, true)
+  vim.lsp.util.show_document(command.arguments[1], client.offset_encoding, { reuse_win = true })
 end
 
 vim.lsp.commands['rust-analyzer.showReferences'] = function()

@@ -4,7 +4,7 @@
 ---@param on_confirm fun(input?: string): nil
 ---@diagnostic disable-next-line: duplicate-set-field
 vim.ui.input = function(opts, on_confirm)
-  vim.validate { on_confirm = { on_confirm, 'function' } }
+  vim.validate('on_confirm', on_confirm, 'function')
 
   opts = opts or {}
   -- Padding between left border and the prompt text.

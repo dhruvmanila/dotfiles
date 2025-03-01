@@ -231,15 +231,10 @@ local function create_logger(name)
   -- It must be either an integer or a string. Use `dm.log.levels`.
   ---@param level LoggingLevel | LoggingLevelName
   function logger.set_level(level)
-    vim.validate {
-      level = {
-        level,
-        function(value)
-          return M.levels[value] ~= nil, 'Use `dm.log.levels`'
-        end,
-        'one of ' .. vim.inspect(vim.tbl_keys(M.levels)),
-      },
-    }
+    vim.validate('level', level, function(value)
+      return M.levels[value] ~= nil, 'Use `dm.log.levels`'
+    end, 'one of ' .. vim.inspect(vim.tbl_keys(M.levels)))
+
     if type(level) == 'string' then
       level = M.levels[level]
       ---@cast level LoggingLevel

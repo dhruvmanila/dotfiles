@@ -473,3 +473,12 @@ do
 end
 
 -- }}}1
+
+-- Delete the defaults keymaps that I'm not going to be using or have remapped to something else.
+-- See `:h default-mappings`
+
+vim.keymap.del('n', 'grn')
+vim.keymap.del('n', 'grr')
+vim.keymap.del('n', 'gri')
+vim.keymap.del({ 'n', 'x' }, 'gra')
+vim.keymap.del('n', 'gO')
