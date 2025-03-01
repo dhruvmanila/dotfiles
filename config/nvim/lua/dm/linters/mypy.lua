@@ -1,11 +1,32 @@
-local pattern = '([^:]+):(%d+):(%d+):(%d+):(%d+): (%a+): (.*) %[(%a[%a-]+)%]'
+-- Format: `file:lnum:col:end_lnum:end_col: severity: message`
+local pattern = '([^:]+):(%d+):(%d+):(%d+):(%d+): (%a+): (.*)'
+-- Format: `file:lnum:col:end_lnum:end_col: severity: message [code]`
+local pattern_with_code = pattern .. ' %[(%a[%a-]+)%]'
+
+-- Groups corresponding to the capture groups in the above pattern.
 local groups = { 'file', 'lnum', 'col', 'end_lnum', 'end_col', 'severity', 'message', 'code' }
 
+-- Map of `mypy` severities to `vim.diagnostic.severity` levels.
 local severity_map = {
   error = vim.diagnostic.severity.ERROR,
   warning = vim.diagnostic.severity.WARN,
   note = vim.diagnostic.severity.HINT,
 }
+
+---@class MypyDiagnostic: vim.Diagnostic
+---@field file string
+
+-- Parse a line from the output of `mypy`.
+---@param line string
+---@return MypyDiagnostic?
+local function parse_line(line)
+  local diagnostic = vim.diagnostic.match(line, pattern_with_code, groups, severity_map)
+  if not diagnostic then
+    diagnostic = vim.diagnostic.match(line, pattern, groups, severity_map)
+  end
+  ---@cast diagnostic MypyDiagnostic?
+  return diagnostic
+end
 
 ---@type LinterConfig
 return {
@@ -35,13 +56,15 @@ return {
     local current_file = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ':.')
 
     for line in vim.gsplit(output, '\n') do
-      local diagnostic = vim.diagnostic.match(line, pattern, groups, severity_map)
-      -- Use the `file` group to filter diagnostics related to other files.
-      -- This is done because `mypy` can follow imports and report errors
-      -- from other files which will be displayed in the current buffer.
+      local diagnostic = parse_line(line)
       if diagnostic and diagnostic.file == current_file then
         diagnostic.source = 'mypy'
-        if diagnostic.severity == vim.diagnostic.severity.HINT and #diagnostics > 0 then
+        -- For hints, try to check if they need to be appended to the previous diagnostic.
+        if
+          diagnostic.severity == vim.diagnostic.severity.HINT
+          and #diagnostics > 0
+          and diagnostics[#diagnostics].lnum == diagnostic.lnum
+        then
           diagnostics[#diagnostics].message = diagnostics[#diagnostics].message
             .. '\n'
             .. diagnostic.message
