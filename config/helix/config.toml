@@ -17,6 +17,9 @@ character = "▏"
 display-messages = true
 display-inlay-hints = true
 
+[editor.inline-diagnostics]
+cursor-line = "hint"
+
 [editor.soft-wrap]
 enable = true
 
