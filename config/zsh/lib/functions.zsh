@@ -1,5 +1,5 @@
-dsh() { # {{{1
-  # Start a bash shell for the given docker container.
+# Start a bash shell for the given docker container.
+dsh() {
   if (( $# == 0 )); then
     echo "Usage: $0 CONTAINER"
     return 1
@@ -9,11 +9,11 @@ dsh() { # {{{1
   docker exec --interactive --tty "$container_id" bash
 }
 
-git-stats() { # {{{1
-  # Show the last month git stats for the current repository. This includes the
-  # number of lines added/removed and the total.
-  #
-  # Ref: https://twitter.com/thorstenball/status/1293181225280999431
+# Show the last month git stats for the current repository. This includes the
+# number of lines added/removed and the total.
+#
+# Ref: https://twitter.com/thorstenball/status/1293181225280999431
+git-stats() {
   git log \
     --since "30 days ago" \
     --author "$(git config --get user.name)" \
@@ -25,12 +25,12 @@ git-stats() { # {{{1
       }'
 }
 
-gld() { # {{{1
-  # Get the latest master for the git repository and show the diff between then
-  # and now.
-  #
-  # $1 (string) (optional): remote name
-  # $2 (string) (optional): HEAD branch name
+# Get the latest master for the git repository and show the diff between then
+# and now.
+#
+# $1 (string) (optional): remote name
+# $2 (string) (optional): HEAD branch name
+gld() {
   local curr_hash latest_hash
   curr_hash=$(git rev-parse HEAD)
   # These are optional arguments and if we quote them, the command will contain
@@ -43,14 +43,14 @@ gld() { # {{{1
   fi
 }
 
-mcd() { # {{{1
-  # Create a new directory and enter it
+# Create a new directory and enter it
+mcd() {
   mkdir -p "$@" && cd "$_" || return
 }
 
-n() { # {{{1
-  # Purpose: Avoid opening
-  # Block nesting of nnn in subshells
+# Purpose: Avoid opening
+# Block nesting of nnn in subshells
+n() {
   if [ -n "$NNNLVL" ] && [ "${NNNLVL:-0}" -ge 1 ]; then
     echo "nnn is already running"
     return
@@ -73,9 +73,9 @@ n() { # {{{1
   fi
 }
 
-o() { # {{{1
-  # `o` with no arguments opens the current directory, otherwise opens the given
-  # location.
+# `o` with no arguments opens the current directory, otherwise opens the given
+# location.
+o() {
   if (( $# == 0 )); then
     open .
   else
@@ -83,33 +83,33 @@ o() { # {{{1
   fi
 }
 
-pip-uninstall() { # {{{1
-  # Uninstall all the Python packages for the current environment except for the
-  # ones already included when the environment was created.
+# Uninstall all the Python packages for the current environment except for the
+# ones already included when the environment was created.
+pip-uninstall() {
   python -m pip list \
     | awk 'NR>2 {if ($1 != "pip" && $1 != "setuptools") print $1}' \
     | xargs python -m pip uninstall --yes
 }
 
-pip-upgrade() { # {{{1
-  # Upgrade the outdated Python packages for the current environment.
+# Upgrade the outdated Python packages for the current environment.
+pip-upgrade() {
   python -m pip list --outdated \
     | awk 'NR>2 {print $1}' \
     | xargs python -m pip install --upgrade
 }
 
-py-venv-activate() { # {{{1
-  # Activate the Python virtual environment built using the `uv` command.
-  #
-  # This checks for the `.venv` directory by climbing up the path until it
-  # finds the directory or reaches the system root directory (`/`).
-  #
-  # This is used for the `_python_auto_venv` hook, but can be used from the
-  # command-line as well.
-  #
-  # The activation part cannot be a script as that is executed in a subshell
-  # and so the `source` part will also be executed in the subshell instead of
-  # the current shell.
+# Activate the Python virtual environment built using the `uv` command.
+#
+# This checks for the `.venv` directory by climbing up the path until it
+# finds the directory or reaches the system root directory (`/`).
+#
+# This is used for the `_python_auto_venv` hook, but can be used from the
+# command-line as well.
+#
+# The activation part cannot be a script as that is executed in a subshell
+# and so the `source` part will also be executed in the subshell instead of
+# the current shell.
+py-venv-activate() {
   local project_root="$PWD"
   while [[ "$project_root" != "/" && ! -e "$project_root/.venv" ]]; do
     project_root="${project_root:h}"
@@ -119,10 +119,12 @@ py-venv-activate() { # {{{1
   fi
 }
 
-viw() { # {{{1
-  # Open a CLI script in vim
-  # For `pyenv`, it will resolve path using the provided command.
-  # Mnemonic: (vi)m (w)hich
+# Open a CLI script in vim.
+#
+# For `pyenv`, it will resolve path using the provided command.
+#
+# Mnemonic: (vi)m (w)hich
+viw() {
   local bin
   bin=$(which "$1")
   if [[ "$bin" == "$(pyenv root)/shims/"* ]]; then
@@ -130,4 +132,3 @@ viw() { # {{{1
   fi
   $EDITOR $(realpath "$bin")
 }
-

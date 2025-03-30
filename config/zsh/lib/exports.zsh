@@ -112,13 +112,12 @@ export NNN_BATSTYLE="$BAT_STYLE"
 # Homebrew and so an alias script by the same name exists on PATH.
 export NNN_TRASH=1
 
-# Plugins {{{
+# Plugins
 #
 # - To run a plugin, press ; followed by the key or Alt+key
 # - To skip directory refresh after running a plugin, prefix with -
 # - To assign keys to arbitrary non-background non-shell-interpreted cli
 #   commands and invoke like plugins, add ! (bang) before the command.
-# }}}
 NNN_SHELL_PLUGINS='l:-!git log;x:!chmod +x $nnn'
 NNN_PLUGINS='p:preview-tui;c:fzcd;o:fzopen'
 export NNN_PLUG="$NNN_PLUGINS;$NNN_SHELL_PLUGINS"

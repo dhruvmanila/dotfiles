@@ -1,4 +1,4 @@
-# NOTES: {{{
+# NOTES:
 #
 # `autoload`:
 # - `-U`: It is recommended to pass this flag for the use of functions
@@ -10,7 +10,6 @@
 #   Create a new user-defined widget. When the new widget is invoked, the
 #   specified function is called. If no function is specified, it defaults
 #   to the same name as the widget. For more info: `man zshzle(1)` /WIDGETS
-# }}}
 
 export DOTFILES="$HOME/dotfiles"
 
@@ -20,11 +19,9 @@ if [[ "$OSTYPE" = "darwin"* ]]; then
 fi
 
 # Use emacs keybindings, set to -v for vi bindings.
-# Warning: {{{
 #
-# Don't move this line after the `Sourcing` section.
-# It would reset `fzf` key bindings.
-# }}}
+# WARNING: Don't move this line after the `Sourcing` section. It would reset
+# `fzf` key bindings.
 bindkey -e
 
 # Automatically remove duplicates from these arrays.
@@ -42,7 +39,9 @@ unalias run-help > /dev/null 2>&1
 #     /usr/local/share/zsh/functions/
 autoload -Uz run-help
 
-# Path {{{1
+# ------------------------------------------------------------------------------
+# Path
+# ------------------------------------------------------------------------------
 
 # https://github.com/golang/go/wiki/SettingGOPATH#bash
 export GOPATH="$HOME/go"
@@ -73,8 +72,6 @@ case "$OSTYPE" in
     ;;
 esac
 
-# fpath {{{2
-
 # An array (colon separated list) of directories specifying the search path
 # for function definitions. This path is searched when a function with the `-u`
 # attribute is referenced.
@@ -93,8 +90,6 @@ fpath=(
   $fpath
 )
 
-# cdpath {{{2
-
 # An array of directories specifying the search path for the `cd` command.
 #
 # This will allow us to cd into any directory, within the specified ones in the
@@ -106,8 +101,6 @@ cdpath=(
   "$HOME/work"
   "$DOTFILES"
 )
-
-# path {{{2
 
 case "$OSTYPE" in
   darwin*)
@@ -154,9 +147,10 @@ path=(
 
   $path
 )
-# }}}2
 
-# Plugins {{{1
+# ------------------------------------------------------------------------------
+# Plugins
+# ------------------------------------------------------------------------------
 
 # https://github.com/zsh-users/zsh-autosuggestions
 if [[ -f $DOTFILES/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh ]]; then
@@ -180,7 +174,9 @@ if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
 
-# Completion {{{1
+# ------------------------------------------------------------------------------
+# Completion
+# ------------------------------------------------------------------------------
 
 # This module offers enhancements to the completion menu:
 #   - Highlight matches
@@ -207,7 +203,7 @@ compinit
 autoload -Uz bashcompinit
 bashcompinit
 
-# What do these commands do? {{{
+# What do these commands do?
 #
 # A command of the form:
 #
@@ -217,7 +213,6 @@ bashcompinit
 #
 # For more info, see:
 # https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org#copying-completions-from-another-command
-# }}}
 compdef viw=which
 compdef o=open
 
@@ -230,9 +225,11 @@ function source_completion {
 
 source_completion "$DOTFILES/config/bash/completions/dotbot.bash"
 
-# Zstyles {{{1
+# ------------------------------------------------------------------------------
+# Zstyles
+# ------------------------------------------------------------------------------
 
-# What is `zstyle`? {{{
+# What is `zstyle`?
 # `zstyle` is a "global" builtin function which is defined in `zsh/util` module,
 # and the documentation can be accessed by running `man zshmodules(1)`.
 #
@@ -243,16 +240,16 @@ source_completion "$DOTFILES/config/bash/completions/dotbot.bash"
 #
 # This gist shows how you might use `zstyle` to store and retrieve information:
 # https://gist.github.com/mattmc3/449430b6654aaab0ba7160e8efe8291b
-# }}}
-# Completion context string {{{
+
+# Completion context string
 #
 #   :completion:function:completer:command:argument:tag
 #   ├─────────┘
 #   └ literal string "completion"
 #
 # For more info: `man zshcompsys(1)`
-# }}}
-# What does the 'format' style control? {{{
+
+# What does the 'format' style control?
 #
 # The appearance of a description for each list of matches, when you
 # tab-complete a word on the command line. Its value gives the format to print
@@ -260,7 +257,6 @@ source_completion "$DOTFILES/config/bash/completions/dotbot.bash"
 #
 # You can use the same escape sequences you would use in a prompt, described at
 # `man zshmisc /EXPANSION OF PROMPT SEQUENCES`:
-# }}}
 
 ITALIC_ON=$'\e[3m'
 ITALIC_OFF=$'\e[23m'
@@ -269,13 +265,12 @@ ITALIC_OFF=$'\e[23m'
 # using the arrow keys.
 zstyle ':completion:*' menu 'select'
 
-# Set the 'format' style for some well-known tags. {{{
+# Set the 'format' style for some well-known tags.
 #
 # - messages: when there can't be any completion
 # - descriptions: for types of matches (e.g., option, file, etc.)
 # - warnings: when there are no matches (%d/%D is replaced with descriptions
 #             for the matches that were expected separated by spaces/newlines)
-# }}}
 zstyle ':completion:*:messages' format '%F{blue}--- %d ---%f'
 zstyle ':completion:*:descriptions' format "%F{yellow}%B${ITALIC_ON}--- %d ---${ITALIC_OFF}%b%f"
 zstyle ':completion:*:warnings' format $'%F{red}--- no matches found for ---%f\n%D'
@@ -324,15 +319,17 @@ zstyle ':completion:*:manuals.*' insert-sections true
 
 unset ITALIC_ON ITALIC_OFF
 
-# Options {{{1
-#
+# ------------------------------------------------------------------------------
+# Options
+# ------------------------------------------------------------------------------
+
 # Set/unset each option using the `setopt` and `unsetopt` command. We can use
 # `setopt NO<name>` to unset an option but we cannot find `NO<name>` option
 # names in the manpage.
 #
 # For help on each option: `man zshoptions(1)`
 
-# NOTES: {{{2
+# NOTES:
 #
 # Do NOT set `HIST_REDUCE_BLANKS`:
 #
@@ -353,7 +350,6 @@ unset ITALIC_ON ITALIC_OFF
 #   13719 echo "one" \\n"two"
 #
 # See: https://github.com/ohmyzsh/ohmyzsh/issues/8949
-# }}}2
 
 # Let us `cd` into a directory just by typing its name, without `cd`.
 #
@@ -413,7 +409,9 @@ setopt PUSHD_IGNORE_DUPS
 # Share history between all sessions.
 setopt SHARE_HISTORY
 
-# Functions, Aliases, Exports {{{1
+# ------------------------------------------------------------------------------
+# Functions, Aliases, Exports
+# ------------------------------------------------------------------------------
 
 # There's no point in having {ba,z}sh compatibility which would not allow us to
 # use the set of features specific to zsh.
@@ -421,8 +419,10 @@ source $DOTFILES/config/zsh/lib/functions.zsh
 source $DOTFILES/config/zsh/lib/aliases.zsh
 source $DOTFILES/config/zsh/lib/exports.zsh
 
-# Hooks {{{1
-#
+# ------------------------------------------------------------------------------
+# Hooks
+# ------------------------------------------------------------------------------
+
 # A function which is run automatically at a specific point during shell
 # execution. To list all the hooks:
 #
@@ -440,7 +440,7 @@ _python_auto_venv() {
   if ! typeset -f deactivate &> /dev/null; then
     py-venv-activate
   elif [[ -n "$VIRTUAL_ENV" ]]; then
-    # Why '/' ? {{{2
+    # Why '/' ?
     #
     # Take these two directories for example:
     #   1. ~/test         - contains virtual environment
@@ -452,7 +452,6 @@ _python_auto_venv() {
     #
     #   `[[ "~/test-other"  != "~/test"*  ]]` -> false
     #   `[[ "~/test-other/" != "~/test/"* ]]` -> true
-    # }}}2
     if [[ "$PWD/" != "${VIRTUAL_ENV:h}/"* ]]; then
       # If we're changing a directory containing a virtual environment to
       # another directory with a virtual environment, then we should deactivate
@@ -468,8 +467,10 @@ add-zsh-hook -Uz precmd _python_auto_venv
 
 # preexec: runs before executing the command
 
-# Key Bindings {{{1
-#
+# ------------------------------------------------------------------------------
+# Key Bindings
+# ------------------------------------------------------------------------------
+
 # In kitty, one can find the sequence of characters the terminal sends to the
 # program for a certain key combination using `kitty +kitten show_key`.
 
