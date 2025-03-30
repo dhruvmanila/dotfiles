@@ -1,4 +1,6 @@
 return {
+  'Bekaboo/dropbar.nvim',
+
   {
     'lukas-reineke/indent-blankline.nvim',
     main = 'ibl',

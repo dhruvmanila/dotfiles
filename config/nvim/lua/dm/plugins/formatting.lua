@@ -45,7 +45,12 @@ return {
         json = { 'prettier' },
         lua = { 'stylua' },
         python = function(_)
-          if vim.startswith(dm.CWD, dm.OS_HOMEDIR .. '/playground') then
+          if vim.startswith(dm.CWD, dm.OS_HOMEDIR .. '/playground/red_knot') then
+            -- Red knot playground turns off the Ruff language server, so we use the command-line
+            -- interface instead for formatting and organizing imports.
+            return { 'ruff_format', 'ruff_organize_imports' }
+          elseif vim.startswith(dm.CWD, dm.OS_HOMEDIR .. '/playground/ruff') then
+            -- Avoid fixing any issues in the Ruff playground as it could contain random code.
             return { lsp_format = 'prefer' }
           else
             -- Run the ruff formatter first and then fix all auto-fixable issues.

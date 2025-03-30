@@ -122,17 +122,6 @@ local servers = {
     end,
   },
 
-  -- https://github.com/astral-sh/ruff
-  -- Install: `pipx install ruff`
-  ruff = {
-    init_options = {
-      settings = {
-        logLevel = 'debug',
-        logFile = vim.fn.stdpath 'log' .. '/lsp.ruff.log',
-      },
-    },
-  },
-
   -- https://github.com/astral-sh/ruff-lsp
   -- Install: `pipx install ruff-lsp`
   -- Settings: https://github.com/astral-sh/ruff-lsp#settings
@@ -258,10 +247,6 @@ local servers = {
     },
   },
 
-  -- https://github.com/iamcco/vim-language-server
-  -- Install: `npm install --global vim-language-server`
-  vimls = {},
-
   -- https://github.com/redhat-developer/yaml-language-server
   -- Install: `npm install --global yaml-language-server`
   -- Settings: https://github.com/redhat-developer/yaml-language-server#language-server-settings
@@ -303,18 +288,13 @@ local function get(name)
     vim.notify_once('No LSP configuration found for ' .. name, vim.log.levels.WARN)
     return
   end
-  local cmp_nvim_capabilities = {}
-  local ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
-  if ok then
-    cmp_nvim_capabilities = cmp_nvim_lsp.default_capabilities()
-  end
   config.capabilities = vim.tbl_deep_extend(
     'force',
     config.capabilities or {},
-    cmp_nvim_capabilities,
+    require('blink.cmp').get_lsp_capabilities(),
     capability_overrides
   )
   return config
 end
 
-return { get = get }
+return { get = get, capability_overrides = capability_overrides }

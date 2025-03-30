@@ -21,9 +21,6 @@ opt.completeopt = {
 -- Maxmimum number of items to show in the popup menu (|inc-completion-menu|)
 opt.pumheight = 20
 
--- Hide the conceal characters unless the cursor is on that line.
-opt.conceallevel = 2
-
 opt.diffopt:append {
   -- Use the indent heuristic for the internal diff library, because it gives
   -- more readable diffs.

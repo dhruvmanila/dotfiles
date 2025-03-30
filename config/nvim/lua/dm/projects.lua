@@ -81,72 +81,42 @@ local function setup_ruff()
   })
 end
 
-local function setup_ruff_playground()
-  require('dm.linter').enabled_linters_by_filetype.python = {
-    'flake8',
-    'pylint',
-    'mypy',
-  }
-
+-- Setup the diagnostic configuration for the playground projects.
+--
+-- The configuration includes:
+-- - Underline the diagnostic ranges
+local function setup_playground_diagnostic()
   vim.diagnostic.config {
     underline = true,
-    severity_sort = true,
-    virtual_text = {
-      source = true,
-      spacing = 1,
-    },
   }
 end
 
+-- Setup for the ruff playground.
+local function setup_ruff_playground()
+  require('dm.linter').enabled_linters_by_filetype.python = { 'flake8', 'pylint', 'mypy' }
+  setup_playground_diagnostic()
+end
+
+-- Setup for the red knot playground.
 local function setup_red_knot_playground()
-  require('dm.linter').enabled_linters_by_filetype.python = {
-    'mypy',
-  }
-
-  vim.diagnostic.config {
-    underline = true,
-    severity_sort = true,
-    virtual_text = {
-      source = true,
-      spacing = 1,
-    },
-  }
-
-  local ok, lspconfig = pcall(require, 'lspconfig')
-  if ok then
-    lspconfig['red_knot'].setup {
-      cmd = {
-        dm.OS_HOMEDIR .. '/work/astral/ruff/target/debug/red_knot',
-        'server',
-      },
-      trace = 'messages',
-      init_options = {
-        settings = {
-          logLevel = 'debug',
-          logFile = vim.fn.stdpath 'log' .. '/lsp.red_knot.log',
-        },
-      },
-    }
-  end
+  require('dm.linter').enabled_linters_by_filetype.python = { 'mypy' }
+  setup_playground_diagnostic()
+  vim.lsp.enable { 'red_knot', 'pyrefly' }
+  vim.lsp.enable('ruff', false)
 end
 
 ---@type table<string, function>
 local DIRECTORIES = {
-  ['~/work/astral/ruff'] = setup_ruff,
-  ['~/work/astral/ruff-test'] = setup_ruff,
-  ['~/playground/ruff'] = setup_ruff_playground,
-  ['~/playground/red_knot'] = setup_red_knot_playground,
+  [dm.OS_HOMEDIR .. '/work/astral/ruff'] = setup_ruff,
+  [dm.OS_HOMEDIR .. '/work/astral/ruff-test'] = setup_ruff,
+  [dm.OS_HOMEDIR .. '/playground/ruff'] = setup_ruff_playground,
+  [dm.OS_HOMEDIR .. '/playground/red_knot'] = setup_red_knot_playground,
 }
 
 -- Perform project specific setup.
 function M.setup()
-  local project = {
-    path = dm.CWD,
-    name = vim.fs.basename(dm.CWD),
-  }
-
   for directory, setup_fn in pairs(DIRECTORIES) do
-    if vim.startswith(project.path, vim.fs.normalize(directory)) then
+    if vim.startswith(dm.CWD, directory) then
       dm.log.info('Setting up project specific configuration under %s', directory)
       setup_fn()
     end

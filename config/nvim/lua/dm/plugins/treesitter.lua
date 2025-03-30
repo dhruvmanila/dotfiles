@@ -106,48 +106,14 @@ return {
   {
     'nvim-treesitter/nvim-treesitter-context',
     opts = {
-      mode = 'topline',
+      enable = false, -- Disabled by default, use the keybinding to toggle.
+      mode = 'cursor',
       separator = '─',
-      max_lines = math.floor(vim.o.lines * 0.2),
+      max_lines = math.floor(vim.o.lines * 0.1),
       multiline_threshold = 1,
     },
-    config = function(_, opts)
-      require('treesitter-context').setup(opts)
-
+    init = function()
       vim.keymap.set('n', '<leader>tc', '<Cmd>TSContextToggle<CR>')
     end,
-  },
-
-  {
-    'danymat/neogen',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter',
-    },
-    keys = {
-      { '<leader>nn', '<Cmd>Neogen<CR>' },
-      {
-        '<leader>ng',
-        function()
-          require('neogen').generate {
-            annotation_convention = {
-              python = 'google_docstrings',
-            },
-          }
-        end,
-        desc = 'neogen: google docstring',
-      },
-    },
-    opts = {
-      snippet_engine = 'luasnip',
-      placeholders_hl = 'None',
-      languages = {
-        python = {
-          template = {
-            -- Update the default annotation convention.
-            annotation_convention = 'numpydoc',
-          },
-        },
-      },
-    },
   },
 }

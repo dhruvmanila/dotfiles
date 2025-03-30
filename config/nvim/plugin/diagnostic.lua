@@ -38,6 +38,8 @@ vim.diagnostic.config {
   },
 }
 
+require('dm.diagnostic').setup_auto_virtual_lines()
+
 -- For all types of diagnostics: `[d`, `]d`
 keymap.set('n', '[d', function()
   vim.diagnostic.jump { count = -vim.v.count1 }

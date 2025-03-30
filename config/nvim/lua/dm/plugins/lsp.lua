@@ -16,7 +16,6 @@ return {
     },
     config = function()
       local lspconfig = require 'lspconfig'
-      local configs = require 'lspconfig.configs'
 
       local servers = require 'dm.lsp.servers'
 
@@ -34,7 +33,6 @@ return {
           'jsonls',
           'marksman',
           'pyright',
-          'ruff',
           -- 'ruff_lsp',
           'rust_analyzer',
           'lua_ls',
@@ -46,14 +44,6 @@ return {
             lspconfig[name].setup(config)
           end
         end)
-
-      if not configs.red_knot then
-        configs.red_knot = {
-          default_config = vim.tbl_deep_extend('keep', {
-            cmd = { 'red_knot', 'server' },
-          }, configs.ruff.config_def.default_config),
-        }
-      end
     end,
   },
 

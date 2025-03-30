@@ -64,6 +64,7 @@ return {
           diagnostic.severity == vim.diagnostic.severity.HINT
           and #diagnostics > 0
           and diagnostics[#diagnostics].lnum == diagnostic.lnum
+          and diagnostics[#diagnostics].col == diagnostic.col
         then
           diagnostics[#diagnostics].message = diagnostics[#diagnostics].message
             .. '\n'

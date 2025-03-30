@@ -215,6 +215,10 @@ function M.load(background)
   highlight('TabLine', { fg = palette.grey1, bg = palette.bg_float })
   highlight('TabLineFill', { fg = palette.grey1, bg = palette.bg_dim })
 
+  -- Winbar
+  highlight('WinBar', { fg = palette.fg, bg = palette.bg_float })
+  highlight('WinBarNC', { fg = palette.grey1, bg = palette.bg_float })
+
   -- Syntax
   highlight('Boolean', { fg = palette.purple })
   highlight('Character', { fg = palette.aqua })
@@ -286,11 +290,6 @@ function M.load(background)
   highlight('DiagnosticWarn', { fg = palette.yellow })
   highlight('DiagnosticInfo', { fg = palette.blue })
   highlight('DiagnosticHint', { fg = palette.aqua })
-  -- Virtual text and virtual line diagnostics
-  highlight('DiagnosticVirtualLinesError', { fg = palette.red, bg = palette.bg1 })
-  highlight('DiagnosticVirtualLinesWarn', { fg = palette.yellow, bg = palette.bg1 })
-  highlight('DiagnosticVirtualLinesInfo', { fg = palette.blue, bg = palette.bg1 })
-  highlight('DiagnosticVirtualLinesHint', { fg = palette.aqua, bg = palette.bg1 })
   -- Reference text
   highlight('LspReferenceText', { bg = palette.bg_current_word })
   highlight('LspReferenceRead', { bg = palette.bg_current_word })

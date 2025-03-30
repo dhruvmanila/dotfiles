@@ -67,7 +67,7 @@ do
       return diagnostic
     end
     for _, info in ipairs(related_info) do
-      diagnostic.message = ('%s\n%s(%d:%d): %s'):format(
+      diagnostic.message = ('%s\n%s(%d, %d): %s'):format(
         diagnostic.message,
         vim.fn.fnamemodify(vim.uri_to_fname(info.location.uri), ':p:.'),
         info.location.range.start.line + 1,
