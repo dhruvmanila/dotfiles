@@ -17,18 +17,14 @@
 #   export LDFLAGS="-L$HOMEBREW_PREFIX/lib -L$HOMEBREW_PREFIX/opt/openssl@3/lib"
 # fi
 
-# Run `bat --list-themes` for a list of all available themes
-export BAT_THEME="gruvbox-dark"
-export BAT_STYLE="changes,header,numbers,rule"
-
 # Make Neovim the default editor.
 # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
 export EDITOR='nvim'
 export VISUAL="$EDITOR"
 
 # Fzf configuration
-# TODO: Add light color scheme
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+
+export FZF_DEFAULT_COMMAND='fd --type file --hidden --exclude .git'
 export FZF_DEFAULT_OPTS='
   --height=50%
   --layout=reverse
@@ -37,10 +33,6 @@ export FZF_DEFAULT_OPTS='
   --bind=ctrl-p:toggle-preview
   --color fg:#ebdbb2,bg:#282828,hl:#fabd2f,fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
   --color info:#83a598,prompt:#bdae93,spinner:#fabd2f,pointer:#83a598,marker:#fe8019,header:#665c54'
-
-# Molokai for fzf
-# --color fg:252,bg:233,hl:67,fg+:252,bg+:235,hl+:81
-# --color info:144,prompt:161,spinner:135,pointer:135,marker:118
 
 export FZF_CTRL_R_OPTS="
   --prompt='History ❯ '
@@ -103,8 +95,8 @@ export NNN_OPTS="dDeHuU"
 export NNN_FIFO=/tmp/nnn.fifo
 
 # These are defined in the `bat` section.
-export NNN_BATTHEME="$BAT_THEME"
-export NNN_BATSTYLE="$BAT_STYLE"
+# export NNN_BATTHEME="$BAT_THEME"
+# export NNN_BATSTYLE="$BAT_STYLE"
 
 # Use system Trash.
 #
