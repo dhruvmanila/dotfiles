@@ -43,6 +43,10 @@ local function git_info()
   if status and status ~= '' then
     info = info .. ' ' .. status
   end
+  local conflict_count = require('git-conflict').conflict_count()
+  if conflict_count > 0 then
+    info = info .. ' !' .. conflict_count
+  end
   return info
 end
 
