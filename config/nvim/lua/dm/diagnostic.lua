@@ -209,9 +209,15 @@ function M.setup_auto_virtual_lines()
   ---@type integer
   local changedtick = vim.b.changedtick
 
+  -- Returns the number of git conflicts in the current buffer.
+  local git_conflict_count = require('git-conflict').conflict_count
+
   vim.api.nvim_create_autocmd('CursorHold', {
     group = group,
     callback = function()
+      if vim.bo.filetype == 'lazy' or git_conflict_count() > 0 then
+        return
+      end
       if lnum and lnum == current_lnum() and changedtick == vim.b.changedtick then
         -- No need to re-render if the cursor is still on the same line.
         return
@@ -225,12 +231,14 @@ function M.setup_auto_virtual_lines()
   vim.api.nvim_create_autocmd('CursorMoved', {
     group = group,
     callback = function()
-      if lnum and lnum == current_lnum() then
-        -- No need to clear if the cursor is still on the same line.
-        return
+      if lnum then
+        if lnum == current_lnum() then
+          -- No need to clear if the cursor is still on the same line.
+          return
+        end
+        vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
+        lnum = nil
       end
-      vim.api.nvim_buf_clear_namespace(0, namespace, 0, -1)
-      lnum = nil
     end,
     desc = 'Clear virtual line diagnostics when moving the cursor',
   })
