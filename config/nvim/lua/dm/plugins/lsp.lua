@@ -6,12 +6,7 @@ return {
       {
         'folke/lazydev.nvim',
         ft = 'lua',
-        opts = {
-          library = {
-            -- Load luvit types for `vim.uv`
-            { path = '${3rd}/luv/library' },
-          },
-        },
+        config = true,
       },
     },
     config = function()
