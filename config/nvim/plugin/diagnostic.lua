@@ -1,3 +1,7 @@
+if dm.KITTY_SCROLLBACK then
+  return
+end
+
 local icons = dm.icons
 local keymap = vim.keymap
 
