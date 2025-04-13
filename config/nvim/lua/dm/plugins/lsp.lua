@@ -10,35 +10,8 @@ return {
       },
     },
     config = function()
-      local lspconfig = require 'lspconfig'
-
-      local servers = require 'dm.lsp.servers'
-
       -- Setup border for the `:LspInfo` window
       require('lspconfig.ui.windows').default_options.border = dm.border
-
-      vim
-        .iter({
-          'bashls',
-          'cssls',
-          'clangd',
-          'dockerls',
-          'gopls',
-          'html',
-          'jsonls',
-          'marksman',
-          'pyright',
-          -- 'ruff_lsp',
-          'rust_analyzer',
-          'lua_ls',
-          'ts_ls',
-        })
-        :each(function(name)
-          local config = servers.get(name)
-          if config then
-            lspconfig[name].setup(config)
-          end
-        end)
     end,
   },
 

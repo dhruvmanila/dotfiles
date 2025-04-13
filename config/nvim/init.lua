@@ -133,19 +133,47 @@ end
 
 -- NOTE: The following is only executed when Neovim is not used as Kitty's scrollback buffer.
 
--- Set the default configuration for all clients.
-vim.lsp.config('*', {
-  root_markers = { '.git' },
-  capabilities = require('blink.cmp').get_lsp_capabilities(
-    require('dm.lsp.servers').capability_overrides
-  ),
-})
+do
+  -- Overrides for language server capabilities. These are applied to all servers.
+  local capability_overrides = {
+    workspace = {
+      diagnostics = {
+        -- `./config/nvim/plugin/lsp/handlers.lua:87`
+        refreshSupport = true,
+      },
+    },
+    -- workspace = {
+    --   -- TODO: Remove this when https://github.com/neovim/neovim/issues/23291#issuecomment-1686709265 is fixed.
+    --   didChangeWatchedFiles = {
+    --     dynamicRegistration = false,
+    --   },
+    -- },
+  }
+
+  -- Set the default configuration for all clients.
+  vim.lsp.config('*', {
+    capabilities = require('blink.cmp').get_lsp_capabilities(capability_overrides),
+  })
+end
 
 -- NOTE: Enable the servers before setting up the projects because a project specific setup may
 -- disable a server.
 vim.lsp.enable {
+  'bashls',
+  'cssls',
+  'clangd',
+  'dockerls',
+  'gopls',
+  'html',
+  'jsonls',
+  'lua_ls',
+  'marksman',
+  'pyright',
+  -- 'ruff_lsp',
   'ruff',
+  'rust_analyzer',
   'tombi',
+  'ts_ls',
 }
 
 require('dm.projects').setup()
