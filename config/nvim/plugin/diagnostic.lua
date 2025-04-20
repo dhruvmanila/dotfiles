@@ -44,32 +44,42 @@ vim.diagnostic.config {
 
 require('dm.diagnostic').setup_auto_virtual_lines()
 
+-- NOTE: Only center the cursor if we actually jumped to a diagnostic.
+
 -- For all types of diagnostics: `[d`, `]d`
 keymap.set('n', '[d', function()
-  vim.diagnostic.jump { count = -vim.v.count1 }
-  dm.center_cursor()
+  if vim.diagnostic.jump { count = -vim.v.count1 } then
+    dm.center_cursor()
+  end
 end, { desc = 'Diagnostic: Goto prev' })
 
 keymap.set('n', ']d', function()
-  vim.diagnostic.jump { count = vim.v.count1 }
-  dm.center_cursor()
+  if vim.diagnostic.jump { count = vim.v.count1 } then
+    dm.center_cursor()
+  end
 end, { desc = 'Diagnostic: Goto next' })
 
 -- For warning and error diagnostics: `[w`, `]w`
 keymap.set('n', '[w', function()
-  vim.diagnostic.jump {
-    count = -vim.v.count1,
-    severity = { min = vim.diagnostic.severity.WARN },
-  }
-  dm.center_cursor()
+  if
+    vim.diagnostic.jump {
+      count = -vim.v.count1,
+      severity = { min = vim.diagnostic.severity.WARN },
+    }
+  then
+    dm.center_cursor()
+  end
 end, { desc = 'Diagnostic: Goto prev (warning/error)' })
 
 keymap.set('n', ']w', function()
-  vim.diagnostic.jump {
-    count = vim.v.count1,
-    severity = { min = vim.diagnostic.severity.WARN },
-  }
-  dm.center_cursor()
+  if
+    vim.diagnostic.jump {
+      count = vim.v.count1,
+      severity = { min = vim.diagnostic.severity.WARN },
+    }
+  then
+    dm.center_cursor()
+  end
 end, { desc = 'Diagnostic: Goto next (warning/error)' })
 
 keymap.set('n', '<leader>l', function()
