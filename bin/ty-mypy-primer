@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+#
+# This script is similar to the one in Ruff's `mypy_primer.yaml` workflow file,
+# but tailored for optimal local usage.
+#
+# Usage:
+#   ty-mypy-primer.sh <old_commit> <new_commit> <name>
+#
+# The diffs are saved to `~/work/astral/mypy_primer_diffs/<name>.diff`
+#
+# Use the `TY_MYPY_PRIMER_TRACE` environment variable to output every command
+# run by this script. This is useful for debugging.
+
+[[ -n "$TY_MYPY_PRIMER_TRACE" ]] && set -x
+
+# NOTE: Keep this in sync with the commit hash in the `mypy_primer.yaml` workflow
+MYPY_PRIMER_COMMIT="4b15cf3b07db69db67bbfaebfffb2a8a28040933"
+
+CMD="$(basename "$0")"
+
+if [[ $# -ne 3 ]]; then
+    echo "Usage: $CMD <old_commit> <new_commit> <name>"
+    echo "  <old_commit> - old type checker version"
+    echo "  <new_commit> - new type checker version"
+    echo "  <name>       - name of the diff file"
+    echo ""
+    echo "Environment variables:"
+    echo "  TY_MYPY_PRIMER_TRACE - if set, will output every command run by this script"
+    exit 1
+fi
+
+OLD_COMMIT="$1"
+NEW_COMMIT="$2"
+DIFF_PATH="$HOME/work/astral/mypy_primer_diffs/$3.diff"
+
+# Create a temporary file for the output and set up a trap to remove it on exit
+TEMP_DIFF_PATH=$(mktemp /tmp/mypy_primer.XXXXXXXX)
+trap 'rm -f "$TEMP_DIFF_PATH"' EXIT
+
+red() {
+  echo -e "\033[0;31m$1\033[0m"
+}
+
+handle_interrupt() {
+  red "\n$CMD: script interrupted by user (CTRL-C)"
+  red "$CMD: make sure to kill any running 'ty' processes"
+  exit 130 # Standard exit code for SIGINT
+}
+
+# Set up trap for CTRL-C (SIGINT)
+trap handle_interrupt INT
+
+PROJECT_SELECTOR="$(paste -s -d'|' ~/work/astral/ruff/crates/ty_python_semantic/resources/primer/good.txt)"
+
+# Allow the exit code to be 0 or 1, only fail for actual mypy_primer crashes/bugs
+if ! (
+  uvx \
+    --from="git+https://github.com/hauntsaninja/mypy_primer@$MYPY_PRIMER_COMMIT" \
+    mypy_primer \
+    --repo ~/work/astral/ruff \
+    --type-checker ty \
+    --old "$OLD_COMMIT" \
+    --new "$NEW_COMMIT" \
+    --project-selector "/($PROJECT_SELECTOR)\$" \
+    --output concise \
+    --debug > "$TEMP_DIFF_PATH" || \
+      [ $? -eq 1 ]
+  ); then
+    echo "$CMD: failed to generate diff"
+    exit 1
+fi
+
+# If we got here, the command succeeded
+mkdir -p "$(dirname "$DIFF_PATH")"
+
+# Remove ANSI color codes and save to the final location
+sed -e 's/\x1b\[[0-9;]*m//g' "$TEMP_DIFF_PATH" > "$DIFF_PATH"
+
+echo "$CMD: diff saved to $DIFF_PATH"
+
+ty-add-toml

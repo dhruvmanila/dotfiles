@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+#
+# This script is used to configure the projects used in the mypy_primer checks
+# for the ty type checker.
+#
+# This is done by adding a `ty.toml` file to each project for ty to recognize
+# the virtual environment.
+
+[[ -n "$TY_MYPY_PRIMER_TRACE" ]] && set -x
+
+CMD="$(basename "$0")"
+
+PROJECT_SELECTOR="$(paste -s -d'|' ~/work/astral/ruff/crates/ty_python_semantic/resources/primer/good.txt)"
+
+echo "$CMD: configuring each project for ty..."
+
+# Split over `|` that's used as the project separator
+IFS='|' read -ra PROJECTS <<< "$PROJECT_SELECTOR"
+
+for project in "${PROJECTS[@]}"; do
+  venv_path="/tmp/mypy_primer/projects/_${project}_venv"
+  if [[ -d "$venv_path" ]]; then
+    cat > "/tmp/mypy_primer/projects/${project}/ty.toml" << EOF
+[environment]
+python = "$venv_path"
+EOF
+  fi
+done
+
+echo "$CMD: configured ${#PROJECTS[@]} projects for ty"
