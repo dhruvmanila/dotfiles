@@ -41,12 +41,17 @@ local function setup_ruff_playground()
   setup_playground_diagnostic()
 end
 
--- Setup for the red knot playground.
-local function setup_red_knot_playground()
+-- Setup for the ty playground.
+local function setup_ty_playground()
   require('dm.linter').enabled_linters_by_filetype.python = { 'mypy' }
   setup_playground_diagnostic()
-  vim.lsp.enable { 'red_knot', 'pyrefly' }
+  vim.lsp.enable { 'ty', 'pyrefly' }
   vim.lsp.enable('ruff', false)
+end
+
+-- Setup for the any of the projects configured for mypy_primer.
+local function setup_mypy_primer()
+  vim.lsp.enable 'ty_main'
 end
 
 ---@type table<string, function>
@@ -54,7 +59,8 @@ local DIRECTORIES = {
   [dm.OS_HOMEDIR .. '/work/astral/ruff'] = setup_ruff,
   [dm.OS_HOMEDIR .. '/work/astral/ruff-test'] = setup_ruff,
   [dm.OS_HOMEDIR .. '/playground/ruff'] = setup_ruff_playground,
-  [dm.OS_HOMEDIR .. '/playground/red_knot'] = setup_red_knot_playground,
+  [dm.OS_HOMEDIR .. '/playground/ty'] = setup_ty_playground,
+  ['/tmp/mypy_primer/projects'] = setup_mypy_primer,
 }
 
 -- Perform project specific setup.

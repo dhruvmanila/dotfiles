@@ -89,3 +89,11 @@ end, { desc = 'Show line diagnostics' })
 keymap.set('n', '<leader>dt', function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = 'Toggle diagnostics' })
+
+keymap.set('n', ';d', function()
+  if vim.diagnostic.config().virtual_lines then
+    vim.diagnostic.config { virtual_lines = false }
+  else
+    vim.diagnostic.config { virtual_lines = require('dm.diagnostic').virtual_lines_opts }
+  end
+end, { desc = 'Toggle virtual line diagnostics' })

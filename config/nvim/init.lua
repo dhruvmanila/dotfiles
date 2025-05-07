@@ -170,6 +170,7 @@ vim.lsp.enable {
   'marksman',
   'pyright',
   -- 'ruff_lsp',
+  'ty',
   'ruff',
   'rust_analyzer',
   'tombi',

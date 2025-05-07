@@ -18,12 +18,12 @@ logLevel = "debug"
 logFile = "~/.cache/helix/ruff.log"
 
 [language-server.red-knot]
-command = "/Users/dhruv/work/astral/ruff/target/debug/red_knot"
+command = "/Users/dhruv/work/astral/ruff/target/debug/ty"
 args = ["server"]
 
 [language-server.red-knot.config.settings]
 logLevel = "debug"
-logFile = "~/.cache/helix/red_knot.log"
+logFile = "~/.cache/helix/ty.log"
 
 [language-server.ruff-lsp]
 command = "ruff-lsp"
