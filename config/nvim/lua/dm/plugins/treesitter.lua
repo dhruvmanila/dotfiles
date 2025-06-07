@@ -4,7 +4,6 @@ return {
     event = 'BufReadPre',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
-      'IndianBoy42/tree-sitter-just',
     },
     build = ':TSUpdate',
     config = function()
@@ -27,7 +26,7 @@ return {
           'javascript',
           'json',
           'jsonc',
-          -- 'just',
+          'just',
           'lalrpop',
           'make',
           'requirements',
