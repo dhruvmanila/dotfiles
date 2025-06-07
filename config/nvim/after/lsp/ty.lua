@@ -6,8 +6,13 @@ return {
   single_file_support = true,
   init_options = {
     settings = {
-      logLevel = 'info',
+      logLevel = 'debug',
       logFile = vim.fn.stdpath 'log' .. '/lsp.ty.log',
+      experimental = {
+        completions = {
+          enable = vim.startswith(dm.CWD .. '/', dm.OS_HOMEDIR .. '/playground/ty_server/'),
+        },
+      },
     },
   },
 }
