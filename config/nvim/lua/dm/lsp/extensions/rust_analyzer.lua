@@ -462,6 +462,32 @@ local function open_cargo_toml()
   )
 end
 
+-- Open a new tab with the status of the rust-analyzer.
+--
+-- See: https://github.com/rust-lang/rust-analyzer/blob/master/docs/book/src/contributing/lsp-extensions.md#analyzer-status
+local function analyzer_status()
+  utils.get_client('rust_analyzer'):request(
+    'rust-analyzer/analyzerStatus',
+    { textDocument = vim.lsp.util.make_text_document_params() },
+    function(_, status)
+      ---@cast status string?
+      if status == nil then
+        return
+      end
+      local lines = vim.split(status, '\n', { plain = true, trimempty = true })
+      vim.cmd.tabnew()
+      vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, lines)
+      vim.api.nvim_win_set_cursor(0, { 1, 0 })
+      vim.api.nvim_buf_set_name(0, 'rust-analyzer-status')
+      vim.keymap.set('n', 'q', function()
+        vim.api.nvim_buf_delete(0, { force = true })
+      end, { buffer = true, nowait = true })
+      vim.opt_local.modifiable = false
+      vim.opt_local.modified = false
+    end
+  )
+end
+
 vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
   execute_runnable(command.arguments[1])
 end
@@ -513,6 +539,7 @@ local commands = {
   { 'RustSyntaxTree', syntax_tree, desc = 'syntax tree' },
   { 'RustMatchingBrace', matching_brace, desc = 'matching brace' },
   { 'RustRebuildProcMacros', rebuild_proc_macros, desc = 'rebuild proc macros' },
+  { 'RustAnalyzerStatus', analyzer_status, desc = 'analyzer status' },
 }
 
 -- Setup the buffer local mappings and commands for the `rust-analyzer` extension features.
