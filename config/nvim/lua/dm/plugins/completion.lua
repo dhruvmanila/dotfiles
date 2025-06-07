@@ -13,8 +13,6 @@ return {
         preset = 'enter',
       },
       appearance = {
-        -- TODO: Define blink highlight groups: https://cmp.saghen.dev/configuration/appearance.html
-        use_nvim_cmp_as_default = true,
         kind_icons = dm.icons.lsp_kind,
       },
       completion = {
