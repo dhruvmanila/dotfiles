@@ -1,6 +1,10 @@
 [[language]]
 name = "python"
-language-servers = ["ruff", "red-knot", "pyright"]
+language-servers = [
+  "ruff",
+  "ty",
+  "pyright"
+]
 
 [[language]]
 name = "rust"
@@ -17,11 +21,11 @@ args = ["server"]
 logLevel = "debug"
 logFile = "~/.cache/helix/ruff.log"
 
-[language-server.red-knot]
+[language-server.ty]
 command = "/Users/dhruv/work/astral/ruff/target/debug/ty"
 args = ["server"]
 
-[language-server.red-knot.config.settings]
+[language-server.ty.config.settings]
 logLevel = "debug"
 logFile = "~/.cache/helix/ty.log"
 
