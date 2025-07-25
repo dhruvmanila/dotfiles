@@ -50,40 +50,6 @@ do
   end
 end
 
--- Neovim does not currently report the related locations for diagnostics.
---
--- Refer:
--- 1. https://github.com/neovim/neovim/issues/19649#issuecomment-1327287313
--- 2. https://github.com/neovim/neovim/issues/22744#issuecomment-1479366923
---
--- TODO: Remove this once a PR for this is merged
-do
-  local original_handler = vim.lsp.handlers[M.textDocument_publishDiagnostics]
-
-  -- See: https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticRelatedInformation
-  local function show_related_information(diagnostic)
-    local related_info = diagnostic.relatedInformation
-    if not related_info or #related_info == 0 then
-      return diagnostic
-    end
-    for _, info in ipairs(related_info) do
-      diagnostic.message = ('%s\n%s(%d, %d): %s'):format(
-        diagnostic.message,
-        vim.fn.fnamemodify(vim.uri_to_fname(info.location.uri), ':p:.'),
-        info.location.range.start.line + 1,
-        info.location.range.start.character + 1,
-        info.message
-      )
-    end
-    return diagnostic
-  end
-
-  vim.lsp.handlers[M.textDocument_publishDiagnostics] = function(err, result, ctx, config)
-    result.diagnostics = vim.tbl_map(show_related_information, result.diagnostics)
-    original_handler(err, result, ctx, config)
-  end
-end
-
 vim.lsp.handlers[M.workspace_diagnostic_refresh] = function(_, _, ctx, _)
   local buffers = vim
     .iter(vim.api.nvim_list_bufs())
