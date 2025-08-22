@@ -5,14 +5,7 @@ return {
   root_markers = { 'pyproject.toml', 'ty.toml' },
   single_file_support = true,
   init_options = {
-    settings = {
-      logLevel = 'debug',
-      logFile = vim.fn.stdpath 'log' .. '/lsp.ty.log',
-      experimental = {
-        completions = {
-          enable = vim.startswith(dm.CWD .. '/', dm.OS_HOMEDIR .. '/playground/ty_server/'),
-        },
-      },
-    },
+    logLevel = 'debug',
+    logFile = vim.fn.stdpath 'log' .. '/lsp.ty.log',
   },
 }
