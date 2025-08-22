@@ -1,8 +1,5 @@
 local M = {}
 
--- Create a namespace for the lightbulb extmark.
-local LIGHTBULB_EXTMARK_NS = vim.api.nvim_create_namespace 'dm__lsp_lightbulb'
-
 local RUST_ANALYZER_WAIT_MESSAGE = 'waiting for cargo metadata or cargo check'
 
 -- Code action listener to set and update the lightbulb to indicate that there
@@ -25,15 +22,16 @@ function M.listener()
       end
       return dm.log.error('LSP (%s): %s', ctx.method, err)
     end
+    local lightbulb_ns = vim.api.nvim_create_namespace 'dm__lsp_lightbulb'
     -- Remove all the existing lightbulbs.
-    vim.api.nvim_buf_clear_namespace(bufnr, LIGHTBULB_EXTMARK_NS, 0, -1)
+    vim.api.nvim_buf_clear_namespace(bufnr, lightbulb_ns, 0, -1)
     -- We've switched buffer by the time the server responded.
     if vim.api.nvim_get_current_buf() ~= bufnr then
       return
     end
     if result and not vim.tbl_isempty(result) then
       local line = params.range.start.line
-      vim.api.nvim_buf_set_extmark(0, LIGHTBULB_EXTMARK_NS, line, 0, {
+      vim.api.nvim_buf_set_extmark(0, lightbulb_ns, line, 0, {
         virt_text = { { '', 'Yellow' } },
         virt_text_pos = 'overlay',
         hl_mode = 'combine',
