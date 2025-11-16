@@ -270,28 +270,23 @@ upgrade_npm() {
 
 upgrade_plugins() {
   # Not quiting vim/neovim to check what's new
-  header "Upgrading vim plugins..."
-  vim +PlugUpgrade +PlugClean +PlugUpdate
+  # header "Upgrading vim plugins..."
+  # vim +PlugUpgrade +PlugClean +PlugUpdate
 
-  # header "Upgrading neovim plugins..."
-  # nvim +Lazy sync
+  header "Upgrading Neovim plugins..."
+  nvim --headless "+Lazy! sync" +qa
 
-  header "Cleaning and updating tmux plugins..."
-  ~/.tmux/plugins/tpm/bin/clean_plugins
-  ~/.tmux/plugins/tpm/bin/update_plugins all
+  # header "Cleaning and updating tmux plugins..."
+  # ~/.tmux/plugins/tpm/bin/clean_plugins
+  # ~/.tmux/plugins/tpm/bin/update_plugins all
 }
 
 upgrade_python() {
-  header "Upgrading pip for all pyenv Python versions..."
-  for python_exec in "$PYENV_ROOT"/versions/*/bin/python; do
-    $python_exec -m pip install --upgrade pip
-  done
-
-  header "Upgrading pipx..."
-  "$PYENV_ROOT/bin/python" -m pip install --upgrade pipx
+  header "Upgrading uv..."
+  uv self update
 
   header "Upgrading all Python global packages..."
-  pipx upgrade-all --include-injected
+  uv tool upgrade --all
 }
 
 ask() {
