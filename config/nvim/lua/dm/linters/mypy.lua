@@ -1,3 +1,5 @@
+local utils = require 'dm.utils'
+
 -- Format: `file:lnum:col:end_lnum:end_col: severity: message`
 local pattern = '([^:]+):(%d+):(%d+):(%d+):(%d+): (%a+): (.*)'
 -- Format: `file:lnum:col:end_lnum:end_col: severity: message [code]`
@@ -47,6 +49,15 @@ return {
         '--python-executable',
         vim.fs.joinpath(venv_dir, 'bin', 'python'),
       })
+      return args
+    end
+    local mypy_primer_venv_dir = utils.find_mypy_primer_venv(dm.CWD)
+    if mypy_primer_venv_dir then
+      vim.list_extend(args, {
+        '--python-executable',
+        vim.fs.joinpath(mypy_primer_venv_dir, 'bin', 'python'),
+      })
+      return args
     end
     return args
   end,

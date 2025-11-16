@@ -1,27 +1,6 @@
 ---@diagnostic disable: inject-field
 
--- Path to `mypy_primer` projects directory.
-local MYPY_PRIMER_PROJECTS_DIR = '/private/tmp/mypy_primer/projects'
-
--- Check if the `root_dir` is in the `mypy_primer` projects directory and return the virtual
--- environment corresponding to that project if it exists.
----@param root_dir string
----@return string|nil
-local function find_mypy_primer_venv(root_dir)
-  if not dm.path_exists(MYPY_PRIMER_PROJECTS_DIR) then
-    return
-  end
-  local relative_path = vim.fs.relpath(MYPY_PRIMER_PROJECTS_DIR, root_dir)
-  if not relative_path then
-    return
-  end
-  local project_name = vim.split(relative_path, '/', { plain = true })[1]
-  local venv_dir = vim.fs.joinpath(MYPY_PRIMER_PROJECTS_DIR, '_' .. project_name .. '_venv')
-  if not dm.path_exists(venv_dir) then
-    return
-  end
-  return venv_dir
-end
+local utils = require 'dm.utils'
 
 -- https://github.com/microsoft/pyright
 -- Install: `npm install --global pyright`
@@ -53,7 +32,7 @@ return {
     end
 
     -- Check if this is a `mypy_primer` project
-    local mypy_primer_venv_dir = find_mypy_primer_venv(config.root_dir)
+    local mypy_primer_venv_dir = utils.find_mypy_primer_venv(config.root_dir)
     if mypy_primer_venv_dir then
       config.settings.python.venvPath = mypy_primer_venv_dir
       config.settings.python.pythonPath = vim.fs.joinpath(mypy_primer_venv_dir, 'bin', 'python')
