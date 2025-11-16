@@ -45,28 +45,67 @@ end
 local function setup_ty_playground()
   require('dm.linter').enabled_linters_by_filetype.python = { 'mypy' }
   setup_playground_diagnostic()
-  vim.lsp.enable { 'ty', 'pyrefly' }
+  vim.lsp.enable { 'pyrefly', 'pyright', 'ty' }
   vim.lsp.enable('ruff', false)
 end
 
 -- Setup for the any of the projects configured for mypy_primer.
 local function setup_mypy_primer()
-  vim.lsp.enable 'ty_main'
+  require('dm.linter').enabled_linters_by_filetype.python = { 'mypy' }
+  vim.lsp.enable { 'pyright', 'ty_main' }
+  vim.lsp.enable('ruff', false)
+end
+
+-- Setup for the ty server playground.
+local function setup_ty_server_playground()
+  setup_playground_diagnostic()
+  vim.lsp.enable({ 'pyrefly', 'pyright', 'ruff' }, false)
+  vim.lsp.enable 'ty'
+end
+
+-- Setup for the Pyright server playground.
+local function setup_pyright_server_playground()
+  vim.lsp.enable({ 'pyrefly', 'ruff', 'ty' }, false)
+  vim.lsp.config('pyright', {
+    settings = {
+      python = {
+        analysis = {
+          typeCheckingMode = 'strict',
+        },
+      },
+    },
+  })
+  vim.lsp.enable 'pyright'
+end
+
+-- Setup for the Pyrefly server playground.
+local function setup_pyrefly_server_playground()
+  vim.lsp.enable({ 'ruff', 'ty', 'pyright' }, false)
+  vim.lsp.enable 'pyrefly'
+end
+
+local function setup_finlab()
+  vim.lsp.enable 'pyright'
+  vim.lsp.enable('ty', false)
 end
 
 ---@type table<string, function>
 local DIRECTORIES = {
-  [dm.OS_HOMEDIR .. '/work/astral/ruff'] = setup_ruff,
-  [dm.OS_HOMEDIR .. '/work/astral/ruff-test'] = setup_ruff,
-  [dm.OS_HOMEDIR .. '/playground/ruff'] = setup_ruff_playground,
-  [dm.OS_HOMEDIR .. '/playground/ty'] = setup_ty_playground,
-  ['/tmp/mypy_primer/projects'] = setup_mypy_primer,
+  [dm.OS_HOMEDIR .. '/work/astral/ruff/'] = setup_ruff,
+  [dm.OS_HOMEDIR .. '/work/astral/ruff-test/'] = setup_ruff,
+  [dm.OS_HOMEDIR .. '/playground/ruff/'] = setup_ruff_playground,
+  [dm.OS_HOMEDIR .. '/playground/ty/'] = setup_ty_playground,
+  [dm.OS_HOMEDIR .. '/playground/ty-server/'] = setup_ty_server_playground,
+  [dm.OS_HOMEDIR .. '/playground/pyright-server/'] = setup_pyright_server_playground,
+  [dm.OS_HOMEDIR .. '/playground/pyrefly-server/'] = setup_pyrefly_server_playground,
+  [dm.OS_HOMEDIR .. '/work/astral/mypy_primer_diffs/'] = setup_mypy_primer,
+  [dm.OS_HOMEDIR .. '/projects/finlab'] = setup_finlab,
 }
 
 -- Perform project specific setup.
 function M.setup()
   for directory, setup_fn in pairs(DIRECTORIES) do
-    if vim.startswith(dm.CWD, directory) then
+    if vim.startswith(dm.CWD .. '/', directory) then
       dm.log.info('Setting up project specific configuration under %s', directory)
       setup_fn()
     end
