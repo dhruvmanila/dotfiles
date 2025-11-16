@@ -105,14 +105,22 @@ return {
   {
     'nvim-treesitter/nvim-treesitter-context',
     opts = {
-      enable = false, -- Disabled by default, use the keybinding to toggle.
+      -- I can enable this only when my laptop is connected to the monitor using the following
+      -- command:
+      --
+      --   $ system_profiler SPDisplaysDataType | grep -c Resolution
+      --
+      -- This will output `n` which is the total number of displays including the builtin display.
+      enable = true,
       mode = 'cursor',
       separator = '─',
       max_lines = math.floor(vim.o.lines * 0.1),
       multiline_threshold = 1,
     },
     init = function()
-      vim.keymap.set('n', '<leader>tc', '<Cmd>TSContextToggle<CR>')
+      vim.keymap.set('n', '<leader>tc', '<Cmd>TSContext toggle<CR>', {
+        desc = 'Toggle treesitter context',
+      })
     end,
   },
 }
