@@ -70,6 +70,10 @@ local function execute_command(cmd, opts)
     height = math.ceil(vim.o.lines * 0.35),
   })
 
+  -- TODO: This isn't supported by the `nvim_open_win` call above
+  vim.opt_local.winfixheight = true
+  vim.cmd.wincmd 'J'
+
   local job_id = vim.fn.jobstart(cmd, vim.tbl_extend('error', { term = true }, opts))
   vim.api.nvim_set_current_win(original_winnr)
 
@@ -238,6 +242,8 @@ end
 local function execute_last_runnable()
   if cache.runnable then
     execute_runnable(cache.runnable)
+  elseif vim.tbl_isempty(vim.lsp.get_clients { name = 'rust-analyzer' }) then
+    dm.notify(TITLE, 'No runnable is cached yet', vim.log.levels.WARN)
   else
     runnables()
   end
@@ -509,10 +515,10 @@ vim.lsp.commands['rust-analyzer.showReferences'] = function()
 end
 
 -- List of mappings to be defined on server attach.
----@type { [1]: string, [2]: string, [3]: function, desc: string }[]
+---@type { [1]: string, [2]: string, [3]: function, desc: string, global: boolean|nil }[]
 local mappings = {
   { 'n', '<leader>rr', runnables, desc = 'runnables' },
-  { 'n', '<leader>rl', execute_last_runnable, desc = 'execute last runnable' },
+  { 'n', '<leader>rl', execute_last_runnable, desc = 'execute last runnable', global = true },
   { 'n', '<leader>rm', expand_macro_recursively, desc = 'expand macro recursively' },
   { 'n', '<leader>rd', open_external_docs, desc = 'open external docs' },
   { 'n', '<leader>rt', open_cargo_toml, desc = 'open Cargo.toml' },
@@ -524,10 +530,10 @@ local mappings = {
 }
 
 -- List of user commands to be defined on server attach.
----@type { [1]: string, [2]: function, desc: string }[]
+---@type { [1]: string, [2]: function, desc: string, global: boolean|nil }[]
 local commands = {
   { 'RustRunnables', runnables, desc = 'runnables' },
-  { 'RustLastRun', execute_last_runnable, desc = 'execute last runnable' },
+  { 'RustLastRun', execute_last_runnable, desc = 'execute last runnable', global = true },
   { 'RustExpandMacro', expand_macro_recursively, desc = 'expand macro recursively' },
   { 'RustOpenExternalDocs', open_external_docs, desc = 'open external docs' },
   { 'RustOpenCargoToml', open_cargo_toml, desc = 'open Cargo.toml' },
@@ -547,11 +553,24 @@ local commands = {
 ---@param bufnr number
 function M.on_attach(_, bufnr)
   for _, m in ipairs(mappings) do
-    vim.keymap.set(m[1], m[2], m[3], { buffer = bufnr, desc = 'rust-analyzer: ' .. m.desc })
+    if m.global then
+      vim.keymap.set(m[1], m[2], m[3], { desc = 'rust-analyzer: ' .. m.desc })
+    else
+      vim.keymap.set(m[1], m[2], m[3], { buffer = bufnr, desc = 'rust-analyzer: ' .. m.desc })
+    end
   end
 
   for _, c in ipairs(commands) do
-    vim.api.nvim_buf_create_user_command(bufnr, c[1], c[2], { desc = 'rust-analyzer: ' .. c.desc })
+    if c.global then
+      vim.api.nvim_create_user_command(c[1], c[2], { desc = 'rust-analyzer: ' .. c.desc })
+    else
+      vim.api.nvim_buf_create_user_command(
+        bufnr,
+        c[1],
+        c[2],
+        { desc = 'rust-analyzer: ' .. c.desc }
+      )
+    end
   end
 end
 
