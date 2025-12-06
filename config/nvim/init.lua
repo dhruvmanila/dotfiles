@@ -133,25 +133,27 @@ end
 
 do
   -- Overrides for language server capabilities. These are applied to all servers.
+  ---@type lsp.ClientCapabilities
   local capability_overrides = {
     workspace = {
       diagnostics = {
-        -- `./config/nvim/plugin/lsp/handlers.lua:87`
+        -- `./config/nvim/plugin/lsp/handlers.lua:53`
         refreshSupport = true,
       },
+      -- TODO: Remove this when https://github.com/neovim/neovim/issues/23291#issuecomment-1686709265 is fixed.
+      -- didChangeWatchedFiles = {
+      --   dynamicRegistration = false,
+      -- },
     },
-    -- workspace = {
-    --   -- TODO: Remove this when https://github.com/neovim/neovim/issues/23291#issuecomment-1686709265 is fixed.
-    --   didChangeWatchedFiles = {
-    --     dynamicRegistration = false,
-    --   },
-    -- },
   }
 
   -- Set the default configuration for all clients.
-  vim.lsp.config('*', {
-    capabilities = require('blink.cmp').get_lsp_capabilities(capability_overrides),
-  })
+  local ok, blink = pcall(require, 'blink.cmp')
+  if ok then
+    vim.lsp.config('*', {
+      capabilities = blink.get_lsp_capabilities(capability_overrides),
+    })
+  end
 end
 
 -- NOTE: Enable the servers before setting up the projects because a project specific setup may
