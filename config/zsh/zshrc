@@ -52,6 +52,8 @@ export CARGO_HOME="$HOME/.cargo"
 # Custom tool for managing multiple Python versions (smaller version of `pyenv`)
 export PYENV_ROOT="$HOME/.pyenv"
 
+export BUN_INSTALL="$HOME/.bun"
+
 case "$OSTYPE" in
   darwin*)
     case "$(uname -m)" in
@@ -134,7 +136,8 @@ path=(
   # Local build of Neovim nightly.
   "$HOME/neovim/bin"(N-/)
 
-  # Language specific bin directory.
+  # Project specific bin directory.
+  "$BUN_INSTALL/bin"(N-/)
   "$CARGO_HOME/bin"(N-/)
   "$GOPATH/bin"(N-/)
 
@@ -149,7 +152,7 @@ path=(
 )
 
 # ------------------------------------------------------------------------------
-# Plugins
+# Plugins and shell integrations
 # ------------------------------------------------------------------------------
 
 # https://github.com/zsh-users/zsh-autosuggestions
@@ -224,6 +227,7 @@ function source_completion {
 }
 
 source_completion "$DOTFILES/config/bash/completions/dotbot.bash"
+source_completion "$HOME/.bun/_bun"
 
 # ------------------------------------------------------------------------------
 # Zstyles
