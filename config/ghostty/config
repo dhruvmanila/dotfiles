@@ -8,7 +8,7 @@ font-family = JetBrains Mono
 font-size = 18
 
 # Theme
-theme = light:GruvboxLight,dark:GruvboxDark
+theme = light:Gruvbox Light,dark:Gruvbox Dark
 window-theme = system
 
 # Use the block non-blinking cursor everywhere
