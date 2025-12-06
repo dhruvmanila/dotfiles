@@ -7,11 +7,9 @@
 --
 -------------------------------------------------------------------------------
 
-local g = vim.g
+vim.loader.enable()
 
-if vim.loader then
-  vim.loader.enable()
-end
+local g = vim.g
 
 -- Leader bindings
 g.mapleader = ' '
