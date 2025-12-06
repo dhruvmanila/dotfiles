@@ -14,7 +14,7 @@
 [[ -n "$TY_MYPY_PRIMER_TRACE" ]] && set -x
 
 # NOTE: Keep this in sync with the commit hash in the `mypy_primer.yaml` workflow
-MYPY_PRIMER_COMMIT="ab5d30e2d4ecdaf7d6cc89395c7130143d6d3c82"
+MYPY_PRIMER_COMMIT="a81360123447a9409ab72f6b4f9684c02a9768e7"
 
 CMD="$(basename "$0")"
 
