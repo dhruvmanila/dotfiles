@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#
+# Synchronize the typeshed repository at `~/git/ty-typeshed` with the commit
+# specified in `crates/ty_vendored/vendor/typeshed/source_commit.txt` of the
+# Ruff repository.
+
+set -euo pipefail
+
+TY_TYPESHED_REPOSITORY="$HOME/git/ty-typeshed"
+SOURCE_COMMIT_FILE="$HOME/work/astral/ruff/crates/ty_vendored/vendor/typeshed/source_commit.txt"
+
+if [[ ! -f "$SOURCE_COMMIT_FILE" ]]; then
+    echo "error: source_commit.txt not found at $SOURCE_COMMIT_FILE" >&2
+    exit 1
+fi
+
+if [[ ! -d "$TY_TYPESHED_REPOSITORY" ]]; then
+    echo "error: ty-typeshed repository not found at $TY_TYPESHED_REPOSITORY" >&2
+    exit 1
+fi
+
+commit="$(head -n1 "$SOURCE_COMMIT_FILE")"
+
+cd "$TY_TYPESHED_REPOSITORY"
+
+current_commit="$(git rev-parse HEAD)"
+if [[ "$current_commit" == "$commit" ]]; then
+    echo "nothing to update, already at $commit"
+    exit 0
+fi
+
+git fetch origin
+git checkout "$commit"
+
+echo "synced typeshed to $commit"
