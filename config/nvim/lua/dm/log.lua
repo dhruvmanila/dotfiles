@@ -161,6 +161,24 @@ local function console_output(name, message, highlight)
   end)
 end
 
+-- Format function to be used with `vim.lsp.log.set_format_func`.
+--
+-- This function respects the log level set in `vim.lsp.log.get_level()`.
+---@param level LoggingLevelName
+---@vararg any
+---@return string? #Formatted log message or `nil` if the message should be ignored
+function M.lsp_log_format_func(level, ...)
+  if M.levels[level] < vim.lsp.log.get_level() then
+    return nil
+  end
+
+  return ('%s [%s] %s\n'):format(
+    os.date(log_date_format),
+    level,
+    table.concat(convert_to_string(...), ' ')
+  )
+end
+
 -- Create a new logger.
 --
 -- The default log level is `WARN` and the log file is created in the `stdpath('log')` directory
