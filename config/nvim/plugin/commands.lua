@@ -113,7 +113,7 @@ do
     if opts.args ~= '' then
       vim.cmd.tabnew(vim.fs.joinpath(logdir, ('lsp.%s.log'):format(opts.args)))
     else
-      vim.cmd.tabnew(vim.lsp.get_log_path())
+      vim.cmd.tabnew(vim.lsp.log.get_filename())
     end
     vim.keymap.set('n', 'q', function()
       vim.cmd.tabclose()
@@ -150,7 +150,7 @@ end
 -- LspSetLogLevel {{{1
 
 nvim_create_user_command('LspSetLogLevel', function(opts)
-  vim.lsp.set_log_level(opts.args)
+  vim.lsp.log.set_level(opts.args)
 end, {
   nargs = 1,
   complete = function(arglead)

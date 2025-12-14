@@ -18,7 +18,7 @@ local function dump_file_debug_info(kind)
   -- The server sends this information via the `window/logMessage` method at `Info` level.
   -- Set the LSP log level temporarily to `INFO` level to log the information.
   local current_lsp_log_level = vim.lsp.log.get_level()
-  vim.lsp.set_log_level(vim.log.levels.INFO)
+  vim.lsp.log.set_level(vim.log.levels.INFO)
 
   utils.get_client('pyright'):exec_cmd(
     {
@@ -32,7 +32,7 @@ local function dump_file_debug_info(kind)
       vim.cmd.tabedit(vim.fs.joinpath(vim.fn.stdpath 'log', 'lsp.pyright.log'))
       vim.keymap.set('n', 'q', '<Cmd>quit<CR>', { buffer = true })
       -- Reset the log level to what it was earlier.
-      vim.lsp.set_log_level(current_lsp_log_level)
+      vim.lsp.log.set_level(current_lsp_log_level)
     end
   )
 end

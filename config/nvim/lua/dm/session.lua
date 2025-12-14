@@ -164,7 +164,9 @@ end
 
 -- Stop all the LSP clients.
 local function stop_lsp_clients()
-  vim.lsp.stop_client(vim.lsp.get_clients())
+  for _, client in ipairs(vim.lsp.get_clients()) do
+    client:stop()
+  end
 end
 
 -- Cleanup performed before saving the session. This includes:
