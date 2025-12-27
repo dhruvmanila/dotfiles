@@ -52,8 +52,33 @@ end
 -- Setup for the any of the projects configured for mypy_primer.
 local function setup_mypy_primer()
   require('dm.linter').enabled_linters_by_filetype.python = { 'mypy' }
-  vim.lsp.enable { 'pyright', 'ty_main' }
+  -- These are the release binaries built when running `mypy_primer` that should exists when I'm
+  -- trying to analyze the output.
+  vim.lsp.enable { 'ty_mypy_primer_new', 'ty_mypy_primer_old', 'pyright', 'pyrefly' }
   vim.lsp.enable('ruff', false)
+  vim.lsp.enable('ty', false)
+
+  -- Override the `on_diagnostic` handler to update the diagnostic source to use the language server
+  -- name instead of "ty".
+  local original_on_diagnostic = vim.lsp.diagnostic.on_diagnostic
+
+  ---@param error lsp.ResponseError?
+  ---@param result lsp.DocumentDiagnosticReport
+  ---@param ctx lsp.HandlerContext
+  ---@diagnostic disable-next-line: duplicate-set-field
+  vim.lsp.diagnostic.on_diagnostic = function(error, result, ctx)
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if
+      result.items ~= nil
+      and client ~= nil
+      and (client.name == 'ty_mypy_primer_new' or client.name == 'ty_mypy_primer_old')
+    then
+      for _, item in ipairs(result.items) do
+        item.source = client.name
+      end
+    end
+    original_on_diagnostic(error, result, ctx)
+  end
 end
 
 -- Setup for the ty server playground.
