@@ -2,12 +2,13 @@ from kittens.tui.handler import result_handler
 from kitty.key_encoding import KeyEvent, parse_shortcut
 
 
-def is_nvim_window(window) -> bool:
-    """Returns `True` if the window is running Neovim."""
-    return any(
-        next(iter(process["cmdline"]), "").endswith("nvim")
-        for process in window.child.foreground_processes
-    )
+def should_pass_keys(window) -> bool:
+    """Returns `True` if keys should be passed to the foreground process."""
+    for process in window.child.foreground_processes:
+        cmd = next(iter(process["cmdline"]), "")
+        if cmd.endswith("nvim") or cmd.endswith("fzf"):
+            return True
+    return False
 
 
 def encode_key_mapping(window, key_mapping):
@@ -37,7 +38,7 @@ def handle_result(args, result, target_window_id, boss):
 
     direction = args[1]
     key_mapping = args[2]
-    if is_nvim_window(window):
+    if should_pass_keys(window):
         for keymap in key_mapping.split(">"):
             encoded = encode_key_mapping(window, keymap)
             window.write_to_child(encoded)
