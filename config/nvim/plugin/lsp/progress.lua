@@ -12,7 +12,10 @@ end
 ---@param client_name string
 ---@return string
 local function format_message(data, client_name)
-  local message = data.title
+  local message = ''
+  if data.title then
+    message = data.title
+  end
   if data.message then
     message = message .. ' ' .. data.message
   end
@@ -38,22 +41,18 @@ do
       if client == nil then
         return
       end
-      vim.api.nvim_echo({
-        { format_message(event.data.params.value, client.name), 'Grey' },
-      }, false, {})
+      local value = event.data.params.value
+      if value.kind == 'end' then
+        if clear_message_timer then
+          clear_message_timer:stop()
+        end
+        clear_message_timer = vim.defer_fn(clear_cmdline, timeout)
+      else
+        vim.api.nvim_echo({
+          { format_message(event.data.params.value, client.name), 'Grey' },
+        }, false, {})
+      end
     end,
     desc = 'LSP: echo progress message',
-  })
-
-  vim.api.nvim_create_autocmd('LspProgress', {
-    group = group,
-    pattern = 'end',
-    callback = function()
-      if clear_message_timer then
-        clear_message_timer:stop()
-      end
-      clear_message_timer = vim.defer_fn(clear_cmdline, timeout)
-    end,
-    desc = 'LSP: clear cmdline after progress ends',
   })
 end
