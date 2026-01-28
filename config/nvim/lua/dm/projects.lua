@@ -73,8 +73,14 @@ local function setup_mypy_primer()
       and client ~= nil
       and (client.name == 'ty_mypy_primer_new' or client.name == 'ty_mypy_primer_old')
     then
+      local source
+      if client.name == 'ty_mypy_primer_new' then
+        source = 'ty (new)'
+      else
+        source = 'ty (old)'
+      end
       for _, item in ipairs(result.items) do
-        item.source = client.name
+        item.source = source
       end
     end
     original_on_diagnostic(error, result, ctx)
