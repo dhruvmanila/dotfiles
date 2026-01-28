@@ -14,3 +14,5 @@ __pycache__
 
 # Neovim project local config
 .nvim.lua
+
+CLAUDE.local.md
