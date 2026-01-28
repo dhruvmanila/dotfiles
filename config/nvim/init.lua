@@ -129,6 +129,10 @@ if dm.KITTY_SCROLLBACK then
   return
 end
 
+if dm.has 'nvim-0.12' then
+  vim.cmd.packadd 'nvim.undotree'
+end
+
 -- NOTE: The following is only executed when Neovim is not used as Kitty's scrollback buffer.
 
 do

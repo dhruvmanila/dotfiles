@@ -132,3 +132,10 @@ end
 function dm.center_cursor()
   vim.cmd.normal { 'zz', bang = true }
 end
+
+-- Check whether the given `feature` is supported.
+---@param feature string
+---@return boolean
+function dm.has(feature)
+  return vim.fn.has(feature) == 1
+end
