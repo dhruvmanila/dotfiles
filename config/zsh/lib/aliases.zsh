@@ -15,7 +15,6 @@ alias -g E='2> /dev/null'
 alias -g T='| tail'
 
 alias hn='clx --nerdfonts --comment-width=$((COLUMNS - 10))'
-alias ipython='uv run --no-project --with ipython ipython --no-banner'
 
 # Quick access to programs
 alias d='docker'

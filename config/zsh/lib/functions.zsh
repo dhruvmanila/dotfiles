@@ -43,6 +43,13 @@ gld() {
   fi
 }
 
+# Start IPython within a `uv` environment without a project.
+#
+# Additional arguments are passed to `uv run` command.
+ipython() {
+  uv run --no-project --with ipython $@ ipython --no-banner
+}
+
 # Create a new directory and enter it
 mcd() {
   mkdir -p "$@" && cd "$_" || return
