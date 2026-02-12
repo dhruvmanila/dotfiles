@@ -480,16 +480,7 @@ local function analyzer_status()
       if status == nil then
         return
       end
-      local lines = vim.split(status, '\n', { plain = true, trimempty = true })
-      vim.cmd.tabnew()
-      vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, lines)
-      vim.api.nvim_win_set_cursor(0, { 1, 0 })
-      vim.api.nvim_buf_set_name(0, 'rust-analyzer-status')
-      vim.keymap.set('n', 'q', function()
-        vim.api.nvim_buf_delete(0, { force = true })
-      end, { buffer = true, nowait = true })
-      vim.opt_local.modifiable = false
-      vim.opt_local.modified = false
+      utils.temp_buffer('rust-analyzer-status', status)
     end
   )
 end

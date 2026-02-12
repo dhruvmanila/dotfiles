@@ -2,4 +2,5 @@
 return {
   pyright = require 'dm.lsp.extensions.pyright',
   rust_analyzer = require 'dm.lsp.extensions.rust_analyzer',
+  ty = require 'dm.lsp.extensions.ty',
 }

@@ -85,4 +85,24 @@ do
   end
 end
 
+-- TODO: Maybe the first parameter should be `content` followed by `opts` table containing various
+-- information like `name`, etc.
+
+-- Open a new tab with a temporary buffer of the given `name` containing the given `content`.
+-- The buffer will be deleted when the user presses `q` in normal mode.
+---@param name string
+---@param content string
+function M.temp_buffer(name, content)
+  vim.cmd.tabnew()
+  local lines = vim.split(content, '\n', { plain = true, trimempty = true })
+  vim.api.nvim_buf_set_text(0, 0, 0, 0, 0, lines)
+  vim.api.nvim_win_set_cursor(0, { 1, 0 })
+  vim.api.nvim_buf_set_name(0, name)
+  vim.keymap.set('n', 'q', function()
+    vim.api.nvim_buf_delete(0, { force = true })
+  end, { buffer = true, nowait = true })
+  vim.opt_local.modifiable = false
+  vim.opt_local.modified = false
+end
+
 return M
