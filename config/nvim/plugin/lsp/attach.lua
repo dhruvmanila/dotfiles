@@ -133,7 +133,33 @@ local function setup_mappings(client, bufnr)
   end
 
   if client:supports_method(M.textDocument_rename) then
-    vim.keymap.set('n', '<leader>rn', lsp.buf.rename, {
+    -- Rename handler for the beancount language server.
+    --
+    -- For beancount, the <cword> should contain the full symbol name (e.g., `Assets:Bank:Account`)
+    -- instead of just the part where the cursor is at (e.g., `Account`). To achieve this, we
+    -- temporarily add `:` to the `iskeyword` option to make sure the entire symbol name is captured
+    -- in `<cword>`.
+    --
+    -- This shouldn't be required if the server supports `textDocument/prepareRename` and returns
+    -- the correct placeholder, but it doesn't at the time of writing.
+    local function beancount_rename()
+      vim.opt_local.iskeyword:append ':'
+      local cword = vim.fn.expand '<cword>'
+      vim.opt_local.iskeyword:remove ':'
+      vim.ui.input({ prompt = 'New Name: ', default = cword }, function(input)
+        if input and input ~= '' then
+          lsp.buf.rename(input)
+        end
+      end)
+    end
+
+    vim.keymap.set('n', '<leader>rn', function()
+      if client.name == 'beancount' then
+        beancount_rename()
+      else
+        lsp.buf.rename()
+      end
+    end, {
       buffer = bufnr,
       desc = 'lsp: [r]e[n]ame all symbol references',
     })
