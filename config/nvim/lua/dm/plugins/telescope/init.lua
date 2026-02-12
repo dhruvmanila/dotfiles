@@ -136,6 +136,9 @@ return {
           keymaps = {
             show_plug = false,
           },
+          oldfiles = {
+            only_cwd = true,
+          },
         },
         extensions = {
           fzf = {
