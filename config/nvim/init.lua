@@ -29,11 +29,6 @@ local namespace = {
     ---@type 'edge'|'single'|'double'|'shadow'|'rounded'|'solid'
     border_style = 'edge',
 
-    -- Provide VS Code like code action lightbulb.
-    code_action_lightbulb = {
-      enable = false,
-    },
-
     colorscheme = {
       -- Color scheme for dark mode.
       dark = 'gruvbox_dark',

@@ -222,19 +222,6 @@ local function setup_autocmds(client, bufnr)
     })
   end
 
-  if
-    dm.config.code_action_lightbulb.enable and client:supports_method(M.textDocument_codeAction)
-  then
-    local group = vim.api.nvim_create_augroup('dm__lsp_code_action_lightbulb', { clear = false })
-    vim.api.nvim_clear_autocmds { buffer = bufnr, group = group }
-    vim.api.nvim_create_autocmd('CursorHold', {
-      group = group,
-      buffer = bufnr,
-      callback = require('dm.lsp.code_action').listener,
-      desc = 'lsp: code action (bulb)',
-    })
-  end
-
   if client:supports_method(M.textDocument_codeLens) then
     local group = vim.api.nvim_create_augroup('dm__lsp_code_lens_refresh', { clear = false })
     vim.api.nvim_clear_autocmds { buffer = bufnr, group = group }
