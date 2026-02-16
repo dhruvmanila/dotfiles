@@ -1,6 +1,6 @@
 -- https://github.com/rust-lang/rust-analyzer
 -- Install: `rustup component add rust-analyzer`
--- Settings: https://rust-analyzer.github.io/manual.html#configuration
+-- Settings: https://rust-analyzer.github.io/book/configuration.html
 ---@type vim.lsp.Config
 return {
   settings = {
@@ -23,6 +23,20 @@ return {
       lens = {
         implementations = {
           enable = false,
+        },
+        references = {
+          adt = {
+            enable = false,
+          },
+          enumVariant = {
+            enable = false,
+          },
+          method = {
+            enable = false,
+          },
+          trait = {
+            enable = false,
+          },
         },
       },
       procMacro = {
