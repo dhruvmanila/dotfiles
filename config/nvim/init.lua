@@ -36,9 +36,10 @@ local namespace = {
       light = 'gruvbox_light',
     },
 
-    -- LSP inlay hints.
     inlay_hints = {
-      enable = false,
+      -- List of LSP servers for which inlay hints should be enabled.
+      ---@type string[]
+      enable = { 'beancount' },
     },
   },
 

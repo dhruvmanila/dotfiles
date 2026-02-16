@@ -235,7 +235,10 @@ local function setup_autocmds(client, bufnr)
     })
   end
 
-  if dm.config.inlay_hints.enable and client:supports_method(M.textDocument_inlayHint) then
+  if
+    vim.tbl_contains(dm.config.inlay_hints.enable, client.name)
+    and client:supports_method(M.textDocument_inlayHint)
+  then
     vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
   end
 end
