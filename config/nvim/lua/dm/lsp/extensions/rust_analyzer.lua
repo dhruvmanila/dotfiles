@@ -485,24 +485,27 @@ local function analyzer_status()
   )
 end
 
-vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
-  execute_runnable(command.arguments[1])
-end
-
-vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
-  debug_runnable(command.arguments[1])
-end
-
-vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
-  local client = vim.lsp.get_client_by_id(ctx.client_id)
-  if client == nil then
-    return
+-- Setup client-defined handlers implementing custom (off-spec) commands which a server may invoke.
+local function setup_server_command_handlers()
+  vim.lsp.commands['rust-analyzer.runSingle'] = function(command)
+    execute_runnable(command.arguments[1])
   end
-  vim.lsp.util.show_document(command.arguments[1], client.offset_encoding, { reuse_win = true })
-end
 
-vim.lsp.commands['rust-analyzer.showReferences'] = function()
-  vim.lsp.buf.implementation()
+  vim.lsp.commands['rust-analyzer.debugSingle'] = function(command)
+    debug_runnable(command.arguments[1])
+  end
+
+  vim.lsp.commands['rust-analyzer.gotoLocation'] = function(command, ctx)
+    local client = vim.lsp.get_client_by_id(ctx.client_id)
+    if client == nil then
+      return
+    end
+    vim.lsp.util.show_document(command.arguments[1], client.offset_encoding, { reuse_win = true })
+  end
+
+  vim.lsp.commands['rust-analyzer.showReferences'] = function()
+    vim.lsp.buf.implementation()
+  end
 end
 
 -- List of mappings to be defined on server attach.
@@ -563,6 +566,8 @@ function M.on_attach(_, bufnr)
       )
     end
   end
+
+  setup_server_command_handlers()
 end
 
 return M
