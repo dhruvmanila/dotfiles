@@ -229,7 +229,7 @@ local function setup_autocmds(client, bufnr)
       group = group,
       buffer = bufnr,
       callback = function()
-        lsp.codelens.refresh { bufnr = bufnr }
+        lsp.codelens.enable(true, { bufnr = bufnr })
       end,
       desc = 'lsp: refresh codelens',
     })
