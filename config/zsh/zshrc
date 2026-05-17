@@ -90,6 +90,9 @@ path=(
   # Local scripts and `pipx` installed executables.
   "$HOME/.local/bin"(N-/)
 
+  # Just in case this isn't present
+  /usr/local/bin(N-/)
+
   $path
 )
 
@@ -119,6 +122,10 @@ fi
 
 if (( $+commands[mise] )); then
   eval "$(mise activate zsh)"
+fi
+
+if (( $+commands[direnv] )); then
+  eval "$(direnv hook zsh)"
 fi
 
 # ------------------------------------------------------------------------------
@@ -495,3 +502,9 @@ bindkey -M menuselect '\ej' down-line-or-history
 bindkey -M menuselect '\ek' up-line-or-history
 bindkey -M menuselect -s '\C-f' '\ej\ej\ej\ej\ej'
 bindkey -M menuselect -s '\C-b' '\ek\ek\ek\ek\ek'
+
+# ------------------------------------------------------------------------------
+# Local
+# ------------------------------------------------------------------------------
+
+source_if_exists "$HOME/.zshrc.local"
