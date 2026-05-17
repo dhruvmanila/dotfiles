@@ -10,6 +10,8 @@ return {
         buildScripts = {
           enable = true,
         },
+        -- https://rust-analyzer.github.io/book/configuration#cargo.targetDir
+        targetDir = true,
       },
       checkOnSave = false,
       check = {
