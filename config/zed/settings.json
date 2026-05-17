@@ -8,9 +8,6 @@
 // from the command palette or from `Zed` application menu.
 {
   "auto_update": false,
-  "auto_update_extensions": {
-    "ruff": false
-  },
   "autosave": "on_window_change",
   "buffer_font_size": 16,
   "buffer_font_family": "JetBrains Mono",
@@ -24,14 +21,16 @@
   "languages": {
     "Python": {
       "language_servers": [
-        "ruff"
+        "ty",
+        "!pyright",
+        "!ruff"
       ],
       "formatter": [
         {
-          "code_actions": {
-            "source.organizeImports.ruff": true,
-            "source.fixAll.ruff": true
-          }
+          "code_action": "source.organizeImports.ruff"
+        },
+        {
+          "code_action": "source.fixAll.ruff"
         },
         {
           "language_server": {
@@ -42,13 +41,49 @@
       "format_on_save": "off"
     },
     "Rust": {
-      "format_on_save": "language_server"
+      "formatter": "language_server",
+      "format_on_save": "on"
     },
     "JSONC": {
-      "format_on_save": "language_server"
+      "formatter": "language_server",
+      "format_on_save": "on"
     }
   },
   "lsp": {
+    "ty": {
+      "settings": {
+        // "configurationFile": "ty.toml",
+        // "configuration": {
+        //   "environment": {
+        //     "python": ".venv/bin/python"
+        //   }
+        // }
+      },
+      "initialization_options": {
+        "logLevel": "debug",
+        "logFile": "~/.cache/zed/ty.log"
+      },
+      "binary": {
+        "path": "/Users/dhruv/work/astral/ruff/target/debug/ty",
+        "arguments": [
+          "server"
+        ]
+      }
+    },
+    "ruff": {
+      "initialization_options": {
+        "settings": {
+          "logLevel": "debug",
+          "logFile": "~/.cache/zed/ruff.log"
+        }
+      }
+      // "binary": {
+      //   "path": "/Users/dhruv/work/astral/ruff/target/debug/ruff",
+      //   "arguments": [
+      //     "server"
+      //   ]
+      // },
+    },
     "rust-analyzer": {
       // These should match the ones in `./../nvim/lua/dm/lsp/servers.lua`
       "initialization_options": {
@@ -58,7 +93,7 @@
             "enable": true
           }
         },
-        "checkOnSave": false,
+        // "checkOnSave": false,
         "check": {
           "command": "clippy"
         },
@@ -74,21 +109,6 @@
           "excludeImports": true
         }
       }
-    },
-    "ruff": {
-      "binary": {
-        "path": "/Users/dhruv/work/astral/ruff/target/debug/ruff",
-        "arguments": [
-          "server"
-        ]
-      },
-      "initialization_options": {
-        "settings": {
-          // Ruff server settings goes here
-          "logLevel": "debug",
-          "logFile": "~/.cache/zed/ruff.log"
-        }
-      }
     }
   },
   "preview_tabs": {
@@ -97,7 +117,7 @@
   "scrollbar": {
     "show": "never"
   },
-  "show_inline_completions": false,
+  "show_edit_predictions": false,
   "soft_wrap": "editor_width",
   "tabs": {
     "file_icons": true

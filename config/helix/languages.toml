@@ -3,7 +3,7 @@ name = "python"
 language-servers = [
   "ruff",
   "ty",
-  "pyright"
+  # "pyright"
 ]
 
 [[language]]
@@ -25,7 +25,7 @@ logFile = "~/.cache/helix/ruff.log"
 command = "/Users/dhruv/work/astral/ruff/target/debug/ty"
 args = ["server"]
 
-[language-server.ty.config.settings]
+[language-server.ty.config]
 logLevel = "debug"
 logFile = "~/.cache/helix/ty.log"
 
