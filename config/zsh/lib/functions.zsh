@@ -50,6 +50,14 @@ ipython() {
   uv run --no-project --with ipython $@ ipython --no-banner
 }
 
+# Fuzzy search the directory list in the present working directory and cd into
+# the selected directory.
+fcd() {
+  local dir
+  dir=$(fd -t d -d 1 . | fzf)
+  [[ -n "$dir" ]] && cd "$dir"
+}
+
 # Create a new directory and enter it
 mcd() {
   mkdir -p "$@" && cd "$_" || return
