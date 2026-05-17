@@ -112,10 +112,10 @@ return {
       --   $ system_profiler SPDisplaysDataType | grep -c Resolution
       --
       -- This will output `n` which is the total number of displays including the builtin display.
-      enable = true,
+      enable = false,
       mode = 'cursor',
       separator = '─',
-      max_lines = math.floor(vim.o.lines * 0.1),
+      max_lines = 3,
       multiline_threshold = 1,
     },
     init = function()
