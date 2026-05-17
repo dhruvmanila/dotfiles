@@ -10,6 +10,7 @@
 	co = checkout
 	nb = checkout -b
 	st = status --short --branch
+	wt = worktree
 
 	# Sync with upstream HEAD branch
 	sync = !git pull upstream HEAD && git push
@@ -58,6 +59,8 @@
 	# patches easier to read
 	indentHeuristic = true
 	algorithm = histogram
+	colorMoved = zebra
+	colorMovedWS = ignore-all-space
 
 [delta]
 	syntax-theme = gruvbox-dark
