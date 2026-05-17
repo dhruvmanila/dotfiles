@@ -131,6 +131,7 @@ local DIRECTORIES = {
   [dm.OS_HOMEDIR .. '/playground/pyrefly-server/'] = setup_pyrefly_server_playground,
   [dm.OS_HOMEDIR .. '/work/astral/mypy_primer_diffs/'] = setup_mypy_primer,
   [dm.OS_HOMEDIR .. '/projects/finlab'] = setup_finlab,
+  [dm.OS_HOMEDIR .. '/projects/personal-finance'] = setup_finlab,
 }
 
 -- Perform project specific setup.
