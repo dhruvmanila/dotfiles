@@ -53,9 +53,11 @@ trap handle_interrupt INT
 PROJECT_SELECTOR="$(paste -s -d'|' ~/work/astral/ruff/crates/ty_python_semantic/resources/primer/good.txt)"
 
 # Allow the exit code to be 0 or 1, only fail for actual mypy_primer crashes/bugs
+# The Python version is from looking at the CI output of mypy_primer.yaml
 if ! (
   uvx \
     --from="git+https://github.com/hauntsaninja/mypy_primer@$MYPY_PRIMER_COMMIT" \
+    --python=3.11 \
     mypy_primer \
     --repo ~/work/astral/ruff \
     --type-checker ty \
