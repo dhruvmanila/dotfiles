@@ -42,6 +42,9 @@ return {
   config = function()
     require('conform').setup {
       formatters_by_ft = {
+        beancount = { lsp_format = 'prefer' },
+        html = { 'prettier' },
+        htmldjango = { 'djlint' },
         json = { 'prettier' },
         lua = { 'stylua' },
         python = function(_)
@@ -61,6 +64,7 @@ return {
         rust = { lsp_format = 'prefer' },
         swift = { 'swift_format' },
         typescript = { 'prettier' },
+        typescriptreact = { 'prettier' },
         yaml = { 'prettier' },
       },
       format_on_save = function(bufnr)
