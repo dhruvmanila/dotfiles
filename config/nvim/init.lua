@@ -135,12 +135,12 @@ do
   -- Overrides for language server capabilities. These are applied to all servers.
   ---@type lsp.ClientCapabilities
   local capability_overrides = {
-    -- workspace = {
-    --   -- TODO: Remove this when https://github.com/neovim/neovim/issues/23291#issuecomment-1686709265 is fixed.
-    --   didChangeWatchedFiles = {
-    --     dynamicRegistration = false,
-    --   },
-    -- },
+    workspace = {
+      -- TODO: Remove this when https://github.com/neovim/neovim/issues/23291 is fixed
+      didChangeWatchedFiles = {
+        dynamicRegistration = false,
+      },
+    },
   }
 
   -- Set the default configuration for all clients.
@@ -156,16 +156,15 @@ end
 -- disable a server.
 vim.lsp.enable {
   'bashls',
+  'beancount',
   'cssls',
   'clangd',
-  'dockerls',
   'gopls',
   'html',
   'jsonls',
   'lua_ls',
   'marksman',
   'pyright',
-  -- 'ruff_lsp',
   'ty',
   'ruff',
   'rust_analyzer',
