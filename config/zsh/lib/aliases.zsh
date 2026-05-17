@@ -1,6 +1,8 @@
 # The <C-l> is mapped to window switching in Kitty.
 alias c='clear'
 
+alias notes='cd "${HOME}/Library/Mobile Documents/iCloud~md~obsidian/Documents/Notes" && nvim && cd -'
+
 # List indivial path in separate line.
 alias path='echo -e ${PATH//:/\\n}'
 
