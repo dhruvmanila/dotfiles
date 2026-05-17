@@ -34,10 +34,6 @@
 	# Enhance git diff with delta
 	delta = "!f() { git diff \"$@\" | delta; }; f"
 
-[commit]
-	gpgsign = true
-	template = ~/.gitmessage
-
 [color "branch"]
 	current = yellow reverse
 	local = yellow
@@ -74,9 +70,6 @@
 	file-style = bold yellow ul
 	file-decoration-style = none
 	hunk-header-decoration-style = cyan box ul
-
-[gpg]
-	program = gpg
 
 [help]
 	autocorrect = prompt
