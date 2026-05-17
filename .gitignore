@@ -1,5 +1,6 @@
 local/
 .vagrant
+.repro/
 
 config/karabiner/automatic_backups/
 config/kitty/kitty.conf.bak
