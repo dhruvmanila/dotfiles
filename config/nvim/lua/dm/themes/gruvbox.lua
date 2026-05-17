@@ -8,6 +8,7 @@ local opts = {
   italic = true,
   bold = true,
   underline = true,
+  strikethrough = true,
 
   -- Italic in comments.
   italic_comment = true,
@@ -105,6 +106,7 @@ function M.load(background)
   highlight('GreyBold', { fg = palette.grey1, bold = opts.bold })
   highlight('GreyItalic', { fg = palette.grey1, italic = opts.italic })
   highlight('GreyUnderline', { fg = palette.grey1, underline = opts.underline })
+  highlight('GreyStrikethrough', { fg = palette.grey1, strikethrough = opts.strikethrough })
 
   for name, color in pairs(base) do
     -- Uppercase the first letter of the given string.
@@ -338,6 +340,11 @@ function M.load(background)
   highlight('LeapMatch', { fg = 'White', bold = true, italic = true, underline = true })
 
   -- blink.cmp
+  link('BlinkCmpLabel', 'Grey')
+  link('BlinkCmpLabelDeprecated', 'GreyStrikethrough')
+  link('BlinkCmpLabelMatch', 'Fg')
+  link('BlinkCmpLabelDescription', 'GreyItalic')
+  link('BlinkCmpLabelDetail', 'GreyItalic')
   link('BlinkCmpDocBorder', 'FloatBorder')
   link('BlinkCmpSignatureHelpBorder', 'FloatBorder')
   -- Kind highlights
