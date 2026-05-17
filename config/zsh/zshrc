@@ -28,51 +28,29 @@ bindkey -e
 # For more info, see `man zshbuiltins(1)`.
 typeset -U path cdpath fpath manpath
 
-# By default, `run-help` is merely an alias for `man`.
-# We want the `run-help` shell function which tries to figure out where to get
-# the best help, and get it.
-unalias run-help > /dev/null 2>&1
-#                ├──────────────┘
-#                └ to avoid error messages when we reload zshrc
-#
-# This should be in:
-#     /usr/local/share/zsh/functions/
-autoload -Uz run-help
-
 # ------------------------------------------------------------------------------
 # Path
 # ------------------------------------------------------------------------------
 
-# https://github.com/golang/go/wiki/SettingGOPATH#bash
-export GOPATH="$HOME/go"
-
 # https://www.rust-lang.org/tools/install
 export CARGO_HOME="$HOME/.cargo"
 
-# Custom tool for managing multiple Python versions (smaller version of `pyenv`)
-export PYENV_ROOT="$HOME/.pyenv"
+if [[ -x "/usr/local/bin/brew" ]]; then
+  eval "$(/usr/local/bin/brew shellenv)";
+elif [[ -x "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)";
+fi
 
-export BUN_INSTALL="$HOME/.bun"
-
-case "$OSTYPE" in
-  darwin*)
-    case "$(uname -m)" in
-      x86_64)
-        [[ -x "/usr/local/bin/brew" ]] && \
-          eval "$(/usr/local/bin/brew shellenv)"
-        ;;
-      arm64)
-        [[ -x "/opt/homebrew/bin/brew" ]] && \
-          eval "$(/opt/homebrew/bin/brew shellenv)"
-        ;;
-    esac
-    ;;
-
-  linux*)
-    [[ -x "/home/linuxbrew/.linuxbrew/bin/brew" ]] && \
-      eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    ;;
-esac
+if [[ -x "/opt/local/bin/port" ]]; then
+  # https://www.macports.org/install.php
+  path=(
+    /opt/local/bin(N-/)
+    /opt/local/sbin(N-/)
+    $path
+  )
+  # Completions installed by MacPorts.
+  fpath=($MACPORTS_PREFIX/share/zsh/site-functions(N-/) $fpath)
+fi
 
 # An array (colon separated list) of directories specifying the search path
 # for function definitions. This path is searched when a function with the `-u`
@@ -86,8 +64,6 @@ fpath=(
   $DOTFILES/config/zsh/completions(N-/)
   # Additional completion definitions, not available in a default installation.
   $DOTFILES/config/zsh/plugins/zsh-completions/src(N-/)
-  # Completions installed by Homebrew.
-  $HOMEBREW_PREFIX/share/zsh/site-functions(N-/)
 
   $fpath
 )
@@ -104,49 +80,15 @@ cdpath=(
   "$DOTFILES"
 )
 
-case "$OSTYPE" in
-  darwin*)
-    path=(
-      # MacOS ships with an older version of Ruby, so replace the system ruby with
-      # an updated one from Homebrew.
-      "$HOMEBREW_PREFIX"/lib/ruby/gems/*/bin(N-/)
-
-      # Brew installed packages which are not symlinked into /usr/local because a
-      # similar software is already provided by the system.
-      #
-      # In other words, these are keg-only and if we want to use the binaries from
-      # these packages, their bin directory needs to be added first in the PATH.
-      "$HOMEBREW_PREFIX"/opt/{ruby,sqlite,llvm,openjdk}/bin(N-/)
-
-      # GNU packages.
-      "$HOMEBREW_PREFIX"/opt/make/libexec/gnubin(N-/)
-
-      $path
-    )
-    ;;
-esac
-
 path=(
-  # Docker bin directory containing the `docker` and `docker-compose` commands.
-  "$HOME/.docker/bin"(N-/)
-
-  # Global Python version bin directory.
-  "$PYENV_ROOT/bin"(N-/)
-
   # Local build of Neovim nightly.
   "$HOME/neovim/bin"(N-/)
 
   # Project specific bin directory.
-  "$BUN_INSTALL/bin"(N-/)
   "$CARGO_HOME/bin"(N-/)
-  "$GOPATH/bin"(N-/)
 
   # Local scripts and `pipx` installed executables.
   "$HOME/.local/bin"(N-/)
-
-  # Luarocks bin directory for Lua 5.1. This is the version used by Neovim, so
-  # we will be installing the packages for that version only.
-  "$HOME/.luarocks/bin"(N-/)
 
   $path
 )
@@ -155,24 +97,22 @@ path=(
 # Plugins and shell integrations
 # ------------------------------------------------------------------------------
 
+function source_if_exists {
+  if [[ -f "$1" ]]; then
+    source "$1"
+  fi
+}
+
 # https://github.com/zsh-users/zsh-autosuggestions
-if [[ -f $DOTFILES/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh ]]; then
-  source $DOTFILES/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
-fi
+source_if_exists "$DOTFILES"/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
 
 # Configure the style that the suggestion is shown with.
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
 
-# Source fzf config which includes fuzzy completion and key-bindings.
-#
-# Do NOT edit this line! The installer can recognize the presence of this line
-# and avoid duplication.
-#
-# To install: `/path/to/install --key-bindings --completion --update-rc --no-bash --no-fish`
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if (( $+commands[fzf] )); then
+  eval "$(fzf --zsh)"
+fi
 
-# Starship prompt
-# https://github.com/starship/starship
 if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
@@ -220,14 +160,7 @@ compdef viw=which
 compdef o=open
 
 # Source the bash completion scripts. This requires `bashcompinit`.
-function source_completion {
-  if [[ -f "$1" ]]; then
-    source "$1"
-  fi
-}
-
-source_completion "$DOTFILES/config/bash/completions/dotbot.bash"
-source_completion "$HOME/.bun/_bun"
+source_if_exists "$DOTFILES/config/bash/completions/dotbot.bash"
 
 # ------------------------------------------------------------------------------
 # Zstyles
