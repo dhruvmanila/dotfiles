@@ -117,6 +117,10 @@ if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
 
+if (( $+commands[mise] )); then
+  eval "$(mise activate zsh)"
+fi
+
 # ------------------------------------------------------------------------------
 # Completion
 # ------------------------------------------------------------------------------

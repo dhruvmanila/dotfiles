@@ -10,16 +10,11 @@ esac
 
 REQUIRED_DIRECTORIES=(
   ~/.config/gh
+  ~/.config/mise
   ~/.gnupg
   ~/.ipython/profile_default
   ~/.jupyter/lab
   ~/.ssh
-  ~/contributing
-  ~/git
-  ~/neovim
-  ~/playground
-  ~/projects
-  ~/work
 )
 
 for directory in "${REQUIRED_DIRECTORIES[@]}"; do
@@ -90,6 +85,7 @@ link "jupyter/jupyter_lab_config.py" ".jupyter/jupyter_lab_config.py"
 link "jupyter/jupyter_notebook_config.py" ".jupyter/jupyter_notebook_config.py"
 link "jupyter/lab/user-settings" ".jupyter/lab/user-settings"
 link "kitty" ".config/kitty"
+link "mise/config.toml" ".config/mise/config.toml"
 link "npmrc" ".npmrc"
 link "nvim" ".config/nvim"
 link "pip" ".config/pip"
