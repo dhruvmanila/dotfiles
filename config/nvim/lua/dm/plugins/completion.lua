@@ -4,7 +4,6 @@ return {
     version = '1.*', -- Use a release tag to download pre-built binaries
     dependencies = {
       'xzbdmw/colorful-menu.nvim',
-      'rafamadriz/friendly-snippets',
     },
     ---@module 'blink.cmp'
     ---@type blink.cmp.Config
@@ -17,36 +16,38 @@ return {
       },
       completion = {
         documentation = {
+          -- Use `<leader><space>` to toggle the documentation window manually.
           -- auto_show = true,
           -- auto_show_delay_ms = 500,
           window = {
             border = dm.border,
           },
         },
-        menu = {
-          draw = {
-            -- We don't need 'label_description' now because 'label' and 'label_description' are
-            -- already combined together in 'label' by `colorful-menu.nvim`.
-            columns = {
-              { 'kind_icon' },
-              { 'label', gap = 1 },
-            },
-            components = {
-              label = {
-                text = function(ctx)
-                  return require('colorful-menu').blink_components_text(ctx)
-                end,
-                highlight = function(ctx)
-                  return require('colorful-menu').blink_components_highlight(ctx)
-                end,
-              },
-            },
-          },
-        },
       },
       cmdline = {
         -- TODO: Enable this
         enabled = false,
+      },
+      sources = {
+        min_keyword_length = function()
+          local node = vim.treesitter.get_node()
+          if
+            (node and vim.tbl_contains({ 'comment', 'line_comment', 'block_comment' }, node:type()))
+            or vim.bo.filetype == 'markdown'
+          then
+            return 3
+          else
+            return 0
+          end
+        end,
+        providers = {
+          snippets = {
+            should_show_items = function(ctx)
+              -- Hide snippets after trigger character
+              return ctx.trigger.initial_kind ~= 'trigger_character'
+            end,
+          },
+        },
       },
     },
   },
@@ -55,5 +56,10 @@ return {
     'github/copilot.vim',
     event = 'InsertEnter',
     dependencies = { 'blink.cmp' },
+    init = function()
+      vim.g.copilot_filetypes = {
+        ledger = false,
+      }
+    end,
   },
 }
