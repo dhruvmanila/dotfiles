@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# Open the script provided as the first argument using Neovim and use `uv` to
+# install any inline dependencies.
+
+CMD="$(basename "$0")"
+
+if (($# != 1)); then
+  echo "Usage: $CMD <script>"
+  exit 1
+elif [[ ! -e "$1" ]]; then
+  echo "$CMD: $1: no such file"
+  exit 1
+fi
+
+uv run --with-requirements "$1" --no-project nvim "$1"
