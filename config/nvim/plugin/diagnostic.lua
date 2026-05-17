@@ -42,7 +42,7 @@ vim.diagnostic.config {
   },
 }
 
-require('dm.diagnostic').setup_auto_virtual_lines()
+-- require('dm.diagnostic').setup_auto_virtual_lines()
 
 -- NOTE: Only center the cursor if we actually jumped to a diagnostic.
 
