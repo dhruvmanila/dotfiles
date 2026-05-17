@@ -16,3 +16,4 @@ __pycache__
 .nvim.lua
 
 CLAUDE.local.md
+.claude/settings.local.json
