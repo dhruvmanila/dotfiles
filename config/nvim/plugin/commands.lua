@@ -1,8 +1,6 @@
 local api = vim.api
 local nvim_create_user_command = api.nvim_create_user_command
 
--- BufOnly {{{1
-
 nvim_create_user_command('BufOnly', function()
   local deleted, modified = 0, 0
   local curr_buf = api.nvim_get_current_buf()
@@ -27,27 +25,29 @@ end, {
   desc = 'Delete all but the current buffer (ignores terminal buffers)',
 })
 
--- LspClient {{{1
-
 do
-  -- Available fields for LSP client object.
+  -- Available fields for LSP client object that provide useful information. Fields that are
+  -- functions have been omitted.
   -- See: `:help vim.lsp.client`
   local lsp_client_fields = {
     'attached_buffers',
+    'capabilities',
     'commands',
     'config',
     'dynamic_capabilities',
+    'exit_timeout',
+    'flags',
     'handlers',
     'id',
     'initialized',
-    'messages',
     'name',
     'offset_encoding',
     'progress',
     'requests',
-    'rpc',
+    'root_dir',
     'server_capabilities',
-    'supports_method',
+    'server_info',
+    'settings',
     'workspace_folders',
   }
 
@@ -102,8 +102,6 @@ do
   })
 end
 
--- LspLog {{{1
-
 do
   local logdir = vim.fn.stdpath 'log'
   ---@cast logdir string
@@ -147,8 +145,6 @@ do
   })
 end
 
--- LspSetLogLevel {{{1
-
 nvim_create_user_command('LspSetLogLevel', function(opts)
   vim.lsp.log.set_level(opts.args)
 end, {
@@ -161,8 +157,6 @@ end, {
   desc = 'Set the log level for the LSP',
 })
 
--- Term / Vterm / Tterm {{{1
-
 nvim_create_user_command('Term', 'new | wincmd J | resize -5 | term', {
   desc = 'Open the terminal on the bottom occupying full width of the editor',
 })
@@ -173,4 +167,8 @@ nvim_create_user_command('Vterm', 'vnew | wincmd L | term', {
 
 nvim_create_user_command('Tterm', 'tabnew | term', {
   desc = 'Open the terminal in a new tab',
+})
+
+nvim_create_user_command('LspInfo', 'checkhealth vim.lsp', {
+  desc = 'Alias to `:checkhealth vim.lsp`',
 })
