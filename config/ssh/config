@@ -6,8 +6,3 @@ Host github
     HostName github.com
     User git
     IdentityFile ~/.ssh/github
-
-Host azure
-    HostName ssh.dev.azure.com
-    User git
-    IdentityFile ~/.ssh/azure
