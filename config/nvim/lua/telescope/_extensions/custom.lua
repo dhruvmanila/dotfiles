@@ -7,7 +7,6 @@ end
 
 return telescope.register_extension {
   exports = {
-    github_stars = require 'telescope._extensions.custom.github_stars',
     installed_plugins = require 'telescope._extensions.custom.installed_plugins',
   },
 }

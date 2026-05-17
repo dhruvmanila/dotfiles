@@ -84,10 +84,6 @@ end
 
 -- Extensions
 
-vim.keymap.set('n', '<leader>gs', function()
-  telescope.extensions.custom.github_stars()
-end, { desc = 'telescope: GitHub stars' })
-
 vim.keymap.set('n', '<leader>fp', function()
   telescope.extensions.custom.installed_plugins(themes.get_dropdown {
     layout_config = {
