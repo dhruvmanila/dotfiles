@@ -1,0 +1,231 @@
+{
+  "migrationVersion": 1,
+  "reader_settings": {
+    "fontSize": 1.5,
+    "lineHeight": 1.6,
+    "maxWidth": 38,
+    "theme": "default",
+    "themeMode": "auto"
+  },
+  "template_1751105164063xiyn72k": {
+    "schemaVersion": "0.1.0",
+    "name": "IMDB",
+    "behavior": "create",
+    "noteNameFormat": "{{schema:name|kebab}}",
+    "path": "references",
+    "noteContentFormat": "",
+    "properties": [
+      {
+        "id": "1751105164080gi7blbd",
+        "name": "genre",
+        "value": "{{schema:genre|wikilink|kebab|join}}",
+        "type": "multitext"
+      },
+      {
+        "id": "1751105164080el8sv7h",
+        "name": "director",
+        "value": "{{schema:director[*].name|wikilink|join}}",
+        "type": "multitext"
+      },
+      {
+        "id": "1751105164080qy6l85c",
+        "name": "cast",
+        "value": "{{schema:actor[*].name|slice:0,5|wikilink|join}}",
+        "type": "multitext"
+      },
+      {
+        "id": "1751105164080hg7h0vf",
+        "name": "cover",
+        "value": "{{schema:image}}",
+        "type": "text"
+      },
+      {
+        "id": "17511051640805pulo0v",
+        "name": "plot",
+        "value": "{{schema:description}}",
+        "type": "text"
+      },
+      {
+        "id": "1751105164080gdnt0a0",
+        "name": "year",
+        "value": "{{schema:datePublished|split:\\\"-\\\"|slice:0,1}}",
+        "type": "number"
+      },
+      {
+        "id": "1751105164080mzxadsw",
+        "name": "created",
+        "value": "{{date}}",
+        "type": "date"
+      },
+      {
+        "id": "1751105164080lbntqir",
+        "name": "tags",
+        "value": "movies, watchlist",
+        "type": "multitext"
+      }
+    ],
+    "triggers": [
+      "/^https:\\/\\/www\\.imdb\\.com\\/title\\/tt\\d+(?!\\/reference\\/)(\\/[^\\s]*)?$/"
+    ],
+    "id": "1751105164063xiyn72k",
+    "context": ""
+  },
+  "interpreter_settings": {
+    "interpreterModel": "",
+    "models": [],
+    "providers": [],
+    "interpreterEnabled": false,
+    "interpreterAutoRun": false,
+    "defaultPromptContext": ""
+  },
+  "general_settings": {
+    "showMoreActionsButton": false,
+    "betaFeatures": false,
+    "legacyMode": false,
+    "silentOpen": false,
+    "saveBehavior": "addToObsidian"
+  },
+  "template_list": [
+    "1751105164063xiyn72k",
+    "1751092496174gpc8uxauo"
+  ],
+  "property_types": [
+    {
+      "name": "title",
+      "type": "text",
+      "defaultValue": "{{title}}"
+    },
+    {
+      "name": "source",
+      "type": "text",
+      "defaultValue": "{{url}}"
+    },
+    {
+      "name": "author",
+      "type": "multitext",
+      "defaultValue": "{{author|split:\", \"|wikilink|join}}"
+    },
+    {
+      "name": "published",
+      "type": "date",
+      "defaultValue": "{{published}}"
+    },
+    {
+      "name": "created",
+      "type": "date",
+      "defaultValue": "{{date}}"
+    },
+    {
+      "name": "description",
+      "type": "text",
+      "defaultValue": "{{description}}"
+    },
+    {
+      "name": "tags",
+      "type": "multitext",
+      "defaultValue": "clippings"
+    },
+    {
+      "name": "categories",
+      "type": "multitext",
+      "defaultValue": "[[Movies]]"
+    },
+    {
+      "name": "genre",
+      "type": "multitext",
+      "defaultValue": "{{schema:genre|wikilink|join}}"
+    },
+    {
+      "name": "director",
+      "type": "multitext",
+      "defaultValue": "{{schema:director[*].name|wikilink|join}}"
+    },
+    {
+      "name": "rating",
+      "type": "number"
+    },
+    {
+      "name": "scoreImdb",
+      "type": "number"
+    },
+    {
+      "name": "cast",
+      "type": "multitext",
+      "defaultValue": "{{schema:actor[*].name|slice:0,5|wikilink|join}}"
+    },
+    {
+      "name": "cover",
+      "type": "text",
+      "defaultValue": "{{schema:image}}"
+    },
+    {
+      "name": "plot",
+      "type": "text",
+      "defaultValue": "{{schema:description}}"
+    },
+    {
+      "name": "year",
+      "type": "number",
+      "defaultValue": "{{schema:datePublished|split:\\\"-\\\"|slice:0,1}}"
+    }
+  ],
+  "highlighter_settings": {
+    "highlighterEnabled": true,
+    "alwaysShowHighlights": true,
+    "highlightBehavior": "highlight-inline"
+  },
+  "vaults": [],
+  "template_1751092496174gpc8uxauo": {
+    "id": "1751092496174gpc8uxauo",
+    "name": "Default",
+    "behavior": "create",
+    "noteNameFormat": "{{title}}",
+    "path": "Clippings",
+    "noteContentFormat": "{{content}}",
+    "context": "",
+    "properties": [
+      {
+        "id": "1751092496174v6kpk1gep",
+        "name": "title",
+        "value": "{{title}}"
+      },
+      {
+        "id": "175109249617431x8tzfb2",
+        "name": "source",
+        "value": "{{url}}"
+      },
+      {
+        "id": "1751092496174hwa6rlz4z",
+        "name": "author",
+        "value": "{{author|split:\", \"|wikilink|join}}"
+      },
+      {
+        "id": "1751092496174n0mx49w9y",
+        "name": "published",
+        "value": "{{published}}"
+      },
+      {
+        "id": "17510924961743obf84wyi",
+        "name": "created",
+        "value": "{{date}}"
+      },
+      {
+        "id": "1751092496174dnr57h5dd",
+        "name": "description",
+        "value": "{{description}}"
+      },
+      {
+        "id": "17510924961747pskexqle",
+        "name": "tags",
+        "value": "clippings"
+      }
+    ],
+    "triggers": []
+  },
+  "stats": {
+    "addToObsidian": 5,
+    "saveFile": 0,
+    "copyToClipboard": 0,
+    "share": 0
+  }
+}
