@@ -4,12 +4,22 @@ local themes = require 'telescope.themes'
 
 local pickers = require 'dm.plugins.telescope.pickers'
 
+local function has_treesitter_parser()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  if not lang then
+    return false
+  end
+
+  local ok, loaded = pcall(vim.treesitter.language.add, lang)
+  return ok and loaded == true
+end
+
 -- Smart tags picker which uses either the LSP symbols, treesitter symbols or
 -- buffer tags, whichever is available first.
 local function document_symbols()
   if #vim.lsp.get_clients { bufnr = vim.api.nvim_get_current_buf() } > 0 then
     builtin.lsp_document_symbols()
-  elseif require('nvim-treesitter.parsers').has_parser() then
+  elseif has_treesitter_parser() then
     builtin.treesitter()
   else
     builtin.current_buffer_tags()

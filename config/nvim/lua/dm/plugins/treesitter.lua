@@ -1,105 +1,66 @@
 return {
   {
-    'nvim-treesitter/nvim-treesitter',
-    event = 'BufReadPre',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
+    'romus204/tree-sitter-manager.nvim',
+    event = { 'BufReadPre', 'BufNewFile' },
+    cmd = 'TSManager',
+    opts = {
+      ensure_installed = {
+        'beancount',
+        'go',
+        'gomod',
+        'gowork',
+        'json',
+        'python',
+        'rust',
+        'toml',
+        'yaml',
+      },
+      auto_install = false,
+      highlight = false,
+      border = dm.border,
     },
-    build = ':TSUpdate',
-    config = function()
-      require('nvim-treesitter.configs').setup {
-        -- A list of parser names, or "all"
-        ensure_installed = {
+    config = function(_, opts)
+      require('tree-sitter-manager').setup(opts)
+
+      vim.treesitter.language.register('json', 'jsonc')
+
+      local function start_treesitter(args)
+        local lang = vim.treesitter.language.get_lang(args.match)
+        if not lang then
+          return
+        end
+
+        local ok, loaded = pcall(vim.treesitter.language.add, lang)
+        if not ok or not loaded then
+          return
+        end
+
+        pcall(vim.treesitter.start, args.buf, lang)
+      end
+
+      vim.api.nvim_create_autocmd('FileType', {
+        group = vim.api.nvim_create_augroup('dm__treesitter_highlight', { clear = true }),
+        pattern = {
           'beancount',
-          'cmake',
-          'comment',
-          'cpp',
-          'dockerfile',
-          'fish',
-          'gitattributes',
-          'gitignore',
+          'c',
           'go',
           'gomod',
           'gowork',
-          'hcl',
-          'ini',
-          'java',
-          'javascript',
+          'help',
           'json',
           'jsonc',
-          'just',
-          'lalrpop',
-          'make',
-          'requirements',
-          'ruby',
+          'lua',
+          'markdown',
+          'python',
+          'query',
           'rust',
-          'scheme',
-          'swift',
           'toml',
-          'typescript',
+          'vim',
           'yaml',
         },
-
-        highlight = {
-          enable = true,
-        },
-
-        incremental_selection = {
-          enable = true,
-          keymaps = {
-            node_incremental = 'v',
-            node_decremental = 'V',
-            scope_incremental = '<C-s>',
-          },
-        },
-
-        textobjects = {
-          select = {
-            enable = true,
-            keymaps = {
-              ['aC'] = '@class.outer',
-              ['iC'] = '@class.inner',
-              ['af'] = '@function.outer',
-              ['if'] = '@function.inner',
-              ['aF'] = '@call.outer',
-              ['iF'] = '@call.inner',
-              ['ac'] = '@conditional.outer',
-              ['ic'] = '@conditional.inner',
-              ['ao'] = '@loop.outer',
-              ['io'] = '@loop.inner',
-              ['aa'] = '@parameter.outer',
-              ['ia'] = '@parameter.inner',
-            },
-            selection_modes = {
-              ['@function.outer'] = 'V',
-              ['@function.inner'] = 'V',
-            },
-          },
-
-          swap = {
-            enable = true,
-            swap_next = {
-              [']a'] = '@parameter.inner',
-            },
-            swap_previous = {
-              ['[a'] = '@parameter.inner',
-            },
-          },
-
-          move = {
-            enable = true,
-            set_jumps = true, -- whether to set jumps in the jumplist
-            goto_next_start = {
-              [']f'] = '@function.outer',
-              [']]'] = '@class.outer',
-            },
-            goto_previous_start = {
-              ['[f'] = '@function.outer',
-              ['[['] = '@class.outer',
-            },
-          },
-        },
-      }
+        callback = start_treesitter,
+        desc = 'Start treesitter highlighting when a parser is available',
+      })
     end,
   },
 
