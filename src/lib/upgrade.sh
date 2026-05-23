@@ -87,6 +87,14 @@ upgrade_npm() {
   npm --location=global upgrade
 }
 
+upgrade_port() {
+  header "Updating MacPorts..."
+  sudo port selfupdate
+
+  header "Upgrading outdated MacPorts packages..."
+  sudo port upgrade outdated
+}
+
 upgrade_plugins() {
   # Not quiting vim/neovim to check what's new
   # header "Upgrading vim plugins..."

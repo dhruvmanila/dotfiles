@@ -51,7 +51,7 @@ _dotbot_completions() {
 
   case "$compline" in
     'upgrade'*)
-      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "$(_dotbot_completions_filter "--help --ref -h -r all brew cargo neovim nnn npm plugins python")" -- "$cur")
+      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "$(_dotbot_completions_filter "--help --ref -h -r all brew cargo neovim nnn npm plugins port python")" -- "$cur")
       ;;
 
     'sync'*)

@@ -98,7 +98,7 @@ dotbot_upgrade_usage() {
 
     printf "  %s\n" "PACKAGE"
     printf "    package to upgrade\n"
-    printf "    %s\n" "Allowed: all, brew, cargo, neovim, nnn, npm, plugins, python"
+    printf "    %s\n" "Allowed: all, brew, cargo, neovim, nnn, npm, port, plugins, python"
     printf "    %s\n" "Default: all"
     echo
 
@@ -269,6 +269,14 @@ upgrade_npm() {
   header "Upgrading npm and packages..."
   npm --location=global install npm@latest
   npm --location=global upgrade
+}
+
+upgrade_port() {
+  header "Updating MacPorts..."
+  sudo port selfupdate
+
+  header "Upgrading outdated MacPorts packages..."
+  sudo port upgrade outdated
 }
 
 upgrade_plugins() {
@@ -636,8 +644,8 @@ dotbot_upgrade_parse_requirements() {
 
   [[ -n ${args['package']:-} ]] || args['package']="all"
 
-  if [[ -n ${args['package']:-} ]] && [[ ! ${args['package']:-} =~ ^(all|brew|cargo|neovim|nnn|npm|plugins|python)$ ]]; then
-    printf "%s\n" "package must be one of: all, brew, cargo, neovim, nnn, npm, plugins, python" >&2
+  if [[ -n ${args['package']:-} ]] && [[ ! ${args['package']:-} =~ ^(all|brew|cargo|neovim|nnn|npm|port|plugins|python)$ ]]; then
+    printf "%s\n" "package must be one of: all, brew, cargo, neovim, nnn, npm, port, plugins, python" >&2
     exit 1
   fi
 
