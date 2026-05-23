@@ -49,6 +49,28 @@ function M.git_create_or_checkout_branch(prompt_bufnr)
   end
 end
 
+-- Open the pull request associated with the selected Git commit.
+---@param prompt_bufnr number
+function M.git_open_commit_pull_request(prompt_bufnr)
+  local selection = action_state.get_selected_entry()
+  if selection == nil then
+    return
+  end
+
+  actions.close(prompt_bufnr)
+  local pr_number = (selection.msg or ''):match '%(#(%d+)%)$'
+  if not pr_number then
+    return
+  end
+
+  require('gitlinker').get_repo_url {
+    action_callback = function(repo_url)
+      vim.ui.open(('%s/pull/%s'):format(repo_url, pr_number))
+    end,
+    print_url = false,
+  }
+end
+
 -- Open the current selection or all the selections made using multi-select
 -- in the default browser using `vim.g.open_command`.
 ---@param prompt_bufnr number

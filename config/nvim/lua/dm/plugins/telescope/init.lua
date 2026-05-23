@@ -105,9 +105,17 @@ return {
           },
           git_commits = {
             layout_strategy = 'vertical',
+            mappings = {
+              i = { ['<CR>'] = custom_actions.git_open_commit_pull_request },
+              n = { ['<CR>'] = custom_actions.git_open_commit_pull_request },
+            },
           },
           git_bcommits = {
             layout_strategy = 'vertical',
+            mappings = {
+              i = { ['<CR>'] = custom_actions.git_open_commit_pull_request },
+              n = { ['<CR>'] = custom_actions.git_open_commit_pull_request },
+            },
           },
           git_bcommits_range = {
             layout_strategy = 'vertical',
