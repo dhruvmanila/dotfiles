@@ -82,9 +82,16 @@ upgrade_nnn() {
 }
 
 upgrade_npm() {
-  header "Upgrading npm and packages..."
-  npm --location=global install npm@latest
-  npm --location=global upgrade
+  header "Upgrading npm..."
+  npm install --global npm@latest
+
+  header "Upgrading global npm packages..."
+  local package
+  while IFS= read -r package; do
+    [[ "$package" == "npm" ]] && continue
+    header "Upgrading ${package}..."
+    npm install --global "$package"
+  done < "${NPM_GLOBAL_PACKAGES}"
 }
 
 upgrade_port() {
