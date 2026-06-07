@@ -1,4 +1,4 @@
-exclude-newer = "7 days"
+exclude-newer = "3 days"
 
 [exclude-newer-package]
 uv = false
