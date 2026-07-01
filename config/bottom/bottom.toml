@@ -7,16 +7,6 @@
 # The update rate of the application.
 rate = 1500
 
-# Whether to group processes with the same name together by default.
-# Press <Tab> to toggle between them.
-group_processes = false
-
-# Whether to make process searching case sensitive by default.
-case_sensitive = false
-
-# Whether to make process searching use regex by default.
-regex = true
-
 # The default time interval (in milliseconds).
 default_time_value = 300000
 
@@ -30,15 +20,29 @@ hide_table_gap = true
 # Available: "default", "gruvbox", "nord" (and their *-light counterparts)
 color = "gruvbox"
 
-# Show memory values in the processes widget as values by default.
-mem_as_value = true
-
 # Shows the list scroll position tracker in the widget title for table widgets.
 # Eg., Processes (1 of 527)
 show_table_scroll_position = true
 
+[processes]
+
+# Whether to group processes with the same name together by default.
+# Press <Tab> to toggle between them.
+default_grouped = false
+
+# Whether to make process searching case sensitive by default.
+case_sensitive = false
+
+# Whether to make process searching use regex by default.
+regex = true
+
+# Show memory values in the processes widget as values by default.
+default_memory_value = true
+
+[network]
+
 # Displays the network widget using bytes. Defaults to bits.
-network_use_bytes = true
+use_bytes = true
 
 # Layout - layouts follow a pattern like this:
 # [[row]] represents a row in the application.
