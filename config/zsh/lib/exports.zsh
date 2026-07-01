@@ -123,5 +123,8 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PYTHONIOENCODING='UTF-8'
 export PIP_REQUIRE_VIRTUALENV=true
 
+# Always prefer to use uv manager Python versions
+export UV_MANAGED_PYTHON=1
+
 # https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
 export RIPGREP_CONFIG_PATH="$HOME/dotfiles/config/ripgreprc"
