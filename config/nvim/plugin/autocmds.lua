@@ -26,6 +26,10 @@ nvim_create_autocmd('OptionSet', {
   end,
 })
 
+-- Neovim 0.12.3 no longer emits the startup `OptionSet background` event, so load the initial
+-- colorscheme explicitly and keep the autocmd above for later background changes.
+vim.cmd.colorscheme(dm.config.colorscheme[vim.o.background])
+
 -- Clear command-line messages {{{1
 
 do
