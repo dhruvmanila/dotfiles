@@ -12,6 +12,8 @@ local borders = setmetatable({
 })
 
 dm.border = borders[dm.config.border_style]
+-- Use the configured style for floats that do not choose their own border.
+vim.o.winborder = type(dm.border) == 'table' and table.concat(dm.border, ',') or dm.border
 
 dm.icons = {
   lsp_kind = {

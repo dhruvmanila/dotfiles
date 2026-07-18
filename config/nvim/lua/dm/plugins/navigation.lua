@@ -109,14 +109,5 @@ return {
         desc = 'Goto to git root directory',
       },
     },
-    float = {
-      border = dm.border,
-    },
-    preview = {
-      border = dm.border,
-    },
-    progress = {
-      border = dm.border,
-    },
   },
 }

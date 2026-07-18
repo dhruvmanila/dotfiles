@@ -13,7 +13,6 @@ vim.ui.input = function(opts, on_confirm)
 
   local bufnr = vim.api.nvim_create_buf(false, true)
   local win_opts = vim.lsp.util.make_floating_popup_options(#opts.default + 25, 1, {
-    border = 'rounded',
     title = opts.prompt,
     title_pos = 'left',
   })

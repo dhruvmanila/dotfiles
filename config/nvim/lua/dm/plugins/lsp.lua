@@ -9,10 +9,6 @@ return {
         config = true,
       },
     },
-    config = function()
-      -- Setup border for the `:LspInfo` window
-      require('lspconfig.ui.windows').default_options.border = dm.border
-    end,
   },
 
   {

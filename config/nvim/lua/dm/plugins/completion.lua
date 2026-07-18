@@ -15,13 +15,13 @@ return {
         kind_icons = dm.icons.lsp_kind,
       },
       completion = {
+        menu = {
+          border = 'none',
+        },
         documentation = {
           -- Use `<leader><space>` to toggle the documentation window manually.
           -- auto_show = true,
           -- auto_show_delay_ms = 500,
-          window = {
-            border = dm.border,
-          },
         },
       },
       cmdline = {

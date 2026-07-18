@@ -12,7 +12,6 @@ lsp.log.set_level(vim.env.NVIM_LSP_LOG_LEVEL or dm.log.get_level())
 require('vim.lsp.log').set_format_func(dm.log.lsp_log_format_func)
 
 -- Set the default options for all LSP floating windows.
---   - Default border according to `dm.config.border_style`
 --   - Limit width and height of the window
 do
   local default_open_floating_preview = lsp.util.open_floating_preview
@@ -20,7 +19,6 @@ do
   ---@diagnostic disable-next-line: duplicate-set-field
   lsp.util.open_floating_preview = function(contents, syntax, opts)
     opts = vim.tbl_deep_extend('force', opts, {
-      border = dm.border,
       max_width = math.min(math.floor(vim.o.columns * 0.7), 120),
       max_height = math.min(math.floor(vim.o.lines * 0.3), 40),
     })

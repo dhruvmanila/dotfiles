@@ -87,7 +87,6 @@ return {
         changedelete = { text = '~' },
       },
       preview_config = {
-        border = dm.border,
         row = 1,
         col = 0,
       },
