@@ -1,22 +1,3 @@
-# CFLAGS, CPPFLAGS, LDFLAGS
-
-# The following softwares are installed via Homebrew but they're not symlinked
-# as they are keg-only. The official instructions is to include them in common
-# compiler environment variables.
-#
-# NOTE: Homebrew installed `clang` compiler does not search for header and
-# library files in `/usr/local/{include,lib}` directories, so they're added
-# here. This can be seen by running the following command:
-#
-#     $ clang -x c -v -E /dev/null
-
-# if [[ -n "$HOMEBREW_PREFIX" ]]; then
-#   export CFLAGS="-I$HOMEBREW_PREFIX/include -I$HOMEBREW_PREFIX/opt/openssl@3/include"
-#   export CPPFLAGS="$CFLAGS"
-
-#   export LDFLAGS="-L$HOMEBREW_PREFIX/lib -L$HOMEBREW_PREFIX/opt/openssl@3/lib"
-# fi
-
 # Make Neovim the default editor.
 # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
 export EDITOR='nvim'
@@ -56,8 +37,6 @@ export FZF_ALT_C_OPTS="
 # https://stackoverflow.com/a/42265848/96656
 export GPG_TTY="$(tty)"
 
-# export GOPROXY="https://proxy.golang.org/"
-
 # The variable is already set by system rc file but that can change and without
 # this, the history is not saved.
 export HISTFILE="$HOME/.zsh_history"
@@ -69,8 +48,6 @@ export SAVEHIST=$HISTSIZE
 # Opt-out of homebrew's analytics
 export HOMEBREW_NO_ANALYTICS=1
 
-# Do not create the lock file on `brew bundle`
-export HOMEBREW_BUNDLE_NO_LOCK=1
 export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/lib/Brewfile"
 
 # Use `bat` for `brew cat` command.
@@ -91,18 +68,10 @@ export LC_ALL='en_US.UTF-8'
 export MANPAGER="nvim +Man!"
 
 # Default options to pass to the `nnn(1)` command.
-export NNN_OPTS="dDeHuU"
-export NNN_FIFO=/tmp/nnn.fifo
+export NNN_OPTS="adDeHuU"
 
-# These are defined in the `bat` section.
-# export NNN_BATTHEME="$BAT_THEME"
-# export NNN_BATSTYLE="$BAT_STYLE"
-
-# Use system Trash.
-#
-# This actually uses `trash-put` from `trash-cli` but we are using `trash` from
-# Homebrew and so an alias script by the same name exists on PATH.
-export NNN_TRASH=1
+# Use macOS's native Trash.
+export NNN_TRASH=trash
 
 # Plugins
 #
