@@ -64,11 +64,6 @@ local namespace = {
 -- Custom global namespace.
 _G.dm = dm or namespace
 
--- System-specific command to use for opening a path.
-dm.OPEN_COMMAND = (dm.OS_UNAME == 'Darwin' and 'open')
-  or (dm.OS_UNAME == 'Windows_NT' and 'start')
-  or 'xdg-open'
-
 require 'dm.globals' -- Global functions and variables
 require 'dm.options' -- Neovim options
 

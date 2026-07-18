@@ -102,12 +102,19 @@ vim.api.nvim_buf_create_user_command(0, 'PyDoc', function(opts)
     word = table.concat(qualname, '.')
   end
 
-  local lines = {}
-  local fd = io.popen('python -m pydoc ' .. word)
-  for line in fd:lines() do
-    lines[#lines + 1] = line
+  local ok, process = pcall(vim.system, { 'python', '-m', 'pydoc', word }, { text = true })
+  if not ok then
+    dm.notify('PyDoc', process, vim.log.levels.ERROR)
+    return
   end
-  fd:close()
+
+  local result = process:wait()
+  if result.code ~= 0 then
+    dm.notify('PyDoc', result.stderr, vim.log.levels.ERROR)
+    return
+  end
+
+  local lines = vim.split(result.stdout or '', '\n', { plain = true, trimempty = true })
 
   -- In case `pydoc` cannot find the documentation for `word` {{{
   --

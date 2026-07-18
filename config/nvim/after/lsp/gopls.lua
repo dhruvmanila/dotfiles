@@ -25,22 +25,33 @@ return {
     },
   },
   on_init = function(client)
-    -- Find the first `go.mod` file starting from the current buffer path,
-    -- moving upwards. This is to support Go workspaces.
+    -- The resolved root can be a Go module, Go workspace, or Git repository.
+    -- Only set the local import prefix when a `go.mod` exists at or above it.
+    local root_dir = client.config.root_dir
+    if root_dir == nil then
+      return
+    end
+
     local modfile = vim.fs.find({ 'go.mod' }, {
-      path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
+      path = root_dir,
       upward = true,
       type = 'file',
       stop = dm.OS_HOMEDIR,
     })[1]
+    if modfile == nil then
+      return
+    end
+
     for line in io.lines(modfile) do
-      if vim.startswith(line, 'module') then
+      local module = line:match '^module%s+([^%s]+)'
+      if module then
         -- https://github.com/golang/tools/blob/master/gopls/doc/settings.md#local-string
-        client.config.settings.gopls['local'] = vim.split(line, ' ', { plain = true })[2]
+        client.config.settings.gopls['local'] = module
+        client:notify(vim.lsp.protocol.Methods.workspace_didChangeConfiguration, {
+          settings = client.config.settings,
+        })
+        return
       end
     end
-    client:notify(vim.lsp.protocol.Methods.workspace_didChangeConfiguration, {
-      settings = client.config.settings,
-    })
   end,
 }

@@ -50,7 +50,6 @@ return {
           'json',
           'jsonc',
           'lua',
-          'markdown',
           'python',
           'query',
           'rust',

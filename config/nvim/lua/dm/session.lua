@@ -353,28 +353,34 @@ function M.select()
     prompt = 'Select session',
     kind = 'session',
   }, function(selection)
-    if selection then
-      local result = vim
-        .system({ 'git', 'checkout', selection.branch }, {
-          cwd = selection.project,
-        })
-        :wait(TIMEOUT)
-      if result.code == TIMEOUT_EXIT_CODE then
-        logger.warn(
-          'Timeout while switching the git branch (%s) in %s',
-          selection.branch,
-          selection.project
-        )
-      elseif result.code > 0 then
-        logger.error(
-          'Failed to switch git branch (%s) in %s: %s',
-          selection.branch,
-          selection.project,
-          result.stderr
-        )
-      else
-        M.load(selection)
-      end
+    if selection == nil then
+      return
+    end
+    if selection.branch == nil then
+      M.load(selection)
+      return
+    end
+
+    local result = vim
+      .system({ 'git', 'checkout', selection.branch }, {
+        cwd = selection.project,
+      })
+      :wait(TIMEOUT)
+    if result.code == TIMEOUT_EXIT_CODE then
+      logger.warn(
+        'Timeout while switching the git branch (%s) in %s',
+        selection.branch,
+        selection.project
+      )
+    elseif result.code > 0 then
+      logger.error(
+        'Failed to switch git branch (%s) in %s: %s',
+        selection.branch,
+        selection.project,
+        result.stderr
+      )
+    else
+      M.load(selection)
     end
   end)
 end

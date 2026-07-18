@@ -72,21 +72,24 @@ function M.git_open_commit_pull_request(prompt_bufnr)
 end
 
 -- Open the current selection or all the selections made using multi-select
--- in the default browser using `vim.g.open_command`.
+-- in the default browser.
 ---@param prompt_bufnr number
 function M.open_in_browser(prompt_bufnr)
-  local urls = ''
+  local urls = {}
   action_utils.map_selections(prompt_bufnr, function(selection)
-    urls = ('%s "%s"'):format(urls, selection.url)
+    urls[#urls + 1] = selection.url
   end)
-  if urls == '' then
-    urls = (' "%s"'):format(action_state.get_selected_entry().url)
-  end
-  if urls == '' then
-    return
+  if vim.tbl_isempty(urls) then
+    local selection = action_state.get_selected_entry()
+    if selection == nil or selection.url == nil then
+      return
+    end
+    urls[1] = selection.url
   end
   actions.close(prompt_bufnr)
-  os.execute(dm.OPEN_COMMAND .. urls)
+  for _, url in ipairs(urls) do
+    vim.ui.open(url)
+  end
 end
 
 return M

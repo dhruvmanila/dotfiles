@@ -22,11 +22,6 @@ opt.completeopt = {
 opt.pumheight = 20
 
 opt.diffopt:append {
-  -- Use the indent heuristic for the internal diff library, because it gives
-  -- more readable diffs.
-  -- See: https://vimways.org/2018/the-power-of-diff/
-  'indent-heuristic',
-
   -- Start diff mode with vertical splits (unless explicitly specified otherwise)
   'vertical',
 }

@@ -17,7 +17,7 @@ local function setup_ruff()
             namespace = vim.lsp.diagnostic.get_namespace(client.id),
           }
         end, {
-          buffer = args.data.buffer,
+          buffer = args.buf,
           desc = 'telescope: rust-analyzer diagnostics',
         })
       end

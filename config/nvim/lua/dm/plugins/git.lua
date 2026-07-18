@@ -42,8 +42,8 @@ local function gitsigns_on_attach(bufnr)
     { { 'n', 'v' }, '<leader>hr', gitsigns.reset_hunk, desc = 'reset hunk' },
     { 'n', '<leader>hR', gitsigns.reset_buffer, desc = 'reset buffer' },
     { 'n', '<leader>hp', gitsigns.preview_hunk, desc = 'preview hunk' },
-    { 'n', '<leader>hb', gitsigns.toggle_current_line_blame, 'toggle current line blame' },
-    { 'n', '<leader>hd', gitsigns.preview_hunk_inline, 'toggle deleted lines' },
+    { 'n', '<leader>hb', gitsigns.toggle_current_line_blame, desc = 'toggle current line blame' },
+    { 'n', '<leader>hd', gitsigns.preview_hunk_inline, desc = 'toggle deleted lines' },
     -- Text object
     { { 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>' },
   }

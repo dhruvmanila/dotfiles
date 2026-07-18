@@ -287,7 +287,7 @@ local function view_crate_graph_impl(full)
           file:flush()
           file:close()
 
-          os.execute(dm.OPEN_COMMAND .. ' ' .. tmpfile)
+          vim.ui.open(tmpfile)
         end
       )
     end)

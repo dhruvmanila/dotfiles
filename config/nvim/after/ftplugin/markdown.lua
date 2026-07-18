@@ -1,11 +1,5 @@
 vim.opt_local.wrap = true
 
--- Avoid highlighting markdown blocks for hover windows. Neovim adds this variable to the floating
--- window it creates for hover.
-if vim.w[vim.lsp.protocol.Methods.textDocument_hover] ~= nil then
-  return
-end
-
 --- Highlight fenced and indented code blocks in markdown using extmarks.
 ---
 --- Uses treesitter to find code blocks and applies the 'ColorColumn' highlight group as a
@@ -42,9 +36,13 @@ local function highlight_code_blocks()
   end
 end
 
-vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
-  buffer = 0,
-  callback = highlight_code_blocks,
-})
+-- Avoid highlighting markdown blocks for hover windows. Neovim adds this variable to the floating
+-- window it creates for hover.
+if vim.w[vim.lsp.protocol.Methods.textDocument_hover] == nil then
+  vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
+    buffer = 0,
+    callback = highlight_code_blocks,
+  })
 
-highlight_code_blocks()
+  highlight_code_blocks()
+end
