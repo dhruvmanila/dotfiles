@@ -35,11 +35,16 @@ typeset -U path cdpath fpath manpath
 # https://www.rust-lang.org/tools/install
 export CARGO_HOME="$HOME/.cargo"
 
-if [[ -x "/usr/local/bin/brew" ]]; then
-  eval "$(/usr/local/bin/brew shellenv)";
-elif [[ -x "/opt/homebrew/bin/brew" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)";
-fi
+case "$(uname -m)" in
+  arm64)
+    [[ -x /opt/homebrew/bin/brew ]] && \
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    ;;
+  x86_64)
+    [[ -x /usr/local/bin/brew ]] && \
+      eval "$(/usr/local/bin/brew shellenv)"
+    ;;
+esac
 
 if [[ -x "/opt/local/bin/port" ]]; then
   # https://www.macports.org/install.php
@@ -48,8 +53,24 @@ if [[ -x "/opt/local/bin/port" ]]; then
     /opt/local/sbin(N-/)
     $path
   )
+
   # Completions installed by MacPorts.
-  fpath=($MACPORTS_PREFIX/share/zsh/site-functions(N-/) $fpath)
+  fpath=(/opt/local/share/zsh/site-functions(N-/) $fpath)
+elif [[ -n "$HOMEBREW_PREFIX" ]]; then
+  path=(
+    # macOS ships with an older version of Ruby, so replace the system Ruby with
+    # an updated one from Homebrew.
+    "$HOMEBREW_PREFIX"/lib/ruby/gems/*/bin(N-/)
+
+    # Homebrew packages which are not symlinked into its prefix because similar
+    # software is already provided by the system.
+    "$HOMEBREW_PREFIX"/opt/{ruby,sqlite,llvm,openjdk}/bin(N-/)
+
+    # GNU packages.
+    "$HOMEBREW_PREFIX"/opt/make/libexec/gnubin(N-/)
+
+    $path
+  )
 fi
 
 # An array (colon separated list) of directories specifying the search path
