@@ -1,44 +1,8 @@
 name: dotbot
-help: Personal tool for managing dotfiles and packages
+help: Personal tool for upgrading packages
 version: 1.0.0
 
 commands:
-  - name: sync
-    help: sync lib files with global package list
-
-    dependencies:
-      awk: install with $(green brew install awk)
-      brew: visit $(blue_underlined https://brew.sh/) to install
-      cargo: visit $(blue_underlined https://rustup.rs/) to install
-      jq: install with $(green brew install jq)
-      npm: install with $(green brew install node)
-      uv: visit $(blue_underlined https://docs.astral.sh/uv/getting-started/installation/) to install
-
-    flags:
-      - long: --brew
-        short: -b
-        help: |
-          sync only homebrew packages
-          File: $HOMEBREW_BUNDLE_FILE
-
-      - long: --node
-        short: -n
-        help: |
-          sync only node packages
-          File: $NPM_GLOBAL_PACKAGES
-
-      - long: --python
-        short: -p
-        help: |
-          sync only Python packages
-          File: $PYTHON_GLOBAL_REQUIREMENTS
-
-      - long: --cargo
-        short: -c
-        help: |
-          sync only Cargo packages
-          File: $CARGO_GLOBAL_PACKAGES
-
   - name: upgrade
     help: upgrade packages
     # catch_all:

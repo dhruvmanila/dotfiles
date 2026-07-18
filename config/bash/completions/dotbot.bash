@@ -4,64 +4,138 @@
 # completely (https://github.com/bashly-framework/completely)
 # Modifying it manually is not recommended
 
-_dotbot_completions_filter() {
-  local words="$1"
-  local cur=${COMP_WORDS[COMP_CWORD]}
-  local result=()
+_dotbot_completions_node_flag_state() {
+  case "$1:$2" in
+    0:--help|0:-h) return 0 ;;
+    0:--version|0:-v) return 0 ;;
+    1:--ref|1:-r) return 2 ;;
+    1:--help|1:-h) return 0 ;;
+  esac
 
-  # words the user already typed (excluding the command itself)
-  local used=()
-  if ((COMP_CWORD > 1)); then
-    used=("${COMP_WORDS[@]:1:$((COMP_CWORD - 1))}")
-  fi
+  return 1
+}
 
-  if [[ "${cur:0:1}" == "-" ]]; then
-    # Completing an option: offer everything (including options)
-    echo "$words"
-
-  else
-    # Completing a non-option: offer only non-options,
-    # and don't re-offer ones already used earlier in the line.
-    for word in $words; do
-      [[ "${word:0:1}" == "-" ]] && continue
-
-      local seen=0
-      for u in "${used[@]}"; do
-        if [[ "$u" == "$word" ]]; then
-          seen=1
-          break
-        fi
-      done
-      ((!seen)) && result+=("$word")
+_dotbot_completions_option_seen() {
+  local completed_option option_name
+  for completed_option in "${completed_options[@]}"; do
+    for option_name in "$@"; do
+      [[ "$completed_option" == "$option_name" ]] && return 0
     done
+  done
 
-    echo "${result[*]}"
-  fi
+  return 1
+}
+
+_dotbot_completions_resolve_node() {
+  node_id=0
+  node_word_count=0
+  positional_index=0
+
+  local word
+  for word in "${non_options[@]}"; do
+    case "$node_id:$word" in
+      0:upgrade)
+        node_id=1
+        node_word_count=1
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+
+  positional_index=$((${#non_options[@]} - node_word_count))
 }
 
 _dotbot_completions() {
   local cur=${COMP_WORDS[COMP_CWORD]}
-  local compwords=()
+  local prev=
   if ((COMP_CWORD > 0)); then
-    compwords=("${COMP_WORDS[@]:1:$((COMP_CWORD - 1))}")
+    prev=${COMP_WORDS[$((COMP_CWORD - 1))]}
   fi
-  local compline="${compwords[*]}"
+
+  local completed=()
+  if ((COMP_CWORD > 1)); then
+    completed=("${COMP_WORDS[@]:1:$((COMP_CWORD - 1))}")
+  fi
+
+  local non_options=()
+  local completed_options=()
+  local node_id=
+  local node_word_count=-1
+  local positional_index=0
+  local invalid_completion=0
+  local flag_state=0
+  _dotbot_completions_resolve_node
+
+  local skip_next=0
+  for word in "${completed[@]}"; do
+    if ((skip_next)); then
+      skip_next=0
+      continue
+    fi
+
+    if [[ "${word:0:1}" == "-" ]]; then
+      _dotbot_completions_node_flag_state "$node_id" "$word"
+      flag_state=$?
+      if (( flag_state == 1 )); then
+        invalid_completion=1
+        break
+      fi
+
+      completed_options+=("$word")
+      if (( flag_state == 2 )); then
+        skip_next=1
+      fi
+      continue
+    fi
+
+    non_options+=("$word")
+    _dotbot_completions_resolve_node
+  done
 
   COMPREPLY=()
+  (( invalid_completion )) && return
 
-  case "$compline" in
-    'upgrade'*)
-      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "$(_dotbot_completions_filter "--help --ref -h -r all brew cargo neovim nnn npm plugins port python")" -- "$cur")
+  case "$node_id:$prev" in
+    1:--ref|1:-r)
+      return
       ;;
+  esac
 
-    'sync'*)
-      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "$(_dotbot_completions_filter "--brew --cargo --help --node --python -b -c -h -n -p")" -- "$cur")
+  if [[ "${cur:0:1}" != "-" ]] && (( positional_index == 0 )); then
+    case "$node_id" in
+      0)
+        while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "upgrade" -- "$cur")
+        return
+        ;;
+    esac
+  fi
+
+  if [[ "${cur:0:1}" == "-" ]]; then
+    case "$node_id" in
+      0)
+        local words=()
+        _dotbot_completions_option_seen "--help" "-h" || words+=("--help" "-h")
+        _dotbot_completions_option_seen "--version" "-v" || words+=("--version" "-v")
+        while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "${words[*]}" -- "$cur")
+        return
+        ;;
+      1)
+        local words=()
+        _dotbot_completions_option_seen "--help" "-h" || words+=("--help" "-h")
+        _dotbot_completions_option_seen "--ref" "-r" || words+=("--ref" "-r")
+        while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "${words[*]}" -- "$cur")
+        return
+        ;;
+    esac
+  fi
+
+  case "$node_id:$positional_index" in
+    1:0)
+      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "all brew cargo neovim nnn npm port plugins python" -- "$cur")
+      return
       ;;
-
-    *)
-      while read -r; do COMPREPLY+=("$REPLY"); done < <(compgen -W "$(_dotbot_completions_filter "--help --version -h -v sync upgrade")" -- "$cur")
-      ;;
-
   esac
 } &&
   complete -F _dotbot_completions dotbot

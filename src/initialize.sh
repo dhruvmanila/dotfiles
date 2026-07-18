@@ -17,8 +17,6 @@ case "$(uname)" in
     ;;
 esac
 
-HOMEBREW_PREFIX="${HOMEBREW_PREFIX:-$(brew --prefix)}"
-
 # Common directories
 DOTFILES_DIRECTORY="${HOME}/dotfiles"
 NEOVIM_DIRECTORY="${HOME}/contributing/neovim"
@@ -26,7 +24,5 @@ NNN_DIRECTORY="${HOME}/git/nnn"
 
 # Packages file
 PACKAGE_DIR="${DOTFILES_DIRECTORY}/src/package"
-HOMEBREW_BUNDLE_FILE="${PACKAGE_DIR}/Brewfile"
-PYTHON_GLOBAL_REQUIREMENTS="${PACKAGE_DIR}/requirements.txt"
 NPM_GLOBAL_PACKAGES="${PACKAGE_DIR}/node_modules.txt"
 CARGO_GLOBAL_PACKAGES="${PACKAGE_DIR}/cargo_packages.txt"
