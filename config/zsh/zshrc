@@ -13,7 +13,7 @@
 
 export DOTFILES="$HOME/dotfiles"
 
-if [[ "$OSTYPE" = "darwin"* ]]; then
+if [[ "$OSTYPE" = "darwin"* ]] && (( $(ulimit -Sn) < 65536 )); then
   # Override insanely low open file limits on macOS.
   ulimit -n 65536
 fi
@@ -350,8 +350,7 @@ setopt HIST_IGNORE_ALL_DUPS
 # Don't record an entity that was just recorded again.
 setopt HIST_IGNORE_DUPS
 
-# Do not enter command lines into the history list if they are duplicates of
-# the previous event.
+# Remove command lines from history when their first character is a space.
 setopt HIST_IGNORE_SPACE
 
 # Whenever the user enters a line with history expansion, don't execute the
@@ -384,9 +383,9 @@ setopt SHARE_HISTORY
 
 # There's no point in having {ba,z}sh compatibility which would not allow us to
 # use the set of features specific to zsh.
-source $DOTFILES/config/zsh/lib/functions.zsh
-source $DOTFILES/config/zsh/lib/aliases.zsh
-source $DOTFILES/config/zsh/lib/exports.zsh
+source "$DOTFILES/config/zsh/lib/functions.zsh"
+source "$DOTFILES/config/zsh/lib/aliases.zsh"
+source "$DOTFILES/config/zsh/lib/exports.zsh"
 
 # ------------------------------------------------------------------------------
 # Hooks
