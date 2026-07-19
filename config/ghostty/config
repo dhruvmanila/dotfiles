@@ -57,4 +57,4 @@ keybind = ctrl+shift+b=jump_to_prompt:+1
 # keybind = ctrl+shift+h=write_scrollback_file:paste
 # keybind = ctrl+shift+g=write_screen_file:paste
 
-# vim: ft=ini commentstring=#\ %s
+# vim: ft=ghostty commentstring=#\ %s

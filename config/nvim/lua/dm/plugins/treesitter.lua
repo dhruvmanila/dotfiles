@@ -46,6 +46,7 @@ return {
           'go',
           'gomod',
           'gowork',
+          'ghostty',
           'help',
           'json',
           'jsonc',
