@@ -1,17 +1,2 @@
-# This file is always sourced, no matter the type of the shell: login,
-# non-login, interactive, non-interactive.
-#
-# We could change the location of our `zsh` config files:
-#
-#     export ZDOTDIR=~/.config/zsh
-#
-# Do not modify this file unless you know exactly what you are doing. It is
-# strongly recommended to keep all shell customization and configuration
-# (including exported environment variables such as PATH) in ~/.zshrc or in
-# files sourced from ~/.zshrc.
-
-# Don't source any global config files from `/etc`.
-#
-# We only want *our* config files (zshrc, zshenv, ...) to be sourced, because
-# we want *total* control over our shell.
+# Load only the startup files managed by this repository.
 unsetopt GLOBAL_RCS

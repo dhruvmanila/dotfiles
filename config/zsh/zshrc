@@ -1,38 +1,19 @@
-# NOTES:
-#
-# `autoload`:
-# - `-U`: It is recommended to pass this flag for the use of functions
-#         supplied with the zsh distribution. This will suppress the usual
-#         alias expansion during reading.
-# - `-z`: Mark the function to be autoloaded using zsh style.
-#
-# `zle -N widget [function]`:
-#   Create a new user-defined widget. When the new widget is invoked, the
-#   specified function is called. If no function is specified, it defaults
-#   to the same name as the widget. For more info: `man zshzle(1)` /WIDGETS
-
 export DOTFILES="$HOME/dotfiles"
 
 if [[ "$OSTYPE" = "darwin"* ]] && (( $(ulimit -Sn) < 65536 )); then
-  # Override insanely low open file limits on macOS.
+  # Raise the macOS soft file limit when needed.
   ulimit -n 65536
 fi
 
-# Use emacs keybindings, set to -v for vi bindings.
-#
-# WARNING: Don't move this line after the `Sourcing` section. It would reset
-# `fzf` key bindings.
+# Set Emacs keybindings before integrations such as fzf add their bindings.
 bindkey -e
 
-# Automatically remove duplicates from these arrays.
-# For more info, see `man zshbuiltins(1)`.
+# Remove duplicate entries from path arrays.
 typeset -U path cdpath fpath manpath
 
-# ------------------------------------------------------------------------------
 # Path
 # ------------------------------------------------------------------------------
 
-# https://www.rust-lang.org/tools/install
 export CARGO_HOME="$HOME/.cargo"
 
 case "$(uname -m)" in
@@ -47,54 +28,30 @@ case "$(uname -m)" in
 esac
 
 if [[ -x "/opt/local/bin/port" ]]; then
-  # https://www.macports.org/install.php
   path=(
     /opt/local/bin(N-/)
     /opt/local/sbin(N-/)
     $path
   )
 
-  # Completions installed by MacPorts.
   fpath=(/opt/local/share/zsh/site-functions(N-/) $fpath)
 elif [[ -n "$HOMEBREW_PREFIX" ]]; then
   path=(
-    # macOS ships with an older version of Ruby, so replace the system Ruby with
-    # an updated one from Homebrew.
+    # Prefer selected Homebrew tools over macOS-provided versions.
     "$HOMEBREW_PREFIX"/lib/ruby/gems/*/bin(N-/)
-
-    # Homebrew packages which are not symlinked into its prefix because similar
-    # software is already provided by the system.
     "$HOMEBREW_PREFIX"/opt/{ruby,sqlite,llvm,openjdk}/bin(N-/)
-
-    # GNU packages.
     "$HOMEBREW_PREFIX"/opt/make/libexec/gnubin(N-/)
-
     $path
   )
 fi
 
-# An array (colon separated list) of directories specifying the search path
-# for function definitions. This path is searched when a function with the `-u`
-# attribute is referenced.
-#
-# NOTE: Any change to `fpath` after `compinit` has been invoked won't have any
-# effect.
+# Completion paths must be configured before compinit.
 fpath=(
-  # Custom and third-party completion definitions. This is kept first in path
-  # to override any possible conflicting function.
-  $DOTFILES/config/zsh/completions(N-/)
-  # Additional completion definitions, not available in a default installation.
   $DOTFILES/config/zsh/plugins/zsh-completions/src(N-/)
-
   $fpath
 )
 
-# An array of directories specifying the search path for the `cd` command.
-#
-# This will allow us to cd into any directory, within the specified ones in the
-# array, from anywhere.
-#
-# Alternative: `z.lua`, `autojump`, `fasd`, `z`
+# Search these parent directories when resolving cd targets.
 cdpath=(
   "$HOME"
   "$HOME/work"
@@ -103,22 +60,19 @@ cdpath=(
 )
 
 path=(
-  # Local build of Neovim nightly.
+  # Local Neovim build.
   "$HOME/neovim/bin"(N-/)
 
-  # Project specific bin directory.
   "$CARGO_HOME/bin"(N-/)
 
   # Local scripts and uv tool executables.
   "$HOME/.local/bin"(N-/)
 
-  # Just in case this isn't present
   /usr/local/bin(N-/)
 
   $path
 )
 
-# ------------------------------------------------------------------------------
 # Plugins and shell integrations
 # ------------------------------------------------------------------------------
 
@@ -128,10 +82,8 @@ function source_if_exists {
   fi
 }
 
-# https://github.com/zsh-users/zsh-autosuggestions
 source_if_exists "$DOTFILES"/config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
 
-# Configure the style that the suggestion is shown with.
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
 
 if (( $+commands[fzf] )); then
@@ -150,339 +102,125 @@ if (( $+commands[direnv] )); then
   eval "$(direnv hook zsh)"
 fi
 
-# ------------------------------------------------------------------------------
 # Completion
 # ------------------------------------------------------------------------------
 
-# This module offers enhancements to the completion menu:
-#   - Highlight matches
-#   - Scroll through long lists
-#   - Alternative style of selecting matches, called menu selection
-#
-# This should be loaded *before* initializing completion (`compinit`).
+# Load menu selection before initializing completion.
 zmodload zsh/complist
 
-# They install programmable completion functions for the most common Unix
-# commands. They also enable some more central functionality, on which
-# `zstyle`, for example, rely.
 autoload -Uz compinit
 compinit
 
-# For some commands/programs, like `pipx`, `aws`, there's no easy way to
-# find/generate a zsh completion function. But there's one for bash. In this
-# case, it can be useful to use the bash completion function. To do so, we need
-# to install a compatibility layer to emulate `compgen` and `complete`.
-#
-# Source: `man zshcompsys`.
-#
-# NOTE: It will work only if the completion function needs `compgen` and/or `complete`.
+# Bash compatibility is required by the generated dotbot completion.
 autoload -Uz bashcompinit
 bashcompinit
 
-# What do these commands do?
-#
-# A command of the form:
-#
-#     compdef foo=bar
-#
-# tells zsh to complete `foo` like it would complete `bar`.
-#
-# For more info, see:
-# https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org#copying-completions-from-another-command
 compdef viw=which
 compdef o=open
 
-# Source the bash completion scripts. This requires `bashcompinit`.
 source_if_exists "$DOTFILES/config/bash/completions/dotbot.bash"
 
+# Completion styles
 # ------------------------------------------------------------------------------
-# Zstyles
-# ------------------------------------------------------------------------------
-
-# What is `zstyle`?
-# `zstyle` is a "global" builtin function which is defined in `zsh/util` module,
-# and the documentation can be accessed by running `man zshmodules(1)`.
-#
-#   zstyle <context> <style>
-#          ├───────────────┘
-#          └ context defines where the style will apply. The context is a
-#            colon (:) separated strings.
-#
-# This gist shows how you might use `zstyle` to store and retrieve information:
-# https://gist.github.com/mattmc3/449430b6654aaab0ba7160e8efe8291b
-
-# Completion context string
-#
-#   :completion:function:completer:command:argument:tag
-#   ├─────────┘
-#   └ literal string "completion"
-#
-# For more info: `man zshcompsys(1)`
-
-# What does the 'format' style control?
-#
-# The appearance of a description for each list of matches, when you
-# tab-complete a word on the command line. Its value gives the format to print
-# the message in.
-#
-# You can use the same escape sequences you would use in a prompt, described at
-# `man zshmisc /EXPANSION OF PROMPT SEQUENCES`:
 
 ITALIC_ON=$'\e[3m'
 ITALIC_OFF=$'\e[23m'
 
-# Do menu-driven completion. This allows navigation in the completion menu
-# using the arrow keys.
 zstyle ':completion:*' menu 'select'
 
-# Set the 'format' style for some well-known tags.
-#
-# - messages: when there can't be any completion
-# - descriptions: for types of matches (e.g., option, file, etc.)
-# - warnings: when there are no matches (%d/%D is replaced with descriptions
-#             for the matches that were expected separated by spaces/newlines)
 zstyle ':completion:*:messages' format '%F{blue}--- %d ---%f'
 zstyle ':completion:*:descriptions' format "%F{yellow}%B${ITALIC_ON}--- %d ---${ITALIC_OFF}%b%f"
 zstyle ':completion:*:warnings' format $'%F{red}--- no matches found for ---%f\n%D'
 
-# Group matches with the same tag and display them separately. All matches
-# without a group name will be put under '-default-'.
 zstyle ':completion:*' group-name ''
-
-# Define the description for options that are not described by the completion
-# functions, but that have exactly one argument. The sequence `%d` in the value
-# will be replaced by the description for this argument.
 zstyle ':completion:*' auto-description 'specify: %d'
-
-# Colorize completions by using the default `ls` colors.
 zstyle ':completion:*' list-colors ''
-
-# Show the default prompt during menu selection when the completion list does
-# not fit on the screen as a whole.
 zstyle ':completion:*' select-prompt ''
-
-# This defines the characters printed between a match and its description.
-# By default, its value is `--`.
 zstyle ':completion:*' list-separator '  #'
 
-# Make completion to try exact (case-sensitive) match first and then fallback
-# to case-insensitive.
+# Try exact matches before case-insensitive matches.
 zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}'
-#                                   ├┘
-#                                   └ remove this to always have case-insensitive match
 
-# $CDPATH is overpowered (can allow us to jump to 100s of directories) so tends
-# to dominate completion; exclude `path-directories` from the `tag-order` so
-# that they will only be used as a fallback if no completions are found.
+# Use CDPATH entries only when local directory completion has no matches.
 zstyle ':completion:*:*:(cd|pushd):*' tag-order local-directories directory-stack path-directories
 
-# Provide completion for *all* the running processes and not just the processes
-# running in the current shell.
 zstyle ':completion:*:processes' command 'ps -u $LOGNAME -o pid,user,command -w'
-
-# Provide more processes in completion of programs like `killall`.
 zstyle ':completion:*:processes-names' command 'ps -c -u $LOGNAME -o command | uniq'
 
-# Complete manual with sections.
 zstyle ':completion:*:manuals' separate-sections true
 zstyle ':completion:*:manuals.*' insert-sections true
 
 unset ITALIC_ON ITALIC_OFF
 
-# ------------------------------------------------------------------------------
 # Options
 # ------------------------------------------------------------------------------
 
-# Set/unset each option using the `setopt` and `unsetopt` command. We can use
-# `setopt NO<name>` to unset an option but we cannot find `NO<name>` option
-# names in the manpage.
-#
-# For help on each option: `man zshoptions(1)`
-
-# NOTES:
-#
-# Do NOT set `HIST_REDUCE_BLANKS`:
-#
-#   % setopt HIST_REDUCE_BLANKS
-#   % echo "one" \
-#   > "two"
-#   % history
-#   ...
-#   13715 echo "one" "two"
-#                   │
-#                   └ newline is being striped off
-#
-#   % unsetopt HIST_REDUCE_BLANKS
-#   % echo "one" \
-#   > "two"
-#   % history
-#   ...
-#   13719 echo "one" \\n"two"
-#
-# See: https://github.com/ohmyzsh/ohmyzsh/issues/8949
-
-# Let us `cd` into a directory just by typing its name, without `cd`.
-#
-# Only works when `SHIN_STDIN` (SHell INput STanDard INput) is set, i.e. when the
-# commands are being read from standard input, i.e. in interactive use.
+# Navigation and spelling correction.
 setopt AUTO_CD
-
-# Make `cd` push the old directory onto the directory stack.
 setopt AUTO_PUSHD
-
-# Try to correct the spelling of commands.
 setopt CORRECT
-
-# Try to correct the spelling of all arguments in a line.
 setopt CORRECT_ALL
 
-# Save each command's beginning timestamp (in seconds since the epoch) and the
-# duration (in seconds) to the history file.
+# History.
 setopt EXTENDED_HISTORY
-
-# Do not display a line previously found.
 setopt HIST_FIND_NO_DUPS
-
-# If a new command line being added to the history list duplicates an older
-# one, the older command is removed from the list (even if it is not the
-# previous event).
 setopt HIST_IGNORE_ALL_DUPS
-
-# Don't record an entity that was just recorded again.
 setopt HIST_IGNORE_DUPS
-
-# Remove command lines from history when their first character is a space.
 setopt HIST_IGNORE_SPACE
-
-# Whenever the user enters a line with history expansion, don't execute the
-# line directly; instead, perform history expansion and reload the line into
-# the editing buffer.
 setopt HIST_VERIFY
 
-# Allow comments even in interactive shells.
+# Interactive behavior.
 setopt INTERACTIVE_COMMENTS
-
-# All unquoted arguments of the form `anything=expression` appearing after the
-# command name have filename expansion performed.
-#
-#   % echo var=~/dotfiles
-#     var=~/dotfiles
-#
-#   % echo var=~/dotfiles
-#     var=/Users/name/dotfiles
 setopt MAGIC_EQUAL_SUBST
-
-# Don't push multiple copies of the same directory onto the directory stack.
 setopt PUSHD_IGNORE_DUPS
-
-# Share history between all sessions.
 setopt SHARE_HISTORY
 
-# ------------------------------------------------------------------------------
 # Functions, Aliases, Exports
 # ------------------------------------------------------------------------------
 
-# There's no point in having {ba,z}sh compatibility which would not allow us to
-# use the set of features specific to zsh.
 source "$DOTFILES/config/zsh/lib/functions.zsh"
 source "$DOTFILES/config/zsh/lib/aliases.zsh"
 source "$DOTFILES/config/zsh/lib/exports.zsh"
 
-# ------------------------------------------------------------------------------
 # Hooks
 # ------------------------------------------------------------------------------
 
-# A function which is run automatically at a specific point during shell
-# execution. To list all the hooks:
-#
-#     % add-zsh-hook -L
-
-# `man zshcontrib /Manipulating Hook Functions`
-# `man zshmisc /SPECIAL FUNCTIONS/;/Hook Functions`
 autoload -Uz add-zsh-hook
 
-# Hook to activate/deactivate the Python virtual environment automagically.
+# Activate or deactivate the nearest Python virtual environment.
 # TODO: nested virtual environments
 _python_auto_venv() {
-  # We cannot use the `VIRTUAL_ENV` variable for this because it stays in the
-  # environment after a shell reload.
+  # deactivate may be absent even when VIRTUAL_ENV survived a shell reload.
   if ! typeset -f deactivate &> /dev/null; then
     py-venv-activate
   elif [[ -n "$VIRTUAL_ENV" ]]; then
-    # Why '/' ?
-    #
-    # Take these two directories for example:
-    #   1. ~/test         - contains virtual environment
-    #   2. ~/test-other   - no virtual environment
-    #
-    # If we go from the first directory to the second, the environment will not
-    # be deactivated because of the glob. By adding a forward slash, we restrict
-    # the match and avoid the case where the string is a substring.
-    #
-    #   `[[ "~/test-other"  != "~/test"*  ]]` -> false
-    #   `[[ "~/test-other/" != "~/test/"* ]]` -> true
+    # Trailing slashes prevent sibling prefixes from matching the venv root.
     if [[ "$PWD/" != "${VIRTUAL_ENV:h}/"* ]]; then
-      # If we're changing a directory containing a virtual environment to
-      # another directory with a virtual environment, then we should deactivate
-      # the first one and activate the current one.
       deactivate
       py-venv-activate
     fi
   fi
 }
 
-# precmd: runs before showing the prompt
 add-zsh-hook -Uz precmd _python_auto_venv
 
-# preexec: runs before executing the command
-
-# ------------------------------------------------------------------------------
 # Key Bindings
 # ------------------------------------------------------------------------------
 
-# In kitty, one can find the sequence of characters the terminal sends to the
-# program for a certain key combination using `kitty +kitten show_key`.
-
-# When we hit `C-w`, don't delete back to a space, but to a space *or* a slash.
-# Useful to have more control over deletion on a filepath.
-#
-# See:
-# - http://stackoverflow.com/a/1438523
-# - http://stackoverflow.com/a/11200998
-# - `man zshcontrib(1)` /select-word-style
+# Make Ctrl-W stop at spaces and path separators.
 autoload -Uz select-word-style
 select-word-style bash
 
-# Use S-Tab to cycle backward during a completion
+# Shift-Tab cycles backward through completion.
 bindkey '\e[Z' reverse-menu-complete
-#        ├──┘
-#        └ the shell doesn't seem to recognize the keysym "S-Tab" but when we
-#          press "S-Tab", the terminal sends the sequence "^[[Z" or "ESC [ Z",
-#          so we use it in the lhs of our mapping.
 
-# The delete key doesn't work in zsh. I use `C-d` but still let's just fix it.
 bindkey '\e[3~' delete-char
 
-# Search backward/forward in the history for a line beginning with the current
-# line up to the cursor. This leaves the cursor in its original position.
-#
-# By default, `C-p/C-n` are bound to `up-line-or-history/down-line-or-history`.
-#
-# See:
-#     man zshcontrib
-#     /down-line-or-beginning-search
-#     /up-line-or-beginning-search
+# Search history using the text before the cursor.
 bindkey '\C-p' history-beginning-search-backward
 bindkey '\C-n' history-beginning-search-forward
 
-# By default, C-u deletes the whole line (kill-whole-line).
-# bindkey '\C-u' backward-kill-line
-
-# Remap `C-l` to both scroll the current screen contents into the scrollback
-# buffer and clear the screen, instead of just clearing the screen.
-#
-# Source:
-# https://sw.kovidgoyal.net/kitty/conf/#shortcut-kitty.Reset-the-terminal
+# Preserve the current screen in scrollback before clearing it.
 scroll-and-clear-screen() {
   printf '\n%.0s' {1..$LINES}
   zle clear-screen
@@ -490,41 +228,28 @@ scroll-and-clear-screen() {
 zle -N scroll-and-clear-screen
 bindkey '\C-l' scroll-and-clear-screen
 
-# Automatic history expansion (`!!`) when inserting a space.
+# Expand history references when inserting a space.
 bindkey ' ' magic-space
 
-# Edit the command line using the VISUAL editor.
+# Edit the command line in VISUAL.
 autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey '\C-x\C-e' edit-command-line
 
-# Press `C-x H`, then some key combination for which you want the name of the
-# zle function which is invoked, like `C-x h`, and you'll see something like:
-#
-#     "^Xh" is describe-key-briefly
 bindkey '\C-xh' describe-key-briefly
 
-# Completion menu navigation using "menuselect" keymap.
+# Completion menu navigation.
 bindkey -M menuselect '\C-j' down-line-or-history
 bindkey -M menuselect '\C-k' up-line-or-history
 bindkey -M menuselect '\C-h' backward-char
 bindkey -M menuselect '\C-l' forward-char
 
-# We cannot bind any custom widget in the `menuselect` keymap:
-#
-#   > Note that the following always perform the same task within the menu
-#   > selection map and cannot be replaced by user defined widgets, nor can the
-#   > set of functions be extended:
-#
-# See:
-#   - `man zshmodules /THE ZSH\/COMPLIST MODULE/;/Menu selection`
-#   - https://unix.stackexchange.com/a/588002/289772
+# Menu paging uses key sequences because menuselect cannot run custom widgets.
 bindkey -M menuselect '\ej' down-line-or-history
 bindkey -M menuselect '\ek' up-line-or-history
 bindkey -M menuselect -s '\C-f' '\ej\ej\ej\ej\ej'
 bindkey -M menuselect -s '\C-b' '\ek\ek\ek\ek\ek'
 
-# ------------------------------------------------------------------------------
 # Local
 # ------------------------------------------------------------------------------
 
