@@ -76,8 +76,8 @@ end)
 -- listen_on unix:/tmp/mykitty
 -- ```
 local kittyFontSizes = {
-  builtin = 16, -- Laptop display
-  external = 18, -- External monitor
+  builtin = 14, -- Laptop display
+  external = 16, -- External monitor
 }
 
 -- Find the Kitty socket in `/tmp` directory.
