@@ -31,7 +31,8 @@ confirm() {
 }
 
 link() {
-  local source_file="${DOTFILES}/config/${1}"
+  local source_directory="${3:-${DOTFILES}/config}"
+  local source_file="${source_directory}/${1}"
   local target_file="${HOME}/${2}"
   if ((FORCE)); then
     echo "==> $target_file -> $source_file"
@@ -64,7 +65,7 @@ case "$OSTYPE" in
 esac
 
 # Common symlinks
-link ".editorconfig" ".editorconfig"
+link ".editorconfig" ".editorconfig" "$DOTFILES"
 link "bash/bash_profile" ".bash_profile"
 link "bash/bashrc" ".bashrc"
 link "bat" ".config/bat"
