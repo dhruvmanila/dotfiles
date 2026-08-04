@@ -44,14 +44,6 @@ export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=999999999
 export SAVEHIST=$HISTSIZE
 
-# Opt-out of homebrew's analytics
-export HOMEBREW_NO_ANALYTICS=1
-
-export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/lib/Brewfile"
-
-# Use `bat` for `brew cat` command.
-export HOMEBREW_BAT=1
-
 # Do not show environment variable hints. HOMEBREW_* environment variables can
 # be found at `man brew /Environment`.
 export HOMEBREW_NO_ENV_HINTS=1

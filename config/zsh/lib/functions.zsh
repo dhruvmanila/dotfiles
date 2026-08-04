@@ -50,14 +50,6 @@ ipython() {
   uv run --no-project --with ipython $@ ipython --no-banner
 }
 
-# Fuzzy search the directory list in the present working directory and cd into
-# the selected directory.
-fcd() {
-  local dir
-  dir=$(fd -t d -d 1 . | fzf)
-  [[ -n "$dir" ]] && cd "$dir"
-}
-
 # Create a new directory and enter it
 mcd() {
   mkdir -p "$@" && cd "$_" || return
@@ -98,21 +90,6 @@ o() {
   fi
 }
 
-# Uninstall all the Python packages for the current environment except for the
-# ones already included when the environment was created.
-pip-uninstall() {
-  python -m pip list \
-    | awk 'NR>2 {if ($1 != "pip" && $1 != "setuptools") print $1}' \
-    | xargs python -m pip uninstall --yes
-}
-
-# Upgrade the outdated Python packages for the current environment.
-pip-upgrade() {
-  python -m pip list --outdated \
-    | awk 'NR>2 {print $1}' \
-    | xargs python -m pip install --upgrade
-}
-
 # Activate the Python virtual environment built using the `uv` command.
 #
 # This checks for the `.venv` directory by climbing up the path until it
@@ -134,16 +111,9 @@ py-venv-activate() {
   fi
 }
 
-# Open a CLI script in vim.
-#
-# For `pyenv`, it will resolve path using the provided command.
-#
-# Mnemonic: (vi)m (w)hich
+# Open an executable in the configured editor.
 viw() {
-  local bin
-  bin=$(which "$1")
-  if [[ "$bin" == "$(pyenv root)/shims/"* ]]; then
-    bin=$(pyenv which "$1")
-  fi
-  $EDITOR $(realpath "$bin")
+  local executable
+  executable=$(whence -p "$1") || return
+  "$EDITOR" "$(realpath "$executable")"
 }
