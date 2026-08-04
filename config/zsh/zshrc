@@ -98,6 +98,7 @@ fpath=(
 cdpath=(
   "$HOME"
   "$HOME/work"
+  "$HOME/code"
   "$DOTFILES"
 )
 
@@ -108,7 +109,7 @@ path=(
   # Project specific bin directory.
   "$CARGO_HOME/bin"(N-/)
 
-  # Local scripts and `pipx` installed executables.
+  # Local scripts and uv tool executables.
   "$HOME/.local/bin"(N-/)
 
   # Just in case this isn't present
