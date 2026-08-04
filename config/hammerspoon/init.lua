@@ -60,13 +60,6 @@ hs.console.consoleResultColor(hs.drawing.color.asRGB { hex = '#8ec07c' })
 -- Remove the space occupying toolbar.
 hs.console.toolbar(nil)
 
--- Keybindings
-
--- Toggle hammerspoon console.
-hs.hotkey.bind({ 'cmd', 'ctrl', 'alt' }, 'h', function()
-  hs.toggleConsole()
-end)
-
 -- Automatically adjust Kitty's font size based on which display it's on.
 --
 -- This requires the following Kitty config:
@@ -128,20 +121,3 @@ end
 local kittyFilter = hs.window.filter.new 'kitty'
 kittyFilter:subscribe(hs.window.filter.windowMoved, adjustKittyFontForScreen)
 kittyFilter:subscribe(hs.window.filter.windowFocused, adjustKittyFontForScreen)
-
--- macOS has provided a shortcut to minimize a window but not to unminimize them.
---
--- This only unminimizes the first window in the *current* space. Repeated
--- presses will unminimize all the remaining windows.
---
--- Also, if you have multiple windows for an application, minimize/unminimize
--- works on a specific window and not on the whole application. Use hide/unhide
--- for all windows of an application.
-hs.hotkey.bind({ 'cmd', 'ctrl' }, 'm', function()
-  for _, win in ipairs(hs.window.allWindows()) do
-    if win:isMinimized() then
-      win:unminimize()
-      break
-    end
-  end
-end)
