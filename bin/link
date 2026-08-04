@@ -9,6 +9,7 @@ case "$1" in
 esac
 
 REQUIRED_DIRECTORIES=(
+  ~/.codex
   ~/.config/gh
   ~/.config/mise
   ~/.gnupg
@@ -66,6 +67,7 @@ esac
 
 # Common symlinks
 link ".editorconfig" ".editorconfig" "$DOTFILES"
+link "codex/AGENTS.md" ".codex/AGENTS.md"
 link "bash/bash_profile" ".bash_profile"
 link "bash/bashrc" ".bashrc"
 link "bat" ".config/bat"
