@@ -115,11 +115,6 @@ local function setup_pyrefly_server_playground()
   vim.lsp.enable 'pyrefly'
 end
 
-local function setup_finlab()
-  vim.lsp.enable 'pyright'
-  vim.lsp.enable('ty', false)
-end
-
 ---@type table<string, function>
 local DIRECTORIES = {
   [dm.OS_HOMEDIR .. '/work/astral/ruff/'] = setup_ruff,
@@ -130,8 +125,6 @@ local DIRECTORIES = {
   [dm.OS_HOMEDIR .. '/playground/pyright-server/'] = setup_pyright_server_playground,
   [dm.OS_HOMEDIR .. '/playground/pyrefly-server/'] = setup_pyrefly_server_playground,
   [dm.OS_HOMEDIR .. '/work/astral/mypy_primer_diffs/'] = setup_mypy_primer,
-  [dm.OS_HOMEDIR .. '/projects/finlab'] = setup_finlab,
-  [dm.OS_HOMEDIR .. '/projects/personal-finance'] = setup_finlab,
 }
 
 -- Perform project specific setup.
